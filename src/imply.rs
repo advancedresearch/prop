@@ -77,3 +77,19 @@ pub fn to_or<A: Prop, B: Prop>(f: Imply<A, B>) -> Or<Not<A>, B> {
         (Right(a), _) => Left(a.clone()),
     }
 }
+
+/// `(¬a ∨ b) => (a => b)`.
+pub fn from_or<A: Prop, B: Prop>(f: Or<Not<A>, B>) -> Imply<A, B> {
+    use Either::*;
+
+    let a = <A as Decidable>::decide();
+    let b = <B as Decidable>::decide();
+    match (a, b) {
+        (_, Left(b)) => Rc::new(move |_| b),
+        (Left(a), _) => match f {
+            Left(x) => match x(a) {},
+            Right(b) => Rc::new(move |_| b),
+        }
+        (Right(a), _) => Rc::new(move |x| match a(x) {}),
+    }
+}
