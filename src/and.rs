@@ -60,3 +60,17 @@ pub fn false_arg<A: Prop>((x, _): And<False, A>) -> False {x}
 
 /// `(true ∧ a) => true`.
 pub fn true_arg<A: Prop>((_, x): And<True, A>) -> A {x}
+
+/// `(a ∧ b) ∧ (a => c)  =>  (c ∧ b)`.
+pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(
+    (x, y): And<A, B>, g: Imply<A, C>
+) -> And<C, B> {
+    (g(x), y)
+}
+
+/// `(a ∧ b) ∧ (b => c)  =>  (a ∧ c)`.
+pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(
+    (x, y): And<A, B>, g: Imply<B, C>
+) -> And<A, C> {
+    (x, g(y))
+}
