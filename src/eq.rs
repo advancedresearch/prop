@@ -46,3 +46,8 @@ pub fn rev_modus_tollens<A: Prop, B: Prop>((f0, f1): Eq<Not<A>, Not<B>>) -> Eq<B
 pub fn is_true<A: Prop>((f0, _): Eq<True, A>) -> A {
     f0(True)
 }
+
+/// `(false = a) => ¬a`.
+pub fn is_false<A: Prop>((_, f1): Eq<False, A>) -> Not<A> {
+    f1
+}
