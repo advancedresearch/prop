@@ -12,6 +12,14 @@ pub fn modus_tollens<A: Prop, B: Prop>(f: Imply<A, B>) -> Imply<Not<B>, Not<A>> 
     })
 }
 
+/// `¬b => ¬a  =>  a => b`.
+pub fn rev_modus_tollens<A: Prop, B: Prop>(f: Imply<Not<B>, Not<A>>) -> Imply<A, B> {
+    imply::rev_double_neg(Rc::new(move |x| {
+        let f = f.clone();
+        Rc::new(move |y| match x(f(y)) {})
+    }))
+}
+
 /// `a => b ∧ b => c  =>  a => c`.
 pub fn transitivity<A: Prop, B: Prop, C: Prop>(
     f: Imply<A, B>,
