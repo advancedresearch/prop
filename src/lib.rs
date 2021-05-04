@@ -6,9 +6,10 @@
 
 use std::rc::Rc;
 
+pub mod and;
 pub mod imply;
 pub mod eq;
-pub mod and;
+pub mod not;
 pub mod or;
 
 /// Logical true.
