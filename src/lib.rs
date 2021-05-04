@@ -1,4 +1,5 @@
 #![deny(missing_docs)]
+#![deny(dead_code)]
 
 //! # Prop
 //! Propositional logic with types in Rust.
@@ -8,6 +9,7 @@ use std::rc::Rc;
 pub mod imply;
 pub mod eq;
 pub mod and;
+pub mod or;
 
 /// Logical true.
 #[derive(Copy, Clone)]
