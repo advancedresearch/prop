@@ -38,3 +38,16 @@ pub fn distrib<A: Prop, B: Prop, C: Prop>(
         Right((a, c)) => (a, Right(c))
     }
 }
+
+/// `¬(a ∧ b) => ¬a ∨ ¬b`.
+pub fn from_de_morgan<A: Prop, B: Prop>(
+    f: Not<And<A, B>>
+) -> Or<Not<A>, Not<B>> {
+    use Either::*;
+
+    match (A::decide(), B::decide()) {
+        (Left(a), Left(b)) => match f((a, b)) {},
+        (_, Right(b)) => Right(Rc::new(move |x| b.clone()(x))),
+        (Right(a), _) => Left(Rc::new(move |x| a.clone()(x))),
+    }
+}
