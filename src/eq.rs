@@ -41,3 +41,8 @@ pub fn rev_modus_tollens<A: Prop, B: Prop>((f0, f1): Eq<Not<A>, Not<B>>) -> Eq<B
     let f12 = imply::rev_modus_tollens(f1);
     (f02, f12)
 }
+
+/// `(true = a) => a`.
+pub fn is_true<A: Prop>((f0, _): Eq<True, A>) -> A {
+    f0(True)
+}
