@@ -51,7 +51,7 @@ pub trait Decidable: 'static + Sized + Clone {
     fn decide() -> ExcM<Self>;
     /// Get double negation rule from instance.
     fn double_neg(self) -> Dneg<Self> {self.map_any()}
-    /// Maps any time into itself.
+    /// Maps anything into itself.
     fn map_any<T>(self) -> Imply<T, Self> {Rc::new(move |_| self.clone())}
 }
 
