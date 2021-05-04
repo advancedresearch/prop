@@ -17,3 +17,8 @@ pub fn double_neg<A: Prop>(a: A) -> Eq<A, Not<Not<A>>> {
 pub fn commute<A: Prop, B: Prop>((f0, f1): Eq<A, B>) -> Eq<B, A> {
     (f1, f0)
 }
+
+/// `(a => b) = (¬a ∨ b)`.
+pub fn imply_to_or<A: Prop, B: Prop>() -> Eq<Imply<A, B>, Or<Not<A>, B>> {
+    (Rc::new(move |x| imply::to_or(x)), Rc::new(move |x| imply::from_or(x)))
+}
