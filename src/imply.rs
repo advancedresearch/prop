@@ -5,7 +5,7 @@ use crate::*;
 /// `a => b  =>  ¬b => ¬a`.
 ///
 /// Swap sides of implication by taking their negation.
-pub fn neg<A: Prop, B: Prop>(f: Imply<A, B>) -> Imply<Not<B>, Not<A>> {
+pub fn modus_tollens<A: Prop, B: Prop>(f: Imply<A, B>) -> Imply<Not<B>, Not<A>> {
     Rc::new(move |x| {
         let f = f.clone();
         Rc::new(move |y| match x(f(y)) {})
