@@ -19,3 +19,11 @@ pub fn transitivity<A: Prop, B: Prop, C: Prop>(
 ) -> Imply<A, C> {
     Rc::new(move |x| g(f(x)))
 }
+
+/// `(a => b) ∧ a  =>  b`
+pub fn modus_ponens<A: Prop, B: Prop>(
+    f: Imply<A, B>,
+    a: A,
+) -> B {
+    f(a)
+}
