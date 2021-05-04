@@ -47,11 +47,13 @@ pub trait Decidable: 'static + Sized + Copy {
     /// Get excluded middle rule.
     fn decide() -> ExcM<Self>;
     /// Get double negation rule from instance.
-    fn double_neg(self) -> Dneg<Self> {
-        Rc::new(move |_| match Self::decide() {
-            Either::Left(a) => a,
-            Either::Right(not_a) => match not_a(self) {},
-        })
+    fn double_neg(self) -> Dneg<Self> {self.map_any()}
+    /// Maps any time into itself.
+    fn map_any<T>(self) -> Imply<T, Self> {
+        match Self::decide() {
+            Either::Left(a) => Rc::new(move |_| a),
+            Either::Right(not_a) => Rc::new(move |_| match not_a(self) {}),
+        }
     }
 }
 impl Decidable for True {
