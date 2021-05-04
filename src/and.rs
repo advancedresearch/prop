@@ -13,3 +13,15 @@ pub fn assoc<A: Prop, B: Prop, C: Prop>(
 ) -> And<A, And<B, C>> {
     (x0, (x1, x2))
 }
+
+/// `a ∧ (b ∨ c)  =>  (a ∧ b) ∨ (a ∧ c)`
+pub fn distrib<A: Prop, B: Prop, C: Prop>(
+    (a, x): And<A, Or<B, C>>
+) -> Or<And<A, B>, And<A, C>> {
+    use Either::*;
+
+    match x {
+        Left(b) => Left((a, b)),
+        Right(c) => Right((a, c)),
+    }
+}
