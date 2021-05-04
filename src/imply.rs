@@ -37,3 +37,9 @@ pub fn reorder_args<A: Prop, B: Prop, C: Prop>(
         Rc::new(move |y| f(y)(x))
     })
 }
+
+/// `(a => b) ∧ a  =>  ¬¬a => ¬¬b`.
+pub fn double_neg<A: Prop, B: Prop>(f: Imply<A, B>, a: A) -> Imply<Not<Not<A>>, Not<Not<B>>> {
+    let g = a.double_neg();
+    Rc::new(move |x| not::double(f(g(x))))
+}
