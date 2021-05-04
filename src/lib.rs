@@ -85,10 +85,11 @@ impl<T, U> Decidable for Or<T, U> where T: Decidable, U: Decidable {
 impl<T, U> Decidable for Imply<T, U> where T: Decidable, U: Decidable {
     fn decide() -> ExcM<Self> {
         match (<T as Decidable>::decide(), <U as Decidable>::decide()) {
-            (_, Left(b)) => Left(Rc::new(move |_| b.clone())),
-            (Left(a), Right(b)) => Right(Rc::new(move |f| b.clone()(f(a.clone())))),
-            (Right(a), Right(b)) => {
-                let g: Imply<Not<U>, Not<T>> = Rc::new(move |_| a.clone());
+            (_, Left(b)) => Left(b.map_any()),
+            (Left(a), Right(b)) =>
+                Right(Rc::new(move |f| b.clone()(f(a.clone())))),
+            (Right(a), _) => {
+                let g: Imply<Not<U>, Not<T>> = a.map_any();
                 Left(imply::rev_modus_tollens(g))
             }
         }

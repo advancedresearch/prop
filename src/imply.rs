@@ -55,7 +55,7 @@ pub fn double_neg<A: Prop, B: Prop>(f: Imply<A, B>) -> Imply<Not<Not<A>>, Not<No
 
     match (a, b) {
         (Left(a), _) => Rc::new(move |x| not::double(f(a.clone().double_neg()(x)))),
-        (_, Left(b)) => Rc::new(move |_| not::double(b.clone())),
+        (_, Left(b)) => not::double(b).map_any(),
         (Right(a), _) => Rc::new(move |x| match x(a.clone()) {})
     }
 }
@@ -67,7 +67,7 @@ pub fn rev_double_neg<A: Prop, B: Prop>(f: Imply<Not<Not<A>>, Not<Not<B>>>) -> I
     let a = <A as Decidable>::decide();
     let b = <B as Decidable>::decide();
     match (a, b) {
-        (_, Left(b)) => Rc::new(move |_| b.clone()),
+        (_, Left(b)) => b.map_any(),
         (Right(a), _) => Rc::new(move |x| match a(x) {}),
         (Left(a), Right(b)) => match f(not::double(a))(b) {}
     }
@@ -93,10 +93,10 @@ pub fn from_or<A: Prop, B: Prop>(f: Or<Not<A>, B>) -> Imply<A, B> {
     let a = <A as Decidable>::decide();
     let b = <B as Decidable>::decide();
     match (a, b) {
-        (_, Left(b)) => Rc::new(move |_| b.clone()),
+        (_, Left(b)) => b.map_any(),
         (Left(a), _) => match f {
             Left(x) => match x(a) {},
-            Right(b) => Rc::new(move |_| b.clone()),
+            Right(b) => b.map_any(),
         }
         (Right(a), _) => Rc::new(move |x| match a(x) {}),
     }
