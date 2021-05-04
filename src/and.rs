@@ -54,3 +54,6 @@ pub fn from_de_morgan<A: Prop, B: Prop>(
         (Right(not_a), Right(not_b)) => (not_a, not_b),
     }
 }
+
+/// `(true ∧ a) => a`.
+pub fn false_arg<A: Prop>((x, _): And<False, A>) -> False {x}
