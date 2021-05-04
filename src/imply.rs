@@ -27,3 +27,13 @@ pub fn modus_ponens<A: Prop, B: Prop>(
 ) -> B {
     f(a)
 }
+
+/// `a => (b => c)  =>  b => (a => c)`
+pub fn reorder_args<A: Prop, B: Prop, C: Prop>(
+    f: Imply<A, Imply<B, C>>
+) -> Imply<B, Imply<A, C>> {
+    Rc::new(move |x| {
+        let f = f.clone();
+        Rc::new(move |y| f(y)(x))
+    })
+}
