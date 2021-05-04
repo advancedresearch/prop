@@ -44,10 +44,17 @@ pub fn double_neg<A: Prop, B: Prop>(f: Imply<A, B>, a: A) -> Imply<Not<Not<A>>, 
     Rc::new(move |x| not::double(f(g(x))))
 }
 
-/// `(¬¬a => ¬¬b) ∧ b  =>  a => b`.
-pub fn rev_double_neg<A: Prop, B: Prop>(f: Imply<Not<Not<A>>, Not<Not<B>>>, b: B) -> Imply<A, B> {
-    let g = b.double_neg();
-    Rc::new(move |x| g(f(not::double(x))))
+/// `(¬¬a => ¬¬b)  =>  a => b`.
+pub fn rev_double_neg<A: Prop, B: Prop>(f: Imply<Not<Not<A>>, Not<Not<B>>>) -> Imply<A, B> {
+    use Either::*;
+
+    let a = <A as Decidable>::decide();
+    let b = <B as Decidable>::decide();
+    match (a, b) {
+        (_, Left(b)) => Rc::new(move |_| b),
+        (Right(a), _) => Rc::new(move |x| match a(x) {}),
+        (Left(a), Right(b)) => match f(not::double(a))(b) {}
+    }
 }
 
 /// `(a => b) => (¬a ∨ b)`.
