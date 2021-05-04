@@ -27,3 +27,17 @@ pub fn imply_to_or<A: Prop, B: Prop>() -> Eq<Imply<A, B>, Or<Not<A>, B>> {
 pub fn refl<A: Prop>() -> Eq<A, A> {
     (Rc::new(move |x| x), Rc::new(move |x| x))
 }
+
+/// `(a = b) = (¬a = ¬b)`
+pub fn modus_tollens<A: Prop, B: Prop>((f0, f1): Eq<A, B>) -> Eq<Not<B>, Not<A>> {
+    let f02 = imply::modus_tollens(f0);
+    let f12 = imply::modus_tollens(f1);
+    (f02, f12)
+}
+
+/// `(¬a = ¬b) = (a = b)`
+pub fn rev_modus_tollens<A: Prop, B: Prop>((f0, f1): Eq<Not<A>, Not<B>>) -> Eq<B, A> {
+    let f02 = imply::rev_modus_tollens(f0);
+    let f12 = imply::rev_modus_tollens(f1);
+    (f02, f12)
+}
