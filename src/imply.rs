@@ -49,3 +49,16 @@ pub fn rev_double_neg<A: Prop, B: Prop>(f: Imply<Not<Not<A>>, Not<Not<B>>>, b: B
     let g = b.double_neg();
     Rc::new(move |x| g(f(not::double(x))))
 }
+
+/// `(a => b) => (¬a ∨ b)`.
+pub fn to_or<A: Prop, B: Prop>(f: Imply<A, B>) -> Or<Not<A>, B> {
+    use Either::*;
+
+    let a = <A as Decidable>::decide();
+    let b = <B as Decidable>::decide();
+    match (a, b) {
+        (_, Left(b)) => Right(b),
+        (Left(a), _) => Right(f(a)),
+        (Right(a), _) => Left(a.clone()),
+    }
+}
