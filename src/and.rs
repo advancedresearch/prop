@@ -55,5 +55,8 @@ pub fn from_de_morgan<A: Prop, B: Prop>(
     }
 }
 
-/// `(true ∧ a) => a`.
+/// `(false ∧ a) => false`.
 pub fn false_arg<A: Prop>((x, _): And<False, A>) -> False {x}
+
+/// `(true ∧ a) => true`.
+pub fn true_arg<A: Prop>((_, x): And<True, A>) -> A {x}
