@@ -7,6 +7,7 @@ use std::rc::Rc;
 
 pub mod imply;
 pub mod eq;
+pub mod and;
 
 /// Logical true.
 #[derive(Copy, Clone)]
