@@ -12,3 +12,8 @@ pub fn double_neg<A: Prop>(a: A) -> Eq<A, Not<Not<A>>> {
     let double_neg = a.double_neg();
     (Rc::new(move |x| not::double(x)), Rc::new(move |x| double_neg(x)))
 }
+
+/// `(a = b) => (b = a)`.
+pub fn commute<A: Prop, B: Prop>((f0, f1): Eq<A, B>) -> Eq<B, A> {
+    (f1, f0)
+}
