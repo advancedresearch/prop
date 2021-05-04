@@ -41,3 +41,16 @@ pub fn to_de_morgan<A: Prop, B: Prop>(
         })
     }
 }
+
+/// `¬(a ∨ b) => (¬a ∧ ¬b)`.
+pub fn from_de_morgan<A: Prop, B: Prop>(
+    f: Not<Or<A, B>>
+) -> And<Not<A>, Not<B>> {
+    use Either::*;
+
+    match (A::decide(), B::decide()) {
+        (Left(a), _) => match f(Left(a)) {},
+        (_, Left(b)) => match f(Right(b)) {},
+        (Right(not_a), Right(not_b)) => (not_a, not_b),
+    }
+}
