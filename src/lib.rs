@@ -36,6 +36,8 @@ pub type And<T, U> = (T, U);
 pub type Dneg<T> = Imply<Not<Not<T>>, T>;
 /// Logical EQ.
 pub type Eq<T, U> = And<Imply<T, U>, Imply<U, T>>;
+/// Alternative to Logical EQ.
+pub type Iff<T, U> = Eq<T, U>;
 /// Logical IMPLY.
 pub type Imply<T, U> = Rc<dyn Fn(T) -> U>;
 /// Excluded middle.
