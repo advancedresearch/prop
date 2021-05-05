@@ -75,3 +75,22 @@ pub fn assoc_right<A: Prop, B: Prop, C: Prop>((f0, f1): Eq<Eq<A, B>, C>) -> Impl
         }
     }
 }
+
+/// `(a = b) = c  =>  (b = c) => a`.
+pub fn assoc_left<A: Prop, B: Prop, C: Prop>((f0, f1): Eq<Eq<A, B>, C>) -> Imply<Eq<B, C>, A> {
+    match (A::decide(), B::decide(), C::decide()) {
+        (Left(a), _, _) => a.map_any(),
+        (Right(not_a), Right(not_b), Right(not_c)) =>
+            match not_c(f0(and::to_eq_neg((not_a, not_b)))) {},
+        (_, Left(b), Right(not_c)) =>
+            Rc::new(move |(fb, _)| match not_c.clone()(fb(b.clone())) {}),
+        (_, Right(not_b), Left(c)) =>
+            Rc::new(move |(_, fc)| match not_b.clone()(fc(c.clone())) {}),
+        (Right(not_a), Left(b), Left(c)) => {
+            // `a = b`.
+            let (_, g1) = f1(c);
+            let a = g1(b);
+            match not_a(a) {}
+        }
+    }
+}
