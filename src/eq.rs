@@ -94,3 +94,8 @@ pub fn assoc_left<A: Prop, B: Prop, C: Prop>((f0, f1): Eq<Eq<A, B>, C>) -> Imply
         }
     }
 }
+
+/// `(a = b) = c  =>  a = (b = c)`.
+pub fn assoc<A: Prop, B: Prop, C: Prop>(f: Eq<Eq<A, B>, C>) -> Eq<A, Eq<B, C>> {
+    (assoc_right(f.clone()), assoc_left(f))
+}
