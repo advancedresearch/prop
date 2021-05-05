@@ -60,3 +60,18 @@ pub fn contra<A: Prop, B: Prop>(f: Not<Eq<A, B>>, a: A) -> Not<B> {
         (Right(not_a), _) => match not_a(a) {},
     }
 }
+
+/// `(a = b) = c  =>  a => (b = c)`
+pub fn assoc_right<A: Prop, B: Prop, C: Prop>((f0, f1): Eq<Eq<A, B>, C>) -> Imply<A, Eq<B, C>> {
+    match (A::decide(), C::decide()) {
+        (Right(not_a), _) => Rc::new(move |x| match not_a.clone()(x) {}),
+        (_, Left(c)) =>
+            Rc::new(move |x| (c.clone().map_any(), f1.clone()(c.clone()).0(x).map_any())),
+        (Left(a), Right(not_c)) => {
+            // `!(a = b)`
+            let g = imply::rev_modus_ponens(f0, not_c.clone());
+            let not_b = eq::contra(g, a);
+            and::to_eq_neg((not_b, not_c)).map_any()
+        }
+    }
+}
