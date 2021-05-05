@@ -128,3 +128,13 @@ pub fn chain<A: Prop, B: Prop, C: Prop>(
         Rc::new(move |y| f((x.clone(), y)))
     })
 }
+
+/// `(a => b) ∧ (a = c)  =>  (c => b)`.
+pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(f: Imply<A, B>, (_, g1): Eq<A, C>) -> Imply<C, B> {
+    transitivity(g1, f)
+}
+
+/// `(a => b) ∧ (b = c)  =>  (a => c)`.
+pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(f: Imply<A, B>, (g0, _): Eq<B, C>) -> Imply<A, C> {
+    transitivity(f, g0)
+}
