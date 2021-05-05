@@ -18,8 +18,6 @@ pub fn assoc<A: Prop, B: Prop, C: Prop>(
 pub fn distrib<A: Prop, B: Prop, C: Prop>(
     (a, x): And<A, Or<B, C>>
 ) -> Or<And<A, B>, And<A, C>> {
-    use Either::*;
-
     match x {
         Left(b) => Left((a, b)),
         Right(c) => Right((a, c)),
@@ -30,8 +28,6 @@ pub fn distrib<A: Prop, B: Prop, C: Prop>(
 pub fn to_de_morgan<A: Prop, B: Prop>(
     (f0, f1): And<Not<A>, Not<B>>
 ) -> Not<Or<A, B>> {
-    use Either::*;
-
     match (A::decide(), B::decide()) {
         (Left(a), _) => match f0(a) {},
         (_, Left(b)) => match f1(b) {},
@@ -46,8 +42,6 @@ pub fn to_de_morgan<A: Prop, B: Prop>(
 pub fn from_de_morgan<A: Prop, B: Prop>(
     f: Not<Or<A, B>>
 ) -> And<Not<A>, Not<B>> {
-    use Either::*;
-
     match (A::decide(), B::decide()) {
         (Left(a), _) => match f(Left(a)) {},
         (_, Left(b)) => match f(Right(b)) {},
@@ -96,4 +90,15 @@ pub fn to_imply<A: Prop, B: Prop>(f: And<A, Not<B>>) -> Not<Imply<A, B>> {
     let h2: Imply<Imply<A, B>, Or<Not<A>, B>> = Rc::new(move |x| imply::to_or(x));
     // `¬(a => b)`
     imply::rev_modus_ponens(h2, h)
+}
+
+/// `(¬a ∧ ¬b) => (a = b)`.
+pub fn to_eq<A: Prop, B: Prop>((f0, f1): And<Not<A>, Not<B>>) -> Eq<A, B> {
+    match (A::decide(), B::decide()) {
+        (Left(a), _) => match f0(a) {},
+        (_, Left(b)) => match f1(b) {},
+        (Right(not_a), Right(not_b)) =>
+            (Rc::new(move |x| match not_a.clone()(x) {}),
+             Rc::new(move |x| match not_b.clone()(x) {}))
+    }
 }
