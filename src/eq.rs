@@ -110,3 +110,13 @@ pub fn swap_right<A: Prop, B: Prop, C: Prop>((f0, f1): Eq<A, Eq<B, C>>) -> Eq<A,
 pub fn swap_left<A: Prop, B: Prop, C: Prop>(f: Eq<Eq<A, B>, C>) -> Eq<Eq<B, A>, C> {
     commute(swap_right(commute(f)))
 }
+
+/// `(a = b) ∧ (a = c)  =>  (c = b)`
+pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(f: Eq<A, B>, g: Eq<A, C>) -> Eq<C, B> {
+    commute(transitivity(commute(f), g))
+}
+
+/// See transitivity.
+pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(f: Eq<A, B>, g: Eq<B, C>) -> Eq<A, C> {
+    transitivity(f, g)
+}
