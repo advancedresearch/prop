@@ -99,3 +99,14 @@ pub fn assoc_left<A: Prop, B: Prop, C: Prop>((f0, f1): Eq<Eq<A, B>, C>) -> Imply
 pub fn assoc<A: Prop, B: Prop, C: Prop>(f: Eq<Eq<A, B>, C>) -> Eq<A, Eq<B, C>> {
     (assoc_right(f.clone()), assoc_left(f))
 }
+
+/// `a = (b = c)  =>  a = (c = b)`.
+pub fn swap_right<A: Prop, B: Prop, C: Prop>((f0, f1): Eq<A, Eq<B, C>>) -> Eq<A, Eq<C, B>> {
+    (Rc::new(move |x| {let (g0, g1) = f0(x); (g1, g0)}),
+     Rc::new(move |(g1, g0)| f1((g0, g1))))
+}
+
+/// `(a = b) = c  =>  (b = a) = c`.
+pub fn swap_left<A: Prop, B: Prop, C: Prop>(f: Eq<Eq<A, B>, C>) -> Eq<Eq<B, A>, C> {
+    commute(swap_right(commute(f)))
+}
