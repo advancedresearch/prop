@@ -36,6 +36,11 @@ pub fn modus_ponens<A: Prop, B: Prop>(
     f(a)
 }
 
+/// `(b => a) ∧ ¬a  => ¬b`.
+pub fn rev_modus_ponens<A: Prop, B: Prop>(g: Imply<B, A>, f: Not<A>) -> Not<B> {
+    modus_tollens(g)(f)
+}
+
 /// `a => (b => c)  =>  b => (a => c)`
 pub fn reorder_args<A: Prop, B: Prop, C: Prop>(
     f: Imply<A, Imply<B, C>>
