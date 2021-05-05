@@ -74,3 +74,14 @@ pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(
 ) -> And<A, C> {
     (x, g(y))
 }
+
+/// `¬(a => b)  =>  (a ∧ ¬b)`.
+pub fn from_imply<A: Prop, B: Prop>(f: Not<Imply<A, B>>) -> And<A, Not<B>> {
+    // `(¬a ∨ b)  =>  (a => b)`
+    let f2 = Rc::new(move |x| imply::from_or(x));
+    // `¬(¬a ∨ b)`
+    let g = imply::rev_modus_ponens(f2, f);
+    // `¬¬a ∧ ¬b`
+    let h = from_de_morgan(g);
+    and::in_left_arg(h, Rc::new(move |x| not::rev_double(x)))
+}
