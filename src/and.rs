@@ -92,13 +92,12 @@ pub fn to_imply<A: Prop, B: Prop>(f: And<A, Not<B>>) -> Not<Imply<A, B>> {
     imply::rev_modus_ponens(h2, h)
 }
 
+/// `(a ∧ b) => (a = b)`.
+pub fn to_eq_pos<A: Prop, B: Prop>((f0, f1): And<A, B>) -> Eq<A, B> {
+    (f1.map_any(), f0.map_any())
+}
+
 /// `(¬a ∧ ¬b) => (a = b)`.
-pub fn to_eq<A: Prop, B: Prop>((f0, f1): And<Not<A>, Not<B>>) -> Eq<A, B> {
-    match (A::decide(), B::decide()) {
-        (Left(a), _) => match f0(a) {},
-        (_, Left(b)) => match f1(b) {},
-        (Right(not_a), Right(not_b)) =>
-            (Rc::new(move |x| match not_a.clone()(x) {}),
-             Rc::new(move |x| match not_b.clone()(x) {}))
-    }
+pub fn to_eq_neg<A: Prop, B: Prop>((f0, f1): And<Not<A>, Not<B>>) -> Eq<A, B> {
+    (Rc::new(move |x| match f0.clone()(x) {}), Rc::new(move |x| match f1.clone()(x) {}))
 }
