@@ -13,7 +13,7 @@ pub fn modus_tollens<A: Prop, B: Prop>(f: Imply<A, B>) -> Imply<Not<B>, Not<A>> 
 }
 
 /// `¬b => ¬a  =>  a => b`.
-pub fn rev_modus_tollens<A: Prop, B: Prop>(f: Imply<Not<B>, Not<A>>) -> Imply<A, B> {
+pub fn rev_modus_tollens<A: DProp, B: DProp>(f: Imply<Not<B>, Not<A>>) -> Imply<A, B> {
     imply::rev_double_neg(Rc::new(move |x| {
         let f = f.clone();
         Rc::new(move |y| match x(f(y)) {})
@@ -37,7 +37,7 @@ pub fn modus_ponens<A: Prop, B: Prop>(
 }
 
 /// `(b => a) ∧ ¬a  => ¬b`.
-pub fn rev_modus_ponens<A: Prop, B: Prop>(g: Imply<B, A>, f: Not<A>) -> Not<B> {
+pub fn rev_modus_ponens<A: Prop, B: DProp>(g: Imply<B, A>, f: Not<A>) -> Not<B> {
     modus_tollens(g)(f)
 }
 
@@ -52,7 +52,7 @@ pub fn reorder_args<A: Prop, B: Prop, C: Prop>(
 }
 
 /// `(a => b)  =>  ¬¬a => ¬¬b`.
-pub fn double_neg<A: Prop, B: Prop>(f: Imply<A, B>) -> Imply<Not<Not<A>>, Not<Not<B>>> {
+pub fn double_neg<A: DProp, B: DProp>(f: Imply<A, B>) -> Imply<Not<Not<A>>, Not<Not<B>>> {
     use Either::*;
 
     let a = <A as Decidable>::decide();
@@ -66,7 +66,7 @@ pub fn double_neg<A: Prop, B: Prop>(f: Imply<A, B>) -> Imply<Not<Not<A>>, Not<No
 }
 
 /// `(¬¬a => ¬¬b)  =>  a => b`.
-pub fn rev_double_neg<A: Prop, B: Prop>(f: Imply<Not<Not<A>>, Not<Not<B>>>) -> Imply<A, B> {
+pub fn rev_double_neg<A: DProp, B: DProp>(f: Imply<Not<Not<A>>, Not<Not<B>>>) -> Imply<A, B> {
     use Either::*;
 
     let a = <A as Decidable>::decide();
@@ -79,7 +79,7 @@ pub fn rev_double_neg<A: Prop, B: Prop>(f: Imply<Not<Not<A>>, Not<Not<B>>>) -> I
 }
 
 /// `(a => b) => (¬a ∨ b)`.
-pub fn to_or<A: Prop, B: Prop>(f: Imply<A, B>) -> Or<Not<A>, B> {
+pub fn to_or<A: DProp, B: DProp>(f: Imply<A, B>) -> Or<Not<A>, B> {
     use Either::*;
 
     let a = <A as Decidable>::decide();
@@ -92,7 +92,7 @@ pub fn to_or<A: Prop, B: Prop>(f: Imply<A, B>) -> Or<Not<A>, B> {
 }
 
 /// `(¬a ∨ b) => (a => b)`.
-pub fn from_or<A: Prop, B: Prop>(f: Or<Not<A>, B>) -> Imply<A, B> {
+pub fn from_or<A: DProp, B: DProp>(f: Or<Not<A>, B>) -> Imply<A, B> {
     use Either::*;
 
     let a = <A as Decidable>::decide();
@@ -108,7 +108,7 @@ pub fn from_or<A: Prop, B: Prop>(f: Or<Not<A>, B>) -> Imply<A, B> {
 }
 
 /// `(¬a => b) => (¬b => a)`.
-pub fn flip_neg_left<A: Prop, B: Prop>(f: Imply<Not<A>, B>) -> Imply<Not<B>, A> {
+pub fn flip_neg_left<A: DProp, B: Prop>(f: Imply<Not<A>, B>) -> Imply<Not<B>, A> {
     let g = imply::modus_tollens(f);
     Rc::new(move |x| not::rev_double(g(x)))
 }
