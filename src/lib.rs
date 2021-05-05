@@ -45,14 +45,19 @@ pub type Not<T> = Imply<T, False>;
 /// Logical OR.
 pub type Or<T, U> = Either<T, U>;
 
-/// Implemented by decidable types.
-pub trait Decidable: 'static + Sized + Clone {
-    /// Get excluded middle rule.
-    fn decide() -> ExcM<Self>;
-    /// Get double negation rule from instance.
+/// A proposition that might be decidable or undecidable.
+pub trait Prop: 'static + Sized + Clone {
+    /// Get double negation rule from proof.
     fn double_neg(self) -> Dneg<Self> {self.map_any()}
     /// Maps anything into itself.
     fn map_any<T>(self) -> Imply<T, Self> {Rc::new(move |_| self.clone())}
+}
+impl<T: 'static + Sized + Clone> Prop for T {}
+
+/// Implemented by decidable types.
+pub trait Decidable: Prop {
+    /// Get excluded middle rule.
+    fn decide() -> ExcM<Self>;
 }
 
 impl Decidable for True {
@@ -96,6 +101,6 @@ impl<T, U> Decidable for Imply<T, U> where T: Decidable, U: Decidable {
     }
 }
 
-/// Shorthand for proposition.
-pub trait Prop: Decidable {}
-impl<T: Decidable> Prop for T {}
+/// Shorthand for decidable proposition.
+pub trait DProp: Decidable {}
+impl<T: Decidable> DProp for T {}

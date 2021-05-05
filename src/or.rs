@@ -40,7 +40,7 @@ pub fn distrib<A: Prop, B: Prop, C: Prop>(
 }
 
 /// `¬(a ∧ b) => (¬a ∨ ¬b)`.
-pub fn from_de_morgan<A: Prop, B: Prop>(
+pub fn from_de_morgan<A: DProp, B: DProp>(
     f: Not<And<A, B>>
 ) -> Or<Not<A>, Not<B>> {
     use Either::*;
@@ -53,7 +53,7 @@ pub fn from_de_morgan<A: Prop, B: Prop>(
 }
 
 /// `(¬a ∨ ¬b) => ¬(a ∧ b)`.
-pub fn to_de_morgan<A: Prop, B: Prop>(
+pub fn to_de_morgan<A: DProp, B: DProp>(
     f: Or<Not<A>, Not<B>>
 ) -> Not<And<A, B>> {
     use Either::*;

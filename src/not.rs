@@ -8,7 +8,7 @@ pub fn double<A: Prop>(a: A) -> Not<Not<A>> {
 }
 
 /// `¬¬a => a`.
-pub fn rev_double<A: Prop>(f: Not<Not<A>>) -> A {
+pub fn rev_double<A: DProp>(f: Not<Not<A>>) -> A {
     use Either::*;
 
     match A::decide() {

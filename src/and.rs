@@ -25,7 +25,7 @@ pub fn distrib<A: Prop, B: Prop, C: Prop>(
 }
 
 /// `(¬a ∧ ¬b) => ¬(a ∨ b)`.
-pub fn to_de_morgan<A: Prop, B: Prop>(
+pub fn to_de_morgan<A: DProp, B: DProp>(
     (f0, f1): And<Not<A>, Not<B>>
 ) -> Not<Or<A, B>> {
     match (A::decide(), B::decide()) {
@@ -39,7 +39,7 @@ pub fn to_de_morgan<A: Prop, B: Prop>(
 }
 
 /// `¬(a ∨ b) => (¬a ∧ ¬b)`.
-pub fn from_de_morgan<A: Prop, B: Prop>(
+pub fn from_de_morgan<A: DProp, B: DProp>(
     f: Not<Or<A, B>>
 ) -> And<Not<A>, Not<B>> {
     match (A::decide(), B::decide()) {
@@ -70,7 +70,7 @@ pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(
 }
 
 /// `¬(a => b)  =>  (a ∧ ¬b)`.
-pub fn from_imply<A: Prop, B: Prop>(f: Not<Imply<A, B>>) -> And<A, Not<B>> {
+pub fn from_imply<A: DProp, B: DProp>(f: Not<Imply<A, B>>) -> And<A, Not<B>> {
     // `(¬a ∨ b)  =>  (a => b)`
     let f2 = Rc::new(move |x| imply::from_or(x));
     // `¬(¬a ∨ b)`
@@ -81,7 +81,7 @@ pub fn from_imply<A: Prop, B: Prop>(f: Not<Imply<A, B>>) -> And<A, Not<B>> {
 }
 
 /// `(a ∧ ¬b)  =>  ¬(a => b)`.
-pub fn to_imply<A: Prop, B: Prop>(f: And<A, Not<B>>) -> Not<Imply<A, B>> {
+pub fn to_imply<A: DProp, B: DProp>(f: And<A, Not<B>>) -> Not<Imply<A, B>> {
     // `(¬¬a ∧ ¬b)`
     let g: And<Not<Not<A>>, Not<B>> = and::in_left_arg(f, Rc::new(move |x| not::double(x)));
     // `¬(¬a ∨ b)`
