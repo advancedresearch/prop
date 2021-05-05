@@ -106,3 +106,25 @@ pub fn from_or<A: Prop, B: Prop>(f: Or<Not<A>, B>) -> Imply<A, B> {
         (Right(a), _) => Rc::new(move |x| match a(x) {}),
     }
 }
+
+/// `(¬a => b) => (¬b => a)`.
+pub fn flip_neg_left<A: Prop, B: Prop>(f: Imply<Not<A>, B>) -> Imply<Not<B>, A> {
+    let g = imply::modus_tollens(f);
+    Rc::new(move |x| not::rev_double(g(x)))
+}
+
+/// `(¬b => a) => (¬a => b)`.
+pub fn flip_neg_right<A: Prop, B: Prop>(f: Imply<A, Not<B>>) -> Imply<B, Not<A>> {
+    let g = imply::modus_tollens(f);
+    Rc::new(move |x| g(not::double(x)))
+}
+
+/// `((a ∧ b) => c  =>  a => (b => c))`.
+pub fn chain<A: Prop, B: Prop, C: Prop>(
+    f: Imply<And<A, B>, C>
+) -> Imply<A, Imply<B, C>> {
+    Rc::new(move |x| {
+        let f = f.clone();
+        Rc::new(move |y| f((x.clone(), y)))
+    })
+}
