@@ -51,3 +51,12 @@ pub fn is_true<A: Prop>((f0, _): Eq<True, A>) -> A {
 pub fn is_false<A: Prop>((_, f1): Eq<False, A>) -> Not<A> {
     f1
 }
+
+/// `¬(a = b) ∧ a  =>  ¬b`.
+pub fn contra<A: Prop, B: Prop>(f: Not<Eq<A, B>>, a: A) -> Not<B> {
+    match (A::decide(), B::decide()) {
+        (Left(a), Left(b)) => match f(and::to_eq_pos((a, b))) {},
+        (_, Right(not_b)) => not_b,
+        (Right(not_a), _) => match not_a(a) {},
+    }
+}
