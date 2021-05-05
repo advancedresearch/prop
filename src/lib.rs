@@ -1,5 +1,6 @@
 #![deny(missing_docs)]
 #![deny(dead_code)]
+#![feature(marker_trait_attr)]
 
 //! # Prop
 //! Propositional logic with types in Rust.
@@ -13,6 +14,7 @@ pub mod imply;
 pub mod eq;
 pub mod not;
 pub mod or;
+pub mod path_semantics;
 
 /// Logical true.
 #[derive(Copy, Clone)]
