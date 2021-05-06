@@ -120,3 +120,36 @@ pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(f: Eq<A, B>, g: Eq<A, C>) -> Eq<C,
 pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(f: Eq<A, B>, g: Eq<B, C>) -> Eq<A, C> {
     transitivity(f, g)
 }
+
+/// `(a = b) = (b = a)`.
+pub fn commute_eq<A: Prop, B: Prop>() -> Eq<Eq<A, B>, Eq<B, A>> {
+    (Rc::new(move |x| eq::commute(x)),
+     Rc::new(move |x| eq::commute(x)))
+}
+
+/// `((a = b) = c)  =  (a = (b = c))`.
+pub fn assoc_eq<A: DProp, B: DProp, C: DProp>() -> Eq<Eq<Eq<A, B>, C>, Eq<A, Eq<B, C>>> {
+    (Rc::new(move |x| eq::assoc(x)), Rc::new(move |x| {
+        let x2 = eq::commute(x);
+        let x3 = eq::in_left_arg(x2, commute_eq());
+        let x4 = eq::assoc(x3);
+        let x5 = eq::commute(x4);
+        eq::in_left_arg(x5, commute_eq())
+    }))
+}
+
+/// `(a = b) = (c = d)  =>  (a = c) = (b = d)`.
+pub fn transpose<A: DProp, B: DProp, C: DProp, D: DProp>(
+    f: Eq<Eq<A, B>, Eq<C, D>>
+) -> Eq<Eq<A, C>, Eq<B, D>> {
+    let f = eq::in_left_arg(f, eq::commute_eq());
+    let f = eq::in_right_arg(f, eq::commute_eq());
+    let f = eq::assoc(f);
+    let f = eq::in_right_arg(f, eq::commute_eq());
+    let f = eq::in_right_arg(f, eq::assoc_eq());
+    let f = eq::commute(f);
+    let f = eq::assoc(f);
+    let f = eq::commute(f);
+    let f = eq::assoc(f);
+    eq::in_left_arg(f, eq::commute_eq())
+}
