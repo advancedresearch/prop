@@ -137,3 +137,19 @@ pub fn assoc_eq<A: DProp, B: DProp, C: DProp>() -> Eq<Eq<Eq<A, B>, C>, Eq<A, Eq<
         eq::in_left_arg(x5, commute_eq())
     }))
 }
+
+/// `(a = b) = (c = d)  =>  (a = c) = (b = d)`.
+pub fn transpose<A: DProp, B: DProp, C: DProp, D: DProp>(
+    f: Eq<Eq<A, B>, Eq<C, D>>
+) -> Eq<Eq<A, C>, Eq<B, D>> {
+    let f = eq::in_left_arg(f, eq::commute_eq());
+    let f = eq::in_right_arg(f, eq::commute_eq());
+    let f = eq::assoc(f);
+    let f = eq::in_right_arg(f, eq::commute_eq());
+    let f = eq::in_right_arg(f, eq::assoc_eq());
+    let f = eq::commute(f);
+    let f = eq::assoc(f);
+    let f = eq::commute(f);
+    let f = eq::assoc(f);
+    eq::in_left_arg(f, eq::commute_eq())
+}
