@@ -35,7 +35,7 @@ pub fn modus_tollens<A: Prop, B: Prop>((f0, f1): Eq<A, B>) -> Eq<Not<B>, Not<A>>
     (f02, f12)
 }
 
-/// `(¬a = ¬b) = (a = b)`
+/// `(¬a = ¬b) = (b = a)`.
 pub fn rev_modus_tollens<A: DProp, B: DProp>((f0, f1): Eq<Not<A>, Not<B>>) -> Eq<B, A> {
     let f02 = imply::rev_modus_tollens(f0);
     let f12 = imply::rev_modus_tollens(f1);
@@ -152,4 +152,19 @@ pub fn transpose<A: DProp, B: DProp, C: DProp, D: DProp>(
     let f = eq::commute(f);
     let f = eq::assoc(f);
     eq::in_left_arg(f, eq::commute_eq())
+}
+
+/// `(a = b) = (c = b)  =>  (a = c)`.
+pub fn triangle<A: DProp, B: DProp, C: DProp>(f: Eq<Eq<A, B>, Eq<C, B>>) -> Eq<A, C> {
+    let f = eq::transpose(f);
+    f.1(eq::refl())
+}
+
+/// `¬(a = b) = ¬(c = b)  =>  (a = c)`.
+pub fn inv_triangle<A: DProp, B: DProp, C: DProp>(
+    f: Eq<Not<Eq<A, B>>, Not<Eq<C, B>>>
+) -> Eq<A, C> {
+    let f = eq::rev_modus_tollens(f);
+    let f = eq::commute(f);
+    eq::triangle(f)
 }
