@@ -159,3 +159,12 @@ pub fn triangle<A: DProp, B: DProp, C: DProp>(f: Eq<Eq<A, B>, Eq<C, B>>) -> Eq<A
     let f = eq::transpose(f);
     f.1(eq::refl())
 }
+
+/// `¬(a = b) = ¬(c = b)  =>  (a = c)`.
+pub fn inv_triangle<A: DProp, B: DProp, C: DProp>(
+    f: Eq<Not<Eq<A, B>>, Not<Eq<C, B>>>
+) -> Eq<A, C> {
+    let f = eq::rev_modus_tollens(f);
+    let f = eq::commute(f);
+    eq::triangle(f)
+}
