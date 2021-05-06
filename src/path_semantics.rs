@@ -17,6 +17,17 @@ pub type PSem<F1, F2, X1, X2> = Imply<
     Eq<X1, X2>,
 >;
 
+/// Sends first argument of Logical AND to higher level.
+pub type PAndFst<A, B, C, D> = Imply<
+    And<Eq<And<A, B>, C>, Imply<C, D>>,
+    Eq<A, D>,
+>;
+/// Sends second argument of Logical AND to higher level.
+pub type PAndSnd<A, B, C, D> = Imply<
+    And<Eq<And<A, B>, C>, Imply<C, D>>,
+    Eq<B, D>,
+>;
+
 /// Proof of path semantical order.
 #[derive(Copy)]
 pub struct POrdProof<T, U>(std::marker::PhantomData<(T, U)>);
