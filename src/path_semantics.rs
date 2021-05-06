@@ -27,6 +27,11 @@ pub type PAndSnd<A, B, C, D> = Imply<
     And<Eq<And<A, B>, C>, Imply<C, D>>,
     Eq<B, D>,
 >;
+/// Sends Logical AND to higher level.
+pub type PAnd<A, B, C, D> = Imply<
+    And<Eq<And<A, B>, C>, Imply<C, D>>,
+    Eq<And<A, B>, D>
+>;
 
 /// Proof of path semantical order.
 #[derive(Copy)]
@@ -149,8 +154,8 @@ pub fn to_pand_snd<A: Prop, B: Prop, C: Prop, D: Prop>(
 pub fn pand_join<A: Prop, B: Prop, C: Prop, D: Prop>(
     p1: PAndFst<A, B, C, D>,
     p2: PAndSnd<A, B, C, D>,
-) -> PSem<And<A, B>, C, And<A, B>, D> {
-    Rc::new(move |((eq_f_c, _pr), (f_ab, g))| {
+) -> PAnd<A, B, C, D> {
+    Rc::new(move |(eq_f_c, g)| {
         let eq_a_d = p1.clone()((eq_f_c.clone(), g.clone()));
         let eq_b_d = p2.clone()((eq_f_c, g));
         let eq_a_d_copy = eq_a_d.clone();
