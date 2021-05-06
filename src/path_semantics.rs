@@ -178,3 +178,14 @@ pub fn use_pand_both<A: Prop, B: Prop, C: Prop, D: Prop>(
     let eq_b_c = p_b((f, g));
     (eq_a_c, eq_b_c)
 }
+
+/// Use both `PAndFst` and `PAndSnd` to prove `a = b`.
+pub fn pand_both_eq<A: Prop, B: Prop, C: Prop, D: Prop>(
+    f: Eq<And<A, B>, D>,
+    g: Imply<D, C>,
+    p_a: PAndFst<A, B, D, C>,
+    p_b: PAndSnd<A, B, D, C>,
+) -> Eq<A, B> {
+    let (eq_a_c, eq_b_c) = path_semantics::use_pand_both(f, g, p_a, p_b);
+    eq::transitivity(eq_a_c, eq::commute(eq_b_c))
+}
