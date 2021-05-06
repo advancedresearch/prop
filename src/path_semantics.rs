@@ -164,3 +164,17 @@ pub fn pand_join<A: Prop, B: Prop, C: Prop, D: Prop>(
         eq_ab_d
     })
 }
+
+/// Use both `PAndFst` and `PAndSnd`.
+///
+/// This results in a stronger statement than `PAnd` alone.
+pub fn use_pand_both<A: Prop, B: Prop, C: Prop, D: Prop>(
+    f: Eq<And<A, B>, D>,
+    g: Imply<D, C>,
+    p_a: PAndFst<A, B, D, C>,
+    p_b: PAndSnd<A, B, D, C>,
+) -> And<Eq<A, C>, Eq<B, C>> {
+    let eq_a_c = p_a((f.clone(), g.clone()));
+    let eq_b_c = p_b((f, g));
+    (eq_a_c, eq_b_c)
+}
