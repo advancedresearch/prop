@@ -153,3 +153,9 @@ pub fn transpose<A: DProp, B: DProp, C: DProp, D: DProp>(
     let f = eq::assoc(f);
     eq::in_left_arg(f, eq::commute_eq())
 }
+
+/// `(a = b) = (c = b)  =>  (a = c)`.
+pub fn triangle<A: DProp, B: DProp, C: DProp>(f: Eq<Eq<A, B>, Eq<C, B>>) -> Eq<A, C> {
+    let f = eq::transpose(f);
+    f.1(eq::refl())
+}
