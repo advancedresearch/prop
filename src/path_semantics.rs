@@ -144,3 +144,18 @@ pub fn to_pand_snd<A: Prop, B: Prop, C: Prop, D: Prop>(
     let y = Rc::new(move |(_, x)| x);
     Rc::new(move |(f, g)| p.clone()(((f, x.clone()), (y.clone(), g))))
 }
+
+/// Join `PAndFst` and `PAndSnd`.
+pub fn pand_join<A: Prop, B: Prop, C: Prop, D: Prop>(
+    p1: PAndFst<A, B, C, D>,
+    p2: PAndSnd<A, B, C, D>,
+) -> PSem<And<A, B>, C, And<A, B>, D> {
+    Rc::new(move |((eq_f_c, _pr), (f_ab, g))| {
+        let eq_a_d = p1.clone()((eq_f_c.clone(), g.clone()));
+        let eq_b_d = p2.clone()((eq_f_c, g));
+        let eq_a_d_copy = eq_a_d.clone();
+        let eq_ab_d: Eq<And<A, B>, D> = (Rc::new(move |(a, _)| eq_a_d_copy.0(a)),
+                       Rc::new(move |d| (eq_a_d.clone().1(d.clone()), eq_b_d.clone().1(d))));
+        eq_ab_d
+    })
+}
