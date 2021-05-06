@@ -35,7 +35,7 @@ pub fn modus_tollens<A: Prop, B: Prop>((f0, f1): Eq<A, B>) -> Eq<Not<B>, Not<A>>
     (f02, f12)
 }
 
-/// `(¬a = ¬b) = (a = b)`
+/// `(¬a = ¬b) = (b = a)`.
 pub fn rev_modus_tollens<A: DProp, B: DProp>((f0, f1): Eq<Not<A>, Not<B>>) -> Eq<B, A> {
     let f02 = imply::rev_modus_tollens(f0);
     let f12 = imply::rev_modus_tollens(f1);
