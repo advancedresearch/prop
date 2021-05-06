@@ -120,3 +120,9 @@ pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(f: Eq<A, B>, g: Eq<A, C>) -> Eq<C,
 pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(f: Eq<A, B>, g: Eq<B, C>) -> Eq<A, C> {
     transitivity(f, g)
 }
+
+/// `(a = b) = (b = a)`.
+pub fn commute_eq<A: Prop, B: Prop>() -> Eq<Eq<A, B>, Eq<B, A>> {
+    (Rc::new(move |x| eq::commute(x)),
+     Rc::new(move |x| eq::commute(x)))
+}
