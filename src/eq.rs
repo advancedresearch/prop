@@ -126,3 +126,14 @@ pub fn commute_eq<A: Prop, B: Prop>() -> Eq<Eq<A, B>, Eq<B, A>> {
     (Rc::new(move |x| eq::commute(x)),
      Rc::new(move |x| eq::commute(x)))
 }
+
+/// `((a = b) = c)  =  (a = (b = c))`.
+pub fn assoc_eq<A: DProp, B: DProp, C: DProp>() -> Eq<Eq<Eq<A, B>, C>, Eq<A, Eq<B, C>>> {
+    (Rc::new(move |x| eq::assoc(x)), Rc::new(move |x| {
+        let x2 = eq::commute(x);
+        let x3 = eq::in_left_arg(x2, commute_eq());
+        let x4 = eq::assoc(x3);
+        let x5 = eq::commute(x4);
+        eq::in_left_arg(x5, commute_eq())
+    }))
+}
