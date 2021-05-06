@@ -126,3 +126,21 @@ pub fn comp<F1: Prop, F2: Prop, F3: Prop, F4: Prop, X1: Prop, X2: Prop>(
         x1_eq_x2
     })
 }
+
+/// Converts core axiom to `PAndFst`.
+pub fn to_pand_fst<A: Prop, B: Prop, C: Prop, D: Prop>(
+    p: PSem<And<A, B>, C, A, D>
+) -> PAndFst<A, B, C, D> {
+    let x: POrdProof<And<A, B>, A> = POrdProof::new();
+    let y = Rc::new(move |(x, _)| x);
+    Rc::new(move |(f, g)| p.clone()(((f, x.clone()), (y.clone(), g))))
+}
+
+/// Converts core axiom to `PAndSnd`.
+pub fn to_pand_snd<A: Prop, B: Prop, C: Prop, D: Prop>(
+    p: PSem<And<A, B>, C, B, D>
+) -> PAndSnd<A, B, C, D> {
+    let x: POrdProof<And<A, B>, B> = POrdProof::new();
+    let y = Rc::new(move |(_, x)| x);
+    Rc::new(move |(f, g)| p.clone()(((f, x.clone()), (y.clone(), g))))
+}
