@@ -97,3 +97,21 @@ impl<T, U> PBinOrd for POrdProof<T, U> {
     type Left = T;
     type Right = U;
 }
+
+/// Composition.
+pub fn comp<F1: Prop, F2: Prop, F3: Prop, F4: Prop, X1: Prop, X2: Prop>(
+    f: PSem<F1, F2, F3, F4>,
+    g: PSem<F3, F4, X1, X2>,
+    pr_f1_f3: POrdProof<F1, F3>,
+    pr_f3_x1: POrdProof<F3, X1>,
+    f1_f3: Imply<F1, F3>,
+    f2_f4: Imply<F2, F4>,
+    f3_x1: Imply<F3, X1>,
+    f4_x2: Imply<F4, X2>,
+) -> PSem<F1, F2, X1, X2> {
+    Rc::new(move |((f1_eq_f2, _pr_f1_x1), (_f1_x1, _f2_x2))| {
+        let f3_eq_f4 = f(((f1_eq_f2, pr_f1_f3.clone()), (f1_f3.clone(), f2_f4.clone())));
+        let x1_eq_x2 = g(((f3_eq_f4, pr_f3_x1.clone()), (f3_x1.clone(), f4_x2.clone())));
+        x1_eq_x2
+    })
+}
