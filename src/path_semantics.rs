@@ -130,6 +130,13 @@ impl<T, U> PBinOrd for POrdProof<T, U> {
     type Right = U;
 }
 
+/// Reduce core axiom in case of false to equality of associated propositions.
+pub fn red_false<A: Prop, B: Prop>(
+    p: PSem<False, False, A, B>
+) -> Eq<A, B> {
+    p(((eq::refl(), POrdProof::new()), (imply::absurd(), imply::absurd())))
+}
+
 /// Composition.
 pub fn comp<F1: Prop, F2: Prop, F3: Prop, F4: Prop, X1: Prop, X2: Prop>(
     f: PSem<F1, F2, F3, F4>,
