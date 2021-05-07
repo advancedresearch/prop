@@ -135,6 +135,9 @@ pub trait LProp: Prop {
     /// The level.
     type N;
 }
+/// True for a path semantical level.
+#[derive(Copy, Clone)]
+pub struct LTrue<N>(pub N);
 /// Shorthand for decidable proposition.
 pub trait DLProp: LProp + DProp {}
 impl<T: LProp + DProp> DLProp for T {}
