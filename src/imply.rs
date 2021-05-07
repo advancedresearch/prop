@@ -138,3 +138,8 @@ pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(f: Imply<A, B>, (_, g1): Eq<A, C>)
 pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(f: Imply<A, B>, (g0, _): Eq<B, C>) -> Imply<A, C> {
     transitivity(f, g0)
 }
+
+/// `false => a`.
+pub fn absurd<A: Prop>() -> Imply<False, A> {
+    Rc::new(|x| match x {})
+}
