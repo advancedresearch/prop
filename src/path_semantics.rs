@@ -141,6 +141,10 @@ pub struct LTrue<N>(pub N);
 impl<U: 'static + Clone> LProp for LTrue<U> {type N = U;}
 impl LProp for False {type N = nat::NaN;}
 
+impl<N: 'static + Default + Clone> Decidable for LTrue<N> {
+    fn decide() -> ExcM<Self> {Either::Left(LTrue(N::default()))}
+}
+
 /// Shorthand for decidable proposition.
 pub trait DLProp: LProp + DProp {}
 impl<T: LProp + DProp> DLProp for T {}
