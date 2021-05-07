@@ -8,6 +8,13 @@ Supports theorem proving in [Classical Propositional Logic](https://en.wikipedia
 - Brought to you by the [AdvancedResearch Community](https://advancedresearch.github.io/)
 - [Join us on Discord!](https://discord.gg/JkrhJJRBR2)
 
+Abbreviations:
+
+- IPL: Intuitionistic/Constructive Propositional Logic
+- PL: Classical Propositional Logic
+- PSC: Path Semantical Intuitionistic/Constructive Propositional Logic
+- PSL: Path Semantical Classical Propositional Logic
+
 ### Motivation
 
 [Path Semantics](https://github.com/advancedresearch/path_semantics)
@@ -30,6 +37,8 @@ This library contains:
 
 - `Prop`: Propositions that might or might not be decidable (constructive logic)
 - `DProp`: Decidable propositions (classical logic)
+- `LProp`: Like `Prop`, but with path semantics (path semantical constructive logic)
+- `DLProp`: Like `DProp`, but with path semantics (path semantical classical logic)
 - Automatic lifting of Excluded Middle to decidable propositions
 - Double Negation for proofs of `Prop`
 - Formalization of the core axiom of Path Semantics
