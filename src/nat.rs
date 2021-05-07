@@ -1,0 +1,54 @@
+//! Natural numbers with types.
+
+/// Zero.
+#[derive(Copy, Clone)]
+pub struct Z;
+/// Successor.
+#[derive(Copy, Clone)]
+pub struct S<T>(pub T);
+/// Not-a-number.
+///
+/// This is less than all other numbers, including itself.
+///
+/// Is used by `False` as path semantical propositional level.
+#[derive(Copy, Clone)]
+pub struct NaN;
+
+impl Default for Z {
+    fn default() -> Z {Z}
+}
+impl<T: Default> Default for S<T> {
+    fn default() -> Self {S(T::default())}
+}
+
+/// The zero type.
+pub type Zero = Z;
+/// The one type.
+pub type One = S<Zero>;
+/// The two type.
+pub type Two = S<One>;
+
+/// Zero.
+pub const _0: Zero = Z;
+/// One.
+pub const _1: One = S(Z);
+/// Two.
+pub const _2: Two = S(_1);
+
+/// Less than comparison.
+#[marker]
+pub trait Lt<T> {}
+impl Lt<S<Z>> for Z {}
+impl<T: Lt<U>, U> Lt<S<U>> for T {}
+impl<T> Lt<T> for NaN {}
+
+/// Whether two natural numbers are equal.
+#[marker]
+pub trait EqNat {}
+impl<T> EqNat for (T, T) {}
+impl<T, U> EqNat for (T, U) where T: Lt<U>, U: Lt<T> {}
+
+/// Check that one natural number is less than the other.
+pub fn lt<T: Lt<U>, U>(_a: T, _b: U) {}
+/// Check that one natural number is equal to the other.
+pub fn eq<T, U>(_a: T, _b: U) where (T, U): EqNat {}
