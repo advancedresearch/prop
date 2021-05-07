@@ -151,6 +151,15 @@ impl<T, U> POrd<U> for T where T: LProp, U: LProp, T::N: nat::Lt<U::N> {}
 pub trait DLProp: LProp + DProp {}
 impl<T: LProp + DProp> DLProp for T {}
 
+/// Generates core axiom from path semantical proposition levels.
+pub fn path_level<A: LProp, B: Prop, C: LProp, D: Prop>(
+    p: PSem<A, B, C, D>
+) -> PSemNaive<A, B, C, D>
+    where A::N: nat::Lt<C::N>
+{
+    Rc::new(move |(f, (a, b))| p(((f, POrdProof::new()), (a, b))))
+}
+
 /// Reduce core axiom in case of false to equality of associated propositions.
 pub fn red_false<A: Prop, B: Prop>(
     p: PSem<False, False, A, B>
