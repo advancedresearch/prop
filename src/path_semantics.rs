@@ -17,6 +17,12 @@ pub type PSem<F1, F2, X1, X2> = Imply<
     Eq<X1, X2>,
 >;
 
+/// Naive axiom of Path Semantics (without order assumption).
+pub type PSemNaive<F1, F2, X1, X2> = Imply<
+    And<Eq<F1, F2>, And<Imply<F1, X1>, Imply<F2, X2>>>,
+    Eq<X1, X2>
+>;
+
 /// Sends first argument of Logical AND to higher level.
 pub type PAndFst<A, B, C, D> = Imply<
     And<Eq<And<A, B>, C>, Imply<C, D>>,
