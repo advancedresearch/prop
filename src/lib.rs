@@ -95,6 +95,7 @@ pub mod eq;
 pub mod not;
 pub mod or;
 pub mod path_semantics;
+pub mod nat;
 
 /// Logical true.
 #[derive(Copy, Clone)]
