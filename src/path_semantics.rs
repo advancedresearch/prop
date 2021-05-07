@@ -182,6 +182,13 @@ pub fn red_false<A: Prop, B: Prop>(
     p(((eq::refl(), POrdProof::new()), (imply::absurd(), imply::absurd())))
 }
 
+/// Reduce naive core axiom in case of false to equality of associated propositions.
+pub fn naive_red_false<A: Prop, B: Prop>(
+    p: PSemNaive<False, False, A, B>
+) -> Eq<A, B> {
+    p((eq::refl(), (imply::absurd(), imply::absurd())))
+}
+
 /// Composition.
 pub fn comp<F1: Prop, F2: Prop, F3: Prop, F4: Prop, X1: Prop, X2: Prop>(
     f: PSem<F1, F2, F3, F4>,
