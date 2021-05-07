@@ -135,9 +135,30 @@ pub trait LProp: Prop {
     /// The level.
     type N;
 }
+/// True for a path semantical level.
+#[derive(Copy, Clone)]
+pub struct LTrue<N>(pub N);
+impl<U: 'static + Clone> LProp for LTrue<U> {type N = U;}
+impl LProp for False {type N = nat::NaN;}
+
+impl<N: 'static + Default + Clone> Decidable for LTrue<N> {
+    fn decide() -> ExcM<Self> {Either::Left(LTrue(N::default()))}
+}
+
+impl<T, U> POrd<U> for T where T: LProp, U: LProp, T::N: nat::Lt<U::N> {}
+
 /// Shorthand for decidable proposition.
 pub trait DLProp: LProp + DProp {}
 impl<T: LProp + DProp> DLProp for T {}
+
+/// Generates core axiom from path semantical proposition levels.
+pub fn path_level<A: LProp, B: Prop, C: LProp, D: Prop>(
+    p: PSem<A, B, C, D>
+) -> PSemNaive<A, B, C, D>
+    where A::N: nat::Lt<C::N>
+{
+    Rc::new(move |(f, (a, b))| p(((f, POrdProof::new()), (a, b))))
+}
 
 /// Reduce core axiom in case of false to equality of associated propositions.
 pub fn red_false<A: Prop, B: Prop>(
@@ -242,4 +263,26 @@ pub fn uniq_ty<A: Prop, B: Prop, C: Prop, D: Prop, E: Prop>(
     let eq_c_e = p_a(((eq_a_b.clone(), pr_a_c), (a_c, b_e.clone())));
     let eq_d_e = p_b(((eq_a_b, pr_a_d), (a_d, b_e)));
     eq::transitivity(eq_c_e, eq::commute(eq_d_e))
+}
+
+/// Checks whether two proposition levels are equal.
+pub fn eq_lev<A: LProp, B: LProp>(_a: A, _b: B) where (A::N, B::N): nat::EqNat {}
+/// Checks whether a proposition level is less than another.
+pub fn lt_lev<A: LProp, B: LProp>(_a: A, _b: B) where A::N: nat::Lt<B::N> {}
+
+#[cfg(test)]
+#[allow(dead_code)]
+mod test {
+    use super::*;
+    use nat::*;
+
+    fn check_nan<A: LProp<N = NaN>, B: LProp<N = NaN>>(a: A, b: B) {eq_lev(a, b)}
+    fn check_zero<A: LProp<N = Zero>, B: LProp<N = Zero>>(a: A, b: B) {eq_lev(a, b)}
+    fn check_one<A: LProp<N = One>, B: LProp<N = One>>(a: A, b: B) {eq_lev(a, b)}
+    fn check_zero_one<A: LProp<N = Zero>, B: LProp<N = One>>(a: A, b: B) {lt_lev(a, b)}
+    fn check_undef_nan<A: LProp, B: LProp<N = NaN>>(a: A, b: B)
+        where A::N: Lt<NaN>, NaN: Lt<A::N>
+    {
+        eq_lev(a, b)
+    }
 }
