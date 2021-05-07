@@ -88,7 +88,7 @@
 //! The hidden symmetry can be exploited to prove semantics and sometimes
 //! improve performance of automated theorem provers.
 //!
-//! For example, path Semantics can be used to boost performance of brute force theorem proving
+//! For example, Path Semantics can be used to boost performance of brute force theorem proving
 //! in Classical Propositional Logic on Type-hierarchy-like problems.
 //! For more information, see the blog post [Improving Brute Force Theorem Proving](https://advancedresearch.github.io/blog/2020-08-20-improving-brute-force-theorem-proving).
 //!
