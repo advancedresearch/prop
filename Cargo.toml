@@ -1,6 +1,6 @@
 [package]
 name = "prop"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Sven Nilsen <bvssvni@gmail.com>"]
 edition = "2018"
 description = "Propositional logic with types in Rust"
@@ -8,6 +8,7 @@ license = "MIT"
 readme = "README.md"
 repository = "https://github.com/advancedresearch/prop.git"
 homepage = "https://github.com/advancedresearch/prop"
+keywords = ["advancedresearch", "theorem", "proving", "logic", "constructive"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
