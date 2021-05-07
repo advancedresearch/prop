@@ -135,6 +135,10 @@ pub trait LProp: Prop {
     /// The level.
     type N;
 }
+/// Shorthand for decidable proposition.
+pub trait DLProp: LProp + DProp {}
+impl<T: LProp + DProp> DLProp for T {}
+
 /// Reduce core axiom in case of false to equality of associated propositions.
 pub fn red_false<A: Prop, B: Prop>(
     p: PSem<False, False, A, B>
