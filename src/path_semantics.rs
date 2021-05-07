@@ -151,7 +151,12 @@ impl<T, U> POrd<U> for T where T: LProp, U: LProp, T::N: nat::Lt<U::N> {}
 pub trait DLProp: LProp + DProp {}
 impl<T: LProp + DProp> DLProp for T {}
 
-/// Generates core axiom from path semantical proposition levels.
+/// Assumes the core axiom for propositions.
+pub unsafe fn assume<A: Prop, B: Prop, C: Prop, D: Prop>() -> PSem<A, B, C, D> {
+    unimplemented!()
+}
+
+/// Converts to naive core axiom using path semantical proposition levels.
 pub fn path_level<A: LProp, B: Prop, C: LProp, D: Prop>(
     p: PSem<A, B, C, D>
 ) -> PSemNaive<A, B, C, D>
