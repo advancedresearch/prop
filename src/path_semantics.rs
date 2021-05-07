@@ -130,6 +130,11 @@ impl<T, U> PBinOrd for POrdProof<T, U> {
     type Right = U;
 }
 
+/// Path semantical proposition level.
+pub trait LProp: Prop {
+    /// The level.
+    type N;
+}
 /// Reduce core axiom in case of false to equality of associated propositions.
 pub fn red_false<A: Prop, B: Prop>(
     p: PSem<False, False, A, B>
