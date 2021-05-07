@@ -285,4 +285,7 @@ mod test {
     {
         eq_lev(a, b)
     }
+    fn check_false1(a: False, b: False) {lt_lev(a, b)}
+    fn check_false2<A: LProp<N = Zero>>(a: A, b: False) {lt_lev(b, a)}
+    fn check_false3<A: LProp<N = One>>(a: A, b: False) {lt_lev(b, a)}
 }
