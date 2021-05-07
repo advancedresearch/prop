@@ -151,7 +151,12 @@ impl<T, U> POrd<U> for T where T: LProp, U: LProp, T::N: nat::Lt<U::N> {}
 pub trait DLProp: LProp + DProp {}
 impl<T: LProp + DProp> DLProp for T {}
 
-/// Generates core axiom from path semantical proposition levels.
+/// Assumes the core axiom for propositions.
+pub unsafe fn assume<A: Prop, B: Prop, C: Prop, D: Prop>() -> PSem<A, B, C, D> {
+    unimplemented!()
+}
+
+/// Converts to naive core axiom using path semantical proposition levels.
 pub fn path_level<A: LProp, B: Prop, C: LProp, D: Prop>(
     p: PSem<A, B, C, D>
 ) -> PSemNaive<A, B, C, D>
@@ -160,11 +165,28 @@ pub fn path_level<A: LProp, B: Prop, C: LProp, D: Prop>(
     Rc::new(move |(f, (a, b))| p(((f, POrdProof::new()), (a, b))))
 }
 
+/// Generates naive core axiom using assumption on path semantical proposition levels.
+///
+/// This is safe because path semantical propositions uses the semantics
+/// that the core axiom holds between layers of propositions.
+pub fn assume_path_level<A: LProp, B: Prop, C: LProp, D: Prop>() -> PSemNaive<A, B, C, D>
+    where A::N: nat::Lt<C::N>
+{
+    path_level(unsafe {assume()})
+}
+
 /// Reduce core axiom in case of false to equality of associated propositions.
 pub fn red_false<A: Prop, B: Prop>(
     p: PSem<False, False, A, B>
 ) -> Eq<A, B> {
     p(((eq::refl(), POrdProof::new()), (imply::absurd(), imply::absurd())))
+}
+
+/// Reduce naive core axiom in case of false to equality of associated propositions.
+pub fn naive_red_false<A: Prop, B: Prop>(
+    p: PSemNaive<False, False, A, B>
+) -> Eq<A, B> {
+    p((eq::refl(), (imply::absurd(), imply::absurd())))
 }
 
 /// Composition.
@@ -285,7 +307,4 @@ mod test {
     {
         eq_lev(a, b)
     }
-    fn check_false1(a: False, b: False) {lt_lev(a, b)}
-    fn check_false2<A: LProp<N = Zero>>(a: A, b: False) {lt_lev(b, a)}
-    fn check_false3<A: LProp<N = One>>(a: A, b: False) {lt_lev(b, a)}
 }
