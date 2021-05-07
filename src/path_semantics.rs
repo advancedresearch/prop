@@ -112,7 +112,7 @@ pub trait PBinOrd {
 
 impl<T> POrd<T::Left> for T where T: PBinOrd {}
 impl<T> POrd<T::Right> for T where T: PBinOrd {}
-impl POrd<False> for True {}
+impl<T> POrd<T> for False {}
 impl<T, U> PBinOrd for And<T, U> {
     type Left = T;
     type Right = U;
