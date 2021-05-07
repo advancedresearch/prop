@@ -165,6 +165,16 @@ pub fn path_level<A: LProp, B: Prop, C: LProp, D: Prop>(
     Rc::new(move |(f, (a, b))| p(((f, POrdProof::new()), (a, b))))
 }
 
+/// Generates naive core axiom using assumption on path semantical proposition levels.
+///
+/// This is safe because path semantical propositions uses the semantics
+/// that the core axiom holds between layers of propositions.
+pub fn assume_path_level<A: LProp, B: Prop, C: LProp, D: Prop>() -> PSemNaive<A, B, C, D>
+    where A::N: nat::Lt<C::N>
+{
+    path_level(unsafe {assume()})
+}
+
 /// Reduce core axiom in case of false to equality of associated propositions.
 pub fn red_false<A: Prop, B: Prop>(
     p: PSem<False, False, A, B>
