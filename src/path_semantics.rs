@@ -264,3 +264,25 @@ pub fn uniq_ty<A: Prop, B: Prop, C: Prop, D: Prop, E: Prop>(
     let eq_d_e = p_b(((eq_a_b, pr_a_d), (a_d, b_e)));
     eq::transitivity(eq_c_e, eq::commute(eq_d_e))
 }
+
+/// Checks whether two proposition levels are equal.
+pub fn eq_lev<A: LProp, B: LProp>(_a: A, _b: B) where (A::N, B::N): nat::EqNat {}
+/// Checks whether a proposition level is less than another.
+pub fn lt_lev<A: LProp, B: LProp>(_a: A, _b: B) where A::N: nat::Lt<B::N> {}
+
+#[cfg(test)]
+#[allow(dead_code)]
+mod test {
+    use super::*;
+    use nat::*;
+
+    fn check_nan<A: LProp<N = NaN>, B: LProp<N = NaN>>(a: A, b: B) {eq_lev(a, b)}
+    fn check_zero<A: LProp<N = Zero>, B: LProp<N = Zero>>(a: A, b: B) {eq_lev(a, b)}
+    fn check_one<A: LProp<N = One>, B: LProp<N = One>>(a: A, b: B) {eq_lev(a, b)}
+    fn check_zero_one<A: LProp<N = Zero>, B: LProp<N = One>>(a: A, b: B) {lt_lev(a, b)}
+    fn check_undef_nan<A: LProp, B: LProp<N = NaN>>(a: A, b: B)
+        where A::N: Lt<NaN>, NaN: Lt<A::N>
+    {
+        eq_lev(a, b)
+    }
+}
