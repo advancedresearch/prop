@@ -138,6 +138,9 @@ pub trait LProp: Prop {
 /// True for a path semantical level.
 #[derive(Copy, Clone)]
 pub struct LTrue<N>(pub N);
+impl<U: 'static + Clone> LProp for LTrue<U> {type N = U;}
+impl LProp for False {type N = nat::NaN;}
+
 /// Shorthand for decidable proposition.
 pub trait DLProp: LProp + DProp {}
 impl<T: LProp + DProp> DLProp for T {}
