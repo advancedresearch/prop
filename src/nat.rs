@@ -40,7 +40,6 @@ pub const _2: Two = S(_1);
 pub trait Lt<T> {}
 impl Lt<S<Z>> for Z {}
 impl<T: Lt<U>, U> Lt<S<U>> for T {}
-impl<T> Lt<T> for NaN {}
 
 /// Whether two natural numbers are equal.
 #[marker]
