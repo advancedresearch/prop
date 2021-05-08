@@ -133,13 +133,23 @@ impl<T, U> PBinOrd for POrdProof<T, U> {
 /// Path semantical proposition level.
 pub trait LProp: Prop {
     /// The level.
-    type N;
+    type N: Clone;
+    /// Sets proposition level.
+    type SetLevel<T: 'static + Clone>: LProp;
 }
 /// True for a path semantical level.
 #[derive(Copy, Clone)]
 pub struct LTrue<N>(pub N);
-impl<U: 'static + Clone> LProp for LTrue<U> {type N = U;}
-impl LProp for False {type N = nat::NaN;}
+impl<U: 'static + Clone> LProp for LTrue<U> {
+    type N = U;
+    type SetLevel<T: 'static + Clone> = LTrue<T>;
+}
+impl LProp for False {
+    type N = nat::NaN;
+    type SetLevel<T: 'static + Clone> = Self;
+}
+/// Increases proposition level of `A` with some amount `N`.
+pub type IncLevel<A, N> = <A as LProp>::SetLevel<<(<A as LProp>::N, N) as nat::Add>::Out>;
 
 impl<N: 'static + Default + Clone> Decidable for LTrue<N> {
     fn decide() -> ExcM<Self> {Either::Left(LTrue(N::default()))}
