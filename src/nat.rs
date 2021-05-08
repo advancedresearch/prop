@@ -55,5 +55,5 @@ pub fn lt<T: Lt<U>, U>(_a: T, _b: U) {}
 pub fn eq<T, U>(_a: T, _b: U) where (T, U): EqNat {}
 
 /// Implemented for natural numbers.
-pub trait Nat: Prop + Lt<S<Self>> {}
-impl<T> Nat for T where T: Prop + Lt<S<T>> {}
+pub trait Nat: Prop + Lt<S<Self>> + Default {}
+impl<T> Nat for T where T: Prop + Lt<S<T>> + Default {}
