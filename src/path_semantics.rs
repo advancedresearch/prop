@@ -207,6 +207,22 @@ pub fn comp<F1: Prop, F2: Prop, F3: Prop, F4: Prop, X1: Prop, X2: Prop>(
     })
 }
 
+/// Composition using the naive core axiom.
+pub fn naive_comp<F1: Prop, F2: Prop, F3: Prop, F4: Prop, X1: Prop, X2: Prop>(
+    f: PSemNaive<F1, F2, F3, F4>,
+    g: PSemNaive<F3, F4, X1, X2>,
+    f1_f3: Imply<F1, F3>,
+    f2_f4: Imply<F2, F4>,
+    f3_x1: Imply<F3, X1>,
+    f4_x2: Imply<F4, X2>,
+) -> PSemNaive<F1, F2, X1, X2> {
+    Rc::new(move |(f1_eq_f2, (_f1_x1, _f2_x2))| {
+        let f3_eq_f4 = f((f1_eq_f2, (f1_f3.clone(), f2_f4.clone())));
+        let x1_eq_x2 = g((f3_eq_f4, (f3_x1.clone(), f4_x2.clone())));
+        x1_eq_x2
+    })
+}
+
 /// Converts core axiom to `PAndFst`.
 pub fn to_pand_fst<A: Prop, B: Prop, C: Prop, D: Prop>(
     p: PSem<And<A, B>, C, A, D>
