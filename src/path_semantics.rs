@@ -145,6 +145,10 @@ impl<N: 'static + Default + Clone> Decidable for LTrue<N> {
     fn decide() -> ExcM<Self> {Either::Left(LTrue(N::default()))}
 }
 
+impl<N: Default> Default for LTrue<N> {
+    fn default() -> Self {LTrue(N::default())}
+}
+
 impl<T, U> POrd<U> for T where T: LProp, U: LProp, T::N: nat::Lt<U::N> {}
 
 /// Shorthand for decidable proposition with path semantical level.
