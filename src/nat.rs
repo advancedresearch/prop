@@ -41,6 +41,7 @@ pub const _2: Two = S(_1);
 #[marker]
 pub trait Lt<T> {}
 impl Lt<S<Z>> for Z {}
+impl<T> Lt<S<S<T>>> for S<T> {}
 impl<T: Lt<U>, U> Lt<S<U>> for T {}
 
 /// Whether two natural numbers are equal.
