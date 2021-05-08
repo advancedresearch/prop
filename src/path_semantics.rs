@@ -10,6 +10,8 @@
 
 use crate::*;
 
+use nat::*;
+
 /// Core axiom of Path Semantics.
 pub type PSem<F1, F2, X1, X2> = Imply<
     And<And<Eq<F1, F2>, POrdProof<F1, X1>>,
@@ -145,11 +147,11 @@ impl<U: 'static + Clone> LProp for LTrue<U> {
     type SetLevel<T: 'static + Clone> = LTrue<T>;
 }
 impl LProp for False {
-    type N = nat::NaN;
+    type N = NaN;
     type SetLevel<T: 'static + Clone> = Self;
 }
 /// Increases proposition level of `A` with some amount `N`.
-pub type IncLevel<A, N> = <A as LProp>::SetLevel<<(<A as LProp>::N, N) as nat::Add>::Out>;
+pub type IncLevel<A, N> = <A as LProp>::SetLevel<<(<A as LProp>::N, N) as Add>::Out>;
 
 impl<N: 'static + Default + Clone> Decidable for LTrue<N> {
     fn decide() -> ExcM<Self> {Either::Left(LTrue(N::default()))}
@@ -159,7 +161,7 @@ impl<N: Default> Default for LTrue<N> {
     fn default() -> Self {LTrue(N::default())}
 }
 
-impl<T, U> POrd<U> for T where T: LProp, U: LProp, T::N: nat::Lt<U::N> {}
+impl<T, U> POrd<U> for T where T: LProp, U: LProp, T::N: Lt<U::N> {}
 
 /// Shorthand for decidable proposition with path semantical level.
 pub trait DLProp: LProp + DProp {}
@@ -174,7 +176,7 @@ pub unsafe fn assume<A: Prop, B: Prop, C: Prop, D: Prop>() -> PSem<A, B, C, D> {
 pub fn path_level<A: LProp, B: Prop, C: LProp, D: Prop>(
     p: PSem<A, B, C, D>
 ) -> PSemNaive<A, B, C, D>
-    where A::N: nat::Lt<C::N>
+    where A::N: Lt<C::N>
 {
     Rc::new(move |(f, (a, b))| p(((f, POrdProof::new()), (a, b))))
 }
@@ -184,19 +186,19 @@ pub fn path_level<A: LProp, B: Prop, C: LProp, D: Prop>(
 /// This is safe because path semantical propositions uses the semantics
 /// that the core axiom holds between layers of propositions.
 pub fn assume_path_level<A: LProp, B: Prop, C: LProp, D: Prop>() -> PSemNaive<A, B, C, D>
-    where A::N: nat::Lt<C::N>
+    where A::N: Lt<C::N>
 {
     path_level(unsafe {assume()})
 }
 
 /// Generates naive core axiom at increased path semantical proposition level.
-pub fn assume_inc_path_level<N: nat::Nat, A: LProp, B: LProp, C: LProp, D: LProp>()
+pub fn assume_inc_path_level<N: Nat, A: LProp, B: LProp, C: LProp, D: LProp>()
 -> PSemNaive<IncLevel<A, N>, IncLevel<B, N>, IncLevel<C, N>, IncLevel<D, N>>
-    where <IncLevel<A, N> as LProp>::N: nat::Lt<<IncLevel<C, N> as LProp>::N>,
-          (A::N, N): nat::Add,
-          (B::N, N): nat::Add,
-          (C::N, N): nat::Add,
-          (D::N, N): nat::Add,
+    where <IncLevel<A, N> as LProp>::N: Lt<<IncLevel<C, N> as LProp>::N>,
+          (A::N, N): Add,
+          (B::N, N): Add,
+          (C::N, N): Add,
+          (D::N, N): Add,
 {
     assume_path_level()
 }
@@ -330,15 +332,14 @@ pub fn uniq_ty<A: Prop, B: Prop, C: Prop, D: Prop, E: Prop>(
 }
 
 /// Checks whether two proposition levels are equal.
-pub fn eq_lev<A: LProp, B: LProp>(_a: A, _b: B) where (A::N, B::N): nat::EqNat {}
+pub fn eq_lev<A: LProp, B: LProp>(_a: A, _b: B) where (A::N, B::N): EqNat {}
 /// Checks whether a proposition level is less than another.
-pub fn lt_lev<A: LProp, B: LProp>(_a: A, _b: B) where A::N: nat::Lt<B::N> {}
+pub fn lt_lev<A: LProp, B: LProp>(_a: A, _b: B) where A::N: Lt<B::N> {}
 
 #[cfg(test)]
 #[allow(dead_code)]
 mod test {
     use super::*;
-    use nat::*;
 
     fn check_nan<A: LProp<N = NaN>, B: LProp<N = NaN>>(a: A, b: B) {eq_lev(a, b)}
     fn check_zero<A: LProp<N = Zero>, B: LProp<N = Zero>>(a: A, b: B) {eq_lev(a, b)}
