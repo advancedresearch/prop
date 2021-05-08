@@ -143,3 +143,8 @@ pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(f: Imply<A, B>, (g0, _): Eq<B, C>
 pub fn absurd<A: Prop>() -> Imply<False, A> {
     Rc::new(|x| match x {})
 }
+
+/// `a => a`.
+pub fn id<A: Prop>() -> Imply<A, A> {
+    Rc::new(|x| x)
+}
