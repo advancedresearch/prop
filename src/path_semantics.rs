@@ -349,4 +349,5 @@ mod test {
     {
         eq_lev(a, b)
     }
+    fn check_one_two() {lt_lev(LTrue(_1), LTrue(_2))}
 }
