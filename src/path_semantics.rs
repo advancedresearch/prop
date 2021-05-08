@@ -189,6 +189,18 @@ pub fn assume_path_level<A: LProp, B: Prop, C: LProp, D: Prop>() -> PSemNaive<A,
     path_level(unsafe {assume()})
 }
 
+/// Generates naive core axiom at increased path semantical proposition level.
+pub fn assume_inc_path_level<A: LProp, B: LProp, C: LProp, D: LProp, N: nat::Nat>(_n: N)
+-> PSemNaive<IncLevel<A, N>, IncLevel<B, N>, IncLevel<C, N>, IncLevel<D, N>>
+    where <IncLevel<A, N> as LProp>::N: nat::Lt<<IncLevel<C, N> as LProp>::N>,
+          (A::N, N): nat::Add,
+          (B::N, N): nat::Add,
+          (C::N, N): nat::Add,
+          (D::N, N): nat::Add,
+{
+    assume_path_level()
+}
+
 /// Reduce core axiom in case of false to equality of associated propositions.
 pub fn red_false<A: Prop, B: Prop>(
     p: PSem<False, False, A, B>
