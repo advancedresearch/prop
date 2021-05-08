@@ -1,5 +1,7 @@
 //! Natural numbers with types.
 
+use crate::Prop;
+
 /// Zero.
 #[derive(Copy, Clone)]
 pub struct Z;
@@ -51,3 +53,7 @@ impl<T, U> EqNat for (T, U) where T: Lt<U>, U: Lt<T> {}
 pub fn lt<T: Lt<U>, U>(_a: T, _b: U) {}
 /// Check that one natural number is equal to the other.
 pub fn eq<T, U>(_a: T, _b: U) where (T, U): EqNat {}
+
+/// Implemented for natural numbers.
+pub trait Nat: Prop + Lt<S<Self>> {}
+impl<T> Nat for T where T: Prop + Lt<S<T>> {}
