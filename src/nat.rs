@@ -32,12 +32,14 @@ pub type Two = S<One>;
 /// The three type.
 pub type Three = S<Two>;
 
-/// Zero.
+/// 0.
 pub const _0: Zero = Z;
-/// One.
+/// 1.
 pub const _1: One = S(Z);
-/// Two.
+/// 2.
 pub const _2: Two = S(_1);
+/// 3.
+pub const _3: Three = S(_2);
 
 /// Less than comparison.
 #[marker]
