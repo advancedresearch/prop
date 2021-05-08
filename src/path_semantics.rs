@@ -167,6 +167,39 @@ impl<T, U> POrd<U> for T where T: LProp, U: LProp, T::N: Lt<U::N> {}
 pub trait DLProp: LProp + DProp {}
 impl<T: LProp + DProp> DLProp for T {}
 
+/// Returns the minimum LProp.
+pub type Min<A, B> = <(<A as LProp>::N, <B as LProp>::N) as SortMin<A, B>>::Out;
+/// Returns the maximum LProp.
+pub type Max<A, B> = <(<A as LProp>::N, <B as LProp>::N) as SortMax<A, B>>::Out;
+/// Normalise 4 `LProp`s (sorted ascending by propositional level).
+pub type Normalise<A, B, C, D> = (
+    Min<Min<A, B>, Min<C, D>>,
+    Min<Max<Min<A, B>, Min<C, D>>, Min<Max<A, B>, Max<C, D>>>,
+    Max<Max<Min<A, B>, Min<C, D>>, Min<Max<A, B>, Max<C, D>>>,
+    Max<Max<A, B>, Max<C, D>>,
+);
+
+/// Look by index.
+pub trait Lookup<N> {
+    /// The output type.
+    type Out;
+}
+impl<A, B, C, D> Lookup<Zero> for (A, B, C, D) {type Out = A;}
+impl<A, B, C, D> Lookup<One> for (A, B, C, D) {type Out = B;}
+impl<A, B, C, D> Lookup<Two> for (A, B, C, D) {type Out = C;}
+impl<A, B, C, D> Lookup<Three> for (A, B, C, D) {type Out = D;}
+
+/// Look up type `N` among the normalised `A, B, C, D`.
+pub type LN<N, A, B, C, D> = <Normalise<A, B, C, D> as Lookup<N>>::Out;
+
+/// Normalised naive core axiom.
+pub type PSemNaiveNorm<A, B, C, D> = PSemNaive<
+    LN<Zero, A, B, C, D>,
+    LN<One, A, B, C, D>,
+    LN<Two, A, B, C, D>,
+    LN<Three, A, B, C, D>
+>;
+
 /// Assumes the core axiom for propositions.
 pub unsafe fn assume<A: Prop, B: Prop, C: Prop, D: Prop>() -> PSem<A, B, C, D> {
     unimplemented!()
@@ -199,6 +232,101 @@ pub fn assume_inc_path_level<N: Nat, A: LProp, B: LProp, C: LProp, D: LProp>()
           (B::N, N): Add,
           (C::N, N): Add,
           (D::N, N): Add,
+{
+    assume_path_level()
+}
+
+/// Sorts two types.
+pub trait SortMin<T: LProp, U: LProp> {
+    /// The output type.
+    type Out: LProp;
+}
+
+impl<T: LProp, U: LProp> SortMin<T, U> for (Z, Z) {
+    type Out = T;
+}
+impl<T: LProp, U: LProp, N> SortMin<T, U> for (Z, S<N>) {
+    type Out = T;
+}
+impl<T: LProp, U: LProp, N> SortMin<T, U> for (S<N>, Z) {
+    type Out = U;
+}
+impl<T: LProp, U: LProp, N, M> SortMin<T, U> for (S<N>, S<M>)
+    where (N, M): SortMin<T, U>
+{
+    type Out = <(N, M) as SortMin<T, U>>::Out;
+}
+
+/// Sorts two types.
+pub trait SortMax<T: LProp, U: LProp> {
+    /// The output type.
+    type Out: LProp;
+}
+
+impl<T: LProp, U: LProp> SortMax<T, U> for (Z, Z) {
+    type Out = U;
+}
+impl<T: LProp, U: LProp, N> SortMax<T, U> for (Z, S<N>) {
+    type Out = U;
+}
+impl<T: LProp, U: LProp, N> SortMax<T, U> for (S<N>, Z) {
+    type Out = T;
+}
+impl<T: LProp, U: LProp, N, M> SortMax<T, U> for (S<N>, S<M>)
+    where (N, M): SortMax<T, U>
+{
+    type Out = <(N, M) as SortMax<T, U>>::Out;
+}
+
+#[cfg(test)]
+pub mod tests {
+    use super::*;
+
+    fn check_sort_min<X, Y, U: LProp, T: LProp>() where (X, Y): SortMin<U, T> {}
+
+    pub fn sort_min<T: LProp, U: LProp>() {
+        check_sort_min::<Z, Z, T, U>();
+        check_sort_min::<S<Z>, Z, T, U>();
+        check_sort_min::<Z, S<Z>, T, U>();
+        check_sort_min::<S<Z>, S<Z>, T, U>();
+    }
+}
+
+/// The decided minimum (1st of 4).
+pub type MinMin<A, B, C, D> = Min<Min<A, B>, Min<C, D>>;
+/// The undecided maximum minimum.
+pub type MaxMin<A, B, C, D> = Max<Min<A, B>, Min<C, D>>;
+/// The undecided minimum maximum.
+pub type MinMax<A, B, C, D> = Min<Max<A, B>, Max<C, D>>;
+/// The decided maximum (4th of 4).
+pub type MaxMax<A, B, C, D> = Max<Max<A, B>, Max<C, D>>;
+/// The decided minimum of undecided middle (2nd of 4).
+pub type Mixi<A, B, C, D> = Min<MaxMin<A, B, C, D>, MinMax<A, B, C, D>>;
+/// The decided maximum of undecided middle (3rd of 4).
+pub type Maxi<A, B, C, D> = Max<MaxMin<A, B, C, D>, MinMax<A, B, C, D>>;
+
+/// Assume a normalised naive core axiom.
+///
+/// The orientation is detected automatically and restored to a naive core axiom
+/// which has a proof to any valid order.
+pub fn assume_norm_path_level<A: LProp, B: LProp, C: LProp, D: LProp>()
+-> PSemNaiveNorm<A, B, C, D>
+    where
+        (A::N, B::N):
+            SortMin<A, B> +
+            SortMax<A, B>,
+        (C::N, D::N): SortMin<C, D> + SortMax<C, D>,
+        (<Min<A, B> as LProp>::N, <Min<C, D> as LProp>::N):
+            SortMin<Min<A, B>, Min<C, D>> +
+            SortMax<Min<A, B>, Min<C, D>>,
+        (<Max<A, B> as LProp>::N, <Max<C, D> as LProp>::N):
+            SortMin<Max<A, B>, Max<C, D>> +
+            SortMax<Max<A, B>, Max<C, D>>,
+        (<MaxMin<A, B, C, D> as LProp>::N, <MinMax<A, B, C, D> as LProp>::N):
+            SortMin<MaxMin<A, B, C, D>, MinMax<A, B, C, D>> +
+            SortMax<MaxMin<A, B, C, D>, MinMax<A, B, C, D>>,
+        <MinMin<A, B, C, D> as LProp>::N:
+            Lt<<Maxi<A, B, C, D> as LProp>::N>,
 {
     assume_path_level()
 }

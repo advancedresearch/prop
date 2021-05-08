@@ -29,6 +29,8 @@ pub type Zero = Z;
 pub type One = S<Zero>;
 /// The two type.
 pub type Two = S<One>;
+/// The three type.
+pub type Three = S<Two>;
 
 /// Zero.
 pub const _0: Zero = Z;
