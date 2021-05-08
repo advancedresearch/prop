@@ -28,6 +28,14 @@ pub fn refl<A: Prop>() -> Eq<A, A> {
     (Rc::new(move |x| x), Rc::new(move |x| x))
 }
 
+/// There is an `a : A` is the same as `A` being true.
+///
+/// With other words, a proof means it is true,
+/// and if it is true then there is a proof.
+pub fn true_eq<A: Prop>(a: A) -> Eq<A, True> {
+    (True.map_any(), Rc::new(move |_| a.clone()))
+}
+
 /// `(a = b) = (¬a = ¬b)`
 pub fn modus_tollens<A: Prop, B: Prop>((f0, f1): Eq<A, B>) -> Eq<Not<B>, Not<A>> {
     let f02 = imply::modus_tollens(f0);
