@@ -147,7 +147,7 @@ impl<N: 'static + Default + Clone> Decidable for LTrue<N> {
 
 impl<T, U> POrd<U> for T where T: LProp, U: LProp, T::N: nat::Lt<U::N> {}
 
-/// Shorthand for decidable proposition.
+/// Shorthand for decidable proposition with path semantical level.
 pub trait DLProp: LProp + DProp {}
 impl<T: LProp + DProp> DLProp for T {}
 
