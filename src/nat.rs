@@ -41,6 +41,7 @@ pub const _2: Two = S(_1);
 #[marker]
 pub trait Lt<T> {}
 impl Lt<S<Z>> for Z {}
+impl<T> Lt<S<S<T>>> for S<T> {}
 impl<T: Lt<U>, U> Lt<S<U>> for T {}
 
 /// Whether two natural numbers are equal.
@@ -69,9 +70,6 @@ impl Add for (Z, Z) {
 impl<T: Clone> Add for (Z, S<T>) {
     type Out = S<T>;
 }
-impl<T: Clone> Add for (S<T>, Z) {
-    type Out = S<T>;
-}
-impl<T, U> Add for (S<T>, S<U>) where (S<S<T>>, U): Add {
-    type Out = <(S<S<T>>, U) as Add>::Out;
+impl<T, U> Add for (S<T>, U) where (T, U): Add {
+    type Out = S<<(T, U) as Add>::Out>;
 }

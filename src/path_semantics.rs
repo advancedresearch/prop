@@ -190,7 +190,7 @@ pub fn assume_path_level<A: LProp, B: Prop, C: LProp, D: Prop>() -> PSemNaive<A,
 }
 
 /// Generates naive core axiom at increased path semantical proposition level.
-pub fn assume_inc_path_level<A: LProp, B: LProp, C: LProp, D: LProp, N: nat::Nat>(_n: N)
+pub fn assume_inc_path_level<N: nat::Nat, A: LProp, B: LProp, C: LProp, D: LProp>()
 -> PSemNaive<IncLevel<A, N>, IncLevel<B, N>, IncLevel<C, N>, IncLevel<D, N>>
     where <IncLevel<A, N> as LProp>::N: nat::Lt<<IncLevel<C, N> as LProp>::N>,
           (A::N, N): nat::Add,
@@ -349,4 +349,5 @@ mod test {
     {
         eq_lev(a, b)
     }
+    fn check_one_two() {lt_lev(LTrue(_1), LTrue(_2))}
 }
