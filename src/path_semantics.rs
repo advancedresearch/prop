@@ -312,9 +312,7 @@ pub type Maxi<A, B, C, D> = Max<MaxMin<A, B, C, D>, MinMax<A, B, C, D>>;
 pub fn assume_norm_path_level<A: LProp, B: LProp, C: LProp, D: LProp>()
 -> PSemNaiveNorm<A, B, C, D>
     where
-        (A::N, B::N):
-            SortMin<A, B> +
-            SortMax<A, B>,
+        (A::N, B::N): SortMin<A, B> + SortMax<A, B>,
         (C::N, D::N): SortMin<C, D> + SortMax<C, D>,
         (<Min<A, B> as LProp>::N, <Min<C, D> as LProp>::N):
             SortMin<Min<A, B>, Min<C, D>> +
