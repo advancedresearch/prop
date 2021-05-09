@@ -386,6 +386,29 @@ pub fn naive_comp<F1: Prop, F2: Prop, F3: Prop, F4: Prop, X1: Prop, X2: Prop>(
     })
 }
 
+/// `(a b) (c d): ¬a ∧ ¬b ∧ a => c ∧ b => d => c = d`.
+pub fn neg<A: Prop, B: Prop, C: Prop, D: Prop>(
+    not_a: Not<A>,
+    not_b: Not<B>,
+    pr_a_c: POrdProof<A, C>,
+    a_c: Imply<A, C>,
+    b_d: Imply<B, D>,
+    p: PSem<A, B, C, D>,
+) -> Eq<C, D> {
+    p(((and::to_eq_neg((not_a, not_b)), pr_a_c), (a_c, b_d)))
+}
+
+/// `(a b) (c d): ¬a ∧ ¬b ∧ a => c ∧ b => d => c = d`.
+pub fn naive_neg<A: Prop, B: Prop, C: Prop, D: Prop>(
+    not_a: Not<A>,
+    not_b: Not<B>,
+    a_c: Imply<A, C>,
+    b_d: Imply<B, D>,
+    p: PSemNaive<A, B, C, D>,
+) -> Eq<C, D> {
+    p((and::to_eq_neg((not_a, not_b)), (a_c, b_d)))
+}
+
 /// Converts core axiom to `PAndFst`.
 pub fn to_pand_fst<A: Prop, B: Prop, C: Prop, D: Prop>(
     p: PSem<And<A, B>, C, A, D>
