@@ -407,6 +407,59 @@ pub fn naive_neg<A: Prop, B: Prop, C: Prop, D: Prop>(
     p((and::to_eq_neg((not_a, not_b)), (a_c, b_d)))
 }
 
+/// Constructs a 2D naive core axiom from two naive core axioms.
+pub fn xy<
+    A: LProp,
+    B: LProp,
+    C: LProp,
+    D: LProp,
+>(
+    p1: PSemNaive<A, B, C, D>,
+    p2: PSemNaiveNorm<A, B, C, D>,
+    f_eq_a_b: Imply<Eq<A::SetLevel<(A::N, <LN<Zero, A, B, C, D> as LProp>::N)>,
+                       B::SetLevel<(B::N, <LN<One, A, B, C, D> as LProp>::N)>>,
+                And<Eq<A, B>, Eq<LN<Zero, A, B, C, D>, LN<One, A, B, C, D>>>>,
+    f_a_c: Imply<Imply<A::SetLevel<(A::N, <LN<Zero, A, B, C, D> as LProp>::N)>,
+                       C::SetLevel<(C::N, <LN<Two, A, B, C, D> as LProp>::N)>>,
+                 And<Imply<A, C>, Imply<LN<Zero, A, B, C, D>, LN<Two, A, B, C, D>>>>,
+    f_b_d: Imply<Imply<B::SetLevel<(B::N, <LN<One, A, B, C, D> as LProp>::N)>,
+                       D::SetLevel<(D::N, <LN<Three, A, B, C, D> as LProp>::N)>>,
+                 And<Imply<B, D>, Imply<LN<One, A, B, C, D>, LN<Three, A, B, C, D>>>>,
+    f_eq_c_d: Imply<And<Eq<C, D>, Eq<LN<Two, A, B, C, D>, LN<Three, A, B, C, D>>>,
+                    Eq<C::SetLevel<(C::N, <LN<Two, A, B, C, D> as LProp>::N)>,
+                       D::SetLevel<(D::N, <LN<Three, A, B, C, D> as LProp>::N)>>>
+) -> PSemNaive<
+        A::SetLevel<(A::N, <LN<Zero, A, B, C, D> as LProp>::N)>,
+        B::SetLevel<(B::N, <LN<One, A, B, C, D> as LProp>::N)>,
+        C::SetLevel<(C::N, <LN<Two, A, B, C, D> as LProp>::N)>,
+        D::SetLevel<(D::N, <LN<Three, A, B, C, D> as LProp>::N)>,
+>
+    where
+        // Normalisation requirements.
+        (A::N, B::N): SortMin<A, B> + SortMax<A, B>,
+        (C::N, D::N): SortMin<C, D> + SortMax<C, D>,
+        (<Min<A, B> as LProp>::N, <Min<C, D> as LProp>::N):
+            SortMin<Min<A, B>, Min<C, D>> +
+            SortMax<Min<A, B>, Min<C, D>>,
+        (<Max<A, B> as LProp>::N, <Max<C, D> as LProp>::N):
+            SortMin<Max<A, B>, Max<C, D>> +
+            SortMax<Max<A, B>, Max<C, D>>,
+        (<MaxMin<A, B, C, D> as LProp>::N, <MinMax<A, B, C, D> as LProp>::N):
+            SortMin<MaxMin<A, B, C, D>, MinMax<A, B, C, D>> +
+            SortMax<MaxMin<A, B, C, D>, MinMax<A, B, C, D>>,
+        <MinMin<A, B, C, D> as LProp>::N:
+            Lt<<Maxi<A, B, C, D> as LProp>::N>,
+{
+    Rc::new(move |(eq_a_b, (a_c, b_d))| {
+        let (p1_eq_a_b, p2_eq_a_b) = f_eq_a_b.clone()(eq_a_b);
+        let (p1_a_c, p2_a_c) = f_a_c.clone()(a_c);
+        let (p1_b_d, p2_b_d) = f_b_d.clone()(b_d);
+        let p1_eq_c_d = p1.clone()((p1_eq_a_b, (p1_a_c, p1_b_d)));
+        let p2_eq_c_d = p2.clone()((p2_eq_a_b, (p2_a_c, p2_b_d)));
+        f_eq_c_d.clone()((p1_eq_c_d, p2_eq_c_d))
+    })
+}
+
 /// Converts core axiom to `PAndFst`.
 pub fn to_pand_fst<A: Prop, B: Prop, C: Prop, D: Prop>(
     p: PSem<And<A, B>, C, A, D>
