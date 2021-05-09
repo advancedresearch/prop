@@ -176,3 +176,8 @@ pub fn inv_triangle<A: DProp, B: DProp, C: DProp>(
     let f = eq::commute(f);
     eq::triangle(f)
 }
+
+/// `false = false`.
+pub fn absurd() -> Eq<False, False> {
+    (imply::absurd(), imply::absurd())
+}
