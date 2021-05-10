@@ -113,7 +113,7 @@ pub fn flip_neg_left<A: DProp, B: Prop>(f: Imply<Not<A>, B>) -> Imply<Not<B>, A>
     Rc::new(move |x| not::rev_double(g(x)))
 }
 
-/// `(¬b => a) => (¬a => b)`.
+/// `(a => ¬b) => (b => ¬a)`.
 pub fn flip_neg_right<A: Prop, B: Prop>(f: Imply<A, Not<B>>) -> Imply<B, Not<A>> {
     let g = imply::modus_tollens(f);
     Rc::new(move |x| g(not::double(x)))
