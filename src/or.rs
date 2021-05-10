@@ -89,3 +89,19 @@ pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(
         Right(y) => Right(g(y)),
     }
 }
+
+/// `(¬a ∧ b) ∨ a  =>  (b ∨ a)`.
+pub fn bound_neg<A: Prop, B: Prop>(f: Or<And<Not<A>, B>, A>) -> Or<B, A> {
+    match f {
+        Left((_, b)) => Left(b),
+        Right(a) => Right(a)
+    }
+}
+
+/// `(a ∧ b) ∨ ¬a  =>  (b ∨ ¬a)`.
+pub fn bound_pos<A: Prop, B: Prop>(f: Or<And<A, B>, Not<A>>) -> Or<B, Not<A>> {
+    match f {
+        Left((_, b)) => Left(b),
+        Right(not_a) => Right(not_a)
+    }
+}
