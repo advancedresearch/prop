@@ -113,7 +113,7 @@ pub fn flip_neg_left<A: DProp, B: Prop>(f: Imply<Not<A>, B>) -> Imply<Not<B>, A>
     Rc::new(move |x| not::rev_double(g(x)))
 }
 
-/// `(¬b => a) => (¬a => b)`.
+/// `(a => ¬b) => (b => ¬a)`.
 pub fn flip_neg_right<A: Prop, B: Prop>(f: Imply<A, Not<B>>) -> Imply<B, Not<A>> {
     let g = imply::modus_tollens(f);
     Rc::new(move |x| g(not::double(x)))
@@ -137,6 +137,11 @@ pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(f: Imply<A, B>, (_, g1): Eq<A, C>)
 /// `(a => b) ∧ (b = c)  =>  (a => c)`.
 pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(f: Imply<A, B>, (g0, _): Eq<B, C>) -> Imply<A, C> {
     transitivity(f, g0)
+}
+
+/// `(a => c) ∧ (b => c)  =>  ((a ∧ b) => c)`.
+pub fn join<A: Prop, B: Prop, C: Prop>(f: Imply<A, C>, _: Imply<B, C>) -> Imply<And<A, B>, C> {
+    Rc::new(move |(a, _)| f.clone()(a))
 }
 
 /// `false => a`.

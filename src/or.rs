@@ -69,3 +69,39 @@ pub fn to_de_morgan<A: DProp, B: DProp>(
         }
     }
 }
+
+/// `(a ∨ b) ∧ (a => c)  =>  (c ∨ b)`.
+pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(
+    or_x_y: Or<A, B>, g: Imply<A, C>
+) -> Or<C, B> {
+    match or_x_y {
+        Left(x) => Left(g(x)),
+        Right(y) => Right(y),
+    }
+}
+
+/// `(a ∨ b) ∧ (b => c)  =>  (a ∨ c)`.
+pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(
+    or_x_y: Or<A, B>, g: Imply<B, C>
+) -> Or<A, C> {
+    match or_x_y {
+        Left(x) => Left(x),
+        Right(y) => Right(g(y)),
+    }
+}
+
+/// `(¬a ∧ b) ∨ a  =>  (b ∨ a)`.
+pub fn bound_neg<A: Prop, B: Prop>(f: Or<And<Not<A>, B>, A>) -> Or<B, A> {
+    match f {
+        Left((_, b)) => Left(b),
+        Right(a) => Right(a)
+    }
+}
+
+/// `(a ∧ b) ∨ ¬a  =>  (b ∨ ¬a)`.
+pub fn bound_pos<A: Prop, B: Prop>(f: Or<And<A, B>, Not<A>>) -> Or<B, Not<A>> {
+    match f {
+        Left((_, b)) => Left(b),
+        Right(not_a) => Right(not_a)
+    }
+}
