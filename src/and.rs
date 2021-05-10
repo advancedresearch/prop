@@ -24,6 +24,26 @@ pub fn distrib<A: Prop, B: Prop, C: Prop>(
     }
 }
 
+/// `¬a ∧ (a ∨ b)  =>  b`
+pub fn exc_left<A: Prop, B: Prop>(
+    (not_a, x): And<Not<A>, Or<A, B>>
+) -> B {
+    match x {
+        Left(a) => match not_a(a) {},
+        Right(b) => b
+    }
+}
+
+/// `¬a ∧ (a ∨ b)  =>  a`
+pub fn exc_right<A: Prop, B: Prop>(
+    (not_b, x): And<Not<B>, Or<A, B>>
+) -> A {
+    match x {
+        Left(a) => a,
+        Right(b) => match not_b(b) {},
+    }
+}
+
 /// `(¬a ∧ ¬b) => ¬(a ∨ b)`.
 pub fn to_de_morgan<A: DProp, B: DProp>(
     (f0, f1): And<Not<A>, Not<B>>
