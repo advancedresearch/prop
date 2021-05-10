@@ -44,6 +44,16 @@ pub fn exc_right<A: Prop, B: Prop>(
     }
 }
 
+/// `(¬a ∧ ¬b) ∧ (a ∨ b)  =>  a`
+pub fn exc_both<A: Prop, B: Prop>(
+    ((not_a, not_b), x): And<And<Not<A>, Not<B>>, Or<A, B>>
+) -> False {
+    match x {
+        Left(a) => match not_a(a) {},
+        Right(b) => match not_b(b) {},
+    }
+}
+
 /// `(¬a ∧ ¬b) => ¬(a ∨ b)`.
 pub fn to_de_morgan<A: DProp, B: DProp>(
     (f0, f1): And<Not<A>, Not<B>>
