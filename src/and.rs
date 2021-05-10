@@ -34,7 +34,7 @@ pub fn exc_left<A: Prop, B: Prop>(
     }
 }
 
-/// `¬a ∧ (a ∨ b)  =>  a`
+/// `¬b ∧ (a ∨ b)  =>  a`
 pub fn exc_right<A: Prop, B: Prop>(
     (not_b, x): And<Not<B>, Or<A, B>>
 ) -> A {
