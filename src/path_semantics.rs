@@ -407,8 +407,9 @@ pub fn naive_neg<A: Prop, B: Prop, C: Prop, D: Prop>(
     p((and::to_eq_neg((not_a, not_b)), (a_c, b_d)))
 }
 
-/// Constructs a 2D naive core axiom from two naive core axioms.
-pub fn xy<
+/// Constructs a 2D naive core axiom from two naive core axioms,
+/// where one is normalised of the other.
+pub fn xy_norm<
     A: LProp,
     B: LProp,
     C: LProp,
