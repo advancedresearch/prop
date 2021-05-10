@@ -139,6 +139,11 @@ pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(f: Imply<A, B>, (g0, _): Eq<B, C>
     transitivity(f, g0)
 }
 
+/// `(a => c) ∧ (b => c)  =>  ((a ∧ b) => c)`.
+pub fn join<A: Prop, B: Prop, C: Prop>(f: Imply<A, C>, _: Imply<B, C>) -> Imply<And<A, B>, C> {
+    Rc::new(move |(a, _)| f.clone()(a))
+}
+
 /// `false => a`.
 pub fn absurd<A: Prop>() -> Imply<False, A> {
     Rc::new(|x| match x {})
