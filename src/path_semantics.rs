@@ -479,6 +479,38 @@ pub fn xy_norm<
     })
 }
 
+/// Converts core axiom to `POrFst`.
+pub fn to_por_fst<A: DProp, B: Prop, C: DProp, D: Prop>(
+    p: PSem<Or<A, B>, C, A, D>
+) -> POrFst<A, B, C, D> {
+    let x: POrdProof<Or<A, B>, A> = POrdProof::new();
+    Rc::new(move |(f, g)| {
+        let x = x.clone();
+        let p = p.clone();
+        Rc::new(move |not_b| {
+            let f = f.clone();
+            let g = g.clone();
+            match (A::decide(), C::decide()) {
+                (_, Left(c)) => {
+                    let or_a_b = f.1(c);
+                    let a = and::exc_right((not_b, or_a_b));
+                    p(((f, x.clone()), (a.map_any(), g)))
+                }
+                (Left(a), Right(not_c)) => {
+                    let c = f.0(Left(a));
+                    match not_c(c) {}
+                }
+                (Right(not_a), _) => {
+                    let h = Rc::new(move |or_a_b| {
+                        match and::exc_both(((not_a.clone(), not_b.clone()), or_a_b)) {}
+                    });
+                    p(((f, x.clone()), (h, g)))
+                }
+            }
+        })
+    })
+}
+
 /// Converts core axiom to `PAndFst`.
 pub fn to_pand_fst<A: Prop, B: Prop, C: Prop, D: Prop>(
     p: PSem<And<A, B>, C, A, D>
