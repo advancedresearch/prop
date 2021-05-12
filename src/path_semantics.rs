@@ -42,9 +42,7 @@ pub type PAndSnd<A, B, C, D> = Imply<
     Eq<B, D>,
 >;
 /// Sends Logical AND to higher level.
-pub type PAnd<A, B, C, D> = Imply<
-    And<Eq<And<A, B>, C>, Imply<C, D>>,
-    Eq<And<A, B>, D>
+pub type PAnd<A, B, C, D> = PLift<And<A, B>, C, D>;
 >;
 
 /// Proof of path semantical order.
