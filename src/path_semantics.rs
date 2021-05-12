@@ -543,6 +543,60 @@ pub fn to_por_snd<A: Prop, B: DProp, C: DProp, D: Prop>(
     })
 }
 
+/// Join either `POrFst` and `POrSnd`.
+pub fn por_join_either<A: DProp, B: DProp, C: Prop, D: Prop>(
+    p: Or<POrFst<A, B, C, D>, POrSnd<A, B, C, D>>,
+) -> POr<A, B, C, D> {
+    match p {
+        Left(p1) => {
+            Rc::new(move |(eq_f_c, g)| {
+                let not_b_eq_a_d = p1.clone()((eq_f_c.clone(), g.clone()));
+                let imply_or_a_b_d: Imply<Or<A, B>, D> = imply::in_left_arg(g, eq::commute(eq_f_c));
+
+                let eq_or_a_b_d: Eq<Or<A, B>, D> = (
+                    Rc::new(move |or_a_b: Or<A, B>| {
+                        let imply_or_a_b_d = imply_or_a_b_d.clone();
+                        match or_a_b {
+                            Left(a) => imply_or_a_b_d(Left(a)),
+                            Right(b) => imply_or_a_b_d(Right(b)),
+                        }
+                    }),
+                    Rc::new(move |d: D| {
+                        match B::decide() {
+                            Left(b) => Right(b),
+                            Right(not_b) => Left(not_b_eq_a_d.clone()(not_b).1(d)),
+                        }
+                    })
+                );
+                eq_or_a_b_d
+            })
+        }
+        Right(p2) => {
+            Rc::new(move |(eq_f_c, g)| {
+                let not_a_eq_b_d = p2.clone()((eq_f_c.clone(), g.clone()));
+                let imply_or_a_b_d: Imply<Or<A, B>, D> = imply::in_left_arg(g, eq::commute(eq_f_c));
+
+                let eq_or_a_b_d: Eq<Or<A, B>, D> = (
+                    Rc::new(move |or_a_b: Or<A, B>| {
+                        let imply_or_a_b_d = imply_or_a_b_d.clone();
+                        match or_a_b {
+                            Left(a) => imply_or_a_b_d(Left(a)),
+                            Right(b) => imply_or_a_b_d(Right(b)),
+                        }
+                    }),
+                    Rc::new(move |d: D| {
+                        match A::decide() {
+                            Left(a) => Left(a),
+                            Right(not_a) => Right(not_a_eq_b_d.clone()(not_a).1(d)),
+                        }
+                    })
+                );
+                eq_or_a_b_d
+            })
+        }
+    }
+}
+
 /// Converts core axiom to `PAndFst`.
 pub fn to_pand_fst<A: Prop, B: Prop, C: Prop, D: Prop>(
     p: PSem<And<A, B>, C, A, D>
