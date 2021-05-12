@@ -43,6 +43,13 @@ pub type PAndSnd<A, B, C, D> = Imply<
 >;
 /// Sends Logical AND to higher level.
 pub type PAnd<A, B, C, D> = PLift<And<A, B>, C, D>;
+
+/// Sends first argument of Logical OR to higher level.
+pub type POrFst<A, B, C, D> = Imply<
+    And<Eq<Or<A, B>, C>, Imply<C, D>>,
+    Imply<Not<B>, Eq<A, D>>
+>;
+
 >;
 
 /// Proof of path semantical order.
