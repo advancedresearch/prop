@@ -25,6 +25,12 @@ pub type PSemNaive<F1, F2, X1, X2> = Imply<
     Eq<X1, X2>
 >;
 
+/// Lifts `A` to higher level.
+pub type PLift<A, B, C> = Imply<
+    And<Eq<A, B>, Imply<B, C>>,
+    Eq<A, C>
+>;
+
 /// Sends first argument of Logical AND to higher level.
 pub type PAndFst<A, B, C, D> = Imply<
     And<Eq<And<A, B>, C>, Imply<C, D>>,
@@ -36,10 +42,22 @@ pub type PAndSnd<A, B, C, D> = Imply<
     Eq<B, D>,
 >;
 /// Sends Logical AND to higher level.
-pub type PAnd<A, B, C, D> = Imply<
-    And<Eq<And<A, B>, C>, Imply<C, D>>,
-    Eq<And<A, B>, D>
+pub type PAnd<A, B, C, D> = PLift<And<A, B>, C, D>;
+
+/// Sends first argument of Logical OR to higher level.
+pub type POrFst<A, B, C, D> = Imply<
+    And<Eq<Or<A, B>, C>, Imply<C, D>>,
+    Imply<Not<B>, Eq<A, D>>
 >;
+
+/// Sends second argument of Logical OR to higher level.
+pub type POrSnd<A, B, C, D> = Imply<
+    And<Eq<Or<A, B>, C>, Imply<C, D>>,
+    Imply<Not<A>, Eq<B, D>>
+>;
+
+/// Sends Logical OR to higher level.
+pub type POr<A, B, C, D> = PLift<Or<A, B>, C, D>;
 
 /// Proof of path semantical order.
 #[derive(Copy)]
@@ -459,6 +477,124 @@ pub fn xy_norm<
         let p2_eq_c_d = p2.clone()((p2_eq_a_b, (p2_a_c, p2_b_d)));
         f_eq_c_d.clone()((p1_eq_c_d, p2_eq_c_d))
     })
+}
+
+/// Converts core axiom to `POrFst`.
+pub fn to_por_fst<A: DProp, B: Prop, C: DProp, D: Prop>(
+    p: PSem<Or<A, B>, C, A, D>
+) -> POrFst<A, B, C, D> {
+    let x: POrdProof<Or<A, B>, A> = POrdProof::new();
+    Rc::new(move |(f, g)| {
+        let x = x.clone();
+        let p = p.clone();
+        Rc::new(move |not_b| {
+            let f = f.clone();
+            let g = g.clone();
+            match (A::decide(), C::decide()) {
+                (_, Left(c)) => {
+                    let or_a_b = f.1(c);
+                    let a = and::exc_right((not_b, or_a_b));
+                    p(((f, x.clone()), (a.map_any(), g)))
+                }
+                (Left(a), Right(not_c)) => {
+                    let c = f.0(Left(a));
+                    match not_c(c) {}
+                }
+                (Right(not_a), _) => {
+                    let h = Rc::new(move |or_a_b| {
+                        match and::exc_both(((not_a.clone(), not_b.clone()), or_a_b)) {}
+                    });
+                    p(((f, x.clone()), (h, g)))
+                }
+            }
+        })
+    })
+}
+
+/// Converts core axiom to `POrSnd`.
+pub fn to_por_snd<A: Prop, B: DProp, C: DProp, D: Prop>(
+    p: PSem<Or<A, B>, C, B, D>
+) -> POrSnd<A, B, C, D> {
+    let x: POrdProof<Or<A, B>, B> = POrdProof::new();
+    Rc::new(move |(f, g)| {
+        let x = x.clone();
+        let p = p.clone();
+        Rc::new(move |not_a| {
+            let f = f.clone();
+            let g = g.clone();
+            match (B::decide(), C::decide()) {
+                (_, Left(c)) => {
+                    let or_a_b = f.1(c);
+                    let b = and::exc_left((not_a, or_a_b));
+                    p(((f, x.clone()), (b.map_any(), g)))
+                }
+                (Left(b), Right(not_c)) => {
+                    let c = f.0(Right(b));
+                    match not_c(c) {}
+                }
+                (Right(not_b), _) => {
+                    let h = Rc::new(move |or_a_b| {
+                        match and::exc_both(((not_a.clone(), not_b.clone()), or_a_b)) {}
+                    });
+                    p(((f, x.clone()), (h, g)))
+                }
+            }
+        })
+    })
+}
+
+/// Join either `POrFst` and `POrSnd`.
+pub fn por_join_either<A: DProp, B: DProp, C: Prop, D: Prop>(
+    p: Or<POrFst<A, B, C, D>, POrSnd<A, B, C, D>>,
+) -> POr<A, B, C, D> {
+    match p {
+        Left(p1) => {
+            Rc::new(move |(eq_f_c, g)| {
+                let not_b_eq_a_d = p1.clone()((eq_f_c.clone(), g.clone()));
+                let imply_or_a_b_d: Imply<Or<A, B>, D> = imply::in_left_arg(g, eq::commute(eq_f_c));
+
+                let eq_or_a_b_d: Eq<Or<A, B>, D> = (
+                    Rc::new(move |or_a_b: Or<A, B>| {
+                        let imply_or_a_b_d = imply_or_a_b_d.clone();
+                        match or_a_b {
+                            Left(a) => imply_or_a_b_d(Left(a)),
+                            Right(b) => imply_or_a_b_d(Right(b)),
+                        }
+                    }),
+                    Rc::new(move |d: D| {
+                        match B::decide() {
+                            Left(b) => Right(b),
+                            Right(not_b) => Left(not_b_eq_a_d.clone()(not_b).1(d)),
+                        }
+                    })
+                );
+                eq_or_a_b_d
+            })
+        }
+        Right(p2) => {
+            Rc::new(move |(eq_f_c, g)| {
+                let not_a_eq_b_d = p2.clone()((eq_f_c.clone(), g.clone()));
+                let imply_or_a_b_d: Imply<Or<A, B>, D> = imply::in_left_arg(g, eq::commute(eq_f_c));
+
+                let eq_or_a_b_d: Eq<Or<A, B>, D> = (
+                    Rc::new(move |or_a_b: Or<A, B>| {
+                        let imply_or_a_b_d = imply_or_a_b_d.clone();
+                        match or_a_b {
+                            Left(a) => imply_or_a_b_d(Left(a)),
+                            Right(b) => imply_or_a_b_d(Right(b)),
+                        }
+                    }),
+                    Rc::new(move |d: D| {
+                        match A::decide() {
+                            Left(a) => Left(a),
+                            Right(not_a) => Right(not_a_eq_b_d.clone()(not_a).1(d)),
+                        }
+                    })
+                );
+                eq_or_a_b_d
+            })
+        }
+    }
 }
 
 /// Converts core axiom to `PAndFst`.
