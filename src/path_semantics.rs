@@ -50,6 +50,10 @@ pub type POrFst<A, B, C, D> = Imply<
     Imply<Not<B>, Eq<A, D>>
 >;
 
+/// Sends second argument of Logical OR to higher level.
+pub type POrSnd<A, B, C, D> = Imply<
+    And<Eq<Or<A, B>, C>, Imply<C, D>>,
+    Imply<Not<A>, Eq<B, D>>
 >;
 
 /// Proof of path semantical order.
