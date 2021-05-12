@@ -25,6 +25,12 @@ pub type PSemNaive<F1, F2, X1, X2> = Imply<
     Eq<X1, X2>
 >;
 
+/// Lifts `A` to higher level.
+pub type PLift<A, B, C> = Imply<
+    And<Eq<A, B>, Imply<B, C>>,
+    Eq<A, C>
+>;
+
 /// Sends first argument of Logical AND to higher level.
 pub type PAndFst<A, B, C, D> = Imply<
     And<Eq<And<A, B>, C>, Imply<C, D>>,
