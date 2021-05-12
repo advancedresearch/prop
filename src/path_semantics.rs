@@ -511,6 +511,38 @@ pub fn to_por_fst<A: DProp, B: Prop, C: DProp, D: Prop>(
     })
 }
 
+/// Converts core axiom to `POrSnd`.
+pub fn to_por_snd<A: Prop, B: DProp, C: DProp, D: Prop>(
+    p: PSem<Or<A, B>, C, B, D>
+) -> POrSnd<A, B, C, D> {
+    let x: POrdProof<Or<A, B>, B> = POrdProof::new();
+    Rc::new(move |(f, g)| {
+        let x = x.clone();
+        let p = p.clone();
+        Rc::new(move |not_a| {
+            let f = f.clone();
+            let g = g.clone();
+            match (B::decide(), C::decide()) {
+                (_, Left(c)) => {
+                    let or_a_b = f.1(c);
+                    let b = and::exc_left((not_a, or_a_b));
+                    p(((f, x.clone()), (b.map_any(), g)))
+                }
+                (Left(b), Right(not_c)) => {
+                    let c = f.0(Right(b));
+                    match not_c(c) {}
+                }
+                (Right(not_b), _) => {
+                    let h = Rc::new(move |or_a_b| {
+                        match and::exc_both(((not_a.clone(), not_b.clone()), or_a_b)) {}
+                    });
+                    p(((f, x.clone()), (h, g)))
+                }
+            }
+        })
+    })
+}
+
 /// Converts core axiom to `PAndFst`.
 pub fn to_pand_fst<A: Prop, B: Prop, C: Prop, D: Prop>(
     p: PSem<And<A, B>, C, A, D>
