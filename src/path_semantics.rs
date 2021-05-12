@@ -56,6 +56,9 @@ pub type POrSnd<A, B, C, D> = Imply<
     Imply<Not<A>, Eq<B, D>>
 >;
 
+/// Sends Logical OR to higher level.
+pub type POr<A, B, C, D> = PLift<Or<A, B>, C, D>;
+
 /// Proof of path semantical order.
 #[derive(Copy)]
 pub struct POrdProof<T, U>(std::marker::PhantomData<(T, U)>);
