@@ -585,11 +585,10 @@ pub fn por_join_either<A: DProp, B: DProp, C: Prop, D: Prop>(
 
 /// Converts core axiom to `PAndFst`.
 pub fn to_pand_fst<A: Prop, B: Prop, C: Prop, D: Prop>(
-    p: PSem<And<A, B>, C, A, D>
+    p: PSemNaive<And<A, B>, C, A, D>
 ) -> PAndFst<A, B, C, D> {
-    let x: POrdProof<And<A, B>, A> = POrdProof::new();
     let y = Rc::new(move |(x, _)| x);
-    Rc::new(move |(f, g)| p.clone()(((f, x.clone()), (y.clone(), g))))
+    Rc::new(move |(f, g)| p.clone()((f, (y.clone(), g))))
 }
 
 /// Converts core axiom to `PAndSnd`.
