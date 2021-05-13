@@ -240,7 +240,7 @@ pub fn path_level<A: LProp, B: Prop, C: LProp, D: Prop>(
 pub fn assume_path_level<A: LProp, B: Prop, C: LProp, D: Prop>() -> PSemNaive<A, B, C, D>
     where A::N: Lt<C::N>
 {
-    path_level(unsafe {assume()})
+    path_level(assume())
 }
 
 /// Converts to naive core axiom.
