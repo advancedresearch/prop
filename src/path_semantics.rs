@@ -676,6 +676,9 @@ pub fn eq_lev<A: LProp, B: LProp>(_a: A, _b: B) where (A::N, B::N): EqNat {}
 /// Checks whether a proposition level is less than another.
 pub fn lt_lev<A: LProp, B: LProp>(_a: A, _b: B) where A::N: Lt<B::N> {}
 
+/// Checks that `X` is equal to `T`.
+pub fn check_eq<T, X>(_: Eq<X, T>) {}
+
 #[cfg(test)]
 #[allow(dead_code)]
 mod test {
