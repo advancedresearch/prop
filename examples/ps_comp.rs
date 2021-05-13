@@ -11,7 +11,7 @@ pub fn proof<A: LProp, B: LProp, C: LProp, F2: Prop, X2: Prop, Y2: Prop>(
     where A::N: nat::Lt<B::N>,
           B::N: nat::Lt<C::N>
 {
-    naive_comp(assume_path_level(), assume_path_level(),
+    naive_comp(assume_naive(), assume_naive(),
                a_b, f2_x2, b_c, x2_y2)
 }
 

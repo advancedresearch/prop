@@ -13,7 +13,7 @@ pub fn proof_1<A: LProp>() -> Eq<A, A>
     // Try comment the next line to trigger an error.
     where A::N: nat::Lt<A::N>
 {
-    let p = assume_path_level::<A, A, A, A>();
+    let p = assume_naive::<A, A, A, A>();
     p((eq::refl(), (imply::id(), imply::id())))
 }
 

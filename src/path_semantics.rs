@@ -122,32 +122,12 @@ impl<T, U> POrdProof<T, U> {
 #[marker]
 pub trait POrd<T> {}
 
-/// Path semantical order for binary operators.
-pub trait PBinOrd {
-    /// The left argument.
-    type Left;
-    /// The right argument.
-    type Right;
-}
-
-impl<T> POrd<T::Left> for T where T: PBinOrd {}
-impl<T> POrd<T::Right> for T where T: PBinOrd {}
-impl<T, U> PBinOrd for And<T, U> {
-    type Left = T;
-    type Right = U;
-}
-impl<T, U> PBinOrd for Or<T, U> {
-    type Left = T;
-    type Right = U;
-}
-impl<T, U> PBinOrd for Imply<T, U> {
-    type Left = T;
-    type Right = U;
-}
-impl<T, U> PBinOrd for POrdProof<T, U> {
-    type Left = T;
-    type Right = U;
-}
+impl<A, B, T> POrd<T> for And<A, B>
+    where A: POrd<T>, B: POrd<T> {}
+impl<A, B, T> POrd<T> for Or<A, B>
+    where A: POrd<T>, B: POrd<T> {}
+impl<A, B, T> POrd<T> for Imply<A, B>
+    where A: POrd<T>, B: POrd<T> {}
 
 /// Path semantical proposition level.
 pub trait LProp: Prop {
@@ -217,28 +197,9 @@ pub type PSemNaiveNorm<A, B, C, D> = PSemNaive<
     LN<Three, A, B, C, D>
 >;
 
-/// Assumes the core axiom for propositions.
-pub unsafe fn assume<A: Prop, B: Prop, C: Prop, D: Prop>() -> PSem<A, B, C, D> {
+/// Assumes the core axiom safely for propositions.
+pub fn assume<A: Prop, B: Prop, C: Prop, D: Prop>() -> PSem<A, B, C, D> {
     unimplemented!()
-}
-
-/// Converts to naive core axiom using path semantical proposition levels.
-pub fn path_level<A: LProp, B: Prop, C: LProp, D: Prop>(
-    p: PSem<A, B, C, D>
-) -> PSemNaive<A, B, C, D>
-    where A::N: Lt<C::N>
-{
-    Rc::new(move |(f, (a, b))| p(((f, POrdProof::new()), (a, b))))
-}
-
-/// Generates naive core axiom using assumption on path semantical proposition levels.
-///
-/// This is safe because path semantical propositions uses the semantics
-/// that the core axiom holds between layers of propositions.
-pub fn assume_path_level<A: LProp, B: Prop, C: LProp, D: Prop>() -> PSemNaive<A, B, C, D>
-    where A::N: Lt<C::N>
-{
-    path_level(unsafe {assume()})
 }
 
 /// Converts to naive core axiom.
@@ -254,7 +215,7 @@ pub fn to_naive<A: Prop, B: Prop, C: Prop, D: Prop>(
 pub fn assume_naive<A: Prop, B: Prop, C: Prop, D: Prop>() -> PSemNaive<A, B, C, D>
     where A: POrd<C>
 {
-    to_naive(unsafe {assume()})
+    to_naive(assume())
 }
 
 /// Generates naive core axiom at increased path semantical proposition level.
@@ -266,7 +227,7 @@ pub fn assume_inc_path_level<N: Nat, A: LProp, B: LProp, C: LProp, D: LProp>()
           (C::N, N): Add,
           (D::N, N): Add,
 {
-    assume_path_level()
+    assume_naive()
 }
 
 /// Sorts two types.
@@ -359,14 +320,14 @@ pub fn assume_norm_path_level<A: LProp, B: LProp, C: LProp, D: LProp>()
         <MinMin<A, B, C, D> as LProp>::N:
             Lt<<Maxi<A, B, C, D> as LProp>::N>,
 {
-    assume_path_level()
+    assume_naive()
 }
 
 /// Generates a naive core axiom which has reflection as end-lines.
-pub fn assume_path_refl<A: LProp, B: LProp>() -> PSemNaive<A, A, B, B>
-    where A::N: Lt<B::N>
+pub fn assume_refl<A: Prop, B: Prop>() -> PSemNaive<A, A, B, B>
+    where A: POrd<B>
 {
-    assume_path_level()
+    assume_naive()
 }
 
 /// Reduce naive core axiom in case of false to equality of associated propositions.
@@ -489,11 +450,9 @@ pub fn xy_norm<
 
 /// Converts core axiom to `POrFst`.
 pub fn to_por_fst<A: DProp, B: Prop, C: DProp, D: Prop>(
-    p: PSem<Or<A, B>, C, A, D>
+    p: PSemNaive<Or<A, B>, C, A, D>
 ) -> POrFst<A, B, C, D> {
-    let x: POrdProof<Or<A, B>, A> = POrdProof::new();
     Rc::new(move |(f, g)| {
-        let x = x.clone();
         let p = p.clone();
         Rc::new(move |not_b| {
             let f = f.clone();
@@ -502,7 +461,7 @@ pub fn to_por_fst<A: DProp, B: Prop, C: DProp, D: Prop>(
                 (_, Left(c)) => {
                     let or_a_b = f.1(c);
                     let a = and::exc_right((not_b, or_a_b));
-                    p(((f, x.clone()), (a.map_any(), g)))
+                    p((f, (a.map_any(), g)))
                 }
                 (Left(a), Right(not_c)) => {
                     let c = f.0(Left(a));
@@ -512,7 +471,7 @@ pub fn to_por_fst<A: DProp, B: Prop, C: DProp, D: Prop>(
                     let h = Rc::new(move |or_a_b| {
                         match and::exc_both(((not_a.clone(), not_b.clone()), or_a_b)) {}
                     });
-                    p(((f, x.clone()), (h, g)))
+                    p((f, (h, g)))
                 }
             }
         })
@@ -521,11 +480,9 @@ pub fn to_por_fst<A: DProp, B: Prop, C: DProp, D: Prop>(
 
 /// Converts core axiom to `POrSnd`.
 pub fn to_por_snd<A: Prop, B: DProp, C: DProp, D: Prop>(
-    p: PSem<Or<A, B>, C, B, D>
+    p: PSemNaive<Or<A, B>, C, B, D>
 ) -> POrSnd<A, B, C, D> {
-    let x: POrdProof<Or<A, B>, B> = POrdProof::new();
     Rc::new(move |(f, g)| {
-        let x = x.clone();
         let p = p.clone();
         Rc::new(move |not_a| {
             let f = f.clone();
@@ -534,7 +491,7 @@ pub fn to_por_snd<A: Prop, B: DProp, C: DProp, D: Prop>(
                 (_, Left(c)) => {
                     let or_a_b = f.1(c);
                     let b = and::exc_left((not_a, or_a_b));
-                    p(((f, x.clone()), (b.map_any(), g)))
+                    p((f, (b.map_any(), g)))
                 }
                 (Left(b), Right(not_c)) => {
                     let c = f.0(Right(b));
@@ -544,7 +501,7 @@ pub fn to_por_snd<A: Prop, B: DProp, C: DProp, D: Prop>(
                     let h = Rc::new(move |or_a_b| {
                         match and::exc_both(((not_a.clone(), not_b.clone()), or_a_b)) {}
                     });
-                    p(((f, x.clone()), (h, g)))
+                    p((f, (h, g)))
                 }
             }
         })
@@ -605,22 +562,55 @@ pub fn por_join_either<A: DProp, B: DProp, C: Prop, D: Prop>(
     }
 }
 
+/// Transports core axiom using equivalence in the `C` corner.
+pub fn by_eq_c<A: Prop, B: Prop, C: Prop, D: Prop, C2: Prop>(
+    p: PSem<A, B, C, D>,
+    eq_c_c2: Eq<C, C2>,
+) -> PSem<A, B, C2, D> {
+    Rc::new(move |((f, pr), (g, h))| {
+        let eq_c_c2 = eq_c_c2.clone();
+        let eq_c_c2_clone = eq_c_c2.clone();
+        let eq_c_c2_clone2 = eq_c_c2.clone();
+        let pr2 = pr.by_eq_right(eq::commute(eq_c_c2.clone()));
+        let g2 = Rc::new(move |a| eq_c_c2_clone2.1(g.clone()(a)));
+        let eq_c_d = p(((f, pr2), (g2, h)));
+        let eq_c_d_clone = eq_c_d.clone();
+        (Rc::new(move |c2| eq_c_d_clone.0(eq_c_c2_clone.1(c2))),
+         Rc::new(move |d| eq_c_c2.0(eq_c_d.clone().1(d))))
+    })
+}
+
+/// Transports naive core axiom using equivalence in the `C` corner.
+pub fn naive_by_eq_c<A: Prop, B: Prop, C: Prop, D: Prop, C2: Prop>(
+    p: PSemNaive<A, B, C, D>,
+    eq_c_c2: Eq<C, C2>,
+) -> PSemNaive<A, B, C2, D> {
+    Rc::new(move |(f, (g, h))| {
+        let eq_c_c2 = eq_c_c2.clone();
+        let eq_c_c2_clone = eq_c_c2.clone();
+        let eq_c_c2_clone2 = eq_c_c2.clone();
+        let g2 = Rc::new(move |a| eq_c_c2_clone2.1(g.clone()(a)));
+        let eq_c_d = p((f, (g2, h)));
+        let eq_c_d_clone = eq_c_d.clone();
+        (Rc::new(move |c2| eq_c_d_clone.0(eq_c_c2_clone.1(c2))),
+         Rc::new(move |d| eq_c_c2.0(eq_c_d.clone().1(d))))
+    })
+}
+
 /// Converts core axiom to `PAndFst`.
 pub fn to_pand_fst<A: Prop, B: Prop, C: Prop, D: Prop>(
-    p: PSem<And<A, B>, C, A, D>
+    p: PSemNaive<And<A, B>, C, A, D>
 ) -> PAndFst<A, B, C, D> {
-    let x: POrdProof<And<A, B>, A> = POrdProof::new();
     let y = Rc::new(move |(x, _)| x);
-    Rc::new(move |(f, g)| p.clone()(((f, x.clone()), (y.clone(), g))))
+    Rc::new(move |(f, g)| p.clone()((f, (y.clone(), g))))
 }
 
 /// Converts core axiom to `PAndSnd`.
 pub fn to_pand_snd<A: Prop, B: Prop, C: Prop, D: Prop>(
-    p: PSem<And<A, B>, C, B, D>
+    p: PSemNaive<And<A, B>, C, B, D>
 ) -> PAndSnd<A, B, C, D> {
-    let x: POrdProof<And<A, B>, B> = POrdProof::new();
     let y = Rc::new(move |(_, x)| x);
-    Rc::new(move |(f, g)| p.clone()(((f, x.clone()), (y.clone(), g))))
+    Rc::new(move |(f, g)| p.clone()((f, (y.clone(), g))))
 }
 
 /// Join `PAndFst` and `PAndSnd`.
@@ -668,20 +658,14 @@ pub fn uniq_ty<A: Prop, B: Prop, C: Prop, D: Prop, E: Prop>(
     eq_a_b: Eq<A, B>,
     f: Imply<A, And<C, D>>,
     b_e: Imply<B, E>,
-    p_a: PSem<A, B, C, E>,
-    p_b: PSem<A, B, D, E>,
+    p_a: PSemNaive<A, B, C, E>,
+    p_b: PSemNaive<A, B, D, E>,
 ) -> Eq<C, D> {
-    let pr_cd_c: POrdProof<And<C, D>, C> = POrdProof::new();
-    let pr_cd_d: POrdProof<And<C, D>, D> = POrdProof::new();
-    let f_copy = f.clone();
-    let pr_a_c = pr_cd_c.by_imply_left(f_copy);
-    let f_copy = f.clone();
-    let pr_a_d = pr_cd_d.by_imply_left(f_copy);
     let f_copy = f.clone();
     let a_c = Rc::new(move |x| f_copy(x).0);
     let a_d = Rc::new(move |x| f.clone()(x).1);
-    let eq_c_e = p_a(((eq_a_b.clone(), pr_a_c), (a_c, b_e.clone())));
-    let eq_d_e = p_b(((eq_a_b, pr_a_d), (a_d, b_e)));
+    let eq_c_e = p_a((eq_a_b.clone(), (a_c, b_e.clone())));
+    let eq_d_e = p_b((eq_a_b, (a_d, b_e)));
     eq::transitivity(eq_c_e, eq::commute(eq_d_e))
 }
 
