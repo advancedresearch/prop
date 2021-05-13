@@ -202,16 +202,6 @@ pub fn assume<A: Prop, B: Prop, C: Prop, D: Prop>() -> PSem<A, B, C, D> {
     unimplemented!()
 }
 
-/// Generates naive core axiom using assumption on path semantical proposition levels.
-///
-/// This is safe because path semantical propositions uses the semantics
-/// that the core axiom holds between layers of propositions.
-pub fn assume_path_level<A: LProp, B: Prop, C: LProp, D: Prop>() -> PSemNaive<A, B, C, D>
-    where A::N: Lt<C::N>
-{
-    path_level(assume())
-}
-
 /// Converts to naive core axiom.
 pub fn to_naive<A: Prop, B: Prop, C: Prop, D: Prop>(
     p: PSem<A, B, C, D>
