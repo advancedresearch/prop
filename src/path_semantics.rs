@@ -122,32 +122,6 @@ impl<T, U> POrdProof<T, U> {
 #[marker]
 pub trait POrd<T> {}
 
-/// Path semantical order for binary operators.
-pub trait PBinOrd {
-    /// The left argument.
-    type Left;
-    /// The right argument.
-    type Right;
-}
-
-impl<T> POrd<T::Left> for T where T: PBinOrd {}
-impl<T> POrd<T::Right> for T where T: PBinOrd {}
-impl<T, U> PBinOrd for And<T, U> {
-    type Left = T;
-    type Right = U;
-}
-impl<T, U> PBinOrd for Or<T, U> {
-    type Left = T;
-    type Right = U;
-}
-impl<T, U> PBinOrd for Imply<T, U> {
-    type Left = T;
-    type Right = U;
-}
-impl<T, U> PBinOrd for POrdProof<T, U> {
-    type Left = T;
-    type Right = U;
-}
 
 /// Path semantical proposition level.
 pub trait LProp: Prop {
