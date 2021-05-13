@@ -227,7 +227,7 @@ pub fn assume_inc_path_level<N: Nat, A: LProp, B: LProp, C: LProp, D: LProp>()
           (C::N, N): Add,
           (D::N, N): Add,
 {
-    assume_path_level()
+    assume_naive()
 }
 
 /// Sorts two types.
