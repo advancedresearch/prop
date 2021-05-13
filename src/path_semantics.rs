@@ -324,10 +324,10 @@ pub fn assume_norm_path_level<A: LProp, B: LProp, C: LProp, D: LProp>()
 }
 
 /// Generates a naive core axiom which has reflection as end-lines.
-pub fn assume_path_refl<A: LProp, B: LProp>() -> PSemNaive<A, A, B, B>
-    where A::N: Lt<B::N>
+pub fn assume_refl<A: Prop, B: Prop>() -> PSemNaive<A, A, B, B>
+    where A: POrd<B>
 {
-    assume_path_level()
+    assume_naive()
 }
 
 /// Reduce naive core axiom in case of false to equality of associated propositions.
