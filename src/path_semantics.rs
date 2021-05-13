@@ -320,7 +320,7 @@ pub fn assume_norm_path_level<A: LProp, B: LProp, C: LProp, D: LProp>()
         <MinMin<A, B, C, D> as LProp>::N:
             Lt<<Maxi<A, B, C, D> as LProp>::N>,
 {
-    assume_path_level()
+    assume_naive()
 }
 
 /// Generates a naive core axiom which has reflection as end-lines.
