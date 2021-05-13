@@ -122,6 +122,12 @@ impl<T, U> POrdProof<T, U> {
 #[marker]
 pub trait POrd<T> {}
 
+impl<A, B, T> POrd<T> for And<A, B>
+    where A: POrd<T>, B: POrd<T> {}
+impl<A, B, T> POrd<T> for Or<A, B>
+    where A: POrd<T>, B: POrd<T> {}
+impl<A, B, T> POrd<T> for Imply<A, B>
+    where A: POrd<T>, B: POrd<T> {}
 
 /// Path semantical proposition level.
 pub trait LProp: Prop {
