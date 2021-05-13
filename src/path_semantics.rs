@@ -593,11 +593,10 @@ pub fn to_pand_fst<A: Prop, B: Prop, C: Prop, D: Prop>(
 
 /// Converts core axiom to `PAndSnd`.
 pub fn to_pand_snd<A: Prop, B: Prop, C: Prop, D: Prop>(
-    p: PSem<And<A, B>, C, B, D>
+    p: PSemNaive<And<A, B>, C, B, D>
 ) -> PAndSnd<A, B, C, D> {
-    let x: POrdProof<And<A, B>, B> = POrdProof::new();
     let y = Rc::new(move |(_, x)| x);
-    Rc::new(move |(f, g)| p.clone()(((f, x.clone()), (y.clone(), g))))
+    Rc::new(move |(f, g)| p.clone()((f, (y.clone(), g))))
 }
 
 /// Join `PAndFst` and `PAndSnd`.
