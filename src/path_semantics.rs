@@ -600,6 +600,24 @@ pub fn by_eq_c<A: Prop, B: Prop, C: Prop, D: Prop, C2: Prop>(
          Rc::new(move |d| eq_c_c2.0(eq_c_d.clone().1(d))))
     })
 }
+
+/// Transports naive core axiom using equivalence in the `C` corner.
+pub fn naive_by_eq_c<A: Prop, B: Prop, C: Prop, D: Prop, C2: Prop>(
+    p: PSemNaive<A, B, C, D>,
+    eq_c_c2: Eq<C, C2>,
+) -> PSemNaive<A, B, C2, D> {
+    Rc::new(move |(f, (g, h))| {
+        let eq_c_c2 = eq_c_c2.clone();
+        let eq_c_c2_clone = eq_c_c2.clone();
+        let eq_c_c2_clone2 = eq_c_c2.clone();
+        let g2 = Rc::new(move |a| eq_c_c2_clone2.1(g.clone()(a)));
+        let eq_c_d = p((f, (g2, h)));
+        let eq_c_d_clone = eq_c_d.clone();
+        (Rc::new(move |c2| eq_c_d_clone.0(eq_c_c2_clone.1(c2))),
+         Rc::new(move |d| eq_c_c2.0(eq_c_d.clone().1(d))))
+    })
+}
+
 /// Converts core axiom to `PAndFst`.
 pub fn to_pand_fst<A: Prop, B: Prop, C: Prop, D: Prop>(
     p: PSemNaive<And<A, B>, C, A, D>
