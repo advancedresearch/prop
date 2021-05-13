@@ -26,11 +26,11 @@ pub trait DeclBool<Type: LProp<N = S<S<N>>>, N: Nat> {
 }
 
 /// Links two memory slots.
-pub struct Mem<T: LProp>(Imply<T, T::SetLevel<S<T::N>>>);
+pub struct Mem<T: LProp>(Imply<T, Inc<T>>);
 
 impl<T: LProp> Mem<T> {
     /// Accesses memory.
-    pub fn read(self) -> Imply<T, T::SetLevel<S<T::N>>> {self.0}
+    pub fn read(self) -> Imply<T, Inc<T>> {self.0}
 }
 
 /// Function type.
@@ -57,10 +57,10 @@ pub trait DeclBool1<Type: LProp<N = S<S<N>>>, N: Nat>: DeclBool<Type, N> + DeclF
     fn ty_true1() -> Imply<Self::True1, FnTy<Self::Bool, Self::Bool>>;
 
     fn def_idb<X: LProp>(_idb: Self::Idb, f: Mem<X>) -> And<
-        Imply<Eq<X, Self::False>, Eq<X::SetLevel<S<X::N>>, Self::False>>,
-        Imply<Eq<X, Self::True>, Eq<X::SetLevel<S<X::N>>, Self::True>>,
+        Imply<Eq<X, Self::False>, Eq<Inc<X>, Self::False>>,
+        Imply<Eq<X, Self::True>, Eq<Inc<X>, Self::True>>,
     >
-        where X: POrd<X::SetLevel<S<X::N>>>
+        where X: POrd<Inc<X>>
     {
         let f1 = f.0.clone();
         let f2 = f.0.clone();
@@ -76,10 +76,10 @@ pub trait DeclBool1<Type: LProp<N = S<S<N>>>, N: Nat>: DeclBool<Type, N> + DeclF
     }
 
     fn def_not<X: LProp>(_not: Self::Not, f: Mem<X>) -> And<
-        Imply<Eq<X, Self::False>, Eq<X::SetLevel<S<X::N>>, Self::True>>,
-        Imply<Eq<X, Self::True>, Eq<X::SetLevel<S<X::N>>, Self::False>>,
+        Imply<Eq<X, Self::False>, Eq<Inc<X>, Self::True>>,
+        Imply<Eq<X, Self::True>, Eq<Inc<X>, Self::False>>,
     >
-        where X: POrd<X::SetLevel<S<X::N>>>
+        where X: POrd<Inc<X>>
     {
         let f = f.read();
         let f1 = f.clone();
@@ -95,11 +95,11 @@ pub trait DeclBool1<Type: LProp<N = S<S<N>>>, N: Nat>: DeclBool<Type, N> + DeclF
         )
     }
 
-    fn def_false1<X: LProp>(_false1: Self::False1, f: Imply<X, X::SetLevel<S<X::N>>>) -> And<
-        Imply<Eq<X, Self::False>, Eq<X::SetLevel<S<X::N>>, Self::False>>,
-        Imply<Eq<X, Self::True>, Eq<X::SetLevel<S<X::N>>, Self::False>>,
+    fn def_false1<X: LProp>(_false1: Self::False1, f: Imply<X, Inc<X>>) -> And<
+        Imply<Eq<X, Self::False>, Eq<Inc<X>, Self::False>>,
+        Imply<Eq<X, Self::True>, Eq<Inc<X>, Self::False>>,
     >
-        where X: POrd<X::SetLevel<S<X::N>>>
+        where X: POrd<Inc<X>>
     {
         let f1 = f.clone();
         let f2 = f.clone();
@@ -114,11 +114,11 @@ pub trait DeclBool1<Type: LProp<N = S<S<N>>>, N: Nat>: DeclBool<Type, N> + DeclF
         )
     }
 
-    fn def_true1<X: LProp>(_true1: Self::True1, f: Imply<X, X::SetLevel<S<X::N>>>) -> And<
-        Imply<Eq<X, Self::False>, Eq<X::SetLevel<S<X::N>>, Self::True>>,
-        Imply<Eq<X, Self::True>, Eq<X::SetLevel<S<X::N>>, Self::True>>,
+    fn def_true1<X: LProp>(_true1: Self::True1, f: Imply<X, Inc<X>>) -> And<
+        Imply<Eq<X, Self::False>, Eq<Inc<X>, Self::True>>,
+        Imply<Eq<X, Self::True>, Eq<Inc<X>, Self::True>>,
     >
-        where X: POrd<X::SetLevel<S<X::N>>>
+        where X: POrd<Inc<X>>
     {
         let f1 = f.clone();
         let f2 = f.clone();
@@ -141,8 +141,8 @@ pub fn proof<T: DeclBool1<Type, Zero>, X: LProp<N = Zero>, Type: LProp<N = Two>>
     idb: T::Idb,
     not: T::Not,
     eq_x_true: Eq<X, T::True>,
-) -> And<Eq<X::SetLevel<One>, T::True>, Eq<X::SetLevel<One>, T::False>>
-    where X: POrd<X::SetLevel<S<X::N>>>
+) -> And<Eq<Inc<X>, T::True>, Eq<Inc<X>, T::False>>
+    where X: POrd<Inc<X>>
 {
     let idb_expr = T::def_idb(idb, f1);
     let not_expr = T::def_not(not, f2);
