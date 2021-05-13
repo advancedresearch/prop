@@ -679,20 +679,14 @@ pub fn uniq_ty<A: Prop, B: Prop, C: Prop, D: Prop, E: Prop>(
     eq_a_b: Eq<A, B>,
     f: Imply<A, And<C, D>>,
     b_e: Imply<B, E>,
-    p_a: PSem<A, B, C, E>,
-    p_b: PSem<A, B, D, E>,
+    p_a: PSemNaive<A, B, C, E>,
+    p_b: PSemNaive<A, B, D, E>,
 ) -> Eq<C, D> {
-    let pr_cd_c: POrdProof<And<C, D>, C> = POrdProof::new();
-    let pr_cd_d: POrdProof<And<C, D>, D> = POrdProof::new();
-    let f_copy = f.clone();
-    let pr_a_c = pr_cd_c.by_imply_left(f_copy);
-    let f_copy = f.clone();
-    let pr_a_d = pr_cd_d.by_imply_left(f_copy);
     let f_copy = f.clone();
     let a_c = Rc::new(move |x| f_copy(x).0);
     let a_d = Rc::new(move |x| f.clone()(x).1);
-    let eq_c_e = p_a(((eq_a_b.clone(), pr_a_c), (a_c, b_e.clone())));
-    let eq_d_e = p_b(((eq_a_b, pr_a_d), (a_d, b_e)));
+    let eq_c_e = p_a((eq_a_b.clone(), (a_c, b_e.clone())));
+    let eq_d_e = p_b((eq_a_b, (a_d, b_e)));
     eq::transitivity(eq_c_e, eq::commute(eq_d_e))
 }
 
