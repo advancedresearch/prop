@@ -132,7 +132,6 @@ pub trait PBinOrd {
 
 impl<T> POrd<T::Left> for T where T: PBinOrd {}
 impl<T> POrd<T::Right> for T where T: PBinOrd {}
-impl<T> POrd<T> for False {}
 impl<T, U> PBinOrd for And<T, U> {
     type Left = T;
     type Right = U;
@@ -368,13 +367,6 @@ pub fn assume_path_refl<A: LProp, B: LProp>() -> PSemNaive<A, A, B, B>
     where A::N: Lt<B::N>
 {
     assume_path_level()
-}
-
-/// Reduce core axiom in case of false to equality of associated propositions.
-pub fn red_false<A: Prop, B: Prop>(
-    p: PSem<False, False, A, B>
-) -> Eq<A, B> {
-    p(((eq::refl(), POrdProof::new()), (imply::absurd(), imply::absurd())))
 }
 
 /// Reduce naive core axiom in case of false to equality of associated propositions.
