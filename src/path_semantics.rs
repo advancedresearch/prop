@@ -198,9 +198,7 @@ pub type PSemNaiveNorm<A, B, C, D> = PSemNaive<
 >;
 
 /// Assumes the core axiom safely for propositions.
-pub fn assume<A: Prop, B: Prop, C: Prop, D: Prop>() -> PSem<A, B, C, D>
-    where A: POrd<C>
-{
+pub fn assume<A: Prop, B: Prop, C: Prop, D: Prop>() -> PSem<A, B, C, D> {
     unimplemented!()
 }
 
