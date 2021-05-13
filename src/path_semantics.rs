@@ -149,6 +149,8 @@ impl LProp for False {
 }
 /// Increases proposition level of `A` with some amount `N`.
 pub type IncLevel<A, N> = <A as LProp>::SetLevel<<(<A as LProp>::N, N) as Add>::Out>;
+/// Increases level one step.
+pub type Inc<A> = <A as LProp>::SetLevel<S<<A as LProp>::N>>;
 
 impl<N: 'static + Default + Clone> Decidable for LTrue<N> {
     fn decide() -> ExcM<Self> {Either::Left(LTrue(N::default()))}
