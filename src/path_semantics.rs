@@ -242,6 +242,22 @@ pub fn assume_path_level<A: LProp, B: Prop, C: LProp, D: Prop>() -> PSemNaive<A,
     path_level(unsafe {assume()})
 }
 
+/// Converts to naive core axiom.
+pub fn to_naive<A: Prop, B: Prop, C: Prop, D: Prop>(
+    p: PSem<A, B, C, D>
+) -> PSemNaive<A, B, C, D>
+    where A: POrd<C>
+{
+    Rc::new(move |(f, (g, h))| p.clone()(((f, POrdProof::new()), (g, h))))
+}
+
+/// Assume naive core axiom safely.
+pub fn assume_naive<A: Prop, B: Prop, C: Prop, D: Prop>() -> PSemNaive<A, B, C, D>
+    where A: POrd<C>
+{
+    to_naive(unsafe {assume()})
+}
+
 /// Generates naive core axiom at increased path semantical proposition level.
 pub fn assume_inc_path_level<N: Nat, A: LProp, B: LProp, C: LProp, D: LProp>()
 -> PSemNaive<IncLevel<A, N>, IncLevel<B, N>, IncLevel<C, N>, IncLevel<D, N>>
