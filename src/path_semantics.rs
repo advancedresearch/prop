@@ -256,7 +256,7 @@ pub fn to_naive<A: Prop, B: Prop, C: Prop, D: Prop>(
 pub fn assume_naive<A: Prop, B: Prop, C: Prop, D: Prop>() -> PSemNaive<A, B, C, D>
     where A: POrd<C>
 {
-    to_naive(unsafe {assume()})
+    to_naive(assume())
 }
 
 /// Generates naive core axiom at increased path semantical proposition level.
