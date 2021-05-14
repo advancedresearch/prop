@@ -20,8 +20,8 @@ pub trait DeclBool<Type: LProp<N = S<S<N>>>, N: Nat> {
     fn ty_bool() -> Imply<Self::Bool, Type>;
     fn ty_false() -> Imply<Self::False, Self::Bool>;
     fn ty_true() -> Imply<Self::True, Self::Bool>;
-    fn const_false() -> Self::False;
-    fn const_true() -> Self::True;
+    unsafe fn const_false() -> Self::False;
+    unsafe fn const_true() -> Self::True;
     fn decide<X: LProp>() -> Or<Eq<X, Self::False>, Eq<X, Self::True>>;
 }
 
@@ -86,11 +86,11 @@ pub trait DeclBool1<Type: LProp<N = S<S<N>>>, N: Nat>: DeclBool<Type, N> + DeclF
         let f2 = f.clone();
         (Rc::new(move |eq_x_false| {
             let p = assume_naive();
-            p((eq_x_false, (f1.clone(), Self::const_true().map_any())))
+            p((eq_x_false, (f1.clone(), unsafe {Self::const_true().map_any()})))
         }),
          Rc::new(move |eq_x_true| {
              let p = assume_naive();
-             p((eq_x_true, (f2.clone(), Self::const_false().map_any())))
+             p((eq_x_true, (f2.clone(), unsafe {Self::const_false().map_any()})))
          })
         )
     }
@@ -105,11 +105,11 @@ pub trait DeclBool1<Type: LProp<N = S<S<N>>>, N: Nat>: DeclBool<Type, N> + DeclF
         let f2 = f.clone();
         (Rc::new(move |eq_x_false| {
             let p = assume_naive();
-            p((eq_x_false, (f1.clone(), Self::const_false().map_any())))
+            p((eq_x_false, (f1.clone(), unsafe {Self::const_false().map_any()})))
         }),
          Rc::new(move |eq_x_true| {
              let p = assume_naive();
-             p((eq_x_true, (f2.clone(), Self::const_false().map_any())))
+             p((eq_x_true, (f2.clone(), unsafe {Self::const_false().map_any()})))
          })
         )
     }
@@ -124,11 +124,11 @@ pub trait DeclBool1<Type: LProp<N = S<S<N>>>, N: Nat>: DeclBool<Type, N> + DeclF
         let f2 = f.clone();
         (Rc::new(move |eq_x_false| {
             let p = assume_naive();
-            p((eq_x_false, (f1.clone(), Self::const_true().map_any())))
+            p((eq_x_false, (f1.clone(), unsafe {Self::const_true().map_any()})))
         }),
          Rc::new(move |eq_x_true| {
              let p = assume_naive();
-             p((eq_x_true, (f2.clone(), Self::const_true().map_any())))
+             p((eq_x_true, (f2.clone(), unsafe {Self::const_true().map_any()})))
          })
         )
     }
