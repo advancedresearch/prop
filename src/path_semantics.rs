@@ -14,7 +14,7 @@ use nat::*;
 
 /// Core axiom of Path Semantics.
 pub type PSem<F1, F2, X1, X2> = Imply<
-    And<And<Eq<F1, F2>, POrdProof<F1, X1>>,
+    And<And<Eq<F1, F2>, And<POrdProof<F1, X1>, POrdProof<F2, X2>>>,
         And<Imply<F1, X1>, Imply<F2, X2>>>,
     Eq<X1, X2>,
 >;
@@ -208,14 +208,14 @@ pub fn assume<A: Prop, B: Prop, C: Prop, D: Prop>() -> PSem<A, B, C, D> {
 pub fn to_naive<A: Prop, B: Prop, C: Prop, D: Prop>(
     p: PSem<A, B, C, D>
 ) -> PSemNaive<A, B, C, D>
-    where A: POrd<C>
+    where A: POrd<C>, B: POrd<D>
 {
-    Rc::new(move |(f, (g, h))| p.clone()(((f, POrdProof::new()), (g, h))))
+    Rc::new(move |(f, (g, h))| p.clone()(((f, (POrdProof::new(), POrdProof::new())), (g, h))))
 }
 
 /// Assume naive core axiom safely.
 pub fn assume_naive<A: Prop, B: Prop, C: Prop, D: Prop>() -> PSemNaive<A, B, C, D>
-    where A: POrd<C>
+    where A: POrd<C>, B: POrd<D>
 {
     to_naive(assume())
 }
@@ -224,6 +224,7 @@ pub fn assume_naive<A: Prop, B: Prop, C: Prop, D: Prop>() -> PSemNaive<A, B, C, 
 pub fn assume_inc_path_level<N: Nat, A: LProp, B: LProp, C: LProp, D: LProp>()
 -> PSemNaive<IncLevel<A, N>, IncLevel<B, N>, IncLevel<C, N>, IncLevel<D, N>>
     where <IncLevel<A, N> as LProp>::N: Lt<<IncLevel<C, N> as LProp>::N>,
+          <IncLevel<B, N> as LProp>::N: Lt<<IncLevel<D, N> as LProp>::N>,
           (A::N, N): Add,
           (B::N, N): Add,
           (C::N, N): Add,
@@ -321,6 +322,8 @@ pub fn assume_norm_path_level<A: LProp, B: LProp, C: LProp, D: LProp>()
             SortMax<MaxMin<A, B, C, D>, MinMax<A, B, C, D>>,
         <MinMin<A, B, C, D> as LProp>::N:
             Lt<<Maxi<A, B, C, D> as LProp>::N>,
+        <Mixi<A, B, C, D> as LProp>::N:
+            Lt<<MaxMax<A, B, C, D> as LProp>::N>,
 {
     assume_naive()
 }
@@ -344,15 +347,17 @@ pub fn comp<F1: Prop, F2: Prop, F3: Prop, F4: Prop, X1: Prop, X2: Prop>(
     f: PSem<F1, F2, F3, F4>,
     g: PSem<F3, F4, X1, X2>,
     pr_f1_f3: POrdProof<F1, F3>,
+    pr_f2_f4: POrdProof<F2, F4>,
     pr_f3_x1: POrdProof<F3, X1>,
+    pr_f4_x2: POrdProof<F4, X2>,
     f1_f3: Imply<F1, F3>,
     f2_f4: Imply<F2, F4>,
     f3_x1: Imply<F3, X1>,
     f4_x2: Imply<F4, X2>,
 ) -> PSem<F1, F2, X1, X2> {
-    Rc::new(move |((f1_eq_f2, _pr_f1_x1), (_f1_x1, _f2_x2))| {
-        let f3_eq_f4 = f(((f1_eq_f2, pr_f1_f3.clone()), (f1_f3.clone(), f2_f4.clone())));
-        let x1_eq_x2 = g(((f3_eq_f4, pr_f3_x1.clone()), (f3_x1.clone(), f4_x2.clone())));
+    Rc::new(move |((f1_eq_f2, (_pr_f1_x1, _pr_f2_x2)), (_f1_x1, _f2_x2))| {
+        let f3_eq_f4 = f(((f1_eq_f2, (pr_f1_f3.clone(), pr_f2_f4.clone())), (f1_f3.clone(), f2_f4.clone())));
+        let x1_eq_x2 = g(((f3_eq_f4, (pr_f3_x1.clone(), pr_f4_x2.clone())), (f3_x1.clone(), f4_x2.clone())));
         x1_eq_x2
     })
 }
@@ -373,16 +378,17 @@ pub fn naive_comp<F1: Prop, F2: Prop, F3: Prop, F4: Prop, X1: Prop, X2: Prop>(
     })
 }
 
-/// `(a b) (c d): ¬a ∧ ¬b ∧ a => c ∧ b => d => c = d`.
+/// `(a b) (c d): ¬a ∧ ¬b ∧ (a => c) ∧ (b => d) => (c = d)`.
 pub fn neg<A: Prop, B: Prop, C: Prop, D: Prop>(
     not_a: Not<A>,
     not_b: Not<B>,
     pr_a_c: POrdProof<A, C>,
+    pr_b_d: POrdProof<B, D>,
     a_c: Imply<A, C>,
     b_d: Imply<B, D>,
     p: PSem<A, B, C, D>,
 ) -> Eq<C, D> {
-    p(((and::to_eq_neg((not_a, not_b)), pr_a_c), (a_c, b_d)))
+    p(((and::to_eq_neg((not_a, not_b)), (pr_a_c, pr_b_d)), (a_c, b_d)))
 }
 
 /// `(a b) (c d): ¬a ∧ ¬b ∧ a => c ∧ b => d => c = d`.
@@ -439,6 +445,8 @@ pub fn xy_norm<
             SortMax<MaxMin<A, B, C, D>, MinMax<A, B, C, D>>,
         <MinMin<A, B, C, D> as LProp>::N:
             Lt<<Maxi<A, B, C, D> as LProp>::N>,
+        <Mixi<A, B, C, D> as LProp>::N:
+            Lt<<MaxMax<A, B, C, D> as LProp>::N>,
 {
     Rc::new(move |(eq_a_b, (a_c, b_d))| {
         let (p1_eq_a_b, p2_eq_a_b) = f_eq_a_b.clone()(eq_a_b);
@@ -569,13 +577,13 @@ pub fn by_eq_c<A: Prop, B: Prop, C: Prop, D: Prop, C2: Prop>(
     p: PSem<A, B, C, D>,
     eq_c_c2: Eq<C, C2>,
 ) -> PSem<A, B, C2, D> {
-    Rc::new(move |((f, pr), (g, h))| {
+    Rc::new(move |((f, (pr_a_c, pr_b_d)), (g, h))| {
         let eq_c_c2 = eq_c_c2.clone();
         let eq_c_c2_clone = eq_c_c2.clone();
         let eq_c_c2_clone2 = eq_c_c2.clone();
-        let pr2 = pr.by_eq_right(eq::commute(eq_c_c2.clone()));
+        let pr2 = pr_a_c.by_eq_right(eq::commute(eq_c_c2.clone()));
         let g2 = Rc::new(move |a| eq_c_c2_clone2.1(g.clone()(a)));
-        let eq_c_d = p(((f, pr2), (g2, h)));
+        let eq_c_d = p(((f, (pr2, pr_b_d)), (g2, h)));
         let eq_c_d_clone = eq_c_d.clone();
         (Rc::new(move |c2| eq_c_d_clone.0(eq_c_c2_clone.1(c2))),
          Rc::new(move |d| eq_c_c2.0(eq_c_d.clone().1(d))))

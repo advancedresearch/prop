@@ -15,8 +15,8 @@ use Either::*;
 // true : bool
 pub trait DeclBool<Type: LProp<N = S<S<N>>>, N: Nat> {
     type Bool: LProp<N = S<N>>;
-    type False: LProp<N = N>;
-    type True: LProp<N = N>;
+    type False: LProp<N = N> + POrd<Self::False> + POrd<Self::True>;
+    type True: LProp<N = N> + POrd<Self::True> + POrd<Self::False>;
     fn ty_bool() -> Imply<Self::Bool, Type>;
     fn ty_false() -> Imply<Self::False, Self::Bool>;
     fn ty_true() -> Imply<Self::True, Self::Bool>;
@@ -132,7 +132,6 @@ pub trait DeclBool1<Type: LProp<N = S<S<N>>>, N: Nat>: DeclBool<Type, N> + DeclF
          })
         )
     }
-
 }
 
 pub fn proof<T: DeclBool1<Type, Zero>, X: LProp<N = Zero>, Type: LProp<N = Two>>(

@@ -65,7 +65,7 @@ pub fn eqv_formation<A: Prop, B: Prop, T: Prop, U: Prop>(
     ty_a: Imply<A, T>,
     ty_b: Imply<B, U>,
 ) -> Imply<Eq<A, B>, Eq<T, U>>
-    where A: POrd<T>
+    where A: POrd<T>, B: POrd<U>
 {
     Rc::new(move |f| {
         let p = assume_naive();
