@@ -335,6 +335,22 @@ pub fn assume_refl<A: Prop, B: Prop>() -> PSemNaive<A, A, B, B>
     assume_naive()
 }
 
+/// Get reflection equality from equality between different propositions.
+///
+/// This is used as alternative to `eq::refl` for path witness in Path Semantics.
+/// See https://github.com/advancedresearch/prop/issues/124 for more information.
+pub fn refl_left<A: Prop, B: Prop>(eq: Eq<A, B>) -> Eq<A, A> {
+    eq::in_right_arg(eq.clone(), eq::commute(eq))
+}
+
+/// Get reflection equality from equality between different propositions.
+///
+/// This is used as alternative to `eq::refl` for path witness in Path Semantics.
+/// See https://github.com/advancedresearch/prop/issues/124 for more information.
+pub fn refl_right<A: Prop, B: Prop>(eq: Eq<A, B>) -> Eq<B, B> {
+    eq::in_left_arg(eq.clone(), eq)
+}
+
 /// Reduce naive core axiom in case of false to equality of associated propositions.
 pub fn naive_red_false<A: Prop, B: Prop>(
     p: PSemNaive<False, False, A, B>
