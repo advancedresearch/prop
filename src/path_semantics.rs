@@ -726,6 +726,26 @@ pub fn implication_theorem<
     }
 }
 
+/// Creation Theorem
+///
+/// See https://github.com/advancedresearch/path_semantics/blob/master/papers-wip2/creation-theorem.pdf
+pub fn creation_theorem<
+    A1: DLProp,
+    B1: DLProp,
+    A2: LProp,
+    B2: LProp,
+>(
+    not_a1: Not<A1>,
+    b1_b2: Imply<B1, B2>,
+) -> Imply<A2, B2>
+    where A1: POrd<A2>, B1: POrd<B2>
+{
+    let not_a1_clone = not_a1.clone();
+    let a1_b1 = Rc::new(move |a| match not_a1_clone(a) {});
+    let a1_a2 = Rc::new(move |a| match not_a1(a) {});
+    implication_theorem(a1_b1, a1_a2, b1_b2)
+}
+
 /// Checks whether two proposition levels are equal.
 pub fn eq_lev<A: LProp, B: LProp>(_a: A, _b: B) where (A::N, B::N): EqNat {}
 /// Checks whether a proposition level is less than another.
