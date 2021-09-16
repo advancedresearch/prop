@@ -695,6 +695,37 @@ pub fn uniq_ty<A: Prop, B: Prop, C: Prop, D: Prop, E: Prop>(
     eq::transitivity(eq_c_e, eq::commute(eq_d_e))
 }
 
+/// Implication Theorem
+///
+/// See https://github.com/advancedresearch/path_semantics/blob/master/papers-wip/implication-theorem.pdf
+pub fn implication_theorem<
+    A1: DLProp,
+    B1: DLProp,
+    A2: LProp,
+    B2: LProp,
+>(
+    a1_b1: Imply<A1, B1>,
+    g1: Imply<A1, A2>,
+    g2: Imply<B1, B2>
+) -> Imply<A2, B2>
+    where A1: POrd<A2>, B1: POrd<B2>
+{
+    match (A1::decide(), B1::decide()) {
+        (_, Either::Left(b1)) => {
+            let b2 = g2(b1);
+            Rc::new(move |_| b2.clone())
+        }
+        (Either::Right(not_a1), Either::Right(not_b1)) => {
+            let eq_a1_b1 = and::to_eq_neg((not_a1, not_b1));
+            let p = assume_naive();
+            p((eq_a1_b1, (g1, g2))).0
+        }
+        (Either::Left(a1), Either::Right(not_b1)) => {
+            match not_b1(a1_b1(a1)) {}
+        }
+    }
+}
+
 /// Checks whether two proposition levels are equal.
 pub fn eq_lev<A: LProp, B: LProp>(_a: A, _b: B) where (A::N, B::N): EqNat {}
 /// Checks whether a proposition level is less than another.
