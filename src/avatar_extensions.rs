@@ -89,7 +89,6 @@ impl<T: Prop, U: Prop> Commutative<T, U> for Eq<T, U> {
     fn commute(self) -> Self::Out {eq::commute(self)}
 }
 
-
 /// `a ∧ b  =>  -(a * b) = (-a) * b`.
 pub fn left_cover_by_proof<
     A: Prop + NonUniform<Pa>,
@@ -123,3 +122,31 @@ pub fn right_cover_by_proof<
         Rc::new(move |_| M1::mul(a.clone(), b.clone()).inv())
     )
 }
+
+/// Imaginary inverse.
+///
+/// This is prevented from leaking
+/// by not having access to the inner object.
+pub struct Inv<T>(T);
+
+impl<T> Avatar<Inv<T>> for Inv<T> {
+    type Out = T;
+    fn inv(self) -> T {self.0}
+}
+impl<T> Avatar<Inv<T>> for T {
+    type Out = Inv<T>;
+    fn inv(self) -> Inv<T> {Inv(self)}
+}
+
+impl<T, U: Prop> Product<T, U> for Inv<Imply<T, U>> {
+    fn mul(a: T, b: U) -> Self {
+        Inv(Rc::new(move |_| b.clone()))
+    }
+}
+
+impl<T, U: Prop> Product<T, U> for Imply<Inv<T>, Inv<U>> {
+    fn mul(a: T, b: U) -> Self {
+        Rc::new(move |_| Inv(b.clone()))
+    }
+}
+
