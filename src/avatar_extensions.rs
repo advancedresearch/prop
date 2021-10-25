@@ -36,6 +36,7 @@ pub trait LoopWitness: Sized + Uniform + NonUniform<Self> {}
 impl<T: Avatar<T, Out = T>> LoopWitness for T {}
 
 /// Loop.
+#[derive(Clone)]
 pub struct Loop<T>(pub T);
 
 impl<T> Avatar<Loop<T>> for Loop<T> {
@@ -127,6 +128,7 @@ pub fn right_cover_by_proof<
 ///
 /// This is prevented from leaking
 /// by not having access to the inner object.
+#[derive(Clone)]
 pub struct Inv<T>(T);
 
 impl<T> Inv<Inv<T>> {
@@ -135,6 +137,12 @@ impl<T> Inv<Inv<T>> {
 
     /// `a => --a`.
     pub fn double(a: T) -> Self {Inv(Inv(a))}
+}
+
+impl<T: Product<U, V>, U, V> Product<U, V> for Inv<T> {
+    fn mul(a: U, b: V) -> Self {
+        Inv(T::mul(a, b))
+    }
 }
 
 impl<T> Avatar<Inv<T>> for Inv<T> {
@@ -146,22 +154,10 @@ impl<T> Avatar<Inv<T>> for T {
     fn inv(self) -> Inv<T> {Inv(self)}
 }
 
-impl<T, U: Prop> Product<T, U> for Inv<Imply<T, U>> {
-    fn mul(a: T, b: U) -> Self {
-        Inv(Rc::new(move |_| b.clone()))
-    }
-}
-
-impl<T, U: Prop> Product<T, U> for Imply<Inv<T>, Inv<U>> {
-    fn mul(a: T, b: U) -> Self {
-        Rc::new(move |_| Inv(b.clone()))
-    }
-}
-
 /// Implemented by contravariant products.
 pub trait Contravariant<T, U>: Product<T, U> {
     /// The contravariant product type.
-    type Out: Product<U, T>;
+    type Out: Product<Inv<U>, Inv<T>>;
     /// Gets the contravariant product.
     fn contra(self) -> Self::Out;
 }
@@ -173,9 +169,44 @@ impl<T: Prop, U: Prop> Contravariant<T, U> for Inv<Imply<T, U>> {
     }
 }
 
-impl<T: Prop, U: Prop> Contravariant<T, U> for Imply<Inv<T>, Inv<U>> {
-    type Out = Inv<Imply<U, T>>;
+impl<T: Prop, U: Prop> Contravariant<Inv<T>, Inv<U>> for Imply<Inv<T>, Inv<U>> {
+    type Out = Inv<Imply<Inv<Inv<U>>, Inv<Inv<T>>>>;
     fn contra(self) -> Self::Out {
         unimplemented!()
+    }
+}
+
+/// An anti-commutative product.
+#[derive(Clone)]
+pub struct AntiMul<T, U>(T, U);
+
+impl<T, U> AntiMul<Inv<Inv<T>>, Inv<Inv<U>>> {
+    /// `(--a * --b)  =>  a * b`.
+    pub fn rev_double(self) -> AntiMul<T, U> {
+        AntiMul(((self.0).0).0, ((self.1).0).0)
+    }
+}
+
+impl<T, U> Inv<AntiMul<Inv<Inv<T>>, Inv<Inv<U>>>> {
+    /// `-(--a * --b)  =>  -(a * b)`.
+    pub fn rev_double(self) -> Inv<AntiMul<T, U>> {
+        Inv(self.0.rev_double())
+    }
+}
+
+impl<T, U> Product<T, U> for AntiMul<T, U> {
+    fn mul(a: T, b: U) -> Self {AntiMul(a, b)}
+}
+
+impl<T, U> Contravariant<T, U> for Inv<AntiMul<T, U>> {
+    type Out = AntiMul<Inv<U>, Inv<T>>;
+    fn contra(self) -> Self::Out {
+        AntiMul(Inv((self.0).1), Inv((self.0).0))
+    }
+}
+impl<T, U> Contravariant<Inv<T>, Inv<U>> for AntiMul<Inv<T>, Inv<U>> {
+    type Out = Inv<AntiMul<Inv<Inv<U>>, Inv<Inv<T>>>>;
+    fn contra(self) -> Self::Out {
+        Inv(AntiMul(Inv(Inv((self.1).0)), Inv(Inv((self.0).0))))
     }
 }
