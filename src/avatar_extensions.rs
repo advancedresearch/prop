@@ -6,6 +6,8 @@
 //! For more information, see
 //! https://advancedresearch.github.io/avatar-extensions/summary.html
 
+use crate::*;
+
 /// Implemented by avatars.
 ///
 /// An avatar is an involution,
@@ -18,29 +20,20 @@ pub trait Avatar<T> {
     fn inv(self) -> Self::Out;
 }
 
-/// Implemented avatars that have their "clothes on".
+/// Implemented by avatars that have their "clothes on".
 pub trait Uniform: Sized + Avatar<Self> {}
 
 impl<T: Avatar<T>> Uniform for T {}
 
-/// Loop Witness.
-pub trait LoopWitness<P>: Sized + Avatar<Self, Out = Self>
-    where P: Avatar<P, Out = Self::Inner>
-{
-    /// The inner type of the loop witness.
-    ///
-    /// This is implemented as `P::Out`.
-    ///
-    /// Since `P` is uniform, the next involution is non-uniform,
-    /// which is the inner most possible type.
-    type Inner;
-}
+/// Implemented by avatars that have their "clothes off".
+pub trait NonUniform<T>: Sized + Avatar<T, Out = T> {}
 
-impl<P, T: Avatar<T, Out = T>> LoopWitness<P> for T
-    where P: Uniform
-{
-    type Inner = P::Out;
-}
+impl<U, T: Avatar<U, Out = U>> NonUniform<U> for T {}
+
+/// Loop Witness.
+pub trait LoopWitness: Sized + Uniform + NonUniform<Self> {}
+
+impl<T: Avatar<T, Out = T>> LoopWitness for T {}
 
 /// Loop.
 pub struct Loop<T>(pub T);
@@ -50,7 +43,7 @@ impl<T> Avatar<Loop<T>> for Loop<T> {
     fn inv(self) -> Self::Out {self}
 }
 
-/// Gets a loop from product.
-pub fn loop_from_product<T: Uniform>(p: T) -> Loop<T::Out> {
+/// Gets a loop witness from product witness.
+pub fn to_loop<T: Uniform>(p: T) -> Loop<T::Out> {
     Loop(p.inv())
 }
