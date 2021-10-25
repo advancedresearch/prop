@@ -64,3 +64,21 @@ impl<T: Prop, U: Prop> Product<T, U> for Eq<T, U> {
          Rc::new(move |_| a.clone()))
     }
 }
+
+/// Implememnted by commutative products.
+pub trait Commutative<T, U>: Product<T, U> {
+    /// The output type for commuted product.
+    type Out: Commutative<U, T>;
+    /// Commutes product.
+    fn commute(self) -> Self::Out;
+}
+
+impl<T: Prop, U: Prop> Commutative<T, U> for And<T, U> {
+    type Out = And<U, T>;
+    fn commute(self) -> Self::Out {and::commute(self)}
+}
+
+impl<T: Prop, U: Prop> Commutative<T, U> for Eq<T, U> {
+    type Out = Eq<U, T>;
+    fn commute(self) -> Self::Out {eq::commute(self)}
+}
