@@ -82,3 +82,38 @@ impl<T: Prop, U: Prop> Commutative<T, U> for Eq<T, U> {
     type Out = Eq<U, T>;
     fn commute(self) -> Self::Out {eq::commute(self)}
 }
+
+
+/// `a ∧ b  =>  -(a * b) = (-a) * b`.
+pub fn left_cover_by_proof<
+    A: Prop + NonUniform<Pa>,
+    B: Prop,
+    M1: Product<A, B> + NonUniform<PM1>,
+    M2: Product<Pa, B>,
+    Pa,
+    PM1,
+>(a: A, b: B) -> Eq<PM1, M2> {
+    let a2 = a.clone();
+    let b2 = b.clone();
+    (
+        Rc::new(move |_| M2::mul(a2.clone().inv(), b2.clone())),
+        Rc::new(move |_| M1::mul(a.clone(), b.clone()).inv())
+    )
+}
+
+/// `a ∧ b  =>  -(a * b) = a * (-b)`.
+pub fn right_cover_by_proof<
+    A: Prop,
+    B: Prop + NonUniform<Pb>,
+    M1: Product<A, B> + NonUniform<PM1>,
+    M2: Product<A, Pb>,
+    Pb,
+    PM1,
+>(a: A, b: B) -> Eq<PM1, M2> {
+    let a2 = a.clone();
+    let b2 = b.clone();
+    (
+        Rc::new(move |_| M2::mul(a2.clone(), b2.clone().inv())),
+        Rc::new(move |_| M1::mul(a.clone(), b.clone()).inv())
+    )
+}
