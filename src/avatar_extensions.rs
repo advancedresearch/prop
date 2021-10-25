@@ -47,3 +47,20 @@ impl<T> Avatar<Loop<T>> for Loop<T> {
 pub fn to_loop<T: Uniform>(p: T) -> Loop<T::Out> {
     Loop(p.inv())
 }
+
+/// Implemented by products.
+pub trait Product<T, U> {
+    /// Creates a product out of two propositions.
+    fn mul(a: T, b: U) -> Self;
+}
+
+impl<T, U> Product<T, U> for And<T, U> {
+    fn mul(a: T, b: U) -> Self {(a, b)}
+}
+
+impl<T: Prop, U: Prop> Product<T, U> for Eq<T, U> {
+    fn mul(a: T, b: U) -> Self {
+        (Rc::new(move |_| b.clone()),
+         Rc::new(move |_| a.clone()))
+    }
+}
