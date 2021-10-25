@@ -101,6 +101,7 @@ use std::rc::Rc;
 use Either::*;
 
 pub mod and;
+pub mod avatar_extensions;
 pub mod imply;
 pub mod eq;
 pub mod not;
