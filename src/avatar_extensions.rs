@@ -150,3 +150,24 @@ impl<T, U: Prop> Product<T, U> for Imply<Inv<T>, Inv<U>> {
     }
 }
 
+/// Implemented by contravariant products.
+pub trait Contravariant<T, U>: Product<T, U> {
+    /// The contravariant product type.
+    type Out: Product<U, T>;
+    /// Gets the contravariant product.
+    fn contra(self) -> Self::Out;
+}
+
+impl<T: Prop, U: Prop> Contravariant<T, U> for Inv<Imply<T, U>> {
+    type Out = Imply<Inv<U>, Inv<T>>;
+    fn contra(self) -> Self::Out {
+        unimplemented!()
+    }
+}
+
+impl<T: Prop, U: Prop> Contravariant<T, U> for Imply<Inv<T>, Inv<U>> {
+    type Out = Inv<Imply<U, T>>;
+    fn contra(self) -> Self::Out {
+        unimplemented!()
+    }
+}
