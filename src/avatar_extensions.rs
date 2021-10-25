@@ -129,6 +129,14 @@ pub fn right_cover_by_proof<
 /// by not having access to the inner object.
 pub struct Inv<T>(T);
 
+impl<T> Inv<Inv<T>> {
+    /// `--a => a`.
+    pub fn rev_double(self) -> T {(self.0).0}
+
+    /// `a => --a`.
+    pub fn double(a: T) -> Self {Inv(Inv(a))}
+}
+
 impl<T> Avatar<Inv<T>> for Inv<T> {
     type Out = T;
     fn inv(self) -> T {self.0}
