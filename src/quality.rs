@@ -60,16 +60,6 @@ pub fn self_quality_right<A: Prop, B: Prop>(q_ab: Q<A, B>) -> Q<B, B> {
     transitivity(q_ba, q_ab)
 }
 
-/// `¬(a ~~ a) => ¬(a ~~ b)`.
-pub fn sesh_left<A: Prop, B: Prop>(sesh_a: Not<Q<A, A>>) -> Not<Q<A, B>> {
-    Rc::new(move |not_q_ab| sesh_a(self_quality_left(not_q_ab)))
-}
-
-/// `¬(b ~~ b) => ¬(a ~~ b)`.
-pub fn sesh_right<A: Prop, B: Prop>(sesh_b: Not<Q<B, B>>) -> Not<Q<A, B>> {
-    Rc::new(move |not_q_ab| sesh_b(self_quality_right(not_q_ab)))
-}
-
 /// Mirror `¬¬(a ~~ a)`.
 pub fn mirror<A: Prop>() -> Not<Not<Q<A, A>>> {
     match eq_lift(eq::refl()) {
@@ -99,5 +89,5 @@ pub fn absurd<A: Prop, B: Prop, C: Prop>(
 
 /// `¬(a ~~ a) => b`.
 pub fn sesh_absurd<A: Prop, B: Prop>(f: Not<Q<A, A>>) -> B {
-    absurd(f, eq::refl())
+    not::absurd(mirror(), f)
 }
