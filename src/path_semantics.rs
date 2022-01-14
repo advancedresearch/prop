@@ -10,54 +10,47 @@
 
 use crate::*;
 
+pub use quality::Q;
+pub use quality::self_quality_left as refl_left;
+pub use quality::self_quality_right as refl_right;
+
 use nat::*;
 
 /// Core axiom of Path Semantics.
 pub type PSem<F1, F2, X1, X2> = Imply<
-    And<And<Eq<F1, F2>, And<POrdProof<F1, X1>, POrdProof<F2, X2>>>,
+    And<And<Q<F1, F2>, And<POrdProof<F1, X1>, POrdProof<F2, X2>>>,
         And<Imply<F1, X1>, Imply<F2, X2>>>,
-    Eq<X1, X2>,
+    Q<X1, X2>,
 >;
 
 /// Naive axiom of Path Semantics (without order assumption).
 pub type PSemNaive<F1, F2, X1, X2> = Imply<
-    And<Eq<F1, F2>, And<Imply<F1, X1>, Imply<F2, X2>>>,
-    Eq<X1, X2>
->;
-
-/// Lifts `A` to higher level.
-pub type PLift<A, B, C> = Imply<
-    And<Eq<A, B>, Imply<B, C>>,
-    Eq<A, C>
+    And<Q<F1, F2>, And<Imply<F1, X1>, Imply<F2, X2>>>,
+    Q<X1, X2>
 >;
 
 /// Sends first argument of Logical AND to higher level.
 pub type PAndFst<A, B, C, D> = Imply<
-    And<Eq<And<A, B>, C>, Imply<C, D>>,
-    Eq<A, D>,
+    And<Q<And<A, B>, C>, Imply<C, D>>,
+    Q<A, D>,
 >;
 /// Sends second argument of Logical AND to higher level.
 pub type PAndSnd<A, B, C, D> = Imply<
-    And<Eq<And<A, B>, C>, Imply<C, D>>,
-    Eq<B, D>,
+    And<Q<And<A, B>, C>, Imply<C, D>>,
+    Q<B, D>,
 >;
-/// Sends Logical AND to higher level.
-pub type PAnd<A, B, C, D> = PLift<And<A, B>, C, D>;
 
 /// Sends first argument of Logical OR to higher level.
 pub type POrFst<A, B, C, D> = Imply<
-    And<Eq<Or<A, B>, C>, Imply<C, D>>,
-    Imply<Not<B>, Eq<A, D>>
+    And<Q<Or<A, B>, C>, Imply<C, D>>,
+    Imply<Not<B>, Q<A, D>>
 >;
 
 /// Sends second argument of Logical OR to higher level.
 pub type POrSnd<A, B, C, D> = Imply<
-    And<Eq<Or<A, B>, C>, Imply<C, D>>,
-    Imply<Not<A>, Eq<B, D>>
+    And<Q<Or<A, B>, C>, Imply<C, D>>,
+    Imply<Not<A>, Q<B, D>>
 >;
-
-/// Sends Logical OR to higher level.
-pub type POr<A, B, C, D> = PLift<Or<A, B>, C, D>;
 
 /// Proof of path semantical order.
 #[derive(Copy)]
@@ -335,27 +328,12 @@ pub fn assume_refl<A: Prop, B: Prop>() -> PSemNaive<A, A, B, B>
     assume_naive()
 }
 
-/// Get reflection equality from equality between different propositions.
-///
-/// This is used as alternative to `eq::refl` for path witness in Path Semantics.
-/// See https://github.com/advancedresearch/prop/issues/124 for more information.
-pub fn refl_left<A: Prop, B: Prop>(eq: Eq<A, B>) -> Eq<A, A> {
-    eq::in_right_arg(eq.clone(), eq::commute(eq))
-}
-
-/// Get reflection equality from equality between different propositions.
-///
-/// This is used as alternative to `eq::refl` for path witness in Path Semantics.
-/// See https://github.com/advancedresearch/prop/issues/124 for more information.
-pub fn refl_right<A: Prop, B: Prop>(eq: Eq<A, B>) -> Eq<B, B> {
-    eq::in_left_arg(eq.clone(), eq)
-}
-
 /// Reduce naive core axiom in case of false to equality of associated propositions.
 pub fn naive_red_false<A: Prop, B: Prop>(
-    p: PSemNaive<False, False, A, B>
-) -> Eq<A, B> {
-    p((eq::refl(), (imply::absurd(), imply::absurd())))
+    p: PSemNaive<False, False, A, B>,
+    q: Q<False, False>,
+) -> Q<A, B> {
+    p((q, (imply::absurd(), imply::absurd())))
 }
 
 /// Composition.
@@ -394,30 +372,6 @@ pub fn naive_comp<F1: Prop, F2: Prop, F3: Prop, F4: Prop, X1: Prop, X2: Prop>(
     })
 }
 
-/// `(a b) (c d): ¬a ∧ ¬b ∧ (a => c) ∧ (b => d) => (c = d)`.
-pub fn neg<A: Prop, B: Prop, C: Prop, D: Prop>(
-    not_a: Not<A>,
-    not_b: Not<B>,
-    pr_a_c: POrdProof<A, C>,
-    pr_b_d: POrdProof<B, D>,
-    a_c: Imply<A, C>,
-    b_d: Imply<B, D>,
-    p: PSem<A, B, C, D>,
-) -> Eq<C, D> {
-    p(((and::to_eq_neg((not_a, not_b)), (pr_a_c, pr_b_d)), (a_c, b_d)))
-}
-
-/// `(a b) (c d): ¬a ∧ ¬b ∧ a => c ∧ b => d => c = d`.
-pub fn naive_neg<A: Prop, B: Prop, C: Prop, D: Prop>(
-    not_a: Not<A>,
-    not_b: Not<B>,
-    a_c: Imply<A, C>,
-    b_d: Imply<B, D>,
-    p: PSemNaive<A, B, C, D>,
-) -> Eq<C, D> {
-    p((and::to_eq_neg((not_a, not_b)), (a_c, b_d)))
-}
-
 /// Constructs a 2D naive core axiom from two naive core axioms,
 /// where one is normalised of the other.
 pub fn xy_norm<
@@ -428,17 +382,17 @@ pub fn xy_norm<
 >(
     p1: PSemNaive<A, B, C, D>,
     p2: PSemNaiveNorm<A, B, C, D>,
-    f_eq_a_b: Imply<Eq<A::SetLevel<(A::N, <LN<Zero, A, B, C, D> as LProp>::N)>,
+    f_eq_a_b: Imply<Q<A::SetLevel<(A::N, <LN<Zero, A, B, C, D> as LProp>::N)>,
                        B::SetLevel<(B::N, <LN<One, A, B, C, D> as LProp>::N)>>,
-                And<Eq<A, B>, Eq<LN<Zero, A, B, C, D>, LN<One, A, B, C, D>>>>,
+                And<Q<A, B>, Q<LN<Zero, A, B, C, D>, LN<One, A, B, C, D>>>>,
     f_a_c: Imply<Imply<A::SetLevel<(A::N, <LN<Zero, A, B, C, D> as LProp>::N)>,
                        C::SetLevel<(C::N, <LN<Two, A, B, C, D> as LProp>::N)>>,
                  And<Imply<A, C>, Imply<LN<Zero, A, B, C, D>, LN<Two, A, B, C, D>>>>,
     f_b_d: Imply<Imply<B::SetLevel<(B::N, <LN<One, A, B, C, D> as LProp>::N)>,
                        D::SetLevel<(D::N, <LN<Three, A, B, C, D> as LProp>::N)>>,
                  And<Imply<B, D>, Imply<LN<One, A, B, C, D>, LN<Three, A, B, C, D>>>>,
-    f_eq_c_d: Imply<And<Eq<C, D>, Eq<LN<Two, A, B, C, D>, LN<Three, A, B, C, D>>>,
-                    Eq<C::SetLevel<(C::N, <LN<Two, A, B, C, D> as LProp>::N)>,
+    f_eq_c_d: Imply<And<Q<C, D>, Q<LN<Two, A, B, C, D>, LN<Three, A, B, C, D>>>,
+                    Q<C::SetLevel<(C::N, <LN<Two, A, B, C, D> as LProp>::N)>,
                        D::SetLevel<(D::N, <LN<Three, A, B, C, D> as LProp>::N)>>>
 ) -> PSemNaive<
         A::SetLevel<(A::N, <LN<Zero, A, B, C, D> as LProp>::N)>,
@@ -485,12 +439,12 @@ pub fn to_por_fst<A: DProp, B: Prop, C: DProp, D: Prop>(
             let g = g.clone();
             match (A::decide(), C::decide()) {
                 (_, Left(c)) => {
-                    let or_a_b = f.1(c);
+                    let or_a_b = quality::to_eq(f.clone()).1(c);
                     let a = and::exc_right((not_b, or_a_b));
                     p((f, (a.map_any(), g)))
                 }
                 (Left(a), Right(not_c)) => {
-                    let c = f.0(Left(a));
+                    let c = quality::to_eq(f).0(Left(a));
                     match not_c(c) {}
                 }
                 (Right(not_a), _) => {
@@ -515,12 +469,12 @@ pub fn to_por_snd<A: Prop, B: DProp, C: DProp, D: Prop>(
             let g = g.clone();
             match (B::decide(), C::decide()) {
                 (_, Left(c)) => {
-                    let or_a_b = f.1(c);
+                    let or_a_b = quality::to_eq(f.clone()).1(c);
                     let b = and::exc_left((not_a, or_a_b));
                     p((f, (b.map_any(), g)))
                 }
                 (Left(b), Right(not_c)) => {
-                    let c = f.0(Right(b));
+                    let c = quality::to_eq(f.clone()).0(Right(b));
                     match not_c(c) {}
                 }
                 (Right(not_b), _) => {
@@ -531,95 +485,6 @@ pub fn to_por_snd<A: Prop, B: DProp, C: DProp, D: Prop>(
                 }
             }
         })
-    })
-}
-
-/// Join either `POrFst` and `POrSnd`.
-pub fn por_join_either<A: DProp, B: DProp, C: Prop, D: Prop>(
-    p: Or<POrFst<A, B, C, D>, POrSnd<A, B, C, D>>,
-) -> POr<A, B, C, D> {
-    match p {
-        Left(p1) => {
-            Rc::new(move |(eq_f_c, g)| {
-                let not_b_eq_a_d = p1.clone()((eq_f_c.clone(), g.clone()));
-                let imply_or_a_b_d: Imply<Or<A, B>, D> = imply::in_left_arg(g, eq::commute(eq_f_c));
-
-                let eq_or_a_b_d: Eq<Or<A, B>, D> = (
-                    Rc::new(move |or_a_b: Or<A, B>| {
-                        let imply_or_a_b_d = imply_or_a_b_d.clone();
-                        match or_a_b {
-                            Left(a) => imply_or_a_b_d(Left(a)),
-                            Right(b) => imply_or_a_b_d(Right(b)),
-                        }
-                    }),
-                    Rc::new(move |d: D| {
-                        match B::decide() {
-                            Left(b) => Right(b),
-                            Right(not_b) => Left(not_b_eq_a_d.clone()(not_b).1(d)),
-                        }
-                    })
-                );
-                eq_or_a_b_d
-            })
-        }
-        Right(p2) => {
-            Rc::new(move |(eq_f_c, g)| {
-                let not_a_eq_b_d = p2.clone()((eq_f_c.clone(), g.clone()));
-                let imply_or_a_b_d: Imply<Or<A, B>, D> = imply::in_left_arg(g, eq::commute(eq_f_c));
-
-                let eq_or_a_b_d: Eq<Or<A, B>, D> = (
-                    Rc::new(move |or_a_b: Or<A, B>| {
-                        let imply_or_a_b_d = imply_or_a_b_d.clone();
-                        match or_a_b {
-                            Left(a) => imply_or_a_b_d(Left(a)),
-                            Right(b) => imply_or_a_b_d(Right(b)),
-                        }
-                    }),
-                    Rc::new(move |d: D| {
-                        match A::decide() {
-                            Left(a) => Left(a),
-                            Right(not_a) => Right(not_a_eq_b_d.clone()(not_a).1(d)),
-                        }
-                    })
-                );
-                eq_or_a_b_d
-            })
-        }
-    }
-}
-
-/// Transports core axiom using equivalence in the `C` corner.
-pub fn by_eq_c<A: Prop, B: Prop, C: Prop, D: Prop, C2: Prop>(
-    p: PSem<A, B, C, D>,
-    eq_c_c2: Eq<C, C2>,
-) -> PSem<A, B, C2, D> {
-    Rc::new(move |((f, (pr_a_c, pr_b_d)), (g, h))| {
-        let eq_c_c2 = eq_c_c2.clone();
-        let eq_c_c2_clone = eq_c_c2.clone();
-        let eq_c_c2_clone2 = eq_c_c2.clone();
-        let pr2 = pr_a_c.by_eq_right(eq::commute(eq_c_c2.clone()));
-        let g2 = Rc::new(move |a| eq_c_c2_clone2.1(g.clone()(a)));
-        let eq_c_d = p(((f, (pr2, pr_b_d)), (g2, h)));
-        let eq_c_d_clone = eq_c_d.clone();
-        (Rc::new(move |c2| eq_c_d_clone.0(eq_c_c2_clone.1(c2))),
-         Rc::new(move |d| eq_c_c2.0(eq_c_d.clone().1(d))))
-    })
-}
-
-/// Transports naive core axiom using equivalence in the `C` corner.
-pub fn naive_by_eq_c<A: Prop, B: Prop, C: Prop, D: Prop, C2: Prop>(
-    p: PSemNaive<A, B, C, D>,
-    eq_c_c2: Eq<C, C2>,
-) -> PSemNaive<A, B, C2, D> {
-    Rc::new(move |(f, (g, h))| {
-        let eq_c_c2 = eq_c_c2.clone();
-        let eq_c_c2_clone = eq_c_c2.clone();
-        let eq_c_c2_clone2 = eq_c_c2.clone();
-        let g2 = Rc::new(move |a| eq_c_c2_clone2.1(g.clone()(a)));
-        let eq_c_d = p((f, (g2, h)));
-        let eq_c_d_clone = eq_c_d.clone();
-        (Rc::new(move |c2| eq_c_d_clone.0(eq_c_c2_clone.1(c2))),
-         Rc::new(move |d| eq_c_c2.0(eq_c_d.clone().1(d))))
     })
 }
 
@@ -639,30 +504,15 @@ pub fn to_pand_snd<A: Prop, B: Prop, C: Prop, D: Prop>(
     Rc::new(move |(f, g)| p.clone()((f, (y.clone(), g))))
 }
 
-/// Join `PAndFst` and `PAndSnd`.
-pub fn pand_join<A: Prop, B: Prop, C: Prop, D: Prop>(
-    p1: PAndFst<A, B, C, D>,
-    p2: PAndSnd<A, B, C, D>,
-) -> PAnd<A, B, C, D> {
-    Rc::new(move |(eq_f_c, g)| {
-        let eq_a_d = p1.clone()((eq_f_c.clone(), g.clone()));
-        let eq_b_d = p2.clone()((eq_f_c, g));
-        let eq_a_d_copy = eq_a_d.clone();
-        let eq_ab_d: Eq<And<A, B>, D> = (Rc::new(move |(a, _)| eq_a_d_copy.0(a)),
-                       Rc::new(move |d| (eq_a_d.clone().1(d.clone()), eq_b_d.clone().1(d))));
-        eq_ab_d
-    })
-}
-
 /// Use both `PAndFst` and `PAndSnd`.
 ///
 /// This results in a stronger statement than `PAnd` alone.
 pub fn use_pand_both<A: Prop, B: Prop, C: Prop, D: Prop>(
-    f: Eq<And<A, B>, D>,
+    f: Q<And<A, B>, D>,
     g: Imply<D, C>,
     p_a: PAndFst<A, B, D, C>,
     p_b: PAndSnd<A, B, D, C>,
-) -> And<Eq<A, C>, Eq<B, C>> {
+) -> And<Q<A, C>, Q<B, C>> {
     let eq_a_c = p_a((f.clone(), g.clone()));
     let eq_b_c = p_b((f, g));
     (eq_a_c, eq_b_c)
@@ -670,80 +520,29 @@ pub fn use_pand_both<A: Prop, B: Prop, C: Prop, D: Prop>(
 
 /// Use both `PAndFst` and `PAndSnd` to prove `a = b`.
 pub fn pand_both_eq<A: Prop, B: Prop, C: Prop, D: Prop>(
-    f: Eq<And<A, B>, D>,
+    f: Q<And<A, B>, D>,
     g: Imply<D, C>,
     p_a: PAndFst<A, B, D, C>,
     p_b: PAndSnd<A, B, D, C>,
-) -> Eq<A, B> {
+) -> Q<A, B> {
     let (eq_a_c, eq_b_c) = path_semantics::use_pand_both(f, g, p_a, p_b);
-    eq::transitivity(eq_a_c, eq::commute(eq_b_c))
+    quality::transitivity(eq_a_c, quality::symmetry(eq_b_c))
 }
 
 /// Proves that types are unique.
 pub fn uniq_ty<A: Prop, B: Prop, C: Prop, D: Prop, E: Prop>(
-    eq_a_b: Eq<A, B>,
+    eq_a_b: Q<A, B>,
     f: Imply<A, And<C, D>>,
     b_e: Imply<B, E>,
     p_a: PSemNaive<A, B, C, E>,
     p_b: PSemNaive<A, B, D, E>,
-) -> Eq<C, D> {
+) -> Q<C, D> {
     let f_copy = f.clone();
     let a_c = Rc::new(move |x| f_copy(x).0);
     let a_d = Rc::new(move |x| f.clone()(x).1);
     let eq_c_e = p_a((eq_a_b.clone(), (a_c, b_e.clone())));
     let eq_d_e = p_b((eq_a_b, (a_d, b_e)));
-    eq::transitivity(eq_c_e, eq::commute(eq_d_e))
-}
-
-/// Implication Theorem
-///
-/// See https://github.com/advancedresearch/path_semantics/blob/master/papers-wip/implication-theorem.pdf
-pub fn implication_theorem<
-    A1: DLProp,
-    B1: DLProp,
-    A2: LProp,
-    B2: LProp,
->(
-    a1_b1: Imply<A1, B1>,
-    g1: Imply<A1, A2>,
-    g2: Imply<B1, B2>
-) -> Imply<A2, B2>
-    where A1: POrd<A2>, B1: POrd<B2>
-{
-    match (A1::decide(), B1::decide()) {
-        (_, Either::Left(b1)) => {
-            let b2 = g2(b1);
-            Rc::new(move |_| b2.clone())
-        }
-        (Either::Right(not_a1), Either::Right(not_b1)) => {
-            let eq_a1_b1 = and::to_eq_neg((not_a1, not_b1));
-            let p = assume_naive();
-            p((eq_a1_b1, (g1, g2))).0
-        }
-        (Either::Left(a1), Either::Right(not_b1)) => {
-            match not_b1(a1_b1(a1)) {}
-        }
-    }
-}
-
-/// Creation Theorem
-///
-/// See https://github.com/advancedresearch/path_semantics/blob/master/papers-wip2/creation-theorem.pdf
-pub fn creation_theorem<
-    A1: DLProp,
-    B1: DLProp,
-    A2: LProp,
-    B2: LProp,
->(
-    not_a1: Not<A1>,
-    b1_b2: Imply<B1, B2>,
-) -> Imply<A2, B2>
-    where A1: POrd<A2>, B1: POrd<B2>
-{
-    let not_a1_clone = not_a1.clone();
-    let a1_b1 = Rc::new(move |a| match not_a1_clone(a) {});
-    let a1_a2 = Rc::new(move |a| match not_a1(a) {});
-    implication_theorem(a1_b1, a1_a2, b1_b2)
+    quality::transitivity(eq_c_e, quality::symmetry(eq_d_e))
 }
 
 /// Checks whether two proposition levels are equal.
@@ -751,8 +550,8 @@ pub fn eq_lev<A: LProp, B: LProp>(_a: A, _b: B) where (A::N, B::N): EqNat {}
 /// Checks whether a proposition level is less than another.
 pub fn lt_lev<A: LProp, B: LProp>(_a: A, _b: B) where A::N: Lt<B::N> {}
 
-/// Checks that `X` is equal to `T`.
-pub fn check_eq<T, X>(_: Eq<X, T>) {}
+/// Checks that `X` is qual to `T`.
+pub fn check_q<T, X>(_: Q<X, T>) {}
 
 #[cfg(test)]
 #[allow(dead_code)]

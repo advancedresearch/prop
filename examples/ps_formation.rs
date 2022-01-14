@@ -60,11 +60,11 @@ pub fn abs_formation<A: Prop, B: Prop, T: Prop, U: Prop>(
 
 //    a : T, b : U
 // -----------------
-// (a = b) : (T = U)
+// (a ~~ b) : (T ~~ U)
 pub fn eqv_formation<A: Prop, B: Prop, T: Prop, U: Prop>(
     ty_a: Imply<A, T>,
     ty_b: Imply<B, U>,
-) -> Imply<Eq<A, B>, Eq<T, U>>
+) -> Imply<Q<A, B>, Q<T, U>>
     where A: POrd<T>, B: POrd<U>
 {
     Rc::new(move |f| {
