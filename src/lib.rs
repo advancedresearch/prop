@@ -108,6 +108,7 @@ pub mod not;
 pub mod or;
 pub mod path_semantics;
 pub mod nat;
+pub mod quality;
 
 /// Logical true.
 #[derive(Copy, Clone)]
