@@ -60,6 +60,11 @@ pub fn is_false<A: Prop>((_, f1): Eq<False, A>) -> Not<A> {
     f1
 }
 
+/// `¬a => (a == false)`.
+pub fn to_eq_false<A: Prop>(n_a: Not<A>) -> Eq<A, False> {
+    (n_a, imply::absurd())
+}
+
 /// `¬(a = b) ∧ a  =>  ¬b`.
 pub fn contra<A: DProp, B: DProp>(f: Not<Eq<A, B>>, a: A) -> Not<B> {
     match (A::decide(), B::decide()) {
