@@ -21,12 +21,14 @@
 
 use crate::*;
 
+pub use commute as symmetry;
+
 /// Quality between `A` and `B` (`A ~~ B`).
 #[derive(Clone)]
 pub struct Q<A, B>(Eq<A, B>);
 
 /// Symmetry `(a ~~ b) => (b ~~ a)`.
-pub fn symmetry<A: Prop, B: Prop>(Q((ab, ba)): Q<A, B>) -> Q<B, A> {
+pub fn commute<A: Prop, B: Prop>(Q((ab, ba)): Q<A, B>) -> Q<B, A> {
     Q((ba, ab))
 }
 
