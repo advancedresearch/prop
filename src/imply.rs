@@ -52,17 +52,8 @@ pub fn reorder_args<A: Prop, B: Prop, C: Prop>(
 }
 
 /// `(a => b)  =>  ¬¬a => ¬¬b`.
-pub fn double_neg<A: DProp, B: DProp>(f: Imply<A, B>) -> Imply<Not<Not<A>>, Not<Not<B>>> {
-    use Either::*;
-
-    let a = <A as Decidable>::decide();
-    let b = <B as Decidable>::decide();
-
-    match (a, b) {
-        (Left(a), _) => Rc::new(move |x| not::double(f(a.clone().double_neg()(x)))),
-        (_, Left(b)) => not::double(b).map_any(),
-        (Right(a), _) => Rc::new(move |x| match x(a.clone()) {})
-    }
+pub fn double_neg<A: DProp, B: Prop>(f: Imply<A, B>) -> Imply<Not<Not<A>>, Not<Not<B>>> {
+    Rc::new(move |nn_a| not::double(f(not::rev_double(nn_a))))
 }
 
 /// `(¬¬a => ¬¬b)  =>  a => b`.
