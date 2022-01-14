@@ -96,3 +96,11 @@ pub fn absurd<A: Prop, B: Prop, C: Prop>(
         Right(nn_q) => not::absurd(nn_q, n_q),
     }
 }
+
+/// `¬(false ~~ false) => x`.
+pub fn sesh_absurd<X: DProp>(f: Not<Q<False, False>>) -> X {
+    match X::decide() {
+        Left(x) => x,
+        Right(n_x) => absurd(sesh_right(f), eq::to_eq_false(n_x)),
+    }
+}
