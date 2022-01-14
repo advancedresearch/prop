@@ -1,5 +1,7 @@
 //! Tactics for Logical OR.
 
+#![allow(unreachable_code)]
+
 use crate::*;
 
 /// `a ∨ b => b ∨ a`.

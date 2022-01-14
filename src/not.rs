@@ -1,5 +1,7 @@
 //! Tactics for Logical NOT.
 
+#![allow(unreachable_code)]
+
 use crate::*;
 
 /// `a => ¬¬a`.
