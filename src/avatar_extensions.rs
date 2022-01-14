@@ -6,6 +6,8 @@
 //! For more information, see
 //! https://advancedresearch.github.io/avatar-extensions/summary.html
 
+#![allow(unreachable_code)]
+
 use crate::*;
 
 /// Implemented by avatars.
@@ -67,7 +69,7 @@ impl<T: Prop, U: Prop> Product<T, U> for Eq<T, U> {
 }
 
 impl<T, U: Prop> Product<T, U> for Imply<T, U> {
-    fn mul(a: T, b: U) -> Self {
+    fn mul(_: T, b: U) -> Self {
         Rc::new(move |_| b.clone())
     }
 }

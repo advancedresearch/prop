@@ -1,5 +1,7 @@
 //! Tactics for Logical EQ.
 
+#![allow(unreachable_code)]
+
 use crate::*;
 
 /// `(a = b) ∧ (b = c) => (a = c)`.

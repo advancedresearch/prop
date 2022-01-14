@@ -8,6 +8,8 @@
 //! For more information, see
 //! https://github.com/advancedresearch/path_semantics.
 
+#![allow(unreachable_code)]
+
 use crate::*;
 
 pub use quality::Q;

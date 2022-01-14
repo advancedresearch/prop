@@ -1,5 +1,7 @@
 //! Tactics for Logical IMPLY.
 
+#![allow(unreachable_code)]
+
 use crate::*;
 
 /// `a => b  =>  ¬b => ¬a`.
