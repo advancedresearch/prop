@@ -85,3 +85,14 @@ pub fn excm_refl<A: Prop>(exc: ExcM<Q<A, A>>) -> Q<A, A> {
         Right(n_q) => imply::absurd()(mirror()(n_q)),
     }
 }
+
+/// `¬(a ~~ b) ⋀ (a == b) => c`.
+pub fn absurd<A: Prop, B: Prop, C: Prop>(
+    n_q: Not<Q<A, B>>,
+    eq: Eq<A, B>,
+) -> C {
+    match eq_lift(eq) {
+        Left(q) => not::absurd(n_q, q),
+        Right(nn_q) => not::absurd(nn_q, n_q),
+    }
+}
