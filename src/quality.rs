@@ -1,8 +1,8 @@
 //! Path Semantical Quality
 //!
 //! This implementation uses a 2-avatar of equality
-//! to model quality within IPL,
-//! by exploiting the property `(a == b) => ( (a ~~ b) ⋁ ¬¬(a ~~ b) )`.
+//! to model [quality](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip2/path-semantical-quality.pdf)
+//! within IPL, by exploiting the property `(a == b) => ( (a ~~ b) ⋁ ¬¬(a ~~ b) )`.
 //!
 //! IPL does not have symbolic distinction,
 //! so equality `a == b` can not be lifted properly into `a ~~ b`.
@@ -10,6 +10,12 @@
 //! one can not prove `a ~~ b` from `¬¬(a ~~ b)`.
 //! This means that the 2-avatar can hide reflexivity,
 //! by lifting `a == b` to `(a ~~ b) ⋁ ¬¬(a ~~ b)`.
+//!
+//! Notice that this implementation does not support reasoning
+//! about [Seshatism](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip2/seshatism.pdf),
+//! because `¬(a ~~ a)` (Seshatism) is absurd in this model (it proves anything).
+//! Proper Seshatism requires quality to use symbolic distinction instead of the trick above.
+//! For a different implementation of quality, see [PSI in Avalog](https://github.com/advancedresearch/avalog/blob/master/source/psi.txt).
 //!
 //! Interpreted as an [Avatar Graph](https://advancedresearch.github.io/avatar-extensions/summary.html#avatar-graphs),
 //! the core is `a == b` and there are two 1-avatars:
