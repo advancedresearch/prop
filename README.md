@@ -1,3 +1,4 @@
+
 # Prop
 Propositional logic with types in Rust.
 
@@ -12,7 +13,7 @@ Abbreviations:
 
 - IPL: Intuitionistic/Constructive Propositional Logic
 - PL: Classical Propositional Logic
-- PSC: Path Semantical Intuitionistic/Constructive Propositional Logic
+- PSI: Path Semantical Intuitionistic/Constructive Propositional Logic
 - PSL: Path Semantical Classical Propositional Logic
 
 ### Motivation
@@ -41,6 +42,7 @@ This library contains:
 - `DLProp`: Like `DProp`, but with path semantics (path semantical classical logic)
 - Automatic lifting of Excluded Middle to decidable propositions
 - Double Negation for proofs of `Prop`
+- A model of Path Semantical Quality in IPL
 - Formalization of the core axiom of Path Semantics
 - Tactics organized in modules by constructs (e.g. `and` or `imply`)
 
@@ -83,9 +85,5 @@ Counter-intuitively, symbols are not "inherently" in logic.
 One way to put it, is that the symbols "themselves" encode laws of mathematics.
 The hidden symmetry can be exploited to prove semantics and sometimes
 improve performance of automated theorem provers.
-
-For example, path Semantics can be used to boost performance of brute force theorem proving
-in Classical Propositional Logic on Type-hierarchy-like problems.
-For more information, see the blog post [Improving Brute Force Theorem Proving](https://advancedresearch.github.io/blog/2020-08-20-improving-brute-force-theorem-proving).
 
 For more information, see the [Path Semantics Project](https://github.com/advancedresearch/path_semantics).
