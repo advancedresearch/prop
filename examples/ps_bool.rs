@@ -22,7 +22,7 @@ pub trait DeclBool<Type: LProp<N = S<S<N>>>, N: Nat> {
     fn ty_true() -> Imply<Self::True, Self::Bool>;
     unsafe fn const_false() -> Self::False;
     unsafe fn const_true() -> Self::True;
-    fn decide<X: LProp>() -> Or<Eq<X, Self::False>, Eq<X, Self::True>>;
+    fn decide<X: LProp>() -> Or<Q<X, Self::False>, Q<X, Self::True>>;
 }
 
 /// Links two memory slots.
@@ -57,8 +57,8 @@ pub trait DeclBool1<Type: LProp<N = S<S<N>>>, N: Nat>: DeclBool<Type, N> + DeclF
     fn ty_true1() -> Imply<Self::True1, FnTy<Self::Bool, Self::Bool>>;
 
     fn def_idb<X: LProp>(_idb: Self::Idb, f: Mem<X>) -> And<
-        Imply<Eq<X, Self::False>, Eq<Inc<X>, Self::False>>,
-        Imply<Eq<X, Self::True>, Eq<Inc<X>, Self::True>>,
+        Imply<Q<X, Self::False>, Q<Inc<X>, Self::False>>,
+        Imply<Q<X, Self::True>, Q<Inc<X>, Self::True>>,
     >
         where X: POrd<Inc<X>>
     {
@@ -76,8 +76,8 @@ pub trait DeclBool1<Type: LProp<N = S<S<N>>>, N: Nat>: DeclBool<Type, N> + DeclF
     }
 
     fn def_not<X: LProp>(_not: Self::Not, f: Mem<X>) -> And<
-        Imply<Eq<X, Self::False>, Eq<Inc<X>, Self::True>>,
-        Imply<Eq<X, Self::True>, Eq<Inc<X>, Self::False>>,
+        Imply<Q<X, Self::False>, Q<Inc<X>, Self::True>>,
+        Imply<Q<X, Self::True>, Q<Inc<X>, Self::False>>,
     >
         where X: POrd<Inc<X>>
     {
@@ -96,8 +96,8 @@ pub trait DeclBool1<Type: LProp<N = S<S<N>>>, N: Nat>: DeclBool<Type, N> + DeclF
     }
 
     fn def_false1<X: LProp>(_false1: Self::False1, f: Imply<X, Inc<X>>) -> And<
-        Imply<Eq<X, Self::False>, Eq<Inc<X>, Self::False>>,
-        Imply<Eq<X, Self::True>, Eq<Inc<X>, Self::False>>,
+        Imply<Q<X, Self::False>, Q<Inc<X>, Self::False>>,
+        Imply<Q<X, Self::True>, Q<Inc<X>, Self::False>>,
     >
         where X: POrd<Inc<X>>
     {
@@ -115,8 +115,8 @@ pub trait DeclBool1<Type: LProp<N = S<S<N>>>, N: Nat>: DeclBool<Type, N> + DeclF
     }
 
     fn def_true1<X: LProp>(_true1: Self::True1, f: Imply<X, Inc<X>>) -> And<
-        Imply<Eq<X, Self::False>, Eq<Inc<X>, Self::True>>,
-        Imply<Eq<X, Self::True>, Eq<Inc<X>, Self::True>>,
+        Imply<Q<X, Self::False>, Q<Inc<X>, Self::True>>,
+        Imply<Q<X, Self::True>, Q<Inc<X>, Self::True>>,
     >
         where X: POrd<Inc<X>>
     {
@@ -139,8 +139,8 @@ pub fn proof<T: DeclBool1<Type, Zero>, X: LProp<N = Zero>, Type: LProp<N = Two>>
     f2: Mem<X>,
     idb: T::Idb,
     not: T::Not,
-    eq_x_true: Eq<X, T::True>,
-) -> And<Eq<Inc<X>, T::True>, Eq<Inc<X>, T::False>>
+    eq_x_true: Q<X, T::True>,
+) -> And<Q<Inc<X>, T::True>, Q<Inc<X>, T::False>>
     where X: POrd<Inc<X>>
 {
     let idb_expr = T::def_idb(idb, f1);
@@ -153,8 +153,8 @@ pub fn proof2<T: DeclBool1<Type, Zero>, X: LProp<N = Zero>, Type: LProp<N = Two>
     f2: Mem<Inc<X>>,
     idb: T::Idb,
     not: T::Not,
-    eq_x_true: Eq<X, T::True>,
-) -> Eq<Inc<Inc<X>>, T::False>
+    eq_x_true: Q<X, T::True>,
+) -> Q<Inc<Inc<X>>, T::False>
     where X: POrd<Inc<X>>,
           Inc<X>: POrd<Inc<Inc<X>>>
 {
@@ -182,12 +182,12 @@ pub fn proof3<
         Left(eq_x_false) => {
             let x1 = not_expr.0(eq_x_false);
             let x2 = not_expr2.1(x1);
-            check_eq::<T::False, _>(x2)
+            check_q::<T::False, _>(x2)
         }
         Right(eq_x_true) => {
             let x1 = not_expr.1(eq_x_true);
             let x2 = not_expr2.0(x1);
-            check_eq::<T::True, _>(x2)
+            check_q::<T::True, _>(x2)
         }
     }
 }
