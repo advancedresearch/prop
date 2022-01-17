@@ -13,6 +13,7 @@
 use crate::*;
 
 pub use quality::Q;
+pub use quality::EqQ;
 pub use quality::self_quality_left as refl_left;
 pub use quality::self_quality_right as refl_right;
 
