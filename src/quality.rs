@@ -130,12 +130,12 @@ pub fn self_quality_right<A: Prop, B: Prop>(q_ab: Q<A, B>) -> Q<B, B> {
     transitivity(q_ba, q_ab)
 }
 
-/// Introduce a different proposition in right argument.
+/// Introduce a different proposition in right argument (keep left).
 pub fn sesh_left<A: Prop, B: Prop>(sesh_a: Not<Q<A, A>>) -> Not<Q<A, B>> {
     Rc::new(move |q_ab| sesh_a(self_quality_left(q_ab)))
 }
 
-/// Introduce a different proposition in right argument.
+/// Introduce a different proposition in left argument (keep right).
 pub fn sesh_right<A: Prop, B: Prop>(sesh_b: Not<Q<B, B>>) -> Not<Q<A, B>> {
     Rc::new(move |q_ab| sesh_b(self_quality_right(q_ab)))
 }
