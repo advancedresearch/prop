@@ -118,13 +118,13 @@ pub fn assoc<A: DProp, B: DProp, C: DProp>(f: Eq<Eq<A, B>, C>) -> Eq<A, Eq<B, C>
 }
 
 /// `a = (b = c)  =>  a = (c = b)`.
-pub fn swap_right<A: DProp, B: Prop, C: Prop>((f0, f1): Eq<A, Eq<B, C>>) -> Eq<A, Eq<C, B>> {
+pub fn swap_right<A: Prop, B: Prop, C: Prop>((f0, f1): Eq<A, Eq<B, C>>) -> Eq<A, Eq<C, B>> {
     (Rc::new(move |x| {let (g0, g1) = f0(x); (g1, g0)}),
      Rc::new(move |(g1, g0)| f1((g0, g1))))
 }
 
 /// `(a = b) = c  =>  (b = a) = c`.
-pub fn swap_left<A: DProp, B: Prop, C: DProp>(f: Eq<Eq<A, B>, C>) -> Eq<Eq<B, A>, C> {
+pub fn swap_left<A: Prop, B: Prop, C: Prop>(f: Eq<Eq<A, B>, C>) -> Eq<Eq<B, A>, C> {
     commute(swap_right(commute(f)))
 }
 
