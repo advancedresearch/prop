@@ -20,3 +20,4 @@ name = "prop"
 [features]
 default = []
 pure_platonism = []
+pure_seshatism = []

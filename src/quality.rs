@@ -4,27 +4,9 @@
 //!
 //! For a different implementation of quality, see [PSI in Avalog](https://github.com/advancedresearch/avalog/blob/master/source/psi.txt).
 //!
-//! ### Seshatism
+//! ### Work-around for symbolic distinction
 //!
-//! [Seshatism](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip2/seshatism.pdf)
-//! is a way to reject two forms of Platonism:
-//!
-//! - `¬(a ~~ a)`: Seshatism (Moment Witness)
-//! - `a ~~ a`: Platonism 1 (Loop Witness)
-//! - `a ~~ b`: Platonism 2 (Product Witness)
-//!
-//! Since `a ~~ b` implies `a ~~ a`, both Loop and Product Witness are rejected.
-//!
-//! Seshatism forces the logical structure around the proposition to be a [DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph)
-//! (Directed Acyclic Graph).
-//!
-//! ### Work-arounds for symbolic distinction
-//!
-//! IPL does not support symbolic distinction,
-//! so there are two supported work-arounds that are safe to use:
-//!
-//! - Add argument to explicitly assume lifting equality into quality
-//! - Add argument or assume pure Platonism using "pure_platonism" feature flag
+//! IPL does not support symbolic distinction, so quality must be assumed explicitly.
 //!
 //! ### Lifting equality into quality
 //!
@@ -34,14 +16,36 @@
 //! Since this is unsound without symbolic distinction,
 //! it is not possible to assume this directly.
 //!
-//! If you want to prove stuff about Seshatism,
-//! this is the only way.
+//! ### Seshatism vs Platonism
+//!
+//! [Seshatism](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip2/seshatism.pdf)
+//! is a way to reject two forms of Platonism:
+//!
+//! - `¬(a ~~ a)`: Seshatism (Moment Witness)
+//! - `a ~~ a`: Platonism 1 (Loop Witness)
+//! - `a ~~ b`: Platonism 2 (Product Witness)
+//!
+//! Since `a ~~ b` implies `a ~~ a`, both Loop and Product Witness are rejected by Seshatism.
+//!
+//! ### Pure Seshatism
+//!
+//! `PureSeshatism<A, B>` (feature flag is not needed)
+//!
+//! Feature flag: "pure_seshatism" (for convenience functions)
+//!
+//! In impure Seshatism, it is possible to have both `¬(a ~~ b)` and `a == b`.
+//!
+//! Pure Seshatism forces the logical structure around the proposition to be a [DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph)
+//! (Directed Acyclic Graph).
+//!
+//! Pure Seshatism does not exclude Platonism,
+//! but pure Platonism excludes pure Seshatism.
 //!
 //! ### Pure Platonism
 //!
-//! `PurePlatonism<A, B>`
+//! `PurePlatonism<A, B>` (feature flag is not needed)
 //!
-//! Feature flag: "pure_platonism"
+//! Feature flag: "pure_platonism" (for convenience functions)
 //!
 //! Pure Platonism is not strong enough to prove quality,
 //! but can prove `False` from Seshatism (`Not<Q<A, A>>`).
@@ -78,6 +82,8 @@ pub use commute as symmetry;
 pub type EqQ<A, B> = Imply<Eq<A, B>, Q<A, B>>;
 /// Pure Platonism assumption.
 pub type PurePlatonism<A, B> = Imply<Eq<A, B>, Or<Q<A, B>, Not<Not<Q<A, B>>>>>;
+/// Pure Seshatism assumption.
+pub type PureSeshatism<A, B> = Imply<Not<Q<A, B>>, Not<Eq<A, B>>>;
 
 /// Quality between `A` and `B` (`A ~~ B`).
 #[derive(Clone)]
@@ -143,6 +149,37 @@ pub fn sesh_right<A: Prop, B: Prop>(sesh_b: Not<Q<B, B>>) -> Not<Q<A, B>> {
 /// `¬(a == b) => ¬(a ~~ b)`.
 pub fn neq_to_sesh<A: Prop, B: Prop>(neq: Not<Eq<A, B>>) -> Not<Q<A, B>> {
     Rc::new(move |q_ab| neq(to_eq(q_ab)))
+}
+
+/// Assume pure Seshatism.
+#[cfg(feature = "pure_seshatism")]
+pub fn assume_pure_seshatism<A: Prop, B: Prop>() -> PureSeshatism<A, B> {
+    Rc::new(move |n_q| Rc::new(move |eq| n_q(Q(eq))))
+}
+
+/// Convert inquality to inequality `¬(a ~~ b) => ¬(a == b)`.
+#[cfg(feature = "pure_seshatism")]
+pub fn sesh_to_neq<A: Prop, B: Prop>(sesh: Not<Q<A, B>>) -> Not<Eq<A, B>> {
+    assume_pure_seshatism()(sesh)
+}
+
+/// `¬(a ~~ b) == ¬(a == b)`.
+#[cfg(feature = "pure_seshatism")]
+pub fn sesh_eq_neq<A: Prop, B: Prop>() -> Eq<Not<Q<A, B>>, Not<Eq<A, B>>> {
+    (
+        Rc::new(move |nq_ab| sesh_to_neq(nq_ab)),
+        Rc::new(move |neq_ab| neq_to_sesh(neq_ab)),
+    )
+}
+
+/// `(¬(a ~~ b) => ¬(a == b)) => (¬(a ~~ b) == ¬(a == b))`.
+pub fn sesh_eq_neq_seshat<A: Prop, B: Prop>(
+    seshat_ab: PureSeshatism<A, B>
+) -> Eq<Not<Q<A, B>>, Not<Eq<A, B>>> {
+    (
+        Rc::new(move |nq_ab| seshat_ab(nq_ab)),
+        Rc::new(move |neq_ab| neq_to_sesh(neq_ab)),
+    )
 }
 
 /// Mirror with pure Platonism
