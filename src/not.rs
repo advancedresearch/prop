@@ -19,7 +19,7 @@ pub fn rev_double<A: DProp>(f: Not<Not<A>>) -> A {
     }
 }
 
-/// Eliminate two inversions.
+/// `¬¬¬a => ¬a`.
 pub fn rev_triple<A: Prop>(x: Not<Not<Not<A>>>) -> Not<A> {
     Rc::new(move |a| x(double(a)))
 }
