@@ -140,6 +140,11 @@ pub fn sesh_right<A: Prop, B: Prop>(sesh_b: Not<Q<B, B>>) -> Not<Q<A, B>> {
     Rc::new(move |q_ab| sesh_b(self_quality_right(q_ab)))
 }
 
+/// `¬(a == b) => ¬(a ~~ b)`.
+pub fn neq_to_sesh<A: Prop, B: Prop>(neq: Not<Eq<A, B>>) -> Not<Q<A, B>> {
+    Rc::new(move |q_ab| neq(to_eq(q_ab)))
+}
+
 /// Mirror with pure Platonism
 /// `((a == a) => ( (a ~~ a) ⋁ ¬¬(a ~~ a) )) => ¬¬(a ~~ a)`.
 pub fn mirror_plato<A: Prop>(plato_a: PurePlatonism<A, A>) -> Not<Not<Q<A, A>>> {
