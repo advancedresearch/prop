@@ -19,6 +19,11 @@ pub fn rev_double<A: DProp>(f: Not<Not<A>>) -> A {
     }
 }
 
+/// Eliminate two inversions.
+pub fn rev_triple<A: Prop>(x: Not<Not<Not<A>>>) -> Not<A> {
+    Rc::new(move |a| x(double(a)))
+}
+
 /// `¬a ⋀ a => b`.
 pub fn absurd<A: Prop, B: Prop>(f: Not<A>, g: A) -> B {
     imply::absurd()(f(g))
