@@ -23,13 +23,6 @@
 //!
 //! `(a == b) ~= (a ~= b)`
 //!
-//! This axiom is unsafe with the core axiom of Path Semantics, due to reflexivity.
-//! To make it safe with Path Semantics, one must use a longer version:
-//!
-//! `((a => b) => (a ~= b)) => ((a == b) ~= (a ~= b))`
-//!
-//! In Rust, this is `HomUniv<A, B>`.
-//!
 //! Under the homotopy univalence axiom with path semantical quality,
 //! quality univalence is equal to homotopy univalence.
 //! Since equality is homotopic equivalent to homotopy equivalence,
@@ -47,9 +40,6 @@ pub type Univ<A, B> = Q<Eq<A, B>, Q<A, B>>;
 /// Univalence from equality.
 pub type EqUniv<A, B> = Imply<Eq<A, B>, Univ<A, B>>;
 
-/// Univalence from homotopy path.
-pub type HomUniv<A, B> = Imply<Hom<A, B>, Univ<A, B>>;
-
 /// `((a == b) => ((a == b) ~~ (a ~~ b))) => ((a == b) => (a ~~ b))`.
 pub fn eq_univ_to_eq_q<A: Prop, B: Prop>(p: EqUniv<A, B>) -> EqQ<A, B> {
     Rc::new(move |eq| quality::to_eq(p(eq.clone())).0(eq))
@@ -66,6 +56,14 @@ pub fn eq_q_to_eq_univ<A: Prop, B: Prop>(p: EqQ<A, B>) -> Univ<A, B> {
 /// `((a == b) ~~ (a ~~ b)) => ((a == b) => (a ~~ b))`.
 pub fn univ_to_eq_q<A: Prop, B: Prop>(univ: Univ<A, B>) -> EqQ<A, B> {
     eq_univ_to_eq_q(univ.map_any())
+}
+
+/// `((a => b) => (a ~~ b)) => ((a == b) ~~ (a ~~ b))`.
+pub fn hom_to_univ<A: Prop, B: Prop>(hom: Hom<A, B>) -> Univ<A, B> {
+    eq_lift((
+        Rc::new(move |eq| hom(eq.0)),
+        Rc::new(move |q| quality::to_eq(q)),
+    ))
 }
 
 /// Lift `(a == b) == (a ~~ b)` to `(a == b) ~~ (a ~~ b)`.
