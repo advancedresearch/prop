@@ -87,7 +87,7 @@ pub type PureSeshatism<A, B> = Imply<Not<Q<A, B>>, Not<Eq<A, B>>>;
 
 /// Quality between `A` and `B` (`A ~~ B`).
 #[derive(Clone)]
-pub struct Q<A, B>(Eq<A, B>);
+pub struct Q<A, B>(pub(crate) Eq<A, B>);
 
 /// Symmetry `(a ~~ b) => (b ~~ a)`.
 pub fn commute<A: Prop, B: Prop>(Q((ab, ba)): Q<A, B>) -> Q<B, A> {
