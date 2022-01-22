@@ -190,3 +190,19 @@ pub fn inv_triangle<A: DProp, B: DProp, C: DProp>(
 pub fn absurd() -> Eq<False, False> {
     (imply::absurd(), imply::absurd())
 }
+
+/// `(a == b) ⋀ ¬(a == c) => ¬(b == c)`.
+pub fn neq_left<A: Prop, B: Prop, C: Prop>(
+    eq_ab: Eq<A, B>,
+    neq_ac: Not<Eq<A, C>>
+) -> Not<Eq<B, C>> {
+    Rc::new(move |eq_bc| neq_ac(transitivity(eq_ab.clone(), eq_bc)))
+}
+
+/// `(a == b) ⋀ ¬(b == c) => ¬(a == c)`.
+pub fn neq_right<A: Prop, B: Prop, C: Prop>(
+    eq_ab: Eq<A, B>,
+    neq_bc: Not<Eq<B, C>>
+) -> Not<Eq<A, C>> {
+    Rc::new(move |eq_ac| neq_bc(transitivity(commute(eq_ab.clone()), eq_ac)))
+}
