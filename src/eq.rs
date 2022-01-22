@@ -5,6 +5,7 @@
 use crate::*;
 
 pub use commute as symmetry;
+pub use neq_commute as neq_symmetry;
 
 /// `(a = b) ∧ (b = c) => (a = c)`.
 pub fn transitivity<A: Prop, B: Prop, C: Prop>((f0, f1): Eq<A, B>, (g0, g1): Eq<B, C>) -> Eq<A, C> {
@@ -20,6 +21,11 @@ pub fn double_neg<A: Prop>(a: A) -> Eq<A, Not<Not<A>>> {
 /// `(a = b) => (b = a)`.
 pub fn commute<A: Prop, B: Prop>((f0, f1): Eq<A, B>) -> Eq<B, A> {
     (f1, f0)
+}
+
+/// `¬(a = b) => ¬(b = a)`.
+pub fn neq_commute<A: Prop, B: Prop>(neq: Not<Eq<A, B>>) -> Not<Eq<B, A>> {
+    Rc::new(move |eq| neq(commute(eq)))
 }
 
 /// `(a => b) = (¬a ∨ b)`.
