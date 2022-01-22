@@ -85,6 +85,18 @@ pub type PurePlatonism<A, B> = Imply<Eq<A, B>, Or<Q<A, B>, Not<Not<Q<A, B>>>>>;
 /// Pure Seshatism assumption.
 pub type PureSeshatism<A, B> = Imply<Not<Q<A, B>>, Not<Eq<A, B>>>;
 
+/// Prevents other qualities of `A` from excluding `B`.
+pub trait NoOtherQ<A, B>: 'static + Clone {
+    /// `(a ~~ c) => ¬¬(b ~~ c)`.
+    fn no_other_q<C: Prop>(&self, q: Q<A, C>) -> Not<Not<Q<B, C>>>;
+}
+
+/// If something is qual to `A`, then `A` is qual to `B`.
+pub trait UniqQ<A, B>: NoOtherQ<A, B> {
+    /// `(a ~~ a) => (a ~~ b)`.
+    fn uniq_q(&self, q_aa: Q<A, A>) -> Q<A, B>;
+}
+
 /// Quality between `A` and `B` (`A ~~ B`).
 #[derive(Clone)]
 pub struct Q<A, B>(pub(crate) Eq<A, B>);
