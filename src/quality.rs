@@ -77,6 +77,7 @@
 use crate::*;
 
 pub use commute as symmetry;
+pub use nq_commute as nq_symmetry;
 
 /// Lifts equality into quality.
 pub type EqQ<A, B> = Imply<Eq<A, B>, Q<A, B>>;
@@ -104,6 +105,11 @@ pub struct Q<A, B>(pub(crate) Eq<A, B>);
 /// Symmetry `(a ~~ b) => (b ~~ a)`.
 pub fn commute<A: Prop, B: Prop>(Q((ab, ba)): Q<A, B>) -> Q<B, A> {
     Q((ba, ab))
+}
+
+/// Negated symmetry `¬(a ~~ b) => ¬(b ~~ a)`.
+pub fn nq_commute<A: Prop, B: Prop>(nq: Not<Q<A, B>>) -> Not<Q<B, A>> {
+    Rc::new(move |q| nq(commute(q)))
 }
 
 /// Transitivity `(a ~~ b) ⋀ (b ~~ c) => (a ~~ c)`.
