@@ -114,6 +114,22 @@ pub fn transitivity<A: Prop, B: Prop, C: Prop>(
     Q((Rc::new(move |a| bc(ab(a))), Rc::new(move |c| ba(cb(c)))))
 }
 
+/// `(a ~~ b) ⋀ ¬(a ~~ c) => ¬(b ~~ c)`.
+pub fn nq_left<A: Prop, B: Prop, C: Prop>(
+    q_ab: Q<A, B>,
+    sesh_ac: Not<Q<A, C>>
+) -> Not<Q<B, C>> {
+    Rc::new(move |q_bc| sesh_ac(transitivity(q_ab.clone(), q_bc)))
+}
+
+/// `(a ~~ b) ⋀ ¬(b ~~ c) => ¬(a ~~ c)`.
+pub fn nq_right<A: Prop, B: Prop, C: Prop>(
+    q_ab: Q<A, B>,
+    sesh_bc: Not<Q<B, C>>
+) -> Not<Q<A, C>> {
+    Rc::new(move |q_ac| sesh_bc(transitivity(symmetry(q_ab.clone()), q_ac)))
+}
+
 /// Equality maybe lift `(a == b) => ( (a ~~ b) ⋁ true )`.
 pub fn eq_maybe_lift<A: Prop, B: Prop>(eq: Eq<A, B>) -> Or<Q<A, B>, True> {
     Left(Q(eq))
