@@ -39,8 +39,8 @@ pub fn modus_ponens<A: Prop, B: Prop>(
 }
 
 /// `(b => a) ∧ ¬a  => ¬b`.
-pub fn rev_modus_ponens<A: Prop, B: DProp>(g: Imply<B, A>, f: Not<A>) -> Not<B> {
-    modus_tollens(g)(f)
+pub fn rev_modus_ponens<A: Prop, B: Prop>(g: Imply<B, A>, f: Not<A>) -> Not<B> {
+    Rc::new(move |b| f(g(b)))
 }
 
 /// `a => (b => c)  =>  b => (a => c)`
