@@ -84,7 +84,7 @@ pub type EqQ<A, B> = Imply<Eq<A, B>, Q<A, B>>;
 /// Pure Platonism assumption.
 pub type PurePlatonism<A, B> = Imply<Eq<A, B>, Or<Q<A, B>, Not<Not<Q<A, B>>>>>;
 /// Pure Seshatism assumption.
-pub type PureSeshatism<A, B> = Imply<Not<Q<A, B>>, Not<Eq<A, B>>>;
+pub type PureSeshatism<A, B> = Imply<And<Not<Q<A, B>>, EqQ<A, B>>, Not<Eq<A, B>>>;
 
 /// Prevents other qualities of `A` from excluding `B`.
 pub trait NoOtherQ<A, B>: 'static + Clone {
@@ -188,28 +188,30 @@ pub fn neq_to_sesh<A: Prop, B: Prop>(neq: Not<Eq<A, B>>) -> Not<Q<A, B>> {
 /// Assume pure Seshatism.
 #[cfg(feature = "pure_seshatism")]
 pub fn assume_pure_seshatism<A: Prop, B: Prop>() -> PureSeshatism<A, B> {
-    Rc::new(move |n_q| Rc::new(move |eq| n_q(Q(eq))))
+    Rc::new(move |(n_q, _)| Rc::new(move |eq| n_q(Q(eq))))
 }
 
-/// Convert inquality to inequality `¬(a ~~ b) => ¬(a == b)`.
+/// Convert inquality to inequality `¬(a ~~ b) ⋀ eq_q(a, b) => ¬(a == b)`.
 #[cfg(feature = "pure_seshatism")]
-pub fn sesh_to_neq<A: Prop, B: Prop>(sesh: Not<Q<A, B>>) -> Not<Eq<A, B>> {
-    assume_pure_seshatism()(sesh)
+pub fn sesh_to_neq<A: Prop, B: Prop>(sesh: Not<Q<A, B>>, eq_q_ab: EqQ<A, B>) -> Not<Eq<A, B>> {
+    assume_pure_seshatism()((sesh, eq_q_ab))
 }
 
-/// `¬(a ~~ b) == ¬(a == b)`.
+/// `eq_q(a, b)  =>  ¬(a ~~ b) == ¬(a == b)`.
 #[cfg(feature = "pure_seshatism")]
-pub fn sesh_eq_neq<A: Prop, B: Prop>() -> Eq<Not<Q<A, B>>, Not<Eq<A, B>>> {
+pub fn sesh_eq_neq<A: Prop, B: Prop>(eq_q_ab: EqQ<A, B>) -> Eq<Not<Q<A, B>>, Not<Eq<A, B>>> {
     (
-        Rc::new(move |nq_ab| sesh_to_neq(nq_ab)),
+        Rc::new(move |nq_ab| sesh_to_neq(nq_ab, eq_q_ab.clone())),
         Rc::new(move |neq_ab| neq_to_sesh(neq_ab)),
     )
 }
 
-/// `(¬(a ~~ b) => ¬(a == b)) => (¬(a ~~ b) == ¬(a == b))`.
+/// `eq_q(a, b) ⋀ ((¬(a ~~ b) ⋀ eq_q(a, b)) => ¬(a == b)) => (¬(a ~~ b) == ¬(a == b))`.
 pub fn sesh_eq_neq_seshat<A: Prop, B: Prop>(
-    seshat_ab: PureSeshatism<A, B>
+    eq_q_ab: EqQ<A, B>,
+    pure_seshat_ab: PureSeshatism<A, B>
 ) -> Eq<Not<Q<A, B>>, Not<Eq<A, B>>> {
+    let seshat_ab = Rc::new(move |nq_ab| pure_seshat_ab.clone()((nq_ab, eq_q_ab.clone())));
     (
         Rc::new(move |nq_ab| seshat_ab(nq_ab)),
         Rc::new(move |neq_ab| neq_to_sesh(neq_ab)),
