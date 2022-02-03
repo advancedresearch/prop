@@ -33,6 +33,15 @@
 //!
 //! Since `a ~~ b` implies `a ~~ a`, both Loop and Product Witness are rejected by Seshatism.
 //!
+//! ### Seshatic Relations
+//!
+//! `Seshatic<A, B>`
+//!
+//! When a relation `p(a, b)` is Seshatic,
+//! it means that it implies Seshatism of either `a` or `b`:
+//!
+//! `p(a, b) => ¬(a ~~ a) ⋁ ¬(b ~~ b)`
+//!
 //! ### Pure Seshatism
 //!
 //! `PureSeshatism<A, B>` (feature flag is not needed)
@@ -91,6 +100,8 @@ pub type EqQ<A, B> = Imply<Eq<A, B>, Q<A, B>>;
 pub type PurePlatonism<A, B> = Imply<Eq<A, B>, Or<Q<A, B>, Not<Not<Q<A, B>>>>>;
 /// Pure Seshatism assumption.
 pub type PureSeshatism<A, B> = Imply<And<Not<Q<A, B>>, EqQ<A, B>>, Not<Eq<A, B>>>;
+/// A Seshatic relation `¬(a ~~ a) ⋁ ¬(b ~~ b)`.
+pub type Seshatic<A, B> = Or<Not<Q<A, A>>, Not<Q<B, B>>>;
 
 /// Prevents other qualities of `A` from excluding `B`.
 pub trait NoOtherQ<A, B>: 'static + Clone {
