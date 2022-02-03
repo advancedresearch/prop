@@ -57,21 +57,11 @@ pub fn from_de_morgan<A: DProp, B: DProp>(
 }
 
 /// `(¬a ∨ ¬b) => ¬(a ∧ b)`.
-pub fn to_de_morgan<A: DProp, B: DProp>(
-    f: Or<Not<A>, Not<B>>
-) -> Not<And<A, B>> {
-    use Either::*;
-
-    match f {
-        Left(fa) => match A::decide() {
-            Left(a) => match fa(a) {},
-            Right(not_a) => Rc::new(move |(x, _)| match not_a.clone()(x) {}),
-        }
-        Right(fb) => match B::decide() {
-            Left(b) => match fb(b) {},
-            Right(not_b) => Rc::new(move |(_, x)| match not_b.clone()(x) {}),
-        }
-    }
+pub fn to_de_morgan<A: Prop, B: Prop>(f: Or<Not<A>, Not<B>>) -> Not<And<A, B>> {
+    Rc::new(move |(a, b)| match f.clone() {
+        Left(fa) => fa(a),
+        Right(fb) => fb(b)
+    })
 }
 
 /// `(a ∨ b) ∧ (a => c)  =>  (c ∨ b)`.
