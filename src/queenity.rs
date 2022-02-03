@@ -1,6 +1,7 @@
 //! # Seshatic Queenity
 //!
 //! Seshatic Queenity is a Seshatic relation that "points directly".
+//! See [paper](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip2/seshatic-queenity.pdf).
 //!
 //! A Seshatic relation means it is strictly directional or looping on itself.
 //! For more information, see the documentation for the "quality" module.
