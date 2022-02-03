@@ -36,7 +36,7 @@
 
 use crate::*;
 
-use quality::{EqQ, Q};
+use quality::{EqQ, Q, Seshatic};
 
 /// Prevents other queens of `A` from excluding queen `B`.
 pub trait NoOtherSq<A, B>: 'static + Clone {
@@ -91,4 +91,9 @@ pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(Sq(f): Sq<A, B>, (_, g1): Eq<A, C>
 /// `(a ¬> b) ∧ (b = c)  =>  (a ¬> c)`.
 pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(Sq(f): Sq<A, B>, (g0, _): Eq<B, C>) -> Sq<A, C> {
     Sq(imply::transitivity(f, g0))
+}
+
+/// `(a ¬> b) => (¬(a ~~ a) ⋁ ¬(b ~~ b))`.
+pub fn seshatic<A: Prop, B: Prop>(sq: Sq<A, B>) -> Seshatic<A, B> {
+    Right(to_sesh(sq_right(sq)))
 }
