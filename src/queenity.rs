@@ -37,6 +37,18 @@ use crate::*;
 
 use quality::{EqQ, Q};
 
+/// Prevents other queens of `A` from excluding queen `B`.
+pub trait NoOtherSq<A, B>: 'static + Clone {
+    /// `(a ¬> c) => ¬¬(a ¬> b)`.
+    fn no_other_sq<C: Prop>(&self, sq: Sq<A, C>) -> Not<Not<Sq<A, B>>>;
+}
+
+/// If `A`'s queen is `C`, then `C` is equal to `B`.
+pub trait UniqSq<A, B>: NoOtherSq<A, B> {
+    /// `(a ¬> c) => (c == b)`.
+    fn uniq_sq<C: Prop>(&self, sq: Sq<A, C>) -> Eq<C, B>;
+}
+
 /// Queenity between `A` and `B` (`A ¬> B`).
 #[derive(Clone)]
 pub struct Sq<A, B>(pub(crate) Imply<A, B>);
