@@ -27,7 +27,7 @@
 //! [Seshatism](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip2/seshatism.pdf)
 //! is a way to reject two forms of Platonism:
 //!
-//! - `¬(a ~~ a)`: Seshatism (Moment Witness)
+//! - `¬(a ~~ a)`: Seshatism
 //! - `a ~~ a`: Platonism 1 (Loop Witness)
 //! - `a ~~ b`: Platonism 2 (Product Witness)
 //!
@@ -41,20 +41,6 @@
 //! it means that it implies Seshatism of either `a` or `b`:
 //!
 //! `p(a, b) => ¬(a ~~ a) ⋁ ¬(b ~~ b)`
-//!
-//! ### Pure Seshatism
-//!
-//! `PureSeshatism<A, B>` (feature flag is not needed)
-//!
-//! Feature flag: "pure_seshatism" (for convenience functions)
-//!
-//! In impure Seshatism, it is possible to have both `¬(a ~~ b)` and `a == b`.
-//!
-//! Pure Seshatism forces the logical structure around the proposition to be a [DAG](https://en.wikipedia.org/wiki/Directed_acyclic_graph)
-//! (Directed Acyclic Graph).
-//!
-//! Pure Seshatism does not exclude Platonism,
-//! but pure Platonism excludes pure Seshatism.
 //!
 //! ### Pure Platonism
 //!
@@ -98,8 +84,6 @@ pub use nq_commute as nq_symmetry;
 pub type EqQ<A, B> = Imply<Eq<A, B>, Q<A, B>>;
 /// Pure Platonism assumption.
 pub type PurePlatonism<A, B> = Imply<Eq<A, B>, Or<Q<A, B>, Not<Not<Q<A, B>>>>>;
-/// Pure Seshatism assumption.
-pub type PureSeshatism<A, B> = Imply<And<Not<Q<A, B>>, EqQ<A, B>>, Not<Eq<A, B>>>;
 /// A Seshatic relation `¬(a ~~ a) ⋁ ¬(b ~~ b)`.
 pub type Seshatic<A, B> = Or<Not<Q<A, A>>, Not<Q<B, B>>>;
 
@@ -202,35 +186,15 @@ pub fn neq_to_sesh<A: Prop, B: Prop>(neq: Not<Eq<A, B>>) -> Not<Q<A, B>> {
     Rc::new(move |q_ab| neq(to_eq(q_ab)))
 }
 
-/// Assume pure Seshatism.
-#[cfg(feature = "pure_seshatism")]
-pub fn assume_pure_seshatism<A: Prop, B: Prop>() -> PureSeshatism<A, B> {
-    Rc::new(move |(n_q, _)| Rc::new(move |eq| n_q(Q(eq))))
-}
-
 /// Convert inquality to inequality `¬(a ~~ b) ⋀ eq_q(a, b) => ¬(a == b)`.
-#[cfg(feature = "pure_seshatism")]
 pub fn sesh_to_neq<A: Prop, B: Prop>(sesh: Not<Q<A, B>>, eq_q_ab: EqQ<A, B>) -> Not<Eq<A, B>> {
-    assume_pure_seshatism()((sesh, eq_q_ab))
+    imply::modus_tollens(eq_q_ab)(sesh)
 }
 
 /// `eq_q(a, b)  =>  ¬(a ~~ b) == ¬(a == b)`.
-#[cfg(feature = "pure_seshatism")]
 pub fn sesh_eq_neq<A: Prop, B: Prop>(eq_q_ab: EqQ<A, B>) -> Eq<Not<Q<A, B>>, Not<Eq<A, B>>> {
     (
         Rc::new(move |nq_ab| sesh_to_neq(nq_ab, eq_q_ab.clone())),
-        Rc::new(move |neq_ab| neq_to_sesh(neq_ab)),
-    )
-}
-
-/// `eq_q(a, b) ⋀ ((¬(a ~~ b) ⋀ eq_q(a, b)) => ¬(a == b)) => (¬(a ~~ b) == ¬(a == b))`.
-pub fn sesh_eq_neq_seshat<A: Prop, B: Prop>(
-    eq_q_ab: EqQ<A, B>,
-    pure_seshat_ab: PureSeshatism<A, B>
-) -> Eq<Not<Q<A, B>>, Not<Eq<A, B>>> {
-    let seshat_ab = Rc::new(move |nq_ab| pure_seshat_ab.clone()((nq_ab, eq_q_ab.clone())));
-    (
-        Rc::new(move |nq_ab| seshat_ab(nq_ab)),
         Rc::new(move |neq_ab| neq_to_sesh(neq_ab)),
     )
 }
