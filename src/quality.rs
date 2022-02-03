@@ -1,5 +1,7 @@
 //! # Path Semantical Quality
 //!
+//! Path Semantical Quality is a partial equivalence relation that lifts biconditions
+//! with symbolic distinction.
 //! See [paper](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip2/path-semantical-quality.pdf).
 //!
 //! For a different implementation of quality, see [PSI in Avalog](https://github.com/advancedresearch/avalog/blob/master/source/psi.txt).
@@ -15,6 +17,10 @@
 //! This implementation lifts equality directly to quality.
 //! Since this is unsound without symbolic distinction,
 //! it is not possible to assume this directly.
+//!
+//! Although IPL does not support symbolic distinction,
+//! one can use `EqQ<A, B>` (`(a == b) => (a ~~ b)`) to model symbolic distinction.
+//! This means `EqQ<A, B>` can be used as an assumption that `A` and `B` are symbolic distinct.
 //!
 //! ### Seshatism vs Platonism
 //!
