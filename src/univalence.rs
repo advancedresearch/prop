@@ -41,12 +41,12 @@ pub type Univ<A, B> = Q<Eq<A, B>, Q<A, B>>;
 pub type EqUniv<A, B> = Imply<Eq<A, B>, Univ<A, B>>;
 
 /// `((a == b) => ((a == b) ~~ (a ~~ b))) => ((a == b) => (a ~~ b))`.
-pub fn eq_univ_to_eq_q<A: Prop, B: Prop>(p: EqUniv<A, B>) -> EqQ<A, B> {
+pub fn eq_univ_to_eqq<A: Prop, B: Prop>(p: EqUniv<A, B>) -> EqQ<A, B> {
     Rc::new(move |eq| quality::to_eq(p(eq.clone())).0(eq))
 }
 
 /// `((a == b) => (a ~~ b)) => ((a == b) ~~ (a ~~ b))`.
-pub fn eq_q_to_univ<A: Prop, B: Prop>(p: EqQ<A, B>) -> Univ<A, B> {
+pub fn eqq_to_univ<A: Prop, B: Prop>(p: EqQ<A, B>) -> Univ<A, B> {
     eq_lift((
         Rc::new(move |eq| p(eq)),
         Rc::new(move |q| quality::to_eq(q))
@@ -54,8 +54,13 @@ pub fn eq_q_to_univ<A: Prop, B: Prop>(p: EqQ<A, B>) -> Univ<A, B> {
 }
 
 /// `((a == b) ~~ (a ~~ b)) => ((a == b) => (a ~~ b))`.
-pub fn univ_to_eq_q<A: Prop, B: Prop>(univ: Univ<A, B>) -> EqQ<A, B> {
-    eq_univ_to_eq_q(univ.map_any())
+pub fn univ_to_eqq<A: Prop, B: Prop>(univ: Univ<A, B>) -> EqQ<A, B> {
+    eq_univ_to_eqq(univ.map_any())
+}
+
+/// Lift `(a == b) == (a ~~ b)` to `(a == b) ~~ (a ~~ b)`.
+pub fn eq_lift<A: Prop, B: Prop>(eq_eq_q: Eq<Eq<A, B>, Q<A, B>>) -> Univ<A, B> {
+    Q(eq_eq_q)
 }
 
 /// `((a => b) => (a ~~ b)) => ((a == b) ~~ (a ~~ b))`.
@@ -68,7 +73,7 @@ pub fn hom_to_univ<A: Prop, B: Prop>(hom: Hom<A, B>) -> Univ<A, B> {
 
 /// `((a == b) => (a ~~ b)) => ((a == b) ~~ (a ~~ b))`.
 pub fn hom_eq_q<A: Prop, B: Prop>() -> Hom<Eq<A, B>, Q<A, B>> {
-    Rc::new(move |x| eq_q_to_univ(x))
+    Rc::new(move |x| eqq_to_univ(x))
 }
 
 /// `((a == b) == (a ~~ b)) ~~ ((a == b) ~~ (a ~~ b))`.
@@ -77,13 +82,8 @@ pub fn univ_eq_q<A: Prop, B: Prop>() -> Univ<Eq<A, B>, Q<A, B>> {
 }
 
 /// `((a == b) == (a ~~ b)) => ((a == b) ~~ (a ~~ b))`.
-pub fn eq_q_eq_q<A: Prop, B: Prop>() -> EqQ<Eq<A, B>, Q<A, B>> {
-    univ_to_eq_q(univ_eq_q())
-}
-
-/// Lift `(a == b) == (a ~~ b)` to `(a == b) ~~ (a ~~ b)`.
-pub fn eq_lift<A: Prop, B: Prop>(eq_eq_q: Eq<Eq<A, B>, Q<A, B>>) -> Univ<A, B> {
-    Q(eq_eq_q)
+pub fn eqq_eq_q<A: Prop, B: Prop>() -> EqQ<Eq<A, B>, Q<A, B>> {
+    univ_to_eqq(univ_eq_q())
 }
 
 /// Higher quality univalence.
