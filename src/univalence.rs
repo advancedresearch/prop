@@ -66,6 +66,21 @@ pub fn hom_to_univ<A: Prop, B: Prop>(hom: Hom<A, B>) -> Univ<A, B> {
     ))
 }
 
+/// `((a == b) => (a ~~ b)) => ((a == b) ~~ (a ~~ b))`.
+pub fn hom_eq_q<A: Prop, B: Prop>() -> Hom<Eq<A, B>, Q<A, B>> {
+    Rc::new(move |x| eq_q_to_univ(x))
+}
+
+/// `((a == b) == (a ~~ b)) ~~ ((a == b) ~~ (a ~~ b))`.
+pub fn univ_eq_q<A: Prop, B: Prop>() -> Univ<Eq<A, B>, Q<A, B>> {
+    hom_to_univ(hom_eq_q())
+}
+
+/// `((a == b) == (a ~~ b)) => ((a == b) ~~ (a ~~ b))`.
+pub fn eq_q_eq_q<A: Prop, B: Prop>() -> EqQ<Eq<A, B>, Q<A, B>> {
+    univ_to_eq_q(univ_eq_q())
+}
+
 /// Lift `(a == b) == (a ~~ b)` to `(a == b) ~~ (a ~~ b)`.
 pub fn eq_lift<A: Prop, B: Prop>(eq_eq_q: Eq<Eq<A, B>, Q<A, B>>) -> Univ<A, B> {
     Q(eq_eq_q)
