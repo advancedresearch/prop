@@ -108,6 +108,7 @@ pub mod nat;
 pub mod quality;
 pub mod queenity;
 pub mod univalence;
+pub mod quantify;
 
 /// Logical true.
 #[derive(Copy, Clone)]
