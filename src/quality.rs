@@ -186,15 +186,15 @@ pub fn neq_to_sesh<A: Prop, B: Prop>(neq: Not<Eq<A, B>>) -> Not<Q<A, B>> {
     Rc::new(move |q_ab| neq(to_eq(q_ab)))
 }
 
-/// Convert inquality to inequality `¬(a ~~ b) ⋀ eq_q(a, b) => ¬(a == b)`.
-pub fn sesh_to_neq<A: Prop, B: Prop>(sesh: Not<Q<A, B>>, eq_q_ab: EqQ<A, B>) -> Not<Eq<A, B>> {
-    imply::modus_tollens(eq_q_ab)(sesh)
+/// Convert inquality to inequality `¬(a ~~ b) ⋀ eqq(a, b) => ¬(a == b)`.
+pub fn sesh_to_neq<A: Prop, B: Prop>(sesh: Not<Q<A, B>>, eqq_ab: EqQ<A, B>) -> Not<Eq<A, B>> {
+    imply::modus_tollens(eqq_ab)(sesh)
 }
 
-/// `eq_q(a, b)  =>  ¬(a ~~ b) == ¬(a == b)`.
-pub fn sesh_eq_neq<A: Prop, B: Prop>(eq_q_ab: EqQ<A, B>) -> Eq<Not<Q<A, B>>, Not<Eq<A, B>>> {
+/// `eqq(a, b)  =>  ¬(a ~~ b) == ¬(a == b)`.
+pub fn sesh_eq_neq<A: Prop, B: Prop>(eqq_ab: EqQ<A, B>) -> Eq<Not<Q<A, B>>, Not<Eq<A, B>>> {
     (
-        Rc::new(move |nq_ab| sesh_to_neq(nq_ab, eq_q_ab.clone())),
+        Rc::new(move |nq_ab| sesh_to_neq(nq_ab, eqq_ab.clone())),
         Rc::new(move |neq_ab| neq_to_sesh(neq_ab)),
     )
 }
