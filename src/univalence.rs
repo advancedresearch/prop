@@ -46,7 +46,7 @@ pub fn eq_univ_to_eq_q<A: Prop, B: Prop>(p: EqUniv<A, B>) -> EqQ<A, B> {
 }
 
 /// `((a == b) => (a ~~ b)) => ((a == b) ~~ (a ~~ b))`.
-pub fn eq_q_to_eq_univ<A: Prop, B: Prop>(p: EqQ<A, B>) -> Univ<A, B> {
+pub fn eq_q_to_univ<A: Prop, B: Prop>(p: EqQ<A, B>) -> Univ<A, B> {
     eq_lift((
         Rc::new(move |eq| p(eq)),
         Rc::new(move |q| quality::to_eq(q))
