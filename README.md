@@ -12,8 +12,10 @@ Supports theorem proving in [Classical Propositional Logic](https://en.wikipedia
 Abbreviations:
 
 - IPL: Intuitionistic/Constructive Propositional Logic
+- EP: Intuitionistic/Constructive Propositional Logic for Existential Philosophy
 - PL: Classical Propositional Logic
 - PSI: Path Semantical Intuitionistic/Constructive Propositional Logic
+- EPS: Path Semantical Intuitionistic/Constructive Propositional Logic for Existential Philosophy
 - PSL: Path Semantical Classical Propositional Logic
 
 ### Motivation
@@ -37,18 +39,23 @@ proofs in constructive logic.
 This library contains:
 
 - `Prop`: Propositions that might or might not be decidable (constructive logic)
+- `EProp`: Existential propositions (type theoretic existential philosophy)
 - `DProp`: Decidable propositions (classical logic)
 - `LProp`: Like `Prop`, but with path semantics (path semantical constructive logic)
+- `ELProp`: Like `EProp`, but with path semantics (path semantical existential philosophy)
 - `DLProp`: Like `DProp`, but with path semantics (path semantical classical logic)
+- Automatic lifting of Excluded Middle of Non-Existence to existential propositions
 - Automatic lifting of Excluded Middle to decidable propositions
 - Double Negation for proofs of `Prop`
-- A model of Path Semantical Quality in IPL
+- A model of Path Semantical Quality in IPL (see "quality" module)
+- A model of Seshatic Queenity (see "queenity" module)
 - Formalization of the core axiom of Path Semantics
 - Tactics organized in modules by constructs (e.g. `and` or `imply`)
 
 Due to first-order logic requiring dependent types,
 which is not yet supported in Rust,
 this library is limited to zeroth-order logic (propositional logic).
+However, this library has limited support for first-order logic in the "quantify" module.
 
 ### Examples
 
