@@ -17,6 +17,7 @@ pub use quality::EqQ;
 pub use quality::self_quality_left as refl_left;
 pub use quality::self_quality_right as refl_right;
 
+use existence::EProp;
 use nat::*;
 
 /// Core axiom of Path Semantics.
@@ -161,6 +162,10 @@ impl<T, U> POrd<U> for T where T: LProp, U: LProp, T::N: Lt<U::N> {}
 /// Shorthand for decidable proposition with path semantical level.
 pub trait DLProp: LProp + DProp {}
 impl<T: LProp + DProp> DLProp for T {}
+
+/// Shorthand for existential proposition with path semantical level.
+pub trait ELProp: LProp + EProp {}
+impl<T: LProp + EProp> ELProp for T {}
 
 /// Returns the minimum LProp.
 pub type Min<A, B> = <(<A as LProp>::N, <B as LProp>::N) as SortMin<A, B>>::Out;
