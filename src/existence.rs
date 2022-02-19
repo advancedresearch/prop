@@ -100,3 +100,11 @@ pub fn eqnn_to_crosseq<A: Prop, B: Prop>(eq: EqNN<A, B>) -> CrossEq<A, B> {
         Rc::new(move |b| eq2.1(not::double(b))),
     )
 }
+
+/// `(a =x= b) ⋀ (b =x= c) => (a =x= c)`.
+pub fn crosseq_transitivity<A: EProp, B: EProp, C: EProp>(
+    ab: CrossEq<A, B>,
+    bc: CrossEq<B, C>,
+) -> CrossEq<A, C> {
+    eqnn_to_crosseq(eq::transitivity(crosseq_to_eqnn(ab), crosseq_to_eqnn(bc)))
+}
