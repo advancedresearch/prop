@@ -40,6 +40,10 @@ use crate::*;
 pub type NN<X> = Not<Not<X>>;
 /// `∀ x { ¬¬x ⋁ ¬x }`.
 pub type E<X> = Or<NN<X>, Not<X>>;
+/// `¬¬a == ¬¬b`.
+pub type EqNN<A, B> = Eq<NN<A>, NN<B>>;
+/// `(a => ¬¬b) ⋀ (b => ¬¬a)`.
+pub type CrossEq<A, B> = And<Imply<A, NN<B>>, Imply<B, NN<A>>>;
 
 /// Implemented by existential types.
 pub trait Existential: Prop {
@@ -69,4 +73,30 @@ pub fn or_from_de_morgan<A: EProp, B: EProp>(
         (Right(na), _) => Left(na),
         (_, Right(nb)) => Right(nb),
     }
+}
+
+/// `((a => ¬¬b) ⋀ (b => ¬¬a)) => (¬¬a == ¬¬b)`.
+pub fn crosseq_to_eqnn<A: EProp, B: EProp>(cross_eq: CrossEq<A, B>) -> EqNN<A, B> {
+    let (ab, ba) = cross_eq;
+    match (A::e(), B::e()) {
+        (Left(nna), Left(nnb)) => and::to_eq_pos((nna, nnb)),
+        (Left(nna), Right(nb)) =>
+            not::absurd(nna, imply::modus_tollens(ab)(not::double(nb))),
+        (Right(na), Left(nnb)) =>
+            not::absurd(nnb, imply::modus_tollens(ba)(not::double(na))),
+        (Right(na), Right(nb)) =>
+            (
+                Rc::new(move |nna| not::absurd(nna, na.clone())),
+                Rc::new(move |nnb| not::absurd(nnb, nb.clone())),
+            )
+    }
+}
+
+/// `(¬¬a == ¬¬b) => ((a => ¬¬b) ⋀ (b => ¬¬a))`.
+pub fn eqnn_to_crosseq<A: Prop, B: Prop>(eq: EqNN<A, B>) -> CrossEq<A, B> {
+    let eq2 = eq.clone();
+    (
+        Rc::new(move |a| eq.0(not::double(a))),
+        Rc::new(move |b| eq2.1(not::double(b))),
+    )
 }
