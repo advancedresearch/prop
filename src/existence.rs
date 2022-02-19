@@ -42,7 +42,7 @@ pub type NN<X> = Not<Not<X>>;
 pub type E<X> = Or<NN<X>, Not<X>>;
 /// `¬¬a == ¬¬b`.
 pub type EqNN<A, B> = Eq<NN<A>, NN<B>>;
-/// `(a => ¬¬b) ⋀ (b => ¬¬a)`.
+/// `a =x= b`, defined as `(a => ¬¬b) ⋀ (b => ¬¬a)`.
 pub type CrossEq<A, B> = And<Imply<A, NN<B>>, Imply<B, NN<A>>>;
 
 /// Implemented by existential types.
@@ -75,7 +75,7 @@ pub fn or_from_de_morgan<A: EProp, B: EProp>(
     }
 }
 
-/// `((a => ¬¬b) ⋀ (b => ¬¬a)) => (¬¬a == ¬¬b)`.
+/// `(a =x= b) => (¬¬a == ¬¬b)`.
 pub fn crosseq_to_eqnn<A: EProp, B: EProp>(cross_eq: CrossEq<A, B>) -> EqNN<A, B> {
     let (ab, ba) = cross_eq;
     match (A::e(), B::e()) {
@@ -92,7 +92,7 @@ pub fn crosseq_to_eqnn<A: EProp, B: EProp>(cross_eq: CrossEq<A, B>) -> EqNN<A, B
     }
 }
 
-/// `(¬¬a == ¬¬b) => ((a => ¬¬b) ⋀ (b => ¬¬a))`.
+/// `(¬¬a == ¬¬b) => (a =x= b)`.
 pub fn eqnn_to_crosseq<A: Prop, B: Prop>(eq: EqNN<A, B>) -> CrossEq<A, B> {
     let eq2 = eq.clone();
     (
