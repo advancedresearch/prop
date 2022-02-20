@@ -103,12 +103,22 @@ pub trait UniqQ<A, B>: NoOtherQ<A, B> {
 pub trait IdQ: 'static + Clone {
     /// `a => (a ~~ a)`.
     fn idq<A: Prop>(&self, a: A) -> Q<A, A>;
+    /// `¬(a ~~ a) => ¬a`
+    fn sesh_to_not<A: Prop>(&self, sesh_a: Not<Q<A, A>>) -> Not<A> {
+        let copy = self.clone();
+        imply::modus_tollens(Rc::new(move |a| copy.idq(a)))(sesh_a)
+    }
 }
 
 /// Maps every self-quality `a ~~ a` into true proposition `a`.
 pub trait QId: 'static + Clone {
     /// `(a ~~ a) => a`.
     fn qid<A: Prop>(&self, q_aa: Q<A, A>) -> A;
+    /// `¬a => ¬(a ~~ a)`.
+    fn not_to_sesh<A: Prop>(&self, na: Not<A>) -> Not<Q<A, A>> {
+        let copy = self.clone();
+        imply::modus_tollens(Rc::new(move |q_aa| copy.qid(q_aa)))(na)
+    }
 }
 
 /// Quality between `A` and `B` (`A ~~ B`).
