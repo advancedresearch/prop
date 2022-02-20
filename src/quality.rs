@@ -99,6 +99,18 @@ pub trait UniqQ<A, B>: NoOtherQ<A, B> {
     fn uniq_q(&self, q_aa: Q<A, A>) -> Q<A, B>;
 }
 
+/// Maps every true proposition `a` into self-quality `a ~~ a`.
+pub trait IdQ: 'static + Clone {
+    /// `a => (a ~~ a)`.
+    fn idq<A: Prop>(&self, a: A) -> Q<A, A>;
+}
+
+/// Maps every self-quality `a ~~ a` into true proposition `a`.
+pub trait QId: 'static + Clone {
+    /// `(a ~~ a) => a`.
+    fn qid<A: Prop>(&self, q_aa: Q<A, A>) -> A;
+}
+
 /// Quality between `A` and `B` (`A ~~ B`).
 #[derive(Clone)]
 pub struct Q<A, B>(pub(crate) Eq<A, B>);
