@@ -60,8 +60,8 @@ pub fn lt<T: Lt<U>, U>(_a: T, _b: U) {}
 pub fn eq<T, U>(_a: T, _b: U) where (T, U): EqNat {}
 
 /// Implemented for natural numbers.
-pub trait Nat: Prop + Lt<S<Self>> + Default {}
-impl<T> Nat for T where T: Prop + Lt<S<T>> + Default {}
+pub trait Nat: Prop + Lt<S<Self>> + Dec + Default {}
+impl<T> Nat for T where T: Prop + Lt<S<T>> + Dec + Default {}
 
 /// Addition.
 pub trait Add {
@@ -76,4 +76,16 @@ impl<T: Clone> Add for (Z, S<T>) {
 }
 impl<T, U> Add for (S<T>, U) where (T, U): Add {
     type Out = S<<(T, U) as Add>::Out>;
+}
+
+/// Decrement.
+pub trait Dec {
+    /// The output type.
+    type Out: Nat;
+}
+impl Dec for Z {
+    type Out = Z;
+}
+impl<T: Nat> Dec for S<T> {
+    type Out = T;
 }
