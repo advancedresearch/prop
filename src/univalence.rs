@@ -92,35 +92,3 @@ pub fn higher<A: Prop, B: Prop>(univ: Univ<A, B>) -> Univ<Eq<A, B>, Q<A, B>> {
     let higher_eq: Eq<_, Univ<A, B>> = (univ.map_any(), eq.map_any());
     eq_lift::<Eq<A, B>, Q<A, B>>(higher_eq)
 }
-
-/// `(a ~~ b) ∧ (a == c)  =>  (c ~~ b)`.
-pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, g: Eq<A, C>) -> Q<C, B> {
-    Q(eq::commute(eq::transitivity(eq::commute(quality::to_eq(f)), g)))
-}
-
-/// `(a ~~ b) ∧ (b == c)  =>  (a ~~ c)`.
-pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, g: Eq<B, C>) -> Q<A, C> {
-    Q(eq::transitivity(quality::to_eq(f), g))
-}
-
-/// `¬(a ~~ b) ⋀ (a == c)  =>  ¬(c ~~ b)`.
-pub fn sesh_in_left_arg<A: Prop, B: Prop, C: Prop>(
-    sesh_ab: Not<Q<A, B>>,
-    eq_ac: Eq<A, C>,
-) -> Not<Q<C, B>> {
-    let eq_ca = eq::symmetry(eq_ac);
-    Rc::new(move |q_cb| {
-        sesh_ab(in_left_arg(q_cb, eq_ca.clone()))
-    })
-}
-
-/// `¬(a ~~ b) ⋀ (b == c)  =>  ¬(a ~~ c)`.
-pub fn sesh_in_right_arg<A: Prop, B: Prop, C: Prop>(
-    sesh_ab: Not<Q<A, B>>,
-    eq_bc: Eq<B, C>,
-) -> Not<Q<A, C>> {
-    let eq_cb = eq::symmetry(eq_bc);
-    Rc::new(move |q_ac| {
-        sesh_ab(in_right_arg(q_ac, eq_cb.clone()))
-    })
-}

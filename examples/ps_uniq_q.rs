@@ -2,7 +2,7 @@ use std::rc::Rc;
 use prop::quality::{
     nq_left,
     nq_symmetry,
-    self_quality_right,
+    right,
     symmetry,
     Q,
     UniqQ,
@@ -38,7 +38,7 @@ pub fn proof<A: Prop, B: Prop, C: Prop>(
         Rc::new(move |q_ba| {
             let q_ab = symmetry(q_ba);
             let sesh_bc = nq_left(q_ab.clone(), sesh_ac.clone());
-            let q_bb = self_quality_right(q_ab);
+            let q_bb = right(q_ab);
             let q_bc = g.uniq_q(q_bb);
             sesh_bc(q_bc)
         }),
@@ -46,7 +46,7 @@ pub fn proof<A: Prop, B: Prop, C: Prop>(
             let q_cb = symmetry(q_bc);
             let sesh_ca = nq_symmetry(sesh_ac2.clone());
             let sesh_ba = nq_left(q_cb.clone(), sesh_ca.clone());
-            let q_bb = self_quality_right(q_cb);
+            let q_bb = right(q_cb);
             let q_ba = f.uniq_q(q_bb);
             sesh_ba(q_ba)
         }),

@@ -14,8 +14,8 @@ use crate::*;
 
 pub use quality::Q;
 pub use quality::EqQ;
-pub use quality::self_quality_left as refl_left;
-pub use quality::self_quality_right as refl_right;
+pub use quality::left as refl_left;
+pub use quality::right as refl_right;
 
 use existence::EProp;
 use nat::*;

@@ -23,7 +23,7 @@ pub fn dominating_queen<A: Prop, B: Prop, C: Prop>(
     let eq_bc = eq::symmetry(eq_cb.clone());
     let sq_ab = queenity::in_right_arg(sq_ac, eq_cb);
     let q_bc = eq_q_bc(eq_bc);
-    let q_bb = quality::self_quality_left(q_bc);
+    let q_bb = quality::left(q_bc);
     let sq_bb = queenity::sq_right(sq_ab);
     let sesh_bb = queenity::to_sesh(sq_bb);
     sesh_bb(q_bb)
