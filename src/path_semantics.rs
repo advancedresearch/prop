@@ -20,6 +20,9 @@ pub use quality::right as refl_right;
 use existence::EProp;
 use nat::*;
 
+/// Models a type relation `a : t`.
+pub type Ty<A, T> = And<Imply<A, T>, POrdProof<A, T>>;
+
 /// Core axiom of Path Semantics.
 pub type PSem<F1, F2, X1, X2> = Imply<
     And<And<Q<F1, F2>, And<POrdProof<F1, X1>, POrdProof<F2, X2>>>,
