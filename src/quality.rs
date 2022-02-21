@@ -182,25 +182,25 @@ pub fn to_eq<A: Prop, B: Prop>(Q(eq): Q<A, B>) -> Eq<A, B> {
 }
 
 /// `(a ~~ b) => (a ~~ a)`.
-pub fn self_quality_left<A: Prop, B: Prop>(q_ab: Q<A, B>) -> Q<A, A> {
+pub fn left<A: Prop, B: Prop>(q_ab: Q<A, B>) -> Q<A, A> {
     let q_ba = symmetry(q_ab.clone());
     transitivity(q_ab, q_ba)
 }
 
 /// `(a ~~ b) => (b ~~ b)`.
-pub fn self_quality_right<A: Prop, B: Prop>(q_ab: Q<A, B>) -> Q<B, B> {
+pub fn right<A: Prop, B: Prop>(q_ab: Q<A, B>) -> Q<B, B> {
     let q_ba = symmetry(q_ab.clone());
     transitivity(q_ba, q_ab)
 }
 
 /// Introduce a different proposition in right argument (keep left).
 pub fn sesh_left<A: Prop, B: Prop>(sesh_a: Not<Q<A, A>>) -> Not<Q<A, B>> {
-    Rc::new(move |q_ab| sesh_a(self_quality_left(q_ab)))
+    Rc::new(move |q_ab| sesh_a(left(q_ab)))
 }
 
 /// Introduce a different proposition in left argument (keep right).
 pub fn sesh_right<A: Prop, B: Prop>(sesh_b: Not<Q<B, B>>) -> Not<Q<A, B>> {
-    Rc::new(move |q_ab| sesh_b(self_quality_right(q_ab)))
+    Rc::new(move |q_ab| sesh_b(right(q_ab)))
 }
 
 /// `¬(a == b) => ¬(a ~~ b)`.
@@ -292,4 +292,36 @@ pub fn sesh_plato_absurd<A: Prop, B: Prop>(
 #[cfg(feature = "pure_platonism")]
 pub fn sesh_absurd<A: Prop, B: Prop>(f: Not<Q<A, A>>) -> B {
     not::absurd(mirror(), f)
+}
+
+/// `(a ~~ b) ∧ (a == c)  =>  (c ~~ b)`.
+pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, g: Eq<A, C>) -> Q<C, B> {
+    Q(eq::commute(eq::transitivity(eq::commute(quality::to_eq(f)), g)))
+}
+
+/// `(a ~~ b) ∧ (b == c)  =>  (a ~~ c)`.
+pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, g: Eq<B, C>) -> Q<A, C> {
+    Q(eq::transitivity(quality::to_eq(f), g))
+}
+
+/// `¬(a ~~ b) ⋀ (a == c)  =>  ¬(c ~~ b)`.
+pub fn sesh_in_left_arg<A: Prop, B: Prop, C: Prop>(
+    sesh_ab: Not<Q<A, B>>,
+    eq_ac: Eq<A, C>,
+) -> Not<Q<C, B>> {
+    let eq_ca = eq::symmetry(eq_ac);
+    Rc::new(move |q_cb| {
+        sesh_ab(in_left_arg(q_cb, eq_ca.clone()))
+    })
+}
+
+/// `¬(a ~~ b) ⋀ (b == c)  =>  ¬(a ~~ c)`.
+pub fn sesh_in_right_arg<A: Prop, B: Prop, C: Prop>(
+    sesh_ab: Not<Q<A, B>>,
+    eq_bc: Eq<B, C>,
+) -> Not<Q<A, C>> {
+    let eq_cb = eq::symmetry(eq_bc);
+    Rc::new(move |q_ac| {
+        sesh_ab(in_right_arg(q_ac, eq_cb.clone()))
+    })
 }
