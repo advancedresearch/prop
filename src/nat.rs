@@ -1,6 +1,6 @@
 //! Natural numbers with types.
 
-use crate::Prop;
+use crate::{Eq, Prop, Not};
 
 /// Zero.
 #[derive(Copy, Clone)]
@@ -47,6 +47,11 @@ pub trait Lt<T> {}
 impl Lt<S<Z>> for Z {}
 impl<T> Lt<S<S<T>>> for S<T> {}
 impl<T: Lt<U>, U> Lt<S<U>> for T {}
+
+/// Provides a proof that the numbers are inequal.
+pub fn lt_neq<T: Lt<U>, U>() -> Not<Eq<T, U>> {
+    unimplemented!()
+}
 
 /// Whether two natural numbers are equal.
 #[marker]
