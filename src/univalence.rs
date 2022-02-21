@@ -93,12 +93,12 @@ pub fn higher<A: Prop, B: Prop>(univ: Univ<A, B>) -> Univ<Eq<A, B>, Q<A, B>> {
     eq_lift::<Eq<A, B>, Q<A, B>>(higher_eq)
 }
 
-/// `(a ~~ b) ∧ (a == c)  =>  (c ~~ b)`
+/// `(a ~~ b) ∧ (a == c)  =>  (c ~~ b)`.
 pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, g: Eq<A, C>) -> Q<C, B> {
     Q(eq::commute(eq::transitivity(eq::commute(quality::to_eq(f)), g)))
 }
 
-/// `(a ~~ b) ∧ (b == c)  =>  (a ~~ c)`
+/// `(a ~~ b) ∧ (b == c)  =>  (a ~~ c)`.
 pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, g: Eq<B, C>) -> Q<A, C> {
     Q(eq::transitivity(quality::to_eq(f), g))
 }
