@@ -30,6 +30,8 @@
 
 use crate::*;
 use quality::*;
+use nat::{Dec, Lt, Nat, Z};
+use path_semantics::Ty;
 
 /// A homotopy path between paths `A` and `B`.
 pub type Hom<A, B> = Imply<Imply<A, B>, Q<A, B>>;
@@ -91,4 +93,50 @@ pub fn higher<A: Prop, B: Prop>(univ: Univ<A, B>) -> Univ<Eq<A, B>, Q<A, B>> {
     let eq: Eq<Eq<A, B>, Q<A, B>> = quality::to_eq(univ.clone());
     let higher_eq: Eq<_, Univ<A, B>> = (univ.map_any(), eq.map_any());
     eq_lift::<Eq<A, B>, Q<A, B>>(higher_eq)
+}
+
+/// Homotopy level.
+///
+/// For theoretical background, see [nLab - homotopy levels](https://ncatlab.org/nlab/show/homotopy+level).
+pub trait HomotopyLevel<N: Nat>: Prop {
+    /// Returns a quality for the homotopy level below.
+    ///
+    /// Uses symbolic distinction to model inhabitation of a type.
+    /// This is only required at homotopy level 0.
+    /// When `x == y`, one can prove `x ~~ y` only if they are symbolic distinct.
+    /// Relative to the core axiom of path semantics,
+    /// this implies that their types are qual.
+    /// Since this produces a self-quality on the homotopy level,
+    /// it is interpreted as the type being inhabited.
+    fn h_level<X: Prop, Y: Prop>(
+        ty_x: Ty<X, Self>,
+        ty_y: Ty<Y, Self>,
+        eqq_xy: Imply<Eq<N, Z>, EqQ<X, Y>>,
+    ) -> Q<X, Y>
+        where Q<X, Y>: HomotopyLevel<<N as Dec>::Out>;
+
+    /// Homotopy level 0.
+    fn h0<X: Prop, Y: Prop>(
+        ty_x: Ty<X, Self>,
+        ty_y: Ty<Y, Self>,
+        eqq_xy: EqQ<X, Y>,
+    ) -> Q<X, Y>
+        where Q<X, Y>: HomotopyLevel<Z>,
+              Self: HomotopyLevel<Z>
+    {
+        <Self as HomotopyLevel<Z>>::h_level(ty_x, ty_y, eqq_xy.map_any())
+    }
+
+    /// Homotopy level `N` where `N > 0`.
+    fn hn<X: Prop, Y: Prop>(
+        ty_x: Ty<X, Self>,
+        ty_y: Ty<Y, Self>,
+    ) -> Q<X, Y>
+        where Q<X, Y>: HomotopyLevel<<N as Dec>::Out>,
+              Z: Lt<N>
+    {
+        let neq_nz: Not<Eq<N, Z>> = eq::neq_symmetry(nat::lt_neq());
+        Self::h_level(ty_x, ty_y,
+            Rc::new(move |eq_nz| not::absurd(neq_nz.clone(), eq_nz)))
+    }
 }
