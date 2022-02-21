@@ -4,7 +4,7 @@
 
 use crate::*;
 
-/// `a => b  =>  ¬b => ¬a`.
+/// `(a => b)  =>  (¬b => ¬a)`.
 ///
 /// Swap sides of implication by taking their negation.
 pub fn modus_tollens<A: Prop, B: Prop>(f: Imply<A, B>) -> Imply<Not<B>, Not<A>> {
@@ -14,7 +14,7 @@ pub fn modus_tollens<A: Prop, B: Prop>(f: Imply<A, B>) -> Imply<Not<B>, Not<A>> 
     })
 }
 
-/// `¬b => ¬a  =>  a => b`.
+/// `(¬b => ¬a)  =>  (a => b)`.
 pub fn rev_modus_tollens<A: DProp, B: DProp>(f: Imply<Not<B>, Not<A>>) -> Imply<A, B> {
     imply::rev_double_neg(Rc::new(move |x| {
         let f = f.clone();
@@ -22,7 +22,7 @@ pub fn rev_modus_tollens<A: DProp, B: DProp>(f: Imply<Not<B>, Not<A>>) -> Imply<
     }))
 }
 
-/// `a => b ∧ b => c  =>  a => c`.
+/// `(a => b) ∧ (b => c)  =>  (a => c)`.
 pub fn transitivity<A: Prop, B: Prop, C: Prop>(
     f: Imply<A, B>,
     g: Imply<B, C>,
@@ -43,7 +43,7 @@ pub fn rev_modus_ponens<A: Prop, B: Prop>(g: Imply<B, A>, f: Not<A>) -> Not<B> {
     Rc::new(move |b| f(g(b)))
 }
 
-/// `a => (b => c)  =>  b => (a => c)`
+/// `(a => (b => c))  =>  (b => (a => c))`
 pub fn reorder_args<A: Prop, B: Prop, C: Prop>(
     f: Imply<A, Imply<B, C>>
 ) -> Imply<B, Imply<A, C>> {
@@ -53,12 +53,12 @@ pub fn reorder_args<A: Prop, B: Prop, C: Prop>(
     })
 }
 
-/// `(a => b)  =>  ¬¬a => ¬¬b`.
+/// `(a => b)  =>  (¬¬a => ¬¬b)`.
 pub fn double_neg<A: DProp, B: Prop>(f: Imply<A, B>) -> Imply<Not<Not<A>>, Not<Not<B>>> {
     Rc::new(move |nn_a| not::double(f(not::rev_double(nn_a))))
 }
 
-/// `(¬¬a => ¬¬b)  =>  a => b`.
+/// `(¬¬a => ¬¬b)  =>  (a => b)`.
 pub fn rev_double_neg<A: DProp, B: DProp>(f: Imply<Not<Not<A>>, Not<Not<B>>>) -> Imply<A, B> {
     use Either::*;
 
@@ -112,7 +112,7 @@ pub fn flip_neg_right<A: Prop, B: Prop>(f: Imply<A, Not<B>>) -> Imply<B, Not<A>>
     Rc::new(move |x| g(not::double(x)))
 }
 
-/// `((a ∧ b) => c  =>  a => (b => c))`.
+/// `((a ∧ b) => c)  =>  (a => (b => c))`.
 pub fn chain<A: Prop, B: Prop, C: Prop>(
     f: Imply<And<A, B>, C>
 ) -> Imply<A, Imply<B, C>> {
