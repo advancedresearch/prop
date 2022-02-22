@@ -122,7 +122,7 @@ impl<N: Nat, T: HomotopyLevel<N>> HProp<N> for T {}
 pub type H2<A, N> = <<A as HomotopyLevel<S<S<N>>>>::H as HomotopyLevel<S<N>>>::H;
 
 /// Proves that homotopy level 0 has quality between any members.
-pub fn hlev0_q<X: Prop, Y: Prop, A: HProp<Z>>(
+pub fn h0_q<X: Prop, Y: Prop, A: HProp<Z>>(
     ty_x: Ty<X, A>,
     ty_y: Ty<Y, A>,
 ) -> Q<X, Y> {
@@ -133,7 +133,7 @@ pub fn hlev0_q<X: Prop, Y: Prop, A: HProp<Z>>(
 }
 
 /// Proves that homotopy level 1 or higher has quality between self-quality of any members.
-pub fn hlev1_q2<X: Prop, Y: Prop, N: Nat, A: HProp<S<N>>>(
+pub fn h1_q2<X: Prop, Y: Prop, N: Nat, A: HProp<S<N>>>(
     ty_x: Ty<X, A>,
     ty_y: Ty<Y, A>,
 ) -> Q<Q<X, X>, Q<Y, Y>> {
