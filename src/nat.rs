@@ -44,7 +44,7 @@ pub const _3: Three = S(_2);
 /// Less than comparison.
 #[marker]
 pub trait Lt<T> {}
-impl Lt<S<Z>> for Z {}
+impl<T> Lt<S<T>> for Z {}
 impl<T> Lt<S<S<T>>> for S<T> {}
 impl<T: Lt<U>, U> Lt<S<U>> for T {}
 
