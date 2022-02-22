@@ -166,3 +166,21 @@ pub fn h2<X: Prop, Y: Prop, X2: Prop, Y2: Prop, N: Nat, A: HProp<S<S<N>>>>(
     let ty_y2_q_az = univalence::lift_ty(ty_x, ty_y, ty_y2_q_xy);
     A::H::hn(ty_x2_q_az, ty_y2_q_az)
 }
+
+/// `(x : a) ⋀ (x : b)  =>  (a ~~ b)` when `a` and `b` are homotopy level 0.
+pub fn h0_ext<A: HProp<Z>, B: HProp<Z>, X: Prop>(
+    ty_xa: Ty<X, A>,
+    ty_xb: Ty<X, B>,
+) -> Q<A, B> {
+    let q_ah0_x = A::h0(ty_xa.clone());
+    let q_bh0_x = B::h0(ty_xb.clone());
+    let q_x_bh0 = quality::symmetry(q_bh0_x.clone());
+    let q_ah0_bh0 = quality::transitivity(q_ah0_x.clone(), q_x_bh0);
+
+    let eq_x_ah0 = eq::symmetry(quality::to_eq(q_ah0_x));
+    let eq_x_bh0 = eq::symmetry(quality::to_eq(q_bh0_x));
+    let ty_ah0_a = path_semantics::ty_in_left_arg(ty_xa, eq_x_ah0);
+    let ty_bh0_b = path_semantics::ty_in_left_arg(ty_xb, eq_x_bh0);
+    let psem = path_semantics::assume();
+    psem(((q_ah0_bh0, (ty_ah0_a.1, ty_bh0_b.1)), (ty_ah0_a.0, ty_bh0_b.0)))
+}
