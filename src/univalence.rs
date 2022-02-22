@@ -151,11 +151,8 @@ pub fn lift_ty<X: Prop, Y: Prop, X2: Prop, N: Nat, A: HProp<S<N>>>(
     ty_x2_q_xy: Ty<X2, Q<X, Y>>,
 ) -> Ty<X2, A::H> {
     let q_az_q_xy = A::hn(ty_x, ty_y);
-    let (x2_q_xy, pord_x2_q_xy) = ty_x2_q_xy;
     let eq_q_xy_q_az = eq::symmetry(quality::to_eq(q_az_q_xy));
-    let x2_q_az = imply::in_right_arg(x2_q_xy, eq_q_xy_q_az.clone());
-    let pord_x2_q_az = pord_x2_q_xy.by_eq_right(eq_q_xy_q_az);
-    (x2_q_az, pord_x2_q_az)
+    path_semantics::ty_in_right_arg(ty_x2_q_xy, eq_q_xy_q_az)
 }
 
 /// Get the type of the path between paths.
