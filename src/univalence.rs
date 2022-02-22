@@ -99,9 +99,9 @@ pub fn higher<A: Prop, B: Prop>(univ: Univ<A, B>) -> Univ<Eq<A, B>, Q<A, B>> {
 ///
 /// For theoretical background, see [nLab - homotopy levels](https://ncatlab.org/nlab/show/homotopy+level).
 pub trait HomotopyLevel<N: Nat>: Prop {
-    /// A type such that proves homotopy level 0.
+    /// A type such that it proves homotopy level 0.
     type H0: Prop;
-    /// A type such that it proves lower homotopy level.
+    /// A type such that it proves a lower homotopy level.
     type H: HomotopyLevel<<N as Dec>::Out>;
     /// Homotopy level 0.
     fn h0<Y: Prop>(ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
