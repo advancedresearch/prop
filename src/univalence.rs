@@ -30,7 +30,7 @@
 
 use crate::*;
 use quality::*;
-use nat::{Dec, Lt, Nat, Z};
+use nat::{EqNat, Dec, Lt, Nat, S, Z};
 use path_semantics::Ty;
 
 /// A homotopy path between paths `A` and `B`.
@@ -99,44 +99,73 @@ pub fn higher<A: Prop, B: Prop>(univ: Univ<A, B>) -> Univ<Eq<A, B>, Q<A, B>> {
 ///
 /// For theoretical background, see [nLab - homotopy levels](https://ncatlab.org/nlab/show/homotopy+level).
 pub trait HomotopyLevel<N: Nat>: Prop {
-    /// Returns a quality for the homotopy level below.
-    ///
-    /// Uses symbolic distinction to model inhabitation of a type.
-    /// This is only required at homotopy level 0.
-    /// When `x == y`, one can prove `x ~~ y` only if they are symbolic distinct.
-    /// Relative to the core axiom of path semantics,
-    /// this implies that their types are qual.
-    /// Since this produces a self-quality on the homotopy level,
-    /// it is interpreted as the type being inhabited.
-    fn h_level<X: Prop, Y: Prop>(
-        ty_x: Ty<X, Self>,
-        ty_y: Ty<Y, Self>,
-        eqq_xy: Imply<Eq<N, Z>, EqQ<X, Y>>,
-    ) -> Q<X, Y>
-        where Q<X, Y>: HomotopyLevel<<N as Dec>::Out>;
-
+    /// A type such that proves homotopy level 0.
+    type H0: Prop;
+    /// A type such that it proves lower homotopy level.
+    type H: HomotopyLevel<<N as Dec>::Out>;
     /// Homotopy level 0.
-    fn h0<X: Prop, Y: Prop>(
-        ty_x: Ty<X, Self>,
-        ty_y: Ty<Y, Self>,
-        eqq_xy: EqQ<X, Y>,
-    ) -> Q<X, Y>
-        where Q<X, Y>: HomotopyLevel<Z>,
-              Self: HomotopyLevel<Z>
-    {
-        <Self as HomotopyLevel<Z>>::h_level(ty_x, ty_y, eqq_xy.map_any())
-    }
-
-    /// Homotopy level `N` where `N > 0`.
+    fn h0<Y: Prop>(ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
+        where (N, Z): EqNat;
+    /// Higher homotopy level.
     fn hn<X: Prop, Y: Prop>(
         ty_x: Ty<X, Self>,
-        ty_y: Ty<Y, Self>,
-    ) -> Q<X, Y>
-        where Q<X, Y>: HomotopyLevel<<N as Dec>::Out>,
-              Z: Lt<N>
-    {
-        let neq_nz: Not<Eq<N, Z>> = eq::neq_symmetry(nat::lt_neq());
-        Self::h_level(ty_x, ty_y,
-            Rc::new(move |eq_nz| not::absurd(neq_nz.clone(), eq_nz)))
-    }
+        ty_y: Ty<Y, Self>
+    ) -> Q<Self::H, Q<X, Y>>
+        where Z: Lt<N>;
+}
+
+/// Shorthand for homotopy proposition.
+pub trait HProp<N: Nat>: HomotopyLevel<N> {}
+impl<N: Nat, T: HomotopyLevel<N>> HProp<N> for T {}
+
+/// Lower homotopy level with 2.
+pub type H2<A, N> = <<A as HomotopyLevel<S<S<N>>>>::H as HomotopyLevel<S<N>>>::H;
+
+/// Proves that homotopy level 0 has quality between any members.
+pub fn hlev0_q<X: Prop, Y: Prop, A: HProp<Z>>(
+    ty_x: Ty<X, A>,
+    ty_y: Ty<Y, A>,
+) -> Q<X, Y> {
+    let q_zx = A::h0(ty_x);
+    let q_zy = A::h0(ty_y);
+    let q_xz = quality::symmetry(q_zx);
+    quality::transitivity(q_xz, q_zy)
+}
+
+/// Proves that homotopy level 1 or higher has quality between self-quality of any members.
+pub fn hlev1_q2<X: Prop, Y: Prop, N: Nat, A: HProp<S<N>>>(
+    ty_x: Ty<X, A>,
+    ty_y: Ty<Y, A>,
+) -> Q<Q<X, X>, Q<Y, Y>> {
+    let q_z_q_xx = A::hn(ty_x.clone(), ty_x);
+    let q_z_q_yy = A::hn(ty_y.clone(), ty_y);
+    let q_xx_q_z = quality::symmetry(q_z_q_xx);
+    let q_xx_q_yy = quality::transitivity(q_xx_q_z, q_z_q_yy);
+    q_xx_q_yy
+}
+
+/// Lift type of path.
+pub fn lift_ty<X: Prop, Y: Prop, X2: Prop, N: Nat, A: HProp<S<N>>>(
+    ty_x: Ty<X, A>,
+    ty_y: Ty<Y, A>,
+    ty_x2_q_xy: Ty<X2, Q<X, Y>>,
+) -> Ty<X2, A::H> {
+    let q_az_q_xy = A::hn(ty_x, ty_y);
+    let (x2_q_xy, pord_x2_q_xy) = ty_x2_q_xy;
+    let eq_q_xy_q_az = eq::symmetry(quality::to_eq(q_az_q_xy));
+    let x2_q_az = imply::in_right_arg(x2_q_xy, eq_q_xy_q_az.clone());
+    let pord_x2_q_az = pord_x2_q_xy.by_eq_right(eq_q_xy_q_az);
+    (x2_q_az, pord_x2_q_az)
+}
+
+/// Get the type of the path between paths.
+pub fn h2<X: Prop, Y: Prop, X2: Prop, Y2: Prop, N: Nat, A: HProp<S<S<N>>>>(
+    ty_x: Ty<X, A>,
+    ty_y: Ty<Y, A>,
+    ty_x2_q_xy: Ty<X2, Q<X, Y>>,
+    ty_y2_q_xy: Ty<Y2, Q<X, Y>>,
+) -> Q<H2<A, N>, Q<X2, Y2>> {
+    let ty_x2_q_az = univalence::lift_ty(ty_x.clone(), ty_y.clone(), ty_x2_q_xy);
+    let ty_y2_q_az = univalence::lift_ty(ty_x, ty_y, ty_y2_q_xy);
+    A::H::hn(ty_x2_q_az, ty_y2_q_az)
 }
