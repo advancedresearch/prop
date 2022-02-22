@@ -23,6 +23,16 @@ use nat::*;
 /// Models a type relation `a : t`.
 pub type Ty<A, T> = And<Imply<A, T>, POrdProof<A, T>>;
 
+/// `(a : b) ⋀ (a == c)  =>  (c : b)`.
+pub fn ty_in_left_arg<A: Prop, B: Prop, C: Prop>((ab, pord): Ty<A, B>, eq: Eq<A, C>) -> Ty<C, B> {
+    (imply::in_left_arg(ab, eq.clone()), pord.by_eq_left(eq))
+}
+
+/// `(a : b) ⋀ (b == c)  =>  (a : c)`.
+pub fn ty_in_right_arg<A: Prop, B: Prop, C: Prop>((ab, pord): Ty<A, B>, eq: Eq<B, C>) -> Ty<A, C> {
+    (imply::in_right_arg(ab, eq.clone()), pord.by_eq_right(eq))
+}
+
 /// Core axiom of Path Semantics.
 pub type PSem<F1, F2, X1, X2> = Imply<
     And<And<Q<F1, F2>, And<POrdProof<F1, X1>, POrdProof<F2, X2>>>,
