@@ -184,3 +184,25 @@ pub fn h0_ext<A: HProp<Z>, B: HProp<Z>, X: Prop>(
     let psem = path_semantics::assume();
     psem(((q_ah0_bh0, (ty_ah0_a.1, ty_bh0_b.1)), (ty_ah0_a.0, ty_bh0_b.0)))
 }
+
+/// `(x : a) ⋀ (x : b) ⋀ ((x ~~ x) == x)  =>  (a ~~ b)`
+/// when `a` and `b` are homotopy level 1 or larger.
+pub fn h1_lim_ext<A: HProp<S<N>>, B: HProp<S<N>>, X: Prop, N: Nat>(
+    ty_xa: Ty<X, A>,
+    ty_xb: Ty<X, B>,
+    q_xx_x: Eq<Q<X, X>, X>,
+) -> Q<A, B> {
+    let q_ah_x = A::hn(ty_xa.clone(), ty_xa.clone());
+    let q_bh_x = B::hn(ty_xb.clone(), ty_xb.clone());
+    let q_x_bh = quality::symmetry(q_bh_x.clone());
+    let q_ah_bh = quality::transitivity(q_ah_x.clone(), q_x_bh);
+
+    let eq_q_xx_ah = eq::symmetry(quality::to_eq(q_ah_x));
+    let eq_q_xx_bh = eq::symmetry(quality::to_eq(q_bh_x));
+    let eq_x_ah = eq::in_left_arg(eq_q_xx_ah, q_xx_x.clone());
+    let eq_x_bh = eq::in_left_arg(eq_q_xx_bh, q_xx_x);
+    let ty_ah_a = path_semantics::ty_in_left_arg(ty_xa, eq_x_ah);
+    let ty_bh_b = path_semantics::ty_in_left_arg(ty_xb, eq_x_bh);
+    let psem = path_semantics::assume();
+    psem(((q_ah_bh, (ty_ah_a.1, ty_bh_b.1)), (ty_ah_a.0, ty_bh_b.0)))
+}
