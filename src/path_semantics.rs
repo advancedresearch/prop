@@ -121,6 +121,21 @@ impl<T, U> POrdProof<T, U> {
     pub fn by_imply_right<V>(self, _: Imply<U, V>) -> POrdProof<T, V> {
         POrdProof(std::marker::PhantomData)
     }
+
+    /// Merges two proofs of order at right side.
+    pub fn merge_right<V>(self, _: POrdProof<T, V>) -> POrdProof<T, And<U, V>> {
+        POrdProof(std::marker::PhantomData)
+    }
+
+    /// Merges two proofs of order at left side.
+    pub fn merge_left<V>(self, _: POrdProof<V, U>) -> POrdProof<And<T, V>, U> {
+        POrdProof(std::marker::PhantomData)
+    }
+
+    /// Combine two proofs into one.
+    pub fn and<T2, U2>(self, _: POrdProof<T2, U2>) -> POrdProof<And<T, T2>, And<U, U2>> {
+        POrdProof(std::marker::PhantomData)
+    }
 }
 
 /// Path semantical order.
