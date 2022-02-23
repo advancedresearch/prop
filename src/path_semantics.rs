@@ -78,6 +78,30 @@ pub fn ty_hom_imply<X: Prop, Y: Prop, A: Prop, B: Prop>(
     (xy_ab, pord)
 }
 
+/// `(x : a) ⋀ (y : b) ⋀ eqq(x, y)  =>  ((x => y) : (a => b))`.
+pub fn ty_eqq_imply<X: DProp, Y: DProp, A: Prop, B: Prop>(
+    (xa, pord_xa): Ty<X, A>,
+    (yb, pord_yb): Ty<Y, B>,
+    eqq_xy: EqQ<X, Y>,
+) -> Ty<Imply<X, Y>, Imply<A, B>> {
+    let pord = pord_xa.clone().imply(pord_yb.clone());
+    let xy_ab: Imply<Imply<X, Y>, Imply<A, B>> = match (X::decide(), Y::decide()) {
+        (Left(x), _) => Rc::new(move |xy| yb(xy(x.clone())).map_any()),
+        (_, Left(y)) => {
+            let ab: Imply<A, B> = yb(y).map_any();
+            ab.map_any()
+        }
+        (Right(nx), Right(ny)) => {
+            let eq_xy: Eq<X, Y> = eq::rev_modus_tollens(and::to_eq_pos((ny, nx)));
+            let q_xy = eqq_xy(eq_xy);
+            let q_ab = assume()(((q_xy, (pord_xa, pord_yb)), (xa, yb)));
+            let ab = quality::to_eq(q_ab).0;
+            ab.map_any()
+        }
+    };
+    (xy_ab, pord)
+}
+
 /// Core axiom of Path Semantics.
 pub type PSem<F1, F2, X1, X2> = Imply<
     And<And<Q<F1, F2>, And<POrdProof<F1, X1>, POrdProof<F2, X2>>>,
