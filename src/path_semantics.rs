@@ -18,6 +18,7 @@ pub use quality::left as refl_left;
 pub use quality::right as refl_right;
 
 use existence::EProp;
+use univalence::Hom;
 use nat::*;
 
 /// Models a type relation `a : t`.
@@ -59,6 +60,22 @@ pub fn ty_or<X: Prop, Y: Prop, A: Prop, B: Prop>(
         }
     });
     (or_xy_or_ab, pord_xa.or(pord_yb))
+}
+
+/// `(x : a) ⋀ (y : b) ⋀ hom(x, y)  =>  ((x => y) : (a => b))`.
+pub fn ty_hom_imply<X: Prop, Y: Prop, A: Prop, B: Prop>(
+    (xa, pord_xa): Ty<X, A>,
+    (yb, pord_yb): Ty<Y, B>,
+    hom: Hom<X, Y>,
+) -> Ty<Imply<X, Y>, Imply<A, B>> {
+    let pord = pord_xa.clone().imply(pord_yb.clone());
+    let xy_ab = Rc::new(move |xy| {
+        let q_xy = hom(xy);
+        let psem = assume();
+        let q_ab = psem(((q_xy, (pord_xa.clone(), pord_yb.clone())), (xa.clone(), yb.clone())));
+        quality::to_eq(q_ab).0
+    });
+    (xy_ab, pord)
 }
 
 /// Core axiom of Path Semantics.
