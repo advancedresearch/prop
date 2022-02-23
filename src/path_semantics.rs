@@ -33,6 +33,21 @@ pub fn ty_in_right_arg<A: Prop, B: Prop, C: Prop>((ab, pord): Ty<A, B>, eq: Eq<B
     (imply::in_right_arg(ab, eq.clone()), pord.by_eq_right(eq))
 }
 
+/// `(x : a) ⋀ (y : b)  =>  ((x ⋀ y) : (a ⋀ b))`.
+pub fn ty_and<X: Prop, Y: Prop, A: Prop, B: Prop>(
+    (xa, pord_xa): Ty<X, A>,
+    (yb, pord_yb): Ty<Y, B>,
+) -> Ty<And<X, Y>, And<A, B>> {
+    let imply_and_xy_and_ab: Imply<And<X, Y>, And<A, B>> = Rc::new(move |(x, y)| {
+        let a = xa(x);
+        let b = yb(y);
+        let and_ab = (a, b);
+        and_ab
+    });
+    let pord_and_xy_and_ab = pord_xa.and(pord_yb);
+    (imply_and_xy_and_ab, pord_and_xy_and_ab)
+}
+
 /// Core axiom of Path Semantics.
 pub type PSem<F1, F2, X1, X2> = Imply<
     And<And<Q<F1, F2>, And<POrdProof<F1, X1>, POrdProof<F2, X2>>>,
