@@ -147,8 +147,18 @@ impl<T, U> POrdProof<T, U> {
         POrdProof(std::marker::PhantomData)
     }
 
-    /// Combine two proofs into one.
+    /// Combine two proofs into one using AND.
     pub fn and<T2, U2>(self, _: POrdProof<T2, U2>) -> POrdProof<And<T, T2>, And<U, U2>> {
+        POrdProof(std::marker::PhantomData)
+    }
+
+    /// Combine two proofs into one using OR.
+    pub fn or<T2, U2>(self, _: POrdProof<T2, U2>) -> POrdProof<Or<T, T2>, Or<U, U2>> {
+        POrdProof(std::marker::PhantomData)
+    }
+
+    /// Combine two proofs into one using IMPLY.
+    pub fn imply<T2, U2>(self, _: POrdProof<T2, U2>) -> POrdProof<Imply<T, T2>, Imply<U, U2>> {
         POrdProof(std::marker::PhantomData)
     }
 }
