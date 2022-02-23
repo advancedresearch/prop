@@ -44,8 +44,21 @@ pub fn ty_and<X: Prop, Y: Prop, A: Prop, B: Prop>(
         let and_ab = (a, b);
         and_ab
     });
-    let pord_and_xy_and_ab = pord_xa.and(pord_yb);
-    (imply_and_xy_and_ab, pord_and_xy_and_ab)
+    (imply_and_xy_and_ab, pord_xa.and(pord_yb))
+}
+
+/// `(x : a) ⋀ (y : b)  =>  ((x ⋁ y) : (a ⋁ b))`.
+pub fn ty_or<X: Prop, Y: Prop, A: Prop, B: Prop>(
+    (xa, pord_xa): Ty<X, A>,
+    (yb, pord_yb): Ty<Y, B>,
+) -> Ty<Or<X, Y>, Or<A, B>> {
+    let or_xy_or_ab: Imply<Or<X, Y>, Or<A, B>> = Rc::new(move |or_xy| {
+        match or_xy {
+            Left(x) => Left(xa(x)),
+            Right(y) => Right(yb(y)),
+        }
+    });
+    (or_xy_or_ab, pord_xa.or(pord_yb))
 }
 
 /// Core axiom of Path Semantics.
