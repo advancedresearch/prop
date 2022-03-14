@@ -149,6 +149,27 @@ impl<N: Nat> HomotopyLevel<S<N>> for False {
     }
 }
 
+/// Represents a Set of homotopy level 2.
+#[derive(Clone)]
+pub struct Set;
+
+impl<N: Nat> HomotopyLevel<S<S<N>>> for Set {
+    type H0 = True;
+    type H = True;
+    fn h0<Y: Prop>(_ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
+        where (S<S<N>>, Z): EqNat {
+        unimplemented!()
+    }
+    fn hn<X: Prop, Y: Prop>(
+        _ty_x: Ty<X, Self>,
+        _ty_y: Ty<Y, Self>
+    ) -> Q<Self::H, Q<X, Y>>
+        where Z: Lt<S<S<N>>>
+    {
+        unimplemented!()
+    }
+}
+
 /// Shorthand for homotopy proposition.
 pub trait HProp<N: Nat>: HomotopyLevel<N> {}
 impl<N: Nat, T: HomotopyLevel<N>> HProp<N> for T {}
@@ -200,6 +221,17 @@ pub fn h2<X: Prop, Y: Prop, X2: Prop, Y2: Prop, N: Nat, A: HProp<S<S<N>>>>(
     let ty_x2_q_az = univalence::lift_ty(ty_x.clone(), ty_y.clone(), ty_x2_q_xy);
     let ty_y2_q_az = univalence::lift_ty(ty_x, ty_y, ty_y2_q_xy);
     A::H::hn(ty_x2_q_az, ty_y2_q_az)
+}
+
+/// `(x : set) ⋀ (y : set) ⋀ (x2 : (x ~~ y)) ⋀ (y2 : (x ~~ y))  =>  (x2 ~~ y2)`.
+pub fn set_h2<X: Prop, Y: Prop, X2: Prop, Y2: Prop>(
+    ty_x: Ty<X, Set>,
+    ty_y: Ty<Y, Set>,
+    ty_x2_q_xy: Ty<X2, Q<X, Y>>,
+    ty_y2_q_xy: Ty<Y2, Q<X, Y>>,
+) -> Q<X2, Y2> {
+    let q_tr_q_x2_y2 = h2::<X, Y, X2, Y2, S<S<Z>>, Set>(ty_x, ty_y, ty_x2_q_xy, ty_y2_q_xy);
+    quality::to_eq(q_tr_q_x2_y2).0(True)
 }
 
 /// `(x : a) ⋀ (x : b)  =>  (a ~~ b)` when `a` and `b` are homotopy level 0.
