@@ -114,6 +114,41 @@ pub trait HomotopyLevel<N: Nat>: Prop {
         where Z: Lt<N>;
 }
 
+impl<N: Nat> HomotopyLevel<N> for True {
+    type H0 = True;
+    type H = True;
+    fn h0<Y: Prop>(_ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
+        where (N, Z): EqNat
+    {
+        unimplemented!()
+    }
+    fn hn<X: Prop, Y: Prop>(
+        _ty_x: Ty<X, Self>,
+        _ty_y: Ty<Y, Self>
+    ) -> Q<Self::H, Q<X, Y>>
+        where Z: Lt<N>
+    {
+        unimplemented!()
+    }
+}
+
+impl<N: Nat> HomotopyLevel<S<N>> for False {
+    type H0 = True;
+    type H = True;
+    fn h0<Y: Prop>(_ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
+        where (S<N>, Z): EqNat {
+        unimplemented!()
+    }
+    fn hn<X: Prop, Y: Prop>(
+        _ty_x: Ty<X, Self>,
+        _ty_y: Ty<Y, Self>
+    ) -> Q<Self::H, Q<X, Y>>
+        where Z: Lt<S<N>>
+    {
+        unimplemented!()
+    }
+}
+
 /// Shorthand for homotopy proposition.
 pub trait HProp<N: Nat>: HomotopyLevel<N> {}
 impl<N: Nat, T: HomotopyLevel<N>> HProp<N> for T {}
@@ -205,4 +240,30 @@ pub fn h1_lim_ext<A: HProp<S<N>>, B: HProp<S<N>>, X: Prop, N: Nat>(
     let ty_bh_b = path_semantics::ty_in_left_arg(ty_xb, eq_x_bh);
     let psem = path_semantics::assume();
     psem(((q_ah_bh, (ty_ah_a.1, ty_bh_b.1)), (ty_ah_a.0, ty_bh_b.0)))
+}
+
+/// `(x : a) ⋀ (x : true) => a`.
+pub fn h0_true<X: Prop, A: HProp<Z>>(
+    ty_x_a: Ty<X, A>,
+    ty_x_true: Ty<X, True>,
+) -> A {
+    quality::to_eq(univalence::h0_ext(ty_x_a, ty_x_true)).1(True)
+}
+
+/// `(x : a) ⋀ (x : false) ⋀ ((x ~~ x) == x)  =>  ¬a`.
+pub fn h1_false<X: Prop, N: Nat, A: HProp<S<N>>>(
+    ty_x_a: Ty<X, A>,
+    ty_x_false: Ty<X, False>,
+    q: Eq<Q<X, X>, X>,
+) -> Not<A> {
+    quality::to_eq(univalence::h1_lim_ext(ty_x_a, ty_x_false, q)).0
+}
+
+/// `(x : a) ⋀ (x : true) ⋀ ((x ~~ x) == x)  =>  a`.
+pub fn h1_true<X: Prop, A: HProp<S<Z>>>(
+    ty_x_a: Ty<X, A>,
+    ty_x_true: Ty<X, True>,
+    q: Eq<Q<X, X>, X>,
+) -> A {
+    quality::to_eq(univalence::h1_lim_ext(ty_x_a, ty_x_true, q)).1(True)
 }
