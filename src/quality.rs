@@ -325,3 +325,13 @@ pub fn sesh_in_right_arg<A: Prop, B: Prop, C: Prop>(
         sesh_ab(in_right_arg(q_ac, eq_cb.clone()))
     })
 }
+
+/// `¬(a ~~ a) => (¬a ~~ ¬a)`.
+pub fn sesh_to_q_inv<A: Prop>(_: Not<Q<A, A>>) -> Q<Not<A>, Not<A>> {
+    Q(eq::modus_tollens(eq::refl()))
+}
+
+/// `(¬a ~~ ¬a) => ¬(a ~~ a)`.
+pub fn q_inv_to_sesh<A: Prop>(_: Q<Not<A>, Not<A>>) -> Not<Q<A, A>> {
+    unimplemented!()
+}
