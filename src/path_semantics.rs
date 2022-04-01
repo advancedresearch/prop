@@ -46,6 +46,13 @@ pub fn eq_true_ltrue<N: Nat>() -> Eq<True, LTrue<N>> {
     (LTrue(Default::default()).map_any(), True.map_any())
 }
 
+/// `x : true`.
+pub fn ty_true<X: LProp>() -> Ty<X, True>
+    where X::N: Nat
+{
+    ty_in_right_arg(ty_ltrue(), eq::symmetry(eq_true_ltrue::<S<X::N>>()))
+}
+
 /// `(x : a) ⋀ (y : b)  =>  ((x ⋀ y) : (a ⋀ b))`.
 pub fn ty_and<X: Prop, Y: Prop, A: Prop, B: Prop>(
     (xa, pord_xa): Ty<X, A>,
