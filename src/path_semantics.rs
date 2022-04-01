@@ -24,6 +24,13 @@ use nat::*;
 /// Models a type relation `a : t`.
 pub type Ty<A, T> = And<Imply<A, T>, POrdProof<A, T>>;
 
+/// `x : ltrue`.
+pub fn ty_ltrue<X: LProp>() -> Ty<X, LTrue<S<X::N>>>
+    where X::N: Lt<S<X::N>> + Default
+{
+    (LTrue(Default::default()).map_any(), POrdProof::default())
+}
+
 /// `(a : b) ⋀ (a == c)  =>  (c : b)`.
 pub fn ty_in_left_arg<A: Prop, B: Prop, C: Prop>((ab, pord): Ty<A, B>, eq: Eq<A, C>) -> Ty<C, B> {
     (imply::in_left_arg(ab, eq.clone()), pord.by_eq_left(eq))
