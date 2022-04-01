@@ -31,7 +31,7 @@
 use crate::*;
 use quality::*;
 use nat::{EqNat, Dec, Lt, Nat, S, Z};
-use path_semantics::Ty;
+use path_semantics::{Ty, LProp};
 
 /// A homotopy path between paths `A` and `B`.
 pub type Hom<A, B> = Imply<Imply<A, B>, Q<A, B>>;
@@ -286,7 +286,14 @@ pub fn h0_true<X: Prop, A: HProp<Z>>(
     ty_x_a: Ty<X, A>,
     ty_x_true: Ty<X, True>,
 ) -> A {
-    quality::to_eq(univalence::h0_ext(ty_x_a, ty_x_true)).1(True)
+    quality::to_eq(h0_ext(ty_x_a, ty_x_true)).1(True)
+}
+
+/// `(x : a) => a`.
+pub fn h0<X: LProp, A: HProp<Z>>(ty_x_a: Ty<X, A>) -> A
+    where X::N: Nat
+{
+    h0_true(ty_x_a, path_semantics::ty_true())
 }
 
 /// `(x : a) ⋀ (x : false) ⋀ ((x ~~ x) == x)  =>  ¬a`.
