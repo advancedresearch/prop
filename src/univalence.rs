@@ -177,6 +177,13 @@ impl<N: Nat, T: HomotopyLevel<N>> HProp<N> for T {}
 /// Lower homotopy level with 2.
 pub type H2<A, N> = <<A as HomotopyLevel<S<S<N>>>>::H as HomotopyLevel<S<N>>>::H;
 
+/// `(x : a) => (a::h0 : a)`.
+pub fn ty_h0<X: Prop, A: HProp<Z>>(ty_x_a: Ty<X, A>) -> Ty<A::H0, A> {
+    let q_h0_x = A::h0(ty_x_a.clone());
+    let eq_x_h0 = eq::symmetry(quality::to_eq(q_h0_x));
+    path_semantics::ty_in_left_arg(ty_x_a, eq_x_h0)
+}
+
 /// Proves that homotopy level 0 has quality between any members.
 pub fn h0_q<X: Prop, Y: Prop, A: HProp<Z>>(
     ty_x: Ty<X, A>,
