@@ -333,6 +333,10 @@ impl LProp for False {
     type N = NaN;
     type SetLevel<T: 'static + Clone> = Self;
 }
+impl<U: LProp> LProp for Q<U, U> {
+    type N = U::N;
+    type SetLevel<T: 'static + Clone> = Q<U::SetLevel<T>, U::SetLevel<T>>;
+}
 /// Increases proposition level of `A` with some amount `N`.
 pub type IncLevel<A, N> = <A as LProp>::SetLevel<<(<A as LProp>::N, N) as Add>::Out>;
 /// Increases level one step.
