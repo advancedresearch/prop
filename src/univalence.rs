@@ -403,3 +403,9 @@ pub fn h1_true<X: LProp, A: HProp<S<Z>>>(
 pub fn h0_q_true<X: LProp>(ty_x: Ty<X, True>) -> Q<True, X> {
     <True as HomotopyLevel<Z>>::h0(ty_x)
 }
+
+/// `(x : true) => (x ~~ x)`.
+pub fn h0_true_q<X: LProp>(ty_x: Ty<X, True>) -> Q<X, X> {
+    let f = h0_q_true(ty_x);
+    quality::transitivity(quality::symmetry(f.clone()), f)
+}
