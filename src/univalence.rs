@@ -104,10 +104,10 @@ pub trait HomotopyLevel<N: Nat>: Prop {
     /// A type such that it proves a lower homotopy level.
     type H: HomotopyLevel<<N as Dec>::Out>;
     /// Homotopy level 0.
-    fn h0<Y: Prop>(ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
+    fn h0<Y: LProp>(ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
         where (N, Z): EqNat;
     /// Higher homotopy level.
-    fn hn<X: Prop, Y: Prop>(
+    fn hn<X: LProp, Y: LProp>(
         ty_x: Ty<X, Self>,
         ty_y: Ty<Y, Self>
     ) -> Q<Self::H, Q<X, Y>>
