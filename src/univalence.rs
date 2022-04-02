@@ -419,3 +419,11 @@ pub fn h0_lproof<X: LProp>(ty_x: Ty<X, True>) -> X {
 pub fn h0_lim<X: LProp>(ty_x: Ty<X, True>) -> Eq<Q<X, X>, X> {
     (h0_lproof(ty_x.clone()).map_any(), h0_true_q(ty_x).map_any())
 }
+
+/// `(x : true) => ((x ~~ x) ~~ x)`.
+pub fn h0_qlim<X: LProp>(ty_x: Ty<X, True>) -> Q<Q<X, X>, X> {
+    let lim = h0_lim(ty_x.clone());
+    let ty_q = path_semantics::ty_in_left_arg(ty_x, eq::symmetry(lim.clone()));
+    let qq = h0_true_q(ty_q);
+    quality::in_right_arg(qq, lim)
+}
