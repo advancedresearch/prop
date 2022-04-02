@@ -146,3 +146,16 @@ pub fn absurd<A: Prop>() -> Imply<False, A> {
 pub fn id<A: Prop>() -> Imply<A, A> {
     Rc::new(|x| x)
 }
+
+/// `(a => (b ∨ c))  =>  (a => b) ∨ (a => c)`.
+pub fn or_split_right_da<A: DProp, B: Prop, C: Prop>(
+    f: Imply<A, Or<B, C>>
+) -> Or<Imply<A, B>, Imply<A, C>> {
+    match A::decide() {
+        Left(a) => match f(a) {
+            Left(b) => Left(b.map_any()),
+            Right(c) => Right(c.map_any())
+        }
+        Right(na) => Left(Rc::new(move |a| not::absurd(na.clone(), a)))
+    }
+}
