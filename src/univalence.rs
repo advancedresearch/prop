@@ -134,6 +134,22 @@ pub trait DecidableHomotopyLevel<N: Nat>: DProp {
         where Z: Lt<N>;
 }
 
+impl<N: Nat, T: DecidableHomotopyLevel<N>> HomotopyLevel<N> for T {
+    type H0 = <T as DecidableHomotopyLevel<N>>::H0;
+    type H = <T as DecidableHomotopyLevel<N>>::H;
+    fn h0<Y: LProp>(ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
+        where (N, Z): EqNat {
+        <T as DecidableHomotopyLevel<N>>::h0(ty_y)
+    }
+    fn hn<X: LProp, Y: LProp>(
+        ty_x: Ty<X, Self>,
+        ty_y: Ty<Y, Self>
+    ) -> Q<Self::H, Q<X, Y>>
+        where Z: Lt<N> {
+        <T as DecidableHomotopyLevel<N>>::hn(ty_x, ty_y)
+    }
+}
+
     type H0 = True;
     type H = True;
     fn h0<Y: Prop>(_ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
