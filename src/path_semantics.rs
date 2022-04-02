@@ -121,6 +121,13 @@ pub fn ty_eqq_imply<X: DProp, Y: DProp, A: Prop, B: Prop>(
     (xy_ab, pord)
 }
 
+/// `x`.
+pub fn lproof<X: LProp>() -> X where X::N: Nat {
+    let ty_x_true = ty_true();
+    let q_true_x = <True as univalence::HomotopyLevel<Z>>::h0(ty_x_true);
+    quality::to_eq(q_true_x).0(True)
+}
+
 /// Core axiom of Path Semantics.
 pub type PSem<F1, F2, X1, X2> = Imply<
     And<And<Q<F1, F2>, And<POrdProof<F1, X1>, POrdProof<F2, X2>>>,
