@@ -104,17 +104,16 @@ pub trait HomotopyLevel<N: Nat>: Prop {
     /// A type such that it proves a lower homotopy level.
     type H: HomotopyLevel<<N as Dec>::Out>;
     /// Homotopy level 0.
-    fn h0<Y: Prop>(ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
+    fn h0<Y: LProp>(ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
         where (N, Z): EqNat;
     /// Higher homotopy level.
-    fn hn<X: Prop, Y: Prop>(
+    fn hn<X: LProp, Y: LProp>(
         ty_x: Ty<X, Self>,
         ty_y: Ty<Y, Self>
     ) -> Q<Self::H, Q<X, Y>>
         where Z: Lt<N>;
 }
 
-impl<N: Nat> HomotopyLevel<N> for True {
 /// Decidable Homotopy Level.
 ///
 /// Same as Homotopy Level, but for decidable propositions.
@@ -134,14 +133,31 @@ pub trait DecidableHomotopyLevel<N: Nat>: DProp {
         where Z: Lt<N>;
 }
 
+impl<N: Nat, T: DecidableHomotopyLevel<N>> HomotopyLevel<N> for T {
+    type H0 = <T as DecidableHomotopyLevel<N>>::H0;
+    type H = <T as DecidableHomotopyLevel<N>>::H;
+    fn h0<Y: LProp>(ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
+        where (N, Z): EqNat {
+        <T as DecidableHomotopyLevel<N>>::h0(ty_y)
+    }
+    fn hn<X: LProp, Y: LProp>(
+        ty_x: Ty<X, Self>,
+        ty_y: Ty<Y, Self>
+    ) -> Q<Self::H, Q<X, Y>>
+        where Z: Lt<N> {
+        <T as DecidableHomotopyLevel<N>>::hn(ty_x, ty_y)
+    }
+}
+
+impl<N: Nat> DecidableHomotopyLevel<N> for True {
     type H0 = True;
     type H = True;
-    fn h0<Y: Prop>(_ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
+    fn h0<Y: LProp>(_ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
         where (N, Z): EqNat
     {
         unimplemented!()
     }
-    fn hn<X: Prop, Y: Prop>(
+    fn hn<X: LProp, Y: LProp>(
         _ty_x: Ty<X, Self>,
         _ty_y: Ty<Y, Self>
     ) -> Q<Self::H, Q<X, Y>>
@@ -151,18 +167,62 @@ pub trait DecidableHomotopyLevel<N: Nat>: DProp {
     }
 }
 
-impl<N: Nat> HomotopyLevel<S<N>> for False {
+impl<N: Nat> DecidableHomotopyLevel<S<N>> for False {
     type H0 = True;
     type H = True;
-    fn h0<Y: Prop>(_ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
+    fn h0<Y: LProp>(_ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
         where (S<N>, Z): EqNat {
         unimplemented!()
     }
-    fn hn<X: Prop, Y: Prop>(
+    fn hn<X: LProp, Y: LProp>(
         _ty_x: Ty<X, Self>,
         _ty_y: Ty<Y, Self>
     ) -> Q<Self::H, Q<X, Y>>
         where Z: Lt<S<N>>
+    {
+        unimplemented!()
+    }
+}
+
+impl<N: Nat> DecidableHomotopyLevel<N> for Or<True, True> {
+    type H0 = Or<True, True>;
+    type H = Or<True, True>;
+    fn h0<Y: LProp>(ty_y_self: Ty<Y, Self>) -> Q<Self::H0, Y>
+        where (N, Z): EqNat
+    {
+        let eq_self_true: Eq<Self, True> = (True.map_any(), Left(True).map_any());
+        let ty_y_true = path_semantics::ty_in_right_arg(ty_y_self, eq_self_true.clone());
+        let q_trueh0_y = <True as DecidableHomotopyLevel<N>>::h0(ty_y_true);
+        quality::in_left_arg(q_trueh0_y, eq::symmetry(eq_self_true))
+    }
+    fn hn<X: LProp, Y: LProp>(
+        ty_x_self: Ty<X, Self>,
+        ty_y_self: Ty<Y, Self>
+    ) -> Q<Self::H, Q<X, Y>>
+        where Z: Lt<N>
+    {
+        let eq_self_true: Eq<Self, True> = (True.map_any(), Left(True).map_any());
+        let ty_x_true = path_semantics::ty_in_right_arg(ty_x_self, eq_self_true.clone());
+        let ty_y_true = path_semantics::ty_in_right_arg(ty_y_self, eq_self_true.clone());
+        let q_selfh_q_x_y = <True as DecidableHomotopyLevel<N>>::hn(ty_x_true, ty_y_true);
+        quality::in_left_arg(q_selfh_q_x_y, eq::symmetry(eq_self_true))
+    }
+}
+
+impl<N: Nat> DecidableHomotopyLevel<N> for Or<True, False>
+{
+    type H0 = Or<True, True>;
+    type H = Or<True, True>;
+    fn h0<Y: LProp>(ty_y_self: Ty<Y, Self>) -> Q<Self::H0, Y>
+        where (N, Z): EqNat
+    {
+        unimplemented!()
+    }
+    fn hn<X: LProp, Y: LProp>(
+        _ty_x: Ty<X, Self>,
+        _ty_y: Ty<Y, Self>
+    ) -> Q<Self::H, Q<X, Y>>
+        where Z: Lt<N>
     {
         unimplemented!()
     }
@@ -174,12 +234,12 @@ pub struct Set;
 
 impl<N: Nat> HomotopyLevel<S<S<N>>> for Set {
     type H0 = True;
-    type H = True;
-    fn h0<Y: Prop>(_ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
+    type H = Or<True, False>;
+    fn h0<Y: LProp>(_ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
         where (S<S<N>>, Z): EqNat {
         unimplemented!()
     }
-    fn hn<X: Prop, Y: Prop>(
+    fn hn<X: LProp, Y: LProp>(
         _ty_x: Ty<X, Self>,
         _ty_y: Ty<Y, Self>
     ) -> Q<Self::H, Q<X, Y>>
@@ -197,14 +257,14 @@ impl<N: Nat, T: HomotopyLevel<N>> HProp<N> for T {}
 pub type H2<A, N> = <<A as HomotopyLevel<S<S<N>>>>::H as HomotopyLevel<S<N>>>::H;
 
 /// `(x : a) => (a::h0 : a)`.
-pub fn ty_h0<X: Prop, A: HProp<Z>>(ty_x_a: Ty<X, A>) -> Ty<A::H0, A> {
+pub fn ty_h0<X: LProp, A: HProp<Z>>(ty_x_a: Ty<X, A>) -> Ty<A::H0, A> {
     let q_h0_x = A::h0(ty_x_a.clone());
     let eq_x_h0 = eq::symmetry(quality::to_eq(q_h0_x));
     path_semantics::ty_in_left_arg(ty_x_a, eq_x_h0)
 }
 
 /// Proves that homotopy level 0 has quality between any members.
-pub fn h0_q<X: Prop, Y: Prop, A: HProp<Z>>(
+pub fn h0_q<X: LProp, Y: LProp, A: HProp<Z>>(
     ty_x: Ty<X, A>,
     ty_y: Ty<Y, A>,
 ) -> Q<X, Y> {
@@ -215,7 +275,7 @@ pub fn h0_q<X: Prop, Y: Prop, A: HProp<Z>>(
 }
 
 /// Proves that homotopy level 1 or higher has quality between self-quality of any members.
-pub fn h1_q2<X: Prop, Y: Prop, N: Nat, A: HProp<S<N>>>(
+pub fn h1_q2<X: LProp, Y: LProp, N: Nat, A: HProp<S<N>>>(
     ty_x: Ty<X, A>,
     ty_y: Ty<Y, A>,
 ) -> Q<Q<X, X>, Q<Y, Y>> {
@@ -227,7 +287,7 @@ pub fn h1_q2<X: Prop, Y: Prop, N: Nat, A: HProp<S<N>>>(
 }
 
 /// Lift type of path.
-pub fn lift_ty<X: Prop, Y: Prop, X2: Prop, N: Nat, A: HProp<S<N>>>(
+pub fn lift_ty<X: LProp, Y: LProp, X2: Prop, N: Nat, A: HProp<S<N>>>(
     ty_x: Ty<X, A>,
     ty_y: Ty<Y, A>,
     ty_x2_q_xy: Ty<X2, Q<X, Y>>,
@@ -238,7 +298,7 @@ pub fn lift_ty<X: Prop, Y: Prop, X2: Prop, N: Nat, A: HProp<S<N>>>(
 }
 
 /// Get the type of the path between paths.
-pub fn h2<X: Prop, Y: Prop, X2: Prop, Y2: Prop, N: Nat, A: HProp<S<S<N>>>>(
+pub fn h2<X: LProp, Y: LProp, X2: LProp, Y2: LProp, N: Nat, A: HProp<S<S<N>>>>(
     ty_x: Ty<X, A>,
     ty_y: Ty<Y, A>,
     ty_x2_q_xy: Ty<X2, Q<X, Y>>,
@@ -250,18 +310,18 @@ pub fn h2<X: Prop, Y: Prop, X2: Prop, Y2: Prop, N: Nat, A: HProp<S<S<N>>>>(
 }
 
 /// `(x : set) ⋀ (y : set) ⋀ (x2 : (x ~~ y)) ⋀ (y2 : (x ~~ y))  =>  (x2 ~~ y2)`.
-pub fn set_h2<X: Prop, Y: Prop, X2: Prop, Y2: Prop>(
+pub fn set_h2<X: LProp, Y: LProp, X2: LProp, Y2: LProp>(
     ty_x: Ty<X, Set>,
     ty_y: Ty<Y, Set>,
     ty_x2_q_xy: Ty<X2, Q<X, Y>>,
     ty_y2_q_xy: Ty<Y2, Q<X, Y>>,
 ) -> Q<X2, Y2> {
     let q_tr_q_x2_y2 = h2::<X, Y, X2, Y2, S<S<Z>>, Set>(ty_x, ty_y, ty_x2_q_xy, ty_y2_q_xy);
-    quality::to_eq(q_tr_q_x2_y2).0(True)
+    quality::to_eq(q_tr_q_x2_y2).0(Left(True))
 }
 
 /// `(x : a) ⋀ (x : b)  =>  (a ~~ b)` when `a` and `b` are homotopy level 0.
-pub fn h0_ext<A: HProp<Z>, B: HProp<Z>, X: Prop>(
+pub fn h0_ext<A: HProp<Z>, B: HProp<Z>, X: LProp>(
     ty_xa: Ty<X, A>,
     ty_xb: Ty<X, B>,
 ) -> Q<A, B> {
@@ -280,7 +340,7 @@ pub fn h0_ext<A: HProp<Z>, B: HProp<Z>, X: Prop>(
 
 /// `(x : a) ⋀ (x : b) ⋀ ((x ~~ x) == x)  =>  (a ~~ b)`
 /// when `a` and `b` are homotopy level 1 or larger.
-pub fn h1_lim_ext<A: HProp<S<N>>, B: HProp<S<N>>, X: Prop, N: Nat>(
+pub fn h1_lim_ext<A: HProp<S<N>>, B: HProp<S<N>>, X: LProp, N: Nat>(
     ty_xa: Ty<X, A>,
     ty_xb: Ty<X, B>,
     q_xx_x: Eq<Q<X, X>, X>,
@@ -301,7 +361,7 @@ pub fn h1_lim_ext<A: HProp<S<N>>, B: HProp<S<N>>, X: Prop, N: Nat>(
 }
 
 /// `(x : a) ⋀ (x : true) => a`.
-pub fn h0_true<X: Prop, A: HProp<Z>>(
+pub fn h0_true<X: LProp, A: HProp<Z>>(
     ty_x_a: Ty<X, A>,
     ty_x_true: Ty<X, True>,
 ) -> A {
@@ -316,7 +376,7 @@ pub fn h0<X: LProp, A: HProp<Z>>(ty_x_a: Ty<X, A>) -> A
 }
 
 /// `(x : a) ⋀ (x : false) ⋀ ((x ~~ x) == x)  =>  ¬a`.
-pub fn h1_false<X: Prop, N: Nat, A: HProp<S<N>>>(
+pub fn h1_false<X: LProp, N: Nat, A: HProp<S<N>>>(
     ty_x_a: Ty<X, A>,
     ty_x_false: Ty<X, False>,
     q: Eq<Q<X, X>, X>,
@@ -325,7 +385,7 @@ pub fn h1_false<X: Prop, N: Nat, A: HProp<S<N>>>(
 }
 
 /// `(x : a) ⋀ (x : true) ⋀ ((x ~~ x) == x)  =>  a`.
-pub fn h1_true<X: Prop, A: HProp<S<Z>>>(
+pub fn h1_true<X: LProp, A: HProp<S<Z>>>(
     ty_x_a: Ty<X, A>,
     ty_x_true: Ty<X, True>,
     q: Eq<Q<X, X>, X>,
