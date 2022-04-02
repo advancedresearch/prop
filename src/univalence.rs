@@ -114,7 +114,6 @@ pub trait HomotopyLevel<N: Nat>: Prop {
         where Z: Lt<N>;
 }
 
-impl<N: Nat> HomotopyLevel<N> for True {
 /// Decidable Homotopy Level.
 ///
 /// Same as Homotopy Level, but for decidable propositions.
@@ -150,14 +149,15 @@ impl<N: Nat, T: DecidableHomotopyLevel<N>> HomotopyLevel<N> for T {
     }
 }
 
+impl<N: Nat> DecidableHomotopyLevel<N> for True {
     type H0 = True;
     type H = True;
-    fn h0<Y: Prop>(_ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
+    fn h0<Y: LProp>(_ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
         where (N, Z): EqNat
     {
         unimplemented!()
     }
-    fn hn<X: Prop, Y: Prop>(
+    fn hn<X: LProp, Y: LProp>(
         _ty_x: Ty<X, Self>,
         _ty_y: Ty<Y, Self>
     ) -> Q<Self::H, Q<X, Y>>
@@ -167,14 +167,14 @@ impl<N: Nat, T: DecidableHomotopyLevel<N>> HomotopyLevel<N> for T {
     }
 }
 
-impl<N: Nat> HomotopyLevel<S<N>> for False {
+impl<N: Nat> DecidableHomotopyLevel<S<N>> for False {
     type H0 = True;
     type H = True;
-    fn h0<Y: Prop>(_ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
+    fn h0<Y: LProp>(_ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
         where (S<N>, Z): EqNat {
         unimplemented!()
     }
-    fn hn<X: Prop, Y: Prop>(
+    fn hn<X: LProp, Y: LProp>(
         _ty_x: Ty<X, Self>,
         _ty_y: Ty<Y, Self>
     ) -> Q<Self::H, Q<X, Y>>
