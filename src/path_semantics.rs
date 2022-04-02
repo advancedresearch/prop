@@ -128,6 +128,16 @@ pub fn lproof<X: LProp>() -> X where X::N: Nat {
     quality::to_eq(q_true_x).0(True)
 }
 
+/// `(a : (b ⋁ c))  =>  (a : b) ⋁ (a : c)`.
+pub fn ty_or_split_da<A: DProp, B: Prop, C: Prop>(
+    (ty_a_or_b_c, pord): Ty<A, Or<B, C>>
+) -> Or<Ty<A, B>, Ty<A, C>> {
+    match imply::or_split_right_da(ty_a_or_b_c) {
+        Left(ty_a_b) => Left((ty_a_b, pord.or_left())),
+        Right(ty_a_c) => Right((ty_a_c, pord.or_right()))
+    }
+}
+
 /// Core axiom of Path Semantics.
 pub type PSem<F1, F2, X1, X2> = Imply<
     And<And<Q<F1, F2>, And<POrdProof<F1, X1>, POrdProof<F2, X2>>>,
@@ -239,6 +249,18 @@ impl<T, U> POrdProof<T, U> {
 
     /// Combine two proofs into one using IMPLY.
     pub fn imply<T2, U2>(self, _: POrdProof<T2, U2>) -> POrdProof<Imply<T, T2>, Imply<U, U2>> {
+        POrdProof(std::marker::PhantomData)
+    }
+}
+
+impl<A, B, C> POrdProof<A, Or<B, C>> {
+    /// Get sub order proof `a < b`.
+    pub fn or_left(self) -> POrdProof<A, B> {
+        POrdProof(std::marker::PhantomData)
+    }
+
+    /// Get sub order proof `a < c`.
+    pub fn or_right(self) -> POrdProof<A, C> {
         POrdProof(std::marker::PhantomData)
     }
 }
