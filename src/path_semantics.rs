@@ -53,6 +53,13 @@ pub fn ty_true<X: LProp>() -> Ty<X, True>
     ty_in_right_arg(ty_ltrue(), eq::symmetry(eq_true_ltrue::<S<X::N>>()))
 }
 
+/// `(true ~~ x)`.
+pub fn q_true<X: LProp>() -> Q<True, X>
+    where X::N: Nat
+{
+    univalence::h0_q_true(ty_true())
+}
+
 /// `(x : a) ⋀ (y : b)  =>  ((x ⋀ y) : (a ⋀ b))`.
 pub fn ty_and<X: Prop, Y: Prop, A: Prop, B: Prop>(
     (xa, pord_xa): Ty<X, A>,
