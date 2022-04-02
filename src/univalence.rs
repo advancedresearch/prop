@@ -209,22 +209,28 @@ impl<N: Nat> DecidableHomotopyLevel<N> for Or<True, True> {
     }
 }
 
-impl<N: Nat> DecidableHomotopyLevel<S<N>> for Or<True, False>
-{
-    type H0 = Or<True, True>;
-    type H = Or<True, True>;
-    fn h0<Y: LProp>(_ty_y_self: Ty<Y, Self>) -> Q<Self::H0, Y>
-        where (S<N>, Z): EqNat
+impl<N: Nat> DecidableHomotopyLevel<N> for Or<True, False> {
+    type H0 = Or<True, False>;
+    type H = Or<True, False>;
+    fn h0<Y: LProp>(ty_y_self: Ty<Y, Self>) -> Q<Self::H0, Y>
+        where (N, Z): EqNat
     {
-        unimplemented!()
+        let eq: Eq<True, Or<True, False>> = (Left(True).map_any(), True.map_any());
+        let ty_y_true = path_semantics::ty_in_right_arg(ty_y_self, eq::symmetry(eq.clone()));
+        let q_trueh_y = <True as HomotopyLevel<N>>::h0(ty_y_true);
+        quality::in_left_arg(q_trueh_y, eq)
     }
     fn hn<X: LProp, Y: LProp>(
-        _ty_x: Ty<X, Self>,
-        _ty_y: Ty<Y, Self>
+        ty_x_self: Ty<X, Self>,
+        ty_y_self: Ty<Y, Self>
     ) -> Q<Self::H, Q<X, Y>>
-        where Z: Lt<S<N>>
+        where Z: Lt<N>
     {
-        unimplemented!()
+        let eq: Eq<True, Or<True, False>> = (Left(True).map_any(), True.map_any());
+        let ty_x_true = path_semantics::ty_in_right_arg(ty_x_self, eq::symmetry(eq.clone()));
+        let ty_y_true = path_semantics::ty_in_right_arg(ty_y_self, eq::symmetry(eq.clone()));
+        let q_trueh_x_y = <True as HomotopyLevel<N>>::hn(ty_x_true, ty_y_true);
+        quality::in_left_arg(q_trueh_x_y, eq)
     }
 }
 
