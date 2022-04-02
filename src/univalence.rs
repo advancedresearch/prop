@@ -209,6 +209,25 @@ impl<N: Nat> DecidableHomotopyLevel<N> for Or<True, True> {
     }
 }
 
+impl<N: Nat> DecidableHomotopyLevel<N> for Or<True, False>
+{
+    type H0 = Or<True, True>;
+    type H = Or<True, True>;
+    fn h0<Y: LProp>(ty_y_self: Ty<Y, Self>) -> Q<Self::H0, Y>
+        where (N, Z): EqNat
+    {
+        unimplemented!()
+    }
+    fn hn<X: LProp, Y: LProp>(
+        _ty_x: Ty<X, Self>,
+        _ty_y: Ty<Y, Self>
+    ) -> Q<Self::H, Q<X, Y>>
+        where Z: Lt<N>
+    {
+        unimplemented!()
+    }
+}
+
 /// Represents a Set of homotopy level 2.
 #[derive(Clone)]
 pub struct Set;
