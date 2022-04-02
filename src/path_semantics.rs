@@ -138,6 +138,16 @@ pub fn ty_or_split_da<A: DProp, B: Prop, C: Prop>(
     }
 }
 
+/// `(a : (b ⋁ c))  =>  (a : b) ⋁ (a : c)`.
+pub fn ty_or_split_db<A: Prop, B: DProp, C: Prop>(
+    (ty_a_or_b_c, pord): Ty<A, Or<B, C>>
+) -> Or<Ty<A, B>, Ty<A, C>> {
+    match imply::or_split_right_db(ty_a_or_b_c) {
+        Left(ty_a_b) => Left((ty_a_b, pord.or_left())),
+        Right(ty_a_c) => Right((ty_a_c, pord.or_right()))
+    }
+}
+
 /// Core axiom of Path Semantics.
 pub type PSem<F1, F2, X1, X2> = Imply<
     And<And<Q<F1, F2>, And<POrdProof<F1, X1>, POrdProof<F2, X2>>>,
