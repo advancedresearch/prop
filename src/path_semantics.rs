@@ -137,6 +137,11 @@ pub fn lproof<X: LProp>() -> X where X::N: Nat {
     quality::to_eq(q_true_x).0(True)
 }
 
+/// `(x ~~ x) == x`.
+pub fn lim<X: LProp>() -> Eq<Q<X, X>, X> where X::N: Nat {
+    univalence::h0_lim(ty_true())
+}
+
 /// `(a : (b ⋁ c))  =>  (a : b) ⋁ (a : c)`.
 pub fn ty_or_split_da<A: DProp, B: Prop, C: Prop>(
     (ty_a_or_b_c, pord): Ty<A, Or<B, C>>
