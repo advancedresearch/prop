@@ -54,9 +54,7 @@ pub fn ty_true<X: LProp>() -> Ty<X, True>
 }
 
 /// `(true ~~ x)`.
-pub fn q_true<X: LProp>() -> Q<True, X>
-    where X::N: Nat
-{
+pub fn q_true<X: LProp>() -> Q<True, X> where X::N: Nat {
     univalence::h0_q_true(ty_true())
 }
 
@@ -130,8 +128,7 @@ pub fn ty_eqq_imply<X: DProp, Y: DProp, A: Prop, B: Prop>(
 
 /// `x`.
 pub fn lproof<X: LProp>() -> X where X::N: Nat {
-    let ty_x_true = ty_true();
-    let q_true_x = <True as univalence::HomotopyLevel<Z>>::h0(ty_x_true);
+    let q_true_x = q_true();
     quality::to_eq(q_true_x).0(True)
 }
 
