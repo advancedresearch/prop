@@ -132,7 +132,7 @@ pub fn lproof<X: LProp>() -> X where X::N: Nat {
 pub fn ty_or_split_da<A: DProp, B: Prop, C: Prop>(
     (ty_a_or_b_c, pord): Ty<A, Or<B, C>>
 ) -> Or<Ty<A, B>, Ty<A, C>> {
-    match imply::or_split_right_da(ty_a_or_b_c) {
+    match imply::or_split_da(ty_a_or_b_c) {
         Left(ty_a_b) => Left((ty_a_b, pord.or_left())),
         Right(ty_a_c) => Right((ty_a_c, pord.or_right()))
     }
@@ -142,7 +142,7 @@ pub fn ty_or_split_da<A: DProp, B: Prop, C: Prop>(
 pub fn ty_or_split_db<A: Prop, B: DProp, C: Prop>(
     (ty_a_or_b_c, pord): Ty<A, Or<B, C>>
 ) -> Or<Ty<A, B>, Ty<A, C>> {
-    match imply::or_split_right_db(ty_a_or_b_c) {
+    match imply::or_split_db(ty_a_or_b_c) {
         Left(ty_a_b) => Left((ty_a_b, pord.or_left())),
         Right(ty_a_c) => Right((ty_a_c, pord.or_right()))
     }
@@ -152,7 +152,7 @@ pub fn ty_or_split_db<A: Prop, B: DProp, C: Prop>(
 pub fn ty_or_split_dc<A: Prop, B: Prop, C: DProp>(
     (ty_a_or_b_c, pord): Ty<A, Or<B, C>>
 ) -> Or<Ty<A, B>, Ty<A, C>> {
-    match imply::or_split_right_dc(ty_a_or_b_c) {
+    match imply::or_split_dc(ty_a_or_b_c) {
         Left(ty_a_b) => Left((ty_a_b, pord.or_left())),
         Right(ty_a_c) => Right((ty_a_c, pord.or_right()))
     }
