@@ -148,7 +148,7 @@ pub fn id<A: Prop>() -> Imply<A, A> {
 }
 
 /// `(a => (b ∨ c))  =>  (a => b) ∨ (a => c)`.
-pub fn or_split_right_da<A: DProp, B: Prop, C: Prop>(
+pub fn or_split_da<A: DProp, B: Prop, C: Prop>(
     f: Imply<A, Or<B, C>>
 ) -> Or<Imply<A, B>, Imply<A, C>> {
     match A::decide() {
@@ -161,7 +161,7 @@ pub fn or_split_right_da<A: DProp, B: Prop, C: Prop>(
 }
 
 /// `(a => (b ∨ c))  =>  (a => b) ∨ (a => c)`.
-pub fn or_split_right_db<A: Prop, B: DProp, C: Prop>(
+pub fn or_split_db<A: Prop, B: DProp, C: Prop>(
     f: Imply<A, Or<B, C>>
 ) -> Or<Imply<A, B>, Imply<A, C>> {
     match B::decide() {
@@ -174,7 +174,7 @@ pub fn or_split_right_db<A: Prop, B: DProp, C: Prop>(
 }
 
 /// `(a => (b ∨ c))  =>  (a => b) ∨ (a => c)`.
-pub fn or_split_right_dc<A: Prop, B: Prop, C: DProp>(
+pub fn or_split_dc<A: Prop, B: Prop, C: DProp>(
     f: Imply<A, Or<B, C>>
 ) -> Or<Imply<A, B>, Imply<A, C>> {
     match C::decide() {
