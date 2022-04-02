@@ -430,8 +430,16 @@ pub fn h0_qlim<X: LProp>(ty_x: Ty<X, True>) -> Q<Q<X, X>, X> {
 
 /// `(x : true) ⋀ (x : false)  =>  (true ~~ false)`.
 pub fn q_contradict<X: LProp>(
-    ty_x: Ty<X, True>,
-    ty_y: Ty<X, False>
+    ty_x_true: Ty<X, True>,
+    ty_x_false: Ty<X, False>
 ) -> Q<True, False> {
-    h1_lim_ext::<True, False, X, S<Z>>(ty_x.clone(), ty_y, h0_lim(ty_x))
+    h1_lim_ext::<True, False, X, S<Z>>(ty_x_true.clone(), ty_x_false, h0_lim(ty_x_true))
+}
+
+/// `(x : true) ⋀ (x : false)  =>  false`.
+pub fn contradict<X: LProp>(
+    ty_x_true: Ty<X, True>,
+    ty_x_false: Ty<X, False>
+) -> False {
+    quality::to_eq(q_contradict(ty_x_true, ty_x_false)).0(True)
 }
