@@ -234,12 +234,12 @@ pub struct Set;
 
 impl<N: Nat> HomotopyLevel<S<S<N>>> for Set {
     type H0 = True;
-    type H = True;
-    fn h0<Y: Prop>(_ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
+    type H = Or<True, False>;
+    fn h0<Y: LProp>(_ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
         where (S<S<N>>, Z): EqNat {
         unimplemented!()
     }
-    fn hn<X: Prop, Y: Prop>(
+    fn hn<X: LProp, Y: LProp>(
         _ty_x: Ty<X, Self>,
         _ty_y: Ty<Y, Self>
     ) -> Q<Self::H, Q<X, Y>>
