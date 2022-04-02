@@ -142,6 +142,11 @@ pub fn lim<X: LProp>() -> Eq<Q<X, X>, X> where X::N: Nat {
     univalence::h0_lim(ty_true())
 }
 
+/// `(x ~~ x) ~~ x`.
+pub fn qlim<X: LProp>() -> Q<Q<X, X>, X> where X::N: Nat {
+    univalence::h0_qlim(ty_true())
+}
+
 /// `(a : (b ⋁ c))  =>  (a : b) ⋁ (a : c)`.
 pub fn ty_or_split_da<A: DProp, B: Prop, C: Prop>(
     (ty_a_or_b_c, pord): Ty<A, Or<B, C>>
