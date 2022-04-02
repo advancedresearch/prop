@@ -398,3 +398,8 @@ pub fn h1_true<X: LProp, A: HProp<S<Z>>>(
 ) -> A {
     quality::to_eq(univalence::h1_lim_ext(ty_x_a, ty_x_true, q)).1(True)
 }
+
+/// `(x : true) => (true ~~ x)`.
+pub fn h0_q_true<X: LProp>(ty_x: Ty<X, True>) -> Q<True, X> {
+    <True as HomotopyLevel<Z>>::h0(ty_x)
+}
