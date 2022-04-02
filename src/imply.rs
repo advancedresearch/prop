@@ -172,3 +172,16 @@ pub fn or_split_right_db<A: Prop, B: DProp, C: Prop>(
         }))
     }
 }
+
+/// `(a => (b ∨ c))  =>  (a => b) ∨ (a => c)`.
+pub fn or_split_right_dc<A: Prop, B: Prop, C: DProp>(
+    f: Imply<A, Or<B, C>>
+) -> Or<Imply<A, B>, Imply<A, C>> {
+    match C::decide() {
+        Left(c) => Right(c.map_any()),
+        Right(nc) => Left(Rc::new(move |a| match f(a) {
+            Left(b) => b,
+            Right(c) => not::absurd(nc.clone(), c)
+        }))
+    }
+}
