@@ -414,3 +414,8 @@ pub fn h0_true_q<X: LProp>(ty_x: Ty<X, True>) -> Q<X, X> {
 pub fn h0_lproof<X: LProp>(ty_x: Ty<X, True>) -> X {
     quality::to_eq(h0_q_true(ty_x)).0(True)
 }
+
+/// `(x : true) => ((x ~~ x) == x)`.
+pub fn h0_lim<X: LProp>(ty_x: Ty<X, True>) -> Eq<Q<X, X>, X> {
+    (h0_lproof(ty_x.clone()).map_any(), h0_true_q(ty_x).map_any())
+}
