@@ -95,7 +95,7 @@ pub fn higher<A: Prop, B: Prop>(univ: Univ<A, B>) -> Univ<Eq<A, B>, Q<A, B>> {
     eq_lift::<Eq<A, B>, Q<A, B>>(higher_eq)
 }
 
-/// Homotopy level.
+/// Homotopy Level.
 ///
 /// For theoretical background, see [nLab - homotopy levels](https://ncatlab.org/nlab/show/homotopy+level).
 pub trait HomotopyLevel<N: Nat>: Prop {
@@ -115,6 +115,25 @@ pub trait HomotopyLevel<N: Nat>: Prop {
 }
 
 impl<N: Nat> HomotopyLevel<N> for True {
+/// Decidable Homotopy Level.
+///
+/// Same as Homotopy Level, but for decidable propositions.
+pub trait DecidableHomotopyLevel<N: Nat>: DProp {
+    /// A type such that it proves homotopy level 0.
+    type H0: DProp;
+    /// A type such that it proves a lower homotopy level.
+    type H: DecidableHomotopyLevel<<N as Dec>::Out>;
+    /// Homotopy level 0.
+    fn h0<Y: LProp>(ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
+        where (N, Z): EqNat;
+    /// Higher homotopy level.
+    fn hn<X: LProp, Y: LProp>(
+        ty_x: Ty<X, Self>,
+        ty_y: Ty<Y, Self>
+    ) -> Q<Self::H, Q<X, Y>>
+        where Z: Lt<N>;
+}
+
     type H0 = True;
     type H = True;
     fn h0<Y: Prop>(_ty_y: Ty<Y, Self>) -> Q<Self::H0, Y>
