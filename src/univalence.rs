@@ -443,3 +443,21 @@ pub fn contradict<X: LProp>(
 ) -> False {
     quality::to_eq(q_contradict(ty_x_true, ty_x_false)).0(True)
 }
+
+/// `(x : a) ⋀ ((x ~~ x) == x)  =>  (a ⋁ ¬a) == ((x : true) ⋁ (x : false))`.
+pub fn h1_lim_excm<X: LProp, N: Nat, A: HProp<S<N>>>(
+    ty_x_a: Ty<X, A>,
+    lim: Eq<Q<X, X>, X>,
+) -> Eq<ExcM<A>, Or<Ty<X, True>, Ty<X, False>>> {
+    let ty_x_a_clone = ty_x_a.clone();
+    (
+        Rc::new(move |excm| match excm {
+            Left(a) => Left(path_semantics::ty_triv(ty_x_a_clone.clone(), a)),
+            Right(na) => Right(path_semantics::ty_non_triv(ty_x_a_clone.clone(), na)),
+        }),
+        Rc::new(move |or| match or {
+            Left(ty_x_true) => Left(h1_true(ty_x_a.clone(), ty_x_true, lim.clone())),
+            Right(ty_x_false) => Right(h1_false(ty_x_a.clone(), ty_x_false, lim.clone())),
+        })
+    )
+}
