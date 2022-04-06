@@ -391,7 +391,7 @@ pub fn h1_false<X: LProp, N: Nat, A: HProp<S<N>>>(
 }
 
 /// `(x : a) ⋀ (x : true) ⋀ ((x ~~ x) == x)  =>  a`.
-pub fn h1_true<X: LProp, A: HProp<S<Z>>>(
+pub fn h1_true<X: LProp, N: Nat, A: HProp<S<N>>>(
     ty_x_a: Ty<X, A>,
     ty_x_true: Ty<X, True>,
     q: Eq<Q<X, X>, X>,
