@@ -41,6 +41,15 @@ pub fn ty_in_right_arg<A: Prop, B: Prop, C: Prop>((ab, pord): Ty<A, B>, eq: Eq<B
     (imply::in_right_arg(ab, eq.clone()), pord.by_eq_right(eq))
 }
 
+/// `(x : a) ⋀ a => (x : true)`.
+pub fn ty_triv<X: Prop, A: Prop>(
+    ty_x_a: Ty<X, A>,
+    a: A,
+) -> Ty<X, True> {
+    let eq_a_true = (True.map_any(), a.map_any());
+    ty_in_right_arg(ty_x_a, eq_a_true)
+}
+
 /// `true == ltrue`.
 pub fn eq_true_ltrue<N: Nat>() -> Eq<True, LTrue<N>> {
     (LTrue(Default::default()).map_any(), True.map_any())
