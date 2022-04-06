@@ -461,3 +461,11 @@ pub fn h1_lim_excm<X: LProp, N: Nat, A: HProp<S<N>>>(
         })
     )
 }
+
+/// `(x : a) ⋀ ((x ~~ x) == x)  =>  (x : true) ⋁ (x : false)`.
+pub fn h1_lim_excm_da<X: LProp, N: Nat, A: DProp + HProp<S<N>>>(
+    ty_x_a: Ty<X, A>,
+    lim: Eq<Q<X, X>, X>,
+) -> Or<Ty<X, True>, Ty<X, False>> {
+    h1_lim_excm(ty_x_a, lim).0(A::decide())
+}
