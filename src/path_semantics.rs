@@ -50,6 +50,16 @@ pub fn ty_triv<X: Prop, A: Prop>(
     ty_in_right_arg(ty_x_a, eq_a_true)
 }
 
+/// `(x : a) ⋀ ¬a => (x : false)`.
+pub fn ty_non_triv<X: Prop, A: Prop>(
+    ty_x_a: Ty<X, A>,
+    na: Not<A>,
+) -> Ty<X, False> {
+    let eq_a_false: Eq<A, False> =
+        (Rc::new(move |a| na(a)), Rc::new(move |fa| imply::absurd()(fa)));
+    ty_in_right_arg(ty_x_a, eq_a_false)
+}
+
 /// `true == ltrue`.
 pub fn eq_true_ltrue<N: Nat>() -> Eq<True, LTrue<N>> {
     (LTrue(Default::default()).map_any(), True.map_any())
