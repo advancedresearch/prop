@@ -474,3 +474,11 @@ pub fn h1_lim_excm_da<X: LProp, N: Nat, A: DProp + HProp<S<N>>>(
 ) -> Or<Ty<X, True>, Ty<X, False>> {
     h1_lim_excm(ty_x_a, lim).0(A::decide())
 }
+
+/// `(x : false) ⋀ ((x ~~ x) == x)  =>  false`.
+pub fn h1_false_lim_contradict<X: LProp>(
+    ty_x_false: Ty<X, False>,
+    lim: Eq<Q<X, X>, X>
+) -> False {
+    ty_x_false.0(lim.0(h1_false_q(ty_x_false.clone())))
+}
