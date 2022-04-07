@@ -14,7 +14,7 @@ pub struct S<T>(pub T);
 ///
 /// Is used by `False` as path semantical propositional level.
 #[derive(Copy, Clone)]
-pub struct NaN;
+pub enum NaN {}
 
 impl Default for Z {
     fn default() -> Z {Z}
