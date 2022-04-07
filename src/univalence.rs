@@ -335,6 +335,15 @@ pub fn set_and<X: LProp, Y: LProp>(
     path_semantics::ty_in_right_arg(path_semantics::ty_and(ty_x, ty_y), eq)
 }
 
+/// `(x : set) ⋀ (y : set) => ((x ⋁ y) : set)`.
+pub fn set_or<X: LProp, Y: LProp>(
+    ty_x: Ty<X, Set>,
+    ty_y: Ty<Y, Set>
+) -> Ty<Or<X, Y>, Set> {
+    let eq: Eq<Or<Set, Set>, Set> = (Set.map_any(), Left(Set).map_any());
+    path_semantics::ty_in_right_arg(path_semantics::ty_or(ty_x, ty_y), eq)
+}
+
 /// `(x : a) ⋀ (x : b)  =>  (a ~~ b)` when `a` and `b` are homotopy level 0.
 pub fn h0_ext<A: HProp<Z>, B: HProp<Z>, X: LProp>(
     ty_xa: Ty<X, A>,
