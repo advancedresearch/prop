@@ -410,6 +410,11 @@ pub fn h0_true_q<X: LProp>(ty_x: Ty<X, True>) -> Q<X, X> {
     quality::transitivity(quality::symmetry(f.clone()), f)
 }
 
+/// `(x : false)  =>  (x ~~ x)`.
+pub fn h1_false_q<X: LProp>(ty_x_false: Ty<X, False>) -> Q<X, X> {
+    quality::to_eq(<False as HomotopyLevel<S<Z>>>::hn(ty_x_false.clone(), ty_x_false)).0(True)
+}
+
 /// `(x : true) => x`.
 pub fn h0_lproof<X: LProp>(ty_x: Ty<X, True>) -> X {
     quality::to_eq(h0_q_true(ty_x)).0(True)
