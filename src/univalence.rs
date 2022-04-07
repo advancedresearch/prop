@@ -482,3 +482,15 @@ pub fn h1_false_lim_contradict<X: LProp>(
 ) -> False {
     ty_x_false.0(lim.0(h1_false_q(ty_x_false.clone())))
 }
+
+/// `(x : a) ⋀ ((x ~~ x) == x) ⋀ (a ⋁ ¬a)  =>  (x : true)`.
+pub fn h1_lim_excm_true<X: LProp, N: Nat, A: HProp<S<N>>>(
+    ty_x_a: Ty<X, A>,
+    lim: Eq<Q<X, X>, X>,
+    excm: Or<A, Not<A>>,
+) -> Ty<X, True> {
+    match h1_lim_excm(ty_x_a, lim.clone()).0(excm) {
+        Left(ty_x_true) => ty_x_true,
+        Right(ty_x_false) => imply::absurd()(h1_false_lim_contradict(ty_x_false, lim)),
+    }
+}
