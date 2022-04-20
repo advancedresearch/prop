@@ -77,8 +77,17 @@ pub fn to_eq_false<A: Prop>(n_a: Not<A>) -> Eq<A, False> {
 
 /// `¬(a = b) ∧ a  =>  ¬b`.
 pub fn contra<A: Prop, B: DProp>(f: Not<Eq<A, B>>, a: A) -> Not<B> {
-    match B::decide() {
-        Left(b) => match f(and::to_eq_pos((a, b))) {},
+    contra_excm(f, a, B::decide())
+}
+
+/// `¬(a = b) ∧ a  =>  ¬b`.
+pub fn contra_excm<A: Prop, B: Prop>(
+    f: Not<Eq<A, B>>,
+    a: A,
+    excm_b: ExcM<B>
+) -> Not<B> {
+    match excm_b {
+        Left(b) => not::absurd(f, and::to_eq_pos((a, b))),
         Right(not_b) => not_b,
     }
 }
