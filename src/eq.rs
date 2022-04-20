@@ -46,7 +46,7 @@ pub fn true_eq<A: Prop>(a: A) -> Eq<A, True> {
     (True.map_any(), Rc::new(move |_| a.clone()))
 }
 
-/// `(a = b) => (¬a = ¬b)`
+/// `(a = b) => (¬b = ¬a)`
 pub fn modus_tollens<A: Prop, B: Prop>((f0, f1): Eq<A, B>) -> Eq<Not<B>, Not<A>> {
     let f02 = imply::modus_tollens(f0);
     let f12 = imply::modus_tollens(f1);
