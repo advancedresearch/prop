@@ -76,11 +76,10 @@ pub fn to_eq_false<A: Prop>(n_a: Not<A>) -> Eq<A, False> {
 }
 
 /// `¬(a = b) ∧ a  =>  ¬b`.
-pub fn contra<A: DProp, B: DProp>(f: Not<Eq<A, B>>, a: A) -> Not<B> {
-    match (A::decide(), B::decide()) {
-        (Left(a), Left(b)) => match f(and::to_eq_pos((a, b))) {},
-        (_, Right(not_b)) => not_b,
-        (Right(not_a), _) => match not_a(a) {},
+pub fn contra<A: Prop, B: DProp>(f: Not<Eq<A, B>>, a: A) -> Not<B> {
+    match B::decide() {
+        Left(b) => match f(and::to_eq_pos((a, b))) {},
+        Right(not_b) => not_b,
     }
 }
 
