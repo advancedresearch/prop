@@ -64,6 +64,14 @@ impl<T: Decidable> Existential for T {
 pub trait EProp: Existential {}
 impl<T: Existential> EProp for T {}
 
+/// `(a ∨ ¬a) => (¬¬a ∨ ¬a)`.
+pub fn excm_to_e<A: Prop>(excm: ExcM<A>) -> E<A> {
+    match excm {
+        Left(a) => Left(not::double(a)),
+        Right(na) => Right(na),
+    }
+}
+
 /// `¬(¬¬a ∧ ¬¬b) => (¬a ∨ ¬b)`.
 pub fn or_from_de_morgan<A: EProp, B: EProp>(
     p: Not<And<NN<A>, NN<B>>>
