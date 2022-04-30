@@ -125,6 +125,18 @@ pub trait QId: 'static + Clone {
 #[derive(Clone)]
 pub struct Q<A, B>(pub(crate) Eq<A, B>);
 
+/// Definition `(a ~~ b) == ((a == b) ⋀ (a ~~ a) ⋀ (b ~~ b))`.
+pub fn def<A: Prop, B: Prop>() -> Eq<Q<A, B>, And<Eq<A, B>, And<Q<A, A>, Q<B, B>>>> {
+    (
+        Rc::new(move |q_ab| {
+            (quality::to_eq(q_ab.clone()), (quality::left(q_ab.clone()), quality::right(q_ab)))
+        }),
+        Rc::new(move |and_eq_qa_qb: And<Eq<A, B>, And<Q<A, A>, Q<B, B>>>| {
+            quality::in_right_arg(and_eq_qa_qb.1.0, and_eq_qa_qb.0)
+        })
+    )
+}
+
 /// Symmetry `(a ~~ b) => (b ~~ a)`.
 pub fn commute<A: Prop, B: Prop>(Q((ab, ba)): Q<A, B>) -> Q<B, A> {
     Q((ba, ab))
