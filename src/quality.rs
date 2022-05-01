@@ -86,10 +86,6 @@ pub type EqQ<A, B> = Imply<Eq<A, B>, Q<A, B>>;
 pub type PurePlatonism<A, B> = Imply<Eq<A, B>, Or<Q<A, B>, Not<Not<Q<A, B>>>>>;
 /// A Seshatic relation `¬(a ~~ a) ⋁ ¬(b ~~ b)`.
 pub type Seshatic<A, B> = Or<Not<Q<A, A>>, Not<Q<B, B>>>;
-/// Self-quality can also be thought of as a qubit proposition.
-///
-/// For an implementation, see the [Pocket-Prover](https://github.com/advancedresearch/pocket_prover) library.
-pub type Qubit<A> = Q<A, A>;
 
 /// Prevents other qualities of `A` from excluding `B`.
 pub trait NoOtherQ<A, B>: 'static + Clone {

@@ -113,6 +113,7 @@ pub mod or;
 pub mod path_semantics;
 pub mod nat;
 pub mod quality;
+pub mod qubit;
 pub mod queenity;
 pub mod univalence;
 pub mod quantify;
