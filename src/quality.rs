@@ -77,6 +77,8 @@
 
 use crate::*;
 
+use univalence::HomEq2;
+
 pub use commute as symmetry;
 pub use nq_commute as nq_symmetry;
 
@@ -314,6 +316,22 @@ pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, g: Eq<A, C>) -> Q<C, B
 /// `(a ~~ b) ∧ (b == c)  =>  (a ~~ c)`.
 pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, g: Eq<B, C>) -> Q<A, C> {
     Q(eq::transitivity(quality::to_eq(f), g))
+}
+
+/// `(a ~~ b) ∧ hom_eq(2, a, c)  =>  (c ~~ b)`.
+pub fn hom_in_left_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, (eq_q, (eq_ac, True)): HomEq2<A, C>) -> Q<C, B> {
+    let (eq_ab, (qa, qb)) = def().0(f);
+    let eq2: Eq<C, B> = eq::transitivity(eq::symmetry(qubit::to_eq(eq_ac)), eq_ab);
+    let qc: Q<C, C> = qubit::to_eq_q(eq_q).0(qa);
+    def().1((eq2, (qc, qb)))
+}
+
+/// `(a ~~ b) ∧ hom_eq(2, b, c)  =>  (a ~~ c)`.
+pub fn hom_in_right_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, (eq_q, (eq_bc, True)): HomEq2<B, C>) -> Q<A, C> {
+    let (eq_ab, (qa, qb)) = def().0(f);
+    let eq2: Eq<A, C> = eq::transitivity(eq_ab, qubit::to_eq(eq_bc));
+    let qc: Q<C, C> = qubit::to_eq_q(eq_q).0(qb);
+    def().1((eq2, (qa, qc)))
 }
 
 /// `¬(a ~~ b) ⋀ (a == c)  =>  ¬(c ~~ b)`.
