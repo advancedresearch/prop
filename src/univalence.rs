@@ -30,6 +30,7 @@
 
 use crate::*;
 use quality::*;
+use qubit::Qubit;
 use nat::{EqNat, Dec, Lt, Nat, S, Z};
 use path_semantics::{Ty, LProp};
 
@@ -94,6 +95,24 @@ pub fn higher<A: Prop, B: Prop>(univ: Univ<A, B>) -> Univ<Eq<A, B>, Q<A, B>> {
     let higher_eq: Eq<_, Univ<A, B>> = (univ.map_any(), eq.map_any());
     eq_lift::<Eq<A, B>, Q<A, B>>(higher_eq)
 }
+
+/// Implemented by homotopy levels.
+pub trait HLev<A: Prop, B: Prop>: Nat {
+    /// The output type.
+    type Out;
+}
+
+impl<A: Prop, B: Prop> HLev<A, B> for Z {
+    type Out = True;
+}
+impl<A: Prop, B: Prop, X: HLev<A, B>> HLev<A, B> for S<X> {
+    type Out = And<Eq<Qubit<X, A>, Qubit<X, B>>, <X as HLev<A, B>>::Out>;
+}
+
+/// Homotopy equality of level `N`.
+pub type HomEq<N, A, B> = <N as HLev<A, B>>::Out;
+/// Homotopy equality of level 2.
+pub type HomEq2<A, B> = HomEq<S<S<Z>>, A, B>;
 
 /// Homotopy Level.
 ///
