@@ -34,6 +34,8 @@ use qubit::Qubit;
 use nat::{EqNat, Dec, Lt, Nat, S, Z};
 use path_semantics::{Ty, LProp};
 
+pub use hom_eq_commute as hom_eq_symmetry;
+
 /// A homotopy path between paths `A` and `B`.
 pub type Hom<A, B> = Imply<Imply<A, B>, Q<A, B>>;
 
@@ -121,6 +123,13 @@ pub fn hom_eq_transitivity<N: Nat, A: Prop, B: Prop, C: Prop>(
 ) -> HomEq<N, A, C>
     where N: HLev<A, B> + HLev<B, C> + HLev<A, C>
 {unimplemented!()}
+
+/// `hom_eq(n, a, b) => hom_eq(n, b, a)`.
+pub fn hom_eq_commute<N: Nat, A: Prop, B: Prop>(_: HomEq<N, A, B>) -> HomEq<N, B, A>
+    where N: HLev<A, B> + HLev<B, A>
+{
+    unimplemented!()
+}
 
 /// Homotopy Level.
 ///
