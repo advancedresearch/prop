@@ -114,6 +114,14 @@ pub type HomEq<N, A, B> = <N as HLev<A, B>>::Out;
 /// Homotopy equality of level 2.
 pub type HomEq2<A, B> = HomEq<S<S<Z>>, A, B>;
 
+/// `hom_eq(n, a, b) ⋀ hom_eq(n, b, c) => hom_eq(n, a, c)`.
+pub fn hom_eq_transitivity<N: Nat, A: Prop, B: Prop, C: Prop>(
+    _: HomEq<N, A, B>,
+    _: HomEq<N, B, C>,
+) -> HomEq<N, A, C>
+    where N: HLev<A, B> + HLev<B, C> + HLev<A, C>
+{unimplemented!()}
+
 /// Homotopy Level.
 ///
 /// For theoretical background, see [nLab - homotopy levels](https://ncatlab.org/nlab/show/homotopy+level).
