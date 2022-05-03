@@ -131,6 +131,13 @@ pub fn hom_eq_commute<N: Nat, A: Prop, B: Prop>(_: HomEq<N, A, B>) -> HomEq<N, B
     unimplemented!()
 }
 
+/// `hom_eq(n, a, a)`.
+pub fn hom_eq_refl<N: Nat, A: Prop>() -> HomEq<N, A, A>
+    where N: HLev<A, A>
+{
+    unimplemented!()
+}
+
 /// Homotopy Level.
 ///
 /// For theoretical background, see [nLab - homotopy levels](https://ncatlab.org/nlab/show/homotopy+level).
