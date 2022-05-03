@@ -98,44 +98,120 @@ pub fn higher<A: Prop, B: Prop>(univ: Univ<A, B>) -> Univ<Eq<A, B>, Q<A, B>> {
     eq_lift::<Eq<A, B>, Q<A, B>>(higher_eq)
 }
 
-/// Implemented by homotopy levels.
-pub trait HLev<A: Prop, B: Prop>: Nat {
-    /// The output type.
-    type Out;
+/// Implemented by homotopy equivalences.
+///
+/// This is a partial equivalence relation.
+pub trait HomotopyEquivalence<A: Prop, B: Prop>: Prop {
+    /// The associated homotopy level.
+    type N: HLev;
+    /// Relation constructor.
+    type Rel<A2: Prop, B2: Prop>: HomotopyEquivalence<A2, B2, N = Self::N>;
+    /// `hom_eq(n, a, b) ⋀ hom_eq(n, b, c) => hom_eq(n, a, c)`.
+    fn transitivity<C: Prop>(self, other: Self::Rel<B, C>) -> Self::Rel<A, C>;
+    /// `hom_eq(n, a, b) => hom_eq(n, b, a)`.
+    fn symmetry(self) -> Self::Rel<B, A>;
+
+    /// Cast to self.
+    fn cast<A2: Prop, B2: Prop>(
+        _: <<Self::N as HLev>::Out<A2, B2> as HomotopyEquivalence<A2, B2>>::Rel<A, B>
+    ) -> Self;
+    /// Cast to other.
+    fn cast_lift<A2: Prop, B2: Prop>(
+        self
+    ) -> <<Self::N as HLev>::Out<A2, B2> as HomotopyEquivalence<A2, B2>>::Rel<A, B>;
 }
 
-impl<A: Prop, B: Prop> HLev<A, B> for Z {
-    type Out = True;
+/// Implemented by homotopy equalities.
+///
+/// This is a total equivalence relation.
+pub trait HomotopyEquality<A: Prop>: HomotopyEquivalence<A, A> {
+    /// `hom_eq(n, a, a)`.
+    fn refl() -> Self;
 }
-impl<A: Prop, B: Prop, X: HLev<A, B>> HLev<A, B> for S<X> {
-    type Out = And<Eq<Qubit<X, A>, Qubit<X, B>>, <X as HLev<A, B>>::Out>;
+
+/// Implemented by homotopy levels.
+pub trait HLev: Nat {
+    /// The output type.
+    type Out<A: Prop, B: Prop>: HomotopyEquivalence<A, B, N = Self>;
+}
+
+impl HLev for Z {
+    type Out<A: Prop, B: Prop> = True;
+}
+impl<X: HLev> HLev for S<X> {
+    type Out<A: Prop, B: Prop> = And<Eq<Qubit<X, A>, Qubit<X, B>>, <X as HLev>::Out<A, B>>;
+}
+
+impl<A: Prop, B: Prop> HomotopyEquivalence<A, B> for True {
+    type N = Z;
+    type Rel<A2: Prop, B2: Prop> = True;
+    fn transitivity<C: Prop>(self, _: True) -> True {True}
+    fn symmetry(self) -> True {True}
+
+    fn cast<A2: Prop, B2: Prop>(_: True) -> True {True}
+    fn cast_lift<A2: Prop, B2: Prop>(self) -> True {True}
+}
+
+impl<A: Prop> HomotopyEquality<A> for True {
+    fn refl() -> Self {True}
+}
+
+impl<A: Prop, B: Prop, X: HLev> HomotopyEquivalence<A, B>
+for And<Eq<Qubit<X, A>, Qubit<X, B>>, <X as HLev>::Out<A, B>> {
+    type N = S<X>;
+    type Rel<A2: Prop, B2: Prop> = And<Eq<Qubit<X, A2>, Qubit<X, B2>>, <X as HLev>::Out<A2, B2>>;
+    fn transitivity<C: Prop>(self, other: Self::Rel<B, C>) -> Self::Rel<A, C> {
+        (
+            eq::transitivity(self.0, other.0),
+            HomotopyEquivalence::cast(self.1.transitivity::<C>(HomotopyEquivalence::cast_lift(other.1)))
+        )
+    }
+    fn symmetry(self) -> Self::Rel<B, A> {
+        (
+            eq::symmetry(self.0),
+            HomotopyEquivalence::cast(self.1.symmetry())
+        )
+    }
+
+    fn cast<A2: Prop, B2: Prop>(arg: Self) -> Self {arg}
+    fn cast_lift<A2: Prop, B2: Prop>(self) -> Self {self}
+}
+
+impl<A: Prop, X: HLev> HomotopyEquality<A>
+for And<Eq<Qubit<X, A>, Qubit<X, A>>, <X as HLev>::Out<A, A>>
+    where <X as HLev>::Out<A, A>: HomotopyEquality<A>
+{
+    fn refl() -> Self {
+        (
+            eq::refl(),
+            HomotopyEquality::refl()
+        )
+    }
 }
 
 /// Homotopy equality of level `N`.
-pub type HomEq<N, A, B> = <N as HLev<A, B>>::Out;
+pub type HomEq<N, A, B> = <N as HLev>::Out<A, B>;
 /// Homotopy equality of level 2.
 pub type HomEq2<A, B> = HomEq<S<S<Z>>, A, B>;
 
 /// `hom_eq(n, a, b) ⋀ hom_eq(n, b, c) => hom_eq(n, a, c)`.
-pub fn hom_eq_transitivity<N: Nat, A: Prop, B: Prop, C: Prop>(
-    _: HomEq<N, A, B>,
-    _: HomEq<N, B, C>,
-) -> HomEq<N, A, C>
-    where N: HLev<A, B> + HLev<B, C> + HLev<A, C>
-{unimplemented!()}
+pub fn hom_eq_transitivity<N: HLev, A: Prop, B: Prop, C: Prop>(
+    ab: HomEq<N, A, B>,
+    bc: HomEq<N, B, C>,
+) -> HomEq<N, A, C> {
+    HomotopyEquivalence::cast(ab.transitivity(HomotopyEquivalence::cast_lift(bc)))
+}
 
 /// `hom_eq(n, a, b) => hom_eq(n, b, a)`.
-pub fn hom_eq_commute<N: Nat, A: Prop, B: Prop>(_: HomEq<N, A, B>) -> HomEq<N, B, A>
-    where N: HLev<A, B> + HLev<B, A>
-{
-    unimplemented!()
+pub fn hom_eq_commute<N: HLev, A: Prop, B: Prop>(ab: HomEq<N, A, B>) -> HomEq<N, B, A> {
+    HomotopyEquivalence::cast(ab.symmetry())
 }
 
 /// `hom_eq(n, a, a)`.
-pub fn hom_eq_refl<N: Nat, A: Prop>() -> HomEq<N, A, A>
-    where N: HLev<A, A>
+pub fn hom_eq_refl<N: HLev, A: Prop>() -> HomEq<N, A, A>
+    where HomEq<N, A, A>: HomotopyEquality<A>
 {
-    unimplemented!()
+    HomotopyEquality::refl()
 }
 
 /// Homotopy Level.
