@@ -7,6 +7,7 @@ use nat::{Z, S};
 use quality::Q;
 
 /// Represents a recursive qubit proposition.
+#[derive(Clone)]
 pub struct Qubit<N, A>(N, A);
 
 impl<A: Prop> Qubit<Z, A> {
