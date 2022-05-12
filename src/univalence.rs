@@ -227,6 +227,13 @@ pub fn to_hom_eq_2<A: Prop, B: Prop>(
     (qubit::from_eq_q(eq_q), (qubit::from_eq(eq), True))
 }
 
+/// `hom_eq(2, a, b) => (a == b) ⋀ ((a ~~ b) == (b ~~ b))`.
+pub fn from_hom_eq_2<A: Prop, B: Prop>(
+    hom_eq: HomEq2<A, B>
+) -> And<Eq<A, B>, Eq<Q<A, A>, Q<B, B>>> {
+    (qubit::to_eq(hom_eq.1.0), qubit::to_eq_q(hom_eq.0))
+}
+
 /// Homotopy Level.
 ///
 /// For theoretical background, see [nLab - homotopy levels](https://ncatlab.org/nlab/show/homotopy+level).
