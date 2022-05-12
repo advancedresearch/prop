@@ -361,6 +361,17 @@ pub fn sesh_in_right_arg<A: Prop, B: Prop, C: Prop>(
         sesh_ab(in_right_arg(q_ac, eq_cb.clone()))
     })
 }
+/// `¬(a ~~ b) ⋀ hom_eq(2, a, c)  =>  ¬(c ~~ b)`.
+pub fn sesh_hom_in_left_arg<A: Prop, B: Prop, C: Prop>(
+    sesh_ab: Not<Q<A, B>>,
+    eq_ac: HomEq2<A, C>,
+) -> Not<Q<C, B>> {
+    let eq_ca = univalence::hom_eq_symmetry::<nat::Two, _, _>(eq_ac);
+    Rc::new(move |q_cb| {
+        sesh_ab(hom_in_left_arg(q_cb, eq_ca.clone()))
+    })
+}
+
 
 /// `¬(a ~~ a) => (¬a ~~ ¬a)`.
 pub fn sesh_to_q_inv<A: Prop>(_: Not<Q<A, A>>) -> Q<Not<A>, Not<A>> {
