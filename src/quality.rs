@@ -195,6 +195,11 @@ pub fn to_eq<A: Prop, B: Prop>(Q(eq): Q<A, B>) -> Eq<A, B> {
     eq
 }
 
+/// Converts to equality of self-quality `(a ~~ b) => ((a ~~ a) == (b ~~ b))`.
+pub fn to_eq_q<A: Prop, B: Prop>(q: Q<A, B>) -> Eq<Q<A, A>, Q<B, B>> {
+    (right(q.clone()).map_any(), left(q).map_any())
+}
+
 /// `(a ~~ b) => (a ~~ a)`.
 pub fn left<A: Prop, B: Prop>(q_ab: Q<A, B>) -> Q<A, A> {
     let q_ba = symmetry(q_ab.clone());
