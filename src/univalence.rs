@@ -216,7 +216,7 @@ pub fn hom_eq_refl<N: HLev, A: Prop>() -> HomEq<N, A, A>
 
 /// `(a ~~ b) => hom_eq(2, a, b)`.
 pub fn q_to_hom_eq_2<A: Prop, B: Prop>(q: Q<A, B>) -> HomEq2<A, B> {
-    (qubit::from_eq_q(quality::to_eq_q(q.clone())), (qubit::from_eq(quality::to_eq(q)), True))
+    to_hom_eq_2(quality::to_eq(q.clone()), quality::to_eq_q(q))
 }
 
 /// `(a == b) ⋀ ((a ~~ a) == (b ~~ b)) => hom_eq(2, a, b)`.
