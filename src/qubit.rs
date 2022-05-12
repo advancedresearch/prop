@@ -50,3 +50,12 @@ pub fn to_eq_q<A: Prop, B: Prop>(x: Eq<Qubit<S<Z>, A>, Qubit<S<Z>, B>>) -> Eq<Q<
         Rc::new(move |qb| x.1(Qubit::from_q(qb)).to_q())
     )
 }
+
+/// Convert from equality.
+pub fn from_eq_q<A: Prop, B: Prop>(x: Eq<Q<A, A>, Q<B, B>>) -> Eq<Qubit<S<Z>, A>, Qubit<S<Z>, B>> {
+    let x2 = x.clone();
+    (
+        Rc::new(move |qa| Qubit::from_q(x2.0(qa.to_q()))),
+        Rc::new(move |qb| Qubit::from_q(x.1(qb.to_q())))
+    )
+}
