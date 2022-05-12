@@ -219,6 +219,14 @@ pub fn q_to_hom_eq_2<A: Prop, B: Prop>(q: Q<A, B>) -> HomEq2<A, B> {
     (qubit::from_eq_q(quality::to_eq_q(q.clone())), (qubit::from_eq(quality::to_eq(q)), True))
 }
 
+/// `(a == b) ⋀ ((a ~~ a) == (b ~~ b)) => hom_eq(2, a, b)`.
+pub fn to_hom_eq_2<A: Prop, B: Prop>(
+    eq: Eq<A, B>,
+    eq_q: Eq<Q<A, A>, Q<B, B>>
+) -> HomEq2<A, B> {
+    (qubit::from_eq_q(eq_q), (qubit::from_eq(eq), True))
+}
+
 /// Homotopy Level.
 ///
 /// For theoretical background, see [nLab - homotopy levels](https://ncatlab.org/nlab/show/homotopy+level).
