@@ -133,8 +133,9 @@ pub fn def<A: Prop, B: Prop>() -> Eq<Q<A, B>, And<Eq<A, B>, And<Q<A, A>, Q<B, B>
         Rc::new(move |q_ab| {
             (quality::to_eq(q_ab.clone()), (quality::left(q_ab.clone()), quality::right(q_ab)))
         }),
-        Rc::new(move |and_eq_qa_qb: And<Eq<A, B>, And<Q<A, A>, Q<B, B>>>| {
-            quality::in_right_arg(and_eq_qa_qb.1.0, and_eq_qa_qb.0)
+        Rc::new(move |(eq_ab, and_qa_qb): And<Eq<A, B>, And<Q<A, A>, Q<B, B>>>| {
+            let h2: HomEq2<A, B> = univalence::to_hom_eq_2(eq_ab, and::to_eq_pos(and_qa_qb.clone()));
+            quality::hom_in_right_arg(and_qa_qb.0, h2)
         })
     )
 }
