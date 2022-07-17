@@ -66,6 +66,16 @@ impl<T: Decidable> Existential for T {
 pub trait EProp: Existential {}
 impl<T: Existential> EProp for T {}
 
+/// `¬¬(¬¬x ⋁ ¬x)`.
+pub fn double_neg_e<A: Prop>() -> NN<E<A>> {
+    Rc::new(move |nexcm| {
+        let nexcm2 = nexcm.clone();
+        let nnna = Rc::new(move |a| nexcm2(Left(a)));
+        let nna = Rc::new(move |na| nexcm(Right(na)));
+        not::absurd(nnna, nna)
+    })
+}
+
 /// `(a ∨ ¬a) => (¬¬a ∨ ¬a)`.
 pub fn excm_to_e<A: Prop>(excm: ExcM<A>) -> E<A> {
     match excm {
