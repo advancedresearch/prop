@@ -86,3 +86,11 @@ pub fn excmc_to_cq<A: DProp>(excm: ExcM<ConQubit<A>>) -> ConQubit<A> {
 pub fn nnccq_to_cq<A: DProp>(x: Not<Not<ConQubit<ConQubit<A>>>>) -> ConQubit<A> {
     excmc_to_cq(ConQubit::to_excm(x))
 }
+
+/// `(.~x => x) => ¬¬x`.
+pub fn cq_unwrap_to_nn<A: Prop>(f: Imply<ConQubit<A>, A>) -> Not<Not<A>> {
+    Rc::new(move |nx| {
+        let ncx: Not<ConQubit<A>> = imply::modus_tollens(f.clone())(nx.clone());
+        excm_to_nncq(Right(nx))(ncx)
+    })
+}
