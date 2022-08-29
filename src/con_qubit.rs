@@ -147,3 +147,13 @@ pub fn cqu_to_cq<A: Prop>(f: Cq<A, A>) -> ConQubit<A> {
 pub fn cq_to_eq<A: Prop, B: Prop>(f: Cq<A, B>) -> Eq<A, B> {
     f.0
 }
+
+/// `(a .~~ b) => (a .~~ a)`.
+pub fn cq_left<A: Prop, B: Prop>(f: Cq<A, B>) -> Cq<A, A> {
+    cq_transitivity(f.clone(), cq_commute(f))
+}
+
+/// `(a .~~ b) => (b .~~ b)`.
+pub fn cq_right<A: Prop, B: Prop>(f: Cq<A, B>) -> Cq<B, B> {
+    cq_transitivity(cq_commute(f.clone()), f)
+}
