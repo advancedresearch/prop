@@ -109,3 +109,11 @@ pub fn cq_unwrap_to_nn<A: Prop>(f: Imply<ConQubit<A>, A>) -> Not<Not<A>> {
 pub fn cq_commute<A: Prop, B: Prop>(f: Cq<A, B>) -> Cq<B, A> {
     (eq::symmetry(f.0), (f.1.1, f.1.0))
 }
+
+/// Transitivity `(a .~~ b) ⋀ (b .~~ c) => (a .~~ c)`.
+pub fn cq_transitivity<A: Prop, B: Prop, C: Prop>(
+    f: Cq<A, B>,
+    g: Cq<B, C>
+) -> Cq<A, C> {
+    (eq::transitivity(f.0, g.0), (f.1.0, g.1.1))
+}
