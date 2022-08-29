@@ -73,37 +73,27 @@ pub fn nn_cnn_to_ncn_absurd<A: Prop>(
     not::absurd(nncnx, ncnx)
 }
 
-/// `¬.~x ⋀ (x ⋁ ¬x) => false`.
-pub fn nc_excm_absurd<A: Prop>(nx: Not<ConQubit<A>>, excm: ExcM<A>) -> False {
-    excm_to_nncq(excm)(nx)
+/// `¬.~x => false`.
+pub fn nc_absurd<A: Prop>(nx: Not<ConQubit<A>>) -> False {
+    let nnnx = not::double(nx.clone());
+    let y: Not<ExcM<A>> = imply::in_left_arg(nnnx, (
+        Rc::new(move |nnx| ConQubit::to_excm(nnx)),
+        Rc::new(move |excm| excm_to_nncq(excm))
+    ));
+    A::nnexcm()(y)
 }
 
-/// `¬.~x => x` when `x` is decidable.
-pub fn nc_absurd<A: DProp>(nx: Not<ConQubit<A>>) -> False {
-    nc_excm_absurd(nx, A::decide())
-}
-
-/// `(.~x ⋁ ¬.~x) ⋀ (x ⋁ ¬x) => .~x`.
-pub fn excmc_excm_to_cq<A: Prop>(excm: ExcM<ConQubit<A>>, excm_a: ExcM<A>) -> ConQubit<A> {
-    let f = Rc::new(move |nx| nc_excm_absurd(nx, excm_a.clone()));
+/// `(.~x ⋁ ¬.~x) => .~x`.
+pub fn excmc_to_cq<A: Prop>(excm: ExcM<ConQubit<A>>) -> ConQubit<A> {
+    let f = Rc::new(move |nx| nc_absurd(nx));
     match excm {
         Left(x) => x,
         Right(nx) => not::absurd(f, nx),
     }
 }
 
-/// `(.~x ⋁ ¬.~x) => .~x` when `x` is decidable.
-pub fn excmc_to_cq<A: DProp>(excm: ExcM<ConQubit<A>>) -> ConQubit<A> {
-    excmc_excm_to_cq(excm, A::decide())
-}
-
-/// `(¬¬.~.~x) ⋀ (x ⋁ ¬x) => .~x`.
-pub fn nnccq_excm_to_cq<A: Prop>(x: Not<Not<ConQubit<ConQubit<A>>>>, excm: ExcM<A>) -> ConQubit<A> {
-    excmc_excm_to_cq(ConQubit::to_excm(x), excm)
-}
-
-/// `¬¬.~.~x => .~x` when `x` is decidable.
-pub fn nnccq_to_cq<A: DProp>(x: Not<Not<ConQubit<ConQubit<A>>>>) -> ConQubit<A> {
+/// `(¬¬.~.~x) => .~x`.
+pub fn nnccq_to_cq<A: Prop>(x: Not<Not<ConQubit<ConQubit<A>>>>) -> ConQubit<A> {
     excmc_to_cq(ConQubit::to_excm(x))
 }
 
