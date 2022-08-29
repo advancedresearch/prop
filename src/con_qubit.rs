@@ -68,9 +68,14 @@ pub fn nn_cnn_to_ncn_absurd<A: Prop>(
     not::absurd(nncnx, ncnx)
 }
 
+/// `¬.~x ⋀ (x ⋁ ¬x) => false`.
+pub fn nc_excm_absurd<A: Prop>(nx: Not<ConQubit<A>>, excm: ExcM<A>) -> False {
+    excm_to_nncq(excm)(nx)
+}
+
 /// `¬.~x => x` when `x` is decidable.
 pub fn nc_absurd<A: DProp>(nx: Not<ConQubit<A>>) -> False {
-    excm_to_nncq(A::decide())(nx)
+    nc_excm_absurd(nx, A::decide())
 }
 
 /// `(.~x ⋁ ¬.~x) => .~x` when `x` is decidable.
