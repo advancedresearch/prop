@@ -159,6 +159,15 @@ pub trait Prop: 'static + Sized + Clone {
     fn double_neg(self) -> Dneg<Self> {self.map_any()}
     /// Maps anything into itself.
     fn map_any<T>(self) -> Imply<T, Self> {Rc::new(move |_| self.clone())}
+    /// Double negated excluded middle.
+    fn nnexcm() -> Not<Not<ExcM<Self>>> {
+        Rc::new(move |nexcm| {
+            let nexcm2 = nexcm.clone();
+            let f: Not<Self> = Rc::new(move |a| nexcm2(Left(a)));
+            let g: Not<Not<Self>> = Rc::new(move |na| nexcm(Right(na)));
+            g(f)
+        })
+    }
 }
 impl<T: 'static + Sized + Clone> Prop for T {}
 
