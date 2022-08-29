@@ -15,6 +15,11 @@
 
 use crate::*;
 
+use cq_commute as cq_symmetry;
+
+/// Path semantical con-quality `a .~~ b`.
+pub type Cq<A, B> = And<Eq<A, B>, And<ConQubit<A>, ConQubit<B>>>;
+
 /// Represents a con-qubit proposition.
 #[derive(Clone)]
 pub struct ConQubit<A>(A);
@@ -98,4 +103,9 @@ pub fn cq_unwrap_to_nn<A: Prop>(f: Imply<ConQubit<A>, A>) -> Not<Not<A>> {
         let ncx: Not<ConQubit<A>> = imply::modus_tollens(f.clone())(nx.clone());
         excm_to_nncq(Right(nx))(ncx)
     })
+}
+
+/// Symmetry `(a .~~ b) => (b .~~ a)`.
+pub fn cq_commute<A: Prop, B: Prop>(f: Cq<A, B>) -> Cq<B, A> {
+    (eq::symmetry(f.0), (f.1.1, f.1.0))
 }
