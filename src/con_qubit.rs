@@ -132,3 +132,13 @@ pub fn cq_transitivity<A: Prop, B: Prop, C: Prop>(
 pub fn and_to_cq<A: Prop, B: Prop>(and: And<A, B>) -> Cq<A, B> {
     (and::to_eq_pos(and.clone()), (ConQubit::from_pos(and.0), ConQubit::from_pos(and.1)))
 }
+
+/// `.~a => (a .~~ a)`.
+pub fn cq_to_cqu<A: Prop>(x: ConQubit<A>) -> Cq<A, A> {
+    (eq::refl(), (x.clone(), x))
+}
+
+/// `(a .~~ a) => .~a`.
+pub fn cqu_to_cq<A: Prop>(f: Cq<A, A>) -> ConQubit<A> {
+    f.1.0
+}
