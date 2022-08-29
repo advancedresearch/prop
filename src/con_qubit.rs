@@ -15,7 +15,7 @@
 
 use crate::*;
 
-use cq_commute as cq_symmetry;
+pub use cq_commute as cq_symmetry;
 
 /// Path semantical con-quality `a .~~ b`.
 pub type Cq<A, B> = And<Eq<A, B>, And<ConQubit<A>, ConQubit<B>>>;
@@ -83,13 +83,18 @@ pub fn nc_absurd<A: DProp>(nx: Not<ConQubit<A>>) -> False {
     nc_excm_absurd(nx, A::decide())
 }
 
-/// `(.~x ⋁ ¬.~x) => .~x` when `x` is decidable.
-pub fn excmc_to_cq<A: DProp>(excm: ExcM<ConQubit<A>>) -> ConQubit<A> {
-    let f = Rc::new(move |nx| nc_absurd(nx));
+/// `(.~x ⋁ ¬.~x) ⋀ (x ⋁ ¬x) => .~x`.
+pub fn excmc_excm_to_cq<A: DProp>(excm: ExcM<ConQubit<A>>, excm_a: ExcM<A>) -> ConQubit<A> {
+    let f = Rc::new(move |nx| nc_excm_absurd(nx, excm_a.clone()));
     match excm {
         Left(x) => x,
         Right(nx) => not::absurd(f, nx),
     }
+}
+
+/// `(.~x ⋁ ¬.~x) => .~x` when `x` is decidable.
+pub fn excmc_to_cq<A: DProp>(excm: ExcM<ConQubit<A>>) -> ConQubit<A> {
+    excmc_excm_to_cq(excm, A::decide())
 }
 
 /// `¬¬.~.~x => .~x` when `x` is decidable.
