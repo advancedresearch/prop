@@ -12,6 +12,12 @@
 //! - `¬¬.~x => (x ⋁ ¬x)`
 //!
 //! This can be thought of as a contractible qubit operator.
+//!
+//! ### Naming conventions
+//!
+//! - `cqu`: con-qubit
+//! - `cq`: con-quality
+//! - `caq`: con-aquality
 
 use crate::*;
 
@@ -47,18 +53,18 @@ impl<A: Prop> ConQubit<A> {
 /// Paradox for con-qubit by assuming `¬.~x == .~¬x`.
 pub trait ConQubitParadox: Sized {
     /// `¬.~x == .~¬x`.
-    fn cq_eq<A: Prop>() -> Eq<Not<ConQubit<A>>, ConQubit<Not<A>>>;
+    fn cqu_eq<A: Prop>() -> Eq<Not<ConQubit<A>>, ConQubit<Not<A>>>;
 
     /// `false` as consequence of the paradox.
     fn absurd() -> False {
-        nn_cnn_to_ncn_absurd(not::double(()), Self::cq_eq().1)
+        nn_cqunn_to_ncqun_absurd(not::double(()), Self::cqu_eq().1)
     }
 }
 
 /// `(x ⋁ ¬x) => ¬¬.~x`.
 ///
 /// Convert excluded middle to double-negated con-qubit.
-pub fn excm_to_nncq<A: Prop>(excm_a: ExcM<A>) -> Not<Not<ConQubit<A>>> {
+pub fn excm_to_nncqu<A: Prop>(excm_a: ExcM<A>) -> Not<Not<ConQubit<A>>> {
     match excm_a {
         Left(x) => not::double(ConQubit::from_pos(x)),
         Right(nx) => ConQubit::from_neg(nx),
@@ -66,7 +72,7 @@ pub fn excm_to_nncq<A: Prop>(excm_a: ExcM<A>) -> Not<Not<ConQubit<A>>> {
 }
 
 /// `¬¬x ⋀ (.~¬¬x => ¬.~¬x) => false`.
-pub fn nn_cnn_to_ncn_absurd<A: Prop>(
+pub fn nn_cqunn_to_ncqun_absurd<A: Prop>(
     nnx: Not<Not<A>>,
     f: Imply<ConQubit<Not<Not<A>>>, Not<ConQubit<Not<A>>>>,
 ) -> False {
@@ -77,18 +83,18 @@ pub fn nn_cnn_to_ncn_absurd<A: Prop>(
 }
 
 /// `¬.~x => false`.
-pub fn nc_absurd<A: Prop>(nx: Not<ConQubit<A>>) -> False {
+pub fn ncqu_absurd<A: Prop>(nx: Not<ConQubit<A>>) -> False {
     let nnnx = not::double(nx.clone());
     let y: Not<ExcM<A>> = imply::in_left_arg(nnnx, (
         Rc::new(move |nnx| ConQubit::to_excm(nnx)),
-        Rc::new(move |excm| excm_to_nncq(excm))
+        Rc::new(move |excm| excm_to_nncqu(excm))
     ));
     A::nnexcm()(y)
 }
 
 /// `(.~x ⋁ ¬.~x) => .~x`.
-pub fn excmc_to_cq<A: Prop>(excm: ExcM<ConQubit<A>>) -> ConQubit<A> {
-    let f = Rc::new(move |nx| nc_absurd(nx));
+pub fn excmcqu_to_cqu<A: Prop>(excm: ExcM<ConQubit<A>>) -> ConQubit<A> {
+    let f = Rc::new(move |nx| ncqu_absurd(nx));
     match excm {
         Left(x) => x,
         Right(nx) => not::absurd(f, nx),
@@ -97,14 +103,14 @@ pub fn excmc_to_cq<A: Prop>(excm: ExcM<ConQubit<A>>) -> ConQubit<A> {
 
 /// `(¬¬.~.~x) => .~x`.
 pub fn nnccq_to_cq<A: Prop>(x: Not<Not<ConQubit<ConQubit<A>>>>) -> ConQubit<A> {
-    excmc_to_cq(ConQubit::to_excm(x))
+    excmcqu_to_cqu(ConQubit::to_excm(x))
 }
 
 /// `(.~x => x) => ¬¬x`.
-pub fn cq_unwrap_to_nn<A: Prop>(f: Imply<ConQubit<A>, A>) -> Not<Not<A>> {
+pub fn cqu_unwrap_to_nn<A: Prop>(f: Imply<ConQubit<A>, A>) -> Not<Not<A>> {
     Rc::new(move |nx| {
         let ncx: Not<ConQubit<A>> = imply::modus_tollens(f.clone())(nx.clone());
-        excm_to_nncq(Right(nx))(ncx)
+        excm_to_nncqu(Right(nx))(ncx)
     })
 }
 
