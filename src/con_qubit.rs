@@ -142,3 +142,8 @@ pub fn cq_to_cqu<A: Prop>(x: ConQubit<A>) -> Cq<A, A> {
 pub fn cqu_to_cq<A: Prop>(f: Cq<A, A>) -> ConQubit<A> {
     f.1.0
 }
+
+/// `(a .~~ b) => (a == b)`.
+pub fn cq_to_eq<A: Prop, B: Prop>(f: Cq<A, B>) -> Eq<A, B> {
+    f.0
+}
