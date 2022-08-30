@@ -23,6 +23,9 @@ use crate::*;
 use psq::*;
 
 pub use cq_commute as cq_symmetry;
+pub use caq_commute as caq_symmetry;
+pub use ncq_commute as ncq_symmetry;
+pub use ncaq_commute as ncaq_symmetry;
 
 /// Con-PSQ logic.
 pub struct ConPSQ;
@@ -140,6 +143,16 @@ pub fn cq_commute<A: Prop, B: Prop>(f: Cq<A, B>) -> Cq<B, A> {
 /// Symmetry `(a .~¬~ b) => (b .~¬~ a)`.
 pub fn caq_commute<A: Prop, B: Prop>(f: Caq<A, B>) -> Caq<B, A> {
     psq::aq_commute::<ConPSQ, A, B>(f)
+}
+
+/// Negated symmetry `¬(a .~~ b) => ¬(b .~~ a)`.
+pub fn ncq_commute<A: Prop, B: Prop>(nq: Not<Cq<A, B>>) -> Not<Cq<B, A>> {
+    psq::nq_commute::<ConPSQ, A, B>(nq)
+}
+
+/// Negated symmetry `¬(a .~¬~ b) => ¬(b .~¬~ a)`.
+pub fn ncaq_commute<A: Prop, B: Prop>(nq: Not<Caq<A, B>>) -> Not<Caq<B, A>> {
+    psq::naq_commute::<ConPSQ, A, B>(nq)
 }
 
 /// Transitivity `(a .~~ b) ⋀ (b .~~ c) => (a .~~ c)`.
