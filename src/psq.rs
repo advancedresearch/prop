@@ -5,6 +5,11 @@
 
 use crate::*;
 
+pub use q_commute as q_symmetry;
+pub use aq_commute as aq_symmetry;
+pub use nq_commute as nq_symmetry;
+pub use naq_commute as naq_symmetry;
+
 /// Qubit type.
 pub type Qubit<Psq, A> = <Psq as PSQ>::Qubit<A>;
 
@@ -28,6 +33,22 @@ pub fn q_commute<Psq: PSQ, A: Prop, B: Prop>(q: Qual<Psq, A, B>) -> Qual<Psq, B,
 /// Symmetry `(a ~¬~ b) => (b ~¬~ a)`.
 pub fn aq_commute<Psq: PSQ, A: Prop, B: Prop>(aq: Aqual<Psq, A, B>) -> Aqual<Psq, B, A> {
     (eq::commute(aq.0), (aq.1.1, aq.1.0))
+}
+
+/// Negated symmetry `¬(a ~~ b) => ¬(b ~~ a)`.
+pub fn nq_commute<Psq: PSQ, A: Prop, B: Prop>(nq: Not<Qual<Psq, A, B>>) -> Not<Qual<Psq, B, A>>
+    where Psq::Qubit<A>: 'static,
+          Psq::Qubit<B>: 'static,
+{
+    Rc::new(move |q| nq(q_commute::<Psq, B, A>(q)))
+}
+
+/// Negated symmetry `¬(a ~¬~ b) => ¬(b ~¬~ a)`.
+pub fn naq_commute<Psq: PSQ, A: Prop, B: Prop>(nq: Not<Aqual<Psq, A, B>>) -> Not<Aqual<Psq, B, A>>
+    where Psq::Qubit<Not<A>>: 'static,
+          Psq::Qubit<Not<B>>: 'static,
+{
+    Rc::new(move |q| nq(aq_commute::<Psq, B, A>(q)))
 }
 
 /// Transitivity `(a ~~ b) ⋀ (b ~~ c) => (a ~~ c)`.
