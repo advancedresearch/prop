@@ -119,6 +119,7 @@ pub mod univalence;
 pub mod quantify;
 pub mod existence;
 pub mod con_qubit;
+pub mod psq;
 
 /// Logical true.
 #[derive(Copy, Clone)]

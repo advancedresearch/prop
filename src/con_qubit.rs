@@ -20,8 +20,16 @@
 //! - `caq`: con-aquality
 
 use crate::*;
+use psq::*;
 
 pub use cq_commute as cq_symmetry;
+
+/// Con-PSQ logic.
+pub struct ConPSQ;
+
+impl PSQ for ConPSQ {
+    type Qubit<A> = ConQubit<A>;
+}
 
 /// Path semantical con-quality `a .~~ b`.
 pub type Cq<A, B> = And<Eq<A, B>, And<ConQubit<A>, ConQubit<B>>>;
@@ -114,32 +122,6 @@ pub fn cqu_unwrap_to_nn<A: Prop>(f: Imply<ConQubit<A>, A>) -> Not<Not<A>> {
     })
 }
 
-/// Symmetry `(a .~~ b) => (b .~~ a)`.
-pub fn cq_commute<A: Prop, B: Prop>(f: Cq<A, B>) -> Cq<B, A> {
-    (eq::symmetry(f.0), (f.1.1, f.1.0))
-}
-
-/// Symmetry `(a .~¬~ b) => (b .~¬~ a)`.
-pub fn caq_commute<A: Prop, B: Prop>(f: Caq<A, B>) -> Caq<B, A> {
-    (eq::symmetry(f.0), (f.1.1, f.1.0))
-}
-
-/// Transitivity `(a .~~ b) ⋀ (b .~~ c) => (a .~~ c)`.
-pub fn cq_transitivity<A: Prop, B: Prop, C: Prop>(
-    f: Cq<A, B>,
-    g: Cq<B, C>
-) -> Cq<A, C> {
-    (eq::transitivity(f.0, g.0), (f.1.0, g.1.1))
-}
-
-/// Transitivity `(a .~¬~ b) ⋀ (b .~¬~ c) => (a .~¬~ c)`.
-pub fn caq_transitivity<A: Prop, B: Prop, C: Prop>(
-    f: Caq<A, B>,
-    g: Caq<B, C>
-) -> Caq<A, C> {
-    (eq::transitivity(f.0, g.0), (f.1.0, g.1.1))
-}
-
 /// `(a ⋀ b) => (a .~~ b)`.
 pub fn and_pos_to_cq<A: Prop, B: Prop>(and: And<A, B>) -> Cq<A, B> {
     (and::to_eq_pos(and.clone()), (ConQubit::from_pos(and.0), ConQubit::from_pos(and.1)))
@@ -150,51 +132,78 @@ pub fn and_neg_to_caq<A: Prop, B: Prop>(and: And<Not<A>, Not<B>>) -> Caq<A, B> {
     (and::to_eq_neg(and.clone()), (ConQubit::from_pos(and.0), ConQubit::from_pos(and.1)))
 }
 
+/// Symmetry `(a .~~ b) => (b .~~ a)`.
+pub fn cq_commute<A: Prop, B: Prop>(f: Cq<A, B>) -> Cq<B, A> {
+    psq::q_commute::<ConPSQ, A, B>(f)
+}
+
+/// Symmetry `(a .~¬~ b) => (b .~¬~ a)`.
+pub fn caq_commute<A: Prop, B: Prop>(f: Caq<A, B>) -> Caq<B, A> {
+    psq::aq_commute::<ConPSQ, A, B>(f)
+}
+
+/// Transitivity `(a .~~ b) ⋀ (b .~~ c) => (a .~~ c)`.
+pub fn cq_transitivity<A: Prop, B: Prop, C: Prop>(
+    f: Cq<A, B>,
+    g: Cq<B, C>
+) -> Cq<A, C> {
+    psq::q_transitivity::<ConPSQ, A, B, C>(f, g)
+}
+
+/// Transitivity `(a .~¬~ b) ⋀ (b .~¬~ c) => (a .~¬~ c)`.
+pub fn caq_transitivity<A: Prop, B: Prop, C: Prop>(
+    f: Caq<A, B>,
+    g: Caq<B, C>
+) -> Caq<A, C> {
+    psq::aq_transitivity::<ConPSQ, A, B, C>(f, g)
+}
+
 /// `.~a => (a .~~ a)`.
 pub fn cqu_to_cq<A: Prop>(x: ConQubit<A>) -> Cq<A, A> {
-    (eq::refl(), (x.clone(), x))
+    psq::qu_to_q::<ConPSQ, A>(x)
 }
 
 /// `.~¬a => (a .~¬~ a)`.
 pub fn cqun_to_caq<A: Prop>(x: ConQubit<Not<A>>) -> Caq<A, A> {
-    (eq::refl(), (x.clone(), x))
+    psq::qun_to_aq::<ConPSQ, A>(x)
 }
 
 /// `(a .~~ a) => .~a`.
 pub fn cq_to_cqu<A: Prop>(f: Cq<A, A>) -> ConQubit<A> {
-    f.1.0
+    psq::q_to_qu::<ConPSQ, A>(f)
 }
 
 /// `(a .~¬~ a) => .~¬a`.
 pub fn caq_to_cqun<A: Prop>(f: Caq<A, A>) -> ConQubit<Not<A>> {
-    f.1.0
+    psq::aq_to_qun::<ConPSQ, A>(f)
 }
 
 /// `(a .~~ b) => (a == b)`.
 pub fn cq_to_eq<A: Prop, B: Prop>(f: Cq<A, B>) -> Eq<A, B> {
-    f.0
+    psq::q_to_eq::<ConPSQ, A, B>(f)
 }
 
 /// `(a .~¬~ b) => (a == b)`.
-pub fn caq_to_eq<A: Prop, B: Prop>(f: Cq<A, B>) -> Eq<A, B> {
-    f.0
+pub fn caq_to_eq<A: Prop, B: Prop>(f: Caq<A, B>) -> Eq<A, B> {
+    psq::aq_to_eq::<ConPSQ, A, B>(f)
 }
 
 /// `(a .~~ b) => (a .~~ a)`.
 pub fn cq_left<A: Prop, B: Prop>(f: Cq<A, B>) -> Cq<A, A> {
-    cq_transitivity(f.clone(), cq_commute(f))
+    psq::q_left::<ConPSQ, A, B>(f)
 }
 
 /// `(a .~¬~ b) => (a .~¬~ a)`.
 pub fn caq_left<A: Prop, B: Prop>(f: Caq<A, B>) -> Caq<A, A> {
-    caq_transitivity(f.clone(), caq_commute(f))
+    psq::aq_left::<ConPSQ, A, B>(f)
 }
 
 /// `(a .~~ b) => (b .~~ b)`.
 pub fn cq_right<A: Prop, B: Prop>(f: Cq<A, B>) -> Cq<B, B> {
-    cq_transitivity(cq_commute(f.clone()), f)
+    psq::q_right::<ConPSQ, A, B>(f)
 }
+
 /// `(a .~¬~ b) => (b .~¬~ b)`.
 pub fn caq_right<A: Prop, B: Prop>(f: Caq<A, B>) -> Caq<B, B> {
-    caq_transitivity(caq_commute(f.clone()), f)
+    psq::aq_right::<ConPSQ, A, B>(f)
 }
