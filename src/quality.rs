@@ -315,11 +315,13 @@ pub fn sesh_absurd<A: Prop, B: Prop>(f: Not<Q<A, A>>) -> B {
 }
 
 /// `(a ~~ b) ∧ (a == c)  =>  (c ~~ b)`.
+#[cfg(feature = "subst_equality")]
 pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, g: Eq<A, C>) -> Q<C, B> {
     Q(eq::commute(eq::transitivity(eq::commute(quality::to_eq(f)), g)))
 }
 
 /// `(a ~~ b) ∧ (b == c)  =>  (a ~~ c)`.
+#[cfg(feature = "subst_equality")]
 pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, g: Eq<B, C>) -> Q<A, C> {
     Q(eq::transitivity(quality::to_eq(f), g))
 }
@@ -341,6 +343,7 @@ pub fn hom_in_right_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, (eq_q, (eq_bc, Tr
 }
 
 /// `¬(a ~~ b) ⋀ (a == c)  =>  ¬(c ~~ b)`.
+#[cfg(feature = "subst_equality")]
 pub fn sesh_in_left_arg<A: Prop, B: Prop, C: Prop>(
     sesh_ab: Not<Q<A, B>>,
     eq_ac: Eq<A, C>,
@@ -352,6 +355,7 @@ pub fn sesh_in_left_arg<A: Prop, B: Prop, C: Prop>(
 }
 
 /// `¬(a ~~ b) ⋀ (b == c)  =>  ¬(a ~~ c)`.
+#[cfg(feature = "subst_equality")]
 pub fn sesh_in_right_arg<A: Prop, B: Prop, C: Prop>(
     sesh_ab: Not<Q<A, B>>,
     eq_bc: Eq<B, C>,
@@ -361,6 +365,7 @@ pub fn sesh_in_right_arg<A: Prop, B: Prop, C: Prop>(
         sesh_ab(in_right_arg(q_ac, eq_cb.clone()))
     })
 }
+
 /// `¬(a ~~ b) ⋀ hom_eq(2, a, c)  =>  ¬(c ~~ b)`.
 pub fn sesh_hom_in_left_arg<A: Prop, B: Prop, C: Prop>(
     sesh_ab: Not<Q<A, B>>,
