@@ -31,7 +31,9 @@
 use crate::*;
 use quality::*;
 use qubit::Qubit;
-use nat::{EqNat, Dec, Lt, Nat, S, Z};
+use nat::{Nat, S, Z};
+#[cfg(feature = "old_homotopy_levels")]
+use nat::{EqNat, Dec, Lt};
 use path_semantics::{Ty, LProp};
 
 pub use hom_eq_commute as hom_eq_symmetry;
@@ -237,6 +239,10 @@ pub fn from_hom_eq_2<A: Prop, B: Prop>(
 /// Homotopy Level.
 ///
 /// For theoretical background, see [nLab - homotopy levels](https://ncatlab.org/nlab/show/homotopy+level).
+/// Homotopy Level.
+///
+/// For theoretical background, see [nLab - homotopy levels](https://ncatlab.org/nlab/show/homotopy+level).
+#[cfg(feature = "old_homotopy_levels")]
 pub trait HomotopyLevel<N: Nat>: Prop {
     /// A type such that it proves homotopy level 0.
     type H0: Prop;
@@ -256,6 +262,7 @@ pub trait HomotopyLevel<N: Nat>: Prop {
 /// Decidable Homotopy Level.
 ///
 /// Same as Homotopy Level, but for decidable propositions.
+#[cfg(feature = "old_homotopy_levels")]
 pub trait DecidableHomotopyLevel<N: Nat>: DProp {
     /// A type such that it proves homotopy level 0.
     type H0: DProp;
@@ -272,6 +279,7 @@ pub trait DecidableHomotopyLevel<N: Nat>: DProp {
         where Z: Lt<N>;
 }
 
+#[cfg(feature = "old_homotopy_levels")]
 impl<N: Nat, T: DecidableHomotopyLevel<N>> HomotopyLevel<N> for T {
     type H0 = <T as DecidableHomotopyLevel<N>>::H0;
     type H = <T as DecidableHomotopyLevel<N>>::H;
@@ -288,6 +296,7 @@ impl<N: Nat, T: DecidableHomotopyLevel<N>> HomotopyLevel<N> for T {
     }
 }
 
+#[cfg(feature = "old_homotopy_levels")]
 impl<N: Nat> DecidableHomotopyLevel<N> for True {
     type H0 = True;
     type H = True;
@@ -306,6 +315,7 @@ impl<N: Nat> DecidableHomotopyLevel<N> for True {
     }
 }
 
+#[cfg(feature = "old_homotopy_levels")]
 impl<N: Nat> DecidableHomotopyLevel<S<N>> for False {
     type H0 = True;
     type H = True;
@@ -323,6 +333,7 @@ impl<N: Nat> DecidableHomotopyLevel<S<N>> for False {
     }
 }
 
+#[cfg(feature = "old_homotopy_levels")]
 impl<N: Nat> DecidableHomotopyLevel<N> for Or<True, True> {
     type H0 = Or<True, True>;
     type H = Or<True, True>;
@@ -348,6 +359,7 @@ impl<N: Nat> DecidableHomotopyLevel<N> for Or<True, True> {
     }
 }
 
+#[cfg(feature = "old_homotopy_levels")]
 impl<N: Nat> DecidableHomotopyLevel<N> for Or<True, False> {
     type H0 = Or<True, False>;
     type H = Or<True, False>;
@@ -374,9 +386,11 @@ impl<N: Nat> DecidableHomotopyLevel<N> for Or<True, False> {
 }
 
 /// Represents a Set of homotopy level 2.
+#[cfg(feature = "old_homotopy_levels")]
 #[derive(Clone)]
 pub struct Set;
 
+#[cfg(feature = "old_homotopy_levels")]
 impl<N: Nat> HomotopyLevel<S<S<N>>> for Set {
     type H0 = True;
     type H = Or<True, False>;
@@ -395,13 +409,18 @@ impl<N: Nat> HomotopyLevel<S<S<N>>> for Set {
 }
 
 /// Shorthand for homotopy proposition.
+#[cfg(feature = "old_homotopy_levels")]
 pub trait HProp<N: Nat>: HomotopyLevel<N> {}
+
+#[cfg(feature = "old_homotopy_levels")]
 impl<N: Nat, T: HomotopyLevel<N>> HProp<N> for T {}
 
 /// Lower homotopy level with 2.
+#[cfg(feature = "old_homotopy_levels")]
 pub type H2<A, N> = <<A as HomotopyLevel<S<S<N>>>>::H as HomotopyLevel<S<N>>>::H;
 
 /// `(x : a) => (a::h0 : a)`.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn ty_h0<X: LProp, A: HProp<Z>>(ty_x_a: Ty<X, A>) -> Ty<A::H0, A> {
     let q_h0_x = A::h0(ty_x_a.clone());
     let eq_x_h0 = eq::symmetry(quality::to_eq(q_h0_x));
@@ -409,6 +428,7 @@ pub fn ty_h0<X: LProp, A: HProp<Z>>(ty_x_a: Ty<X, A>) -> Ty<A::H0, A> {
 }
 
 /// Proves that homotopy level 0 has quality between any members.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn h0_q<X: LProp, Y: LProp, A: HProp<Z>>(
     ty_x: Ty<X, A>,
     ty_y: Ty<Y, A>,
@@ -420,6 +440,7 @@ pub fn h0_q<X: LProp, Y: LProp, A: HProp<Z>>(
 }
 
 /// Proves that homotopy level 1 or higher has quality between self-quality of any members.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn h1_q2<X: LProp, Y: LProp, N: Nat, A: HProp<S<N>>>(
     ty_x: Ty<X, A>,
     ty_y: Ty<Y, A>,
@@ -432,6 +453,7 @@ pub fn h1_q2<X: LProp, Y: LProp, N: Nat, A: HProp<S<N>>>(
 }
 
 /// Lift type of path.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn lift_ty<X: LProp, Y: LProp, X2: Prop, N: Nat, A: HProp<S<N>>>(
     ty_x: Ty<X, A>,
     ty_y: Ty<Y, A>,
@@ -443,6 +465,7 @@ pub fn lift_ty<X: LProp, Y: LProp, X2: Prop, N: Nat, A: HProp<S<N>>>(
 }
 
 /// Get the type of the path between paths.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn h2<X: LProp, Y: LProp, X2: LProp, Y2: LProp, N: Nat, A: HProp<S<S<N>>>>(
     ty_x: Ty<X, A>,
     ty_y: Ty<Y, A>,
@@ -455,6 +478,7 @@ pub fn h2<X: LProp, Y: LProp, X2: LProp, Y2: LProp, N: Nat, A: HProp<S<S<N>>>>(
 }
 
 /// `(x : set) ⋀ (y : set) ⋀ (x2 : (x ~~ y)) ⋀ (y2 : (x ~~ y))  =>  (x2 ~~ y2)`.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn set_h2<X: LProp, Y: LProp, X2: LProp, Y2: LProp>(
     ty_x: Ty<X, Set>,
     ty_y: Ty<Y, Set>,
@@ -466,6 +490,7 @@ pub fn set_h2<X: LProp, Y: LProp, X2: LProp, Y2: LProp>(
 }
 
 /// `(x : set) ⋀ (y : set) => ((x ⋀ y) : set)`
+#[cfg(feature = "old_homotopy_levels")]
 pub fn set_and<X: LProp, Y: LProp>(
     ty_x: Ty<X, Set>,
     ty_y: Ty<Y, Set>
@@ -475,6 +500,7 @@ pub fn set_and<X: LProp, Y: LProp>(
 }
 
 /// `(x : set) ⋀ (y : set) => ((x ⋁ y) : set)`.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn set_or<X: LProp, Y: LProp>(
     ty_x: Ty<X, Set>,
     ty_y: Ty<Y, Set>
@@ -484,6 +510,7 @@ pub fn set_or<X: LProp, Y: LProp>(
 }
 
 /// `(x : a) ⋀ (x : b)  =>  (a ~~ b)` when `a` and `b` are homotopy level 0.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn h0_ext<A: HProp<Z>, B: HProp<Z>, X: LProp>(
     ty_xa: Ty<X, A>,
     ty_xb: Ty<X, B>,
@@ -503,6 +530,7 @@ pub fn h0_ext<A: HProp<Z>, B: HProp<Z>, X: LProp>(
 
 /// `(x : a) ⋀ (x : b) ⋀ ((x ~~ x) == x)  =>  (a ~~ b)`
 /// when `a` and `b` are homotopy level 1 or larger.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn h1_lim_ext<A: HProp<S<N>>, B: HProp<S<N>>, X: LProp, N: Nat>(
     ty_xa: Ty<X, A>,
     ty_xb: Ty<X, B>,
@@ -524,6 +552,7 @@ pub fn h1_lim_ext<A: HProp<S<N>>, B: HProp<S<N>>, X: LProp, N: Nat>(
 }
 
 /// `(x : a) ⋀ (x : true) => a`.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn h0_true<X: LProp, A: HProp<Z>>(
     ty_x_a: Ty<X, A>,
     ty_x_true: Ty<X, True>,
@@ -532,6 +561,7 @@ pub fn h0_true<X: LProp, A: HProp<Z>>(
 }
 
 /// `(x : a) => a`.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn h0<X: LProp, A: HProp<Z>>(ty_x_a: Ty<X, A>) -> A
     where X::N: Nat
 {
@@ -539,6 +569,7 @@ pub fn h0<X: LProp, A: HProp<Z>>(ty_x_a: Ty<X, A>) -> A
 }
 
 /// `(x : a) ⋀ (x : false) ⋀ ((x ~~ x) == x)  =>  ¬a`.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn h1_false<X: LProp, N: Nat, A: HProp<S<N>>>(
     ty_x_a: Ty<X, A>,
     ty_x_false: Ty<X, False>,
@@ -548,6 +579,7 @@ pub fn h1_false<X: LProp, N: Nat, A: HProp<S<N>>>(
 }
 
 /// `(x : a) ⋀ (x : true) ⋀ ((x ~~ x) == x)  =>  a`.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn h1_true<X: LProp, N: Nat, A: HProp<S<N>>>(
     ty_x_a: Ty<X, A>,
     ty_x_true: Ty<X, True>,
@@ -557,32 +589,38 @@ pub fn h1_true<X: LProp, N: Nat, A: HProp<S<N>>>(
 }
 
 /// `(x : true) => (true ~~ x)`.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn h0_q_true<X: LProp>(ty_x: Ty<X, True>) -> Q<True, X> {
     <True as HomotopyLevel<Z>>::h0(ty_x)
 }
 
 /// `(x : true) => (x ~~ x)`.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn h0_true_q<X: LProp>(ty_x: Ty<X, True>) -> Q<X, X> {
     let f = h0_q_true(ty_x);
     quality::transitivity(quality::symmetry(f.clone()), f)
 }
 
 /// `(x : false)  =>  (x ~~ x)`.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn h1_false_q<X: LProp>(ty_x_false: Ty<X, False>) -> Q<X, X> {
     quality::to_eq(<False as HomotopyLevel<S<Z>>>::hn(ty_x_false.clone(), ty_x_false)).0(True)
 }
 
 /// `(x : true) => x`.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn h0_lproof<X: LProp>(ty_x: Ty<X, True>) -> X {
     quality::to_eq(h0_q_true(ty_x)).0(True)
 }
 
 /// `(x : true) => ((x ~~ x) == x)`.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn h0_lim<X: LProp>(ty_x: Ty<X, True>) -> Eq<Q<X, X>, X> {
     (h0_lproof(ty_x.clone()).map_any(), h0_true_q(ty_x).map_any())
 }
 
 /// `(x : true) => ((x ~~ x) ~~ x)`.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn h0_qlim<X: LProp>(ty_x: Ty<X, True>) -> Q<Q<X, X>, X> {
     let lim = h0_lim(ty_x.clone());
     let ty_q = path_semantics::ty_in_left_arg(ty_x, eq::symmetry(lim.clone()));
@@ -591,6 +629,7 @@ pub fn h0_qlim<X: LProp>(ty_x: Ty<X, True>) -> Q<Q<X, X>, X> {
 }
 
 /// `(x : true) ⋀ (x : false)  =>  (true ~~ false)`.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn q_contradict<X: LProp>(
     ty_x_true: Ty<X, True>,
     ty_x_false: Ty<X, False>
@@ -599,6 +638,7 @@ pub fn q_contradict<X: LProp>(
 }
 
 /// `(x : true) ⋀ (x : false)  =>  false`.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn contradict<X: LProp>(
     ty_x_true: Ty<X, True>,
     ty_x_false: Ty<X, False>
@@ -607,6 +647,7 @@ pub fn contradict<X: LProp>(
 }
 
 /// `(x : a) ⋀ ((x ~~ x) == x)  =>  (a ⋁ ¬a) == ((x : true) ⋁ (x : false))`.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn h1_lim_excm<X: LProp, N: Nat, A: HProp<S<N>>>(
     ty_x_a: Ty<X, A>,
     lim: Eq<Q<X, X>, X>,
@@ -625,6 +666,7 @@ pub fn h1_lim_excm<X: LProp, N: Nat, A: HProp<S<N>>>(
 }
 
 /// `(x : a) ⋀ ((x ~~ x) == x)  =>  (x : true) ⋁ (x : false)`.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn h1_lim_excm_da<X: LProp, N: Nat, A: DProp + HProp<S<N>>>(
     ty_x_a: Ty<X, A>,
     lim: Eq<Q<X, X>, X>,
@@ -633,6 +675,7 @@ pub fn h1_lim_excm_da<X: LProp, N: Nat, A: DProp + HProp<S<N>>>(
 }
 
 /// `(x : false) ⋀ ((x ~~ x) == x)  =>  false`.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn h1_false_lim_contradict<X: LProp>(
     ty_x_false: Ty<X, False>,
     lim: Eq<Q<X, X>, X>
@@ -641,6 +684,7 @@ pub fn h1_false_lim_contradict<X: LProp>(
 }
 
 /// `(x : a) ⋀ ((x ~~ x) == x) ⋀ (a ⋁ ¬a)  =>  (x : true)`.
+#[cfg(feature = "old_homotopy_levels")]
 pub fn h1_lim_excm_true<X: LProp, N: Nat, A: HProp<S<N>>>(
     ty_x_a: Ty<X, A>,
     lim: Eq<Q<X, X>, X>,
