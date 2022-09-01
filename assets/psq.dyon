@@ -1,0 +1,300 @@
+/*
+
+Generates variants of PSQs.
+
+To run, use `dyonrun assets/psq.dyon`
+
+For more information about Dyon, see https://github.com/pistondevelopers/dyon
+
+*/
+
+fn main() {
+    con_qubit := psq(
+        docs: [
+"# Path Semantical Con-Qubit",
+"",
+"Operator symbol: `.~`",
+"",
+"The idea behind the con-qubit is to show that",
+"an alternative qubit operator can be constructed",
+"by removing the `¬.~x == .~¬x` axiom",
+"and replace it with three axioms:",
+"",
+"- `x => .~x`",
+"- `¬x => ¬¬.~x`",
+"- `¬¬.~x => (x ⋁ ¬x)`",
+"",
+"This can be thought of as a contractible qubit operator.",
+        ],
+        qubit: op(
+            name: "con-qubit",
+            symbol: ".~",
+            nameconv: "cqu",
+            ident: "ConQubit",
+        ),
+        qual: op(
+            name: "con-quality",
+            symbol: ".~~",
+            nameconv: "cq",
+            ident: "Cq",
+        ),
+        aqual: op(
+            name: "con-aquality",
+            symbol: ".~¬~",
+            nameconv: "caq",
+            ident: "Caq",
+        ),
+        code: \(obj) = link {
+            qu_id := obj.qubit.ident
+
+            qu_sym := obj.qubit.symbol
+"
+impl<A: Prop> "qu_id"<A> {
+    /// `x => "qu_sym"x`.
+    pub fn from_pos(x : A) -> "qu_id"<A> {
+        "qu_id"(x)
+    }
+
+    /// `¬x => ¬¬"qu_sym"x`.
+    pub fn from_neg(_nx: Not<A>) -> Not<Not<Self>> {
+        unimplemented!()
+    }
+
+    /// `¬¬"qu_sym"x => (x ⋁ ¬x)`.
+    pub fn to_excm(_nnx: Not<Not<Self>>) -> ExcM<A> {
+        unimplemented!()
+    }
+}
+
+/// Paradox for "obj.qubit.name" by assuming `¬"qu_sym"x == "qu_sym"¬x`.
+pub trait ConQubitParadox: Sized {
+    /// `¬.~x == .~¬x`.
+    fn cqu_eq<A: Prop>() -> Eq<Not<ConQubit<A>>, ConQubit<Not<A>>>;
+
+    /// `false` as consequence of the paradox.
+    fn absurd() -> False {
+        nn_cqunn_to_ncqun_absurd(not::double(()), Self::cqu_eq().1)
+    }
+}
+
+/// `(x ⋁ ¬x) => ¬¬.~x`.
+///
+/// Convert excluded middle to double-negated con-qubit.
+pub fn excm_to_nncqu<A: Prop>(excm_a: ExcM<A>) -> Not<Not<ConQubit<A>>> {
+    match excm_a {
+        Left(x) => not::double(ConQubit::from_pos(x)),
+        Right(nx) => ConQubit::from_neg(nx),
+    }
+}
+
+/// `¬¬x ⋀ (.~¬¬x => ¬.~¬x) => false`.
+pub fn nn_cqunn_to_ncqun_absurd<A: Prop>(
+    nnx: Not<Not<A>>,
+    f: Imply<ConQubit<Not<Not<A>>>, Not<ConQubit<Not<A>>>>,
+) -> False {
+    let cnnx = ConQubit::from_pos(nnx.clone());
+    let ncnx: Not<ConQubit<Not<A>>> = f(cnnx);
+    let nncnx = ConQubit::from_neg(nnx);
+    not::absurd(nncnx, ncnx)
+}
+
+/// `¬.~x => false`.
+pub fn ncqu_absurd<A: Prop>(nx: Not<ConQubit<A>>) -> False {
+    let nnnx = not::double(nx.clone());
+    let y: Not<ExcM<A>> = imply::in_left_arg(nnnx, (
+        Rc::new(move |nnx| ConQubit::to_excm(nnx)),
+        Rc::new(move |excm| excm_to_nncqu(excm))
+    ));
+    A::nnexcm()(y)
+}
+
+/// `(.~x ⋁ ¬.~x) => .~x`.
+pub fn excmcqu_to_cqu<A: Prop>(excm: ExcM<ConQubit<A>>) -> ConQubit<A> {
+    let f = Rc::new(move |nx| ncqu_absurd(nx));
+    match excm {
+        Left(x) => x,
+        Right(nx) => not::absurd(f, nx),
+    }
+}
+
+/// `(¬¬.~.~x) => .~x`.
+pub fn nnccq_to_cq<A: Prop>(x: Not<Not<ConQubit<ConQubit<A>>>>) -> ConQubit<A> {
+    excmcqu_to_cqu(ConQubit::to_excm(x))
+}
+
+/// `(.~x => x) => ¬¬x`.
+pub fn cqu_unwrap_to_nn<A: Prop>(f: Imply<ConQubit<A>, A>) -> Not<Not<A>> {
+    Rc::new(move |nx| {
+        let ncx: Not<ConQubit<A>> = imply::modus_tollens(f.clone())(nx.clone());
+        excm_to_nncqu(Right(nx))(ncx)
+    })
+}
+
+/// `(a ⋀ b) => (a .~~ b)`.
+pub fn and_pos_to_cq<A: Prop, B: Prop>(and: And<A, B>) -> Cq<A, B> {
+    (and::to_eq_pos(and.clone()), (ConQubit::from_pos(and.0), ConQubit::from_pos(and.1)))
+}
+
+/// `(¬a ⋀ ¬b) => (a .~¬~ b)`.
+pub fn and_neg_to_caq<A: Prop, B: Prop>(and: And<Not<A>, Not<B>>) -> Caq<A, B> {
+    (and::to_eq_neg(and.clone()), (ConQubit::from_pos(and.0), ConQubit::from_pos(and.1)))
+}
+        "}
+    )
+    _ := save(string: str(code(con_qubit)), file: "src/con_qubit.rs")
+}
+
+op__name_symbol_nameconv_ident(
+    name: str,
+    symbol: str,
+    nameconv: str,
+    ident: str,
+) = clone({
+    name: name,
+    symbol: symbol,
+    nameconv: nameconv,
+    ident: ident,
+})
+
+/// Creates a PSQ object that determines how code is generated.
+psq__docs_qubit_qual_aqual_code(
+    docs: [str],
+    qubit: str,
+    qual: str,
+    aqual: str,
+    code: \({}) -> link,
+) = clone({
+    docs: docs,
+    qubit: qubit,
+    qual: qual,
+    aqual: aqual,
+    code: code,
+})
+
+code(obj: {}) = link {
+    qu := obj.qubit.nameconv
+    q := obj.qual.nameconv
+    aq := obj.aqual.nameconv
+
+    qu_id := obj.qubit.ident
+    q_id := obj.qual.ident
+    aq_id := obj.aqual.ident
+
+    qu_sym := obj.qubit.symbol
+    q_sym := obj.qual.symbol
+    aq_sym := obj.aqual.symbol
+
+"// *Notice! This source file was generated using a script*\n"
+    link i {"//!"if obj.docs[i] != "" {link {" "obj.docs[i]}}"\n"}
+"//!
+//! ### Naming conventions
+//!
+//! - `"qu"`: "obj.qubit.name"
+//! - `"q"`: "obj.qual.name"
+//! - `"aq"`: "obj.aqual.name"
+
+use crate::*;
+
+pub use "q"_commute as "q"_symmetry;
+pub use "aq"_commute as "aq"_symmetry;
+pub use n"q"_commute as n"q"_symmetry;
+pub use n"aq"_commute as n"aq"_symmetry;
+
+/// Path semantical "obj.qual.name" `a "q_sym" b`.
+pub type "q_id"<A, B> = And<Eq<A, B>, And<"qu_id"<A>, "qu_id"<B>>>;
+
+/// Path semantical con-aquality `a .~¬~ b`.
+pub type "aq_id"<A, B> = And<Eq<A, B>, And<"qu_id"<Not<A>>, "qu_id"<Not<B>>>>;
+
+/// Represents a "obj.qubit.name" proposition.
+#[derive(Clone)]
+pub struct "qu_id"<A>(A);
+
+"trim(str(\obj.code(obj)))"
+
+/// Symmetry `(a "q_sym" b) => (b "q_sym" a)`.
+pub fn "q"_commute<A: Prop, B: Prop>(f: "q_id"<A, B>) -> "q_id"<B, A> {
+    (eq::symmetry(f.0), (f.1.1, f.1.0))
+}
+
+/// Symmetry `(a "aq_sym" b) => (b "aq_sym" a)`.
+pub fn "aq"_commute<A: Prop, B: Prop>(f: "aq_id"<A, B>) -> "aq_id"<B, A> {
+    (eq::symmetry(f.0), (f.1.1, f.1.0))
+}
+
+/// Negated symmetry `¬(a "q_sym" b) => ¬(b "q_sym" a)`.
+pub fn n"q"_commute<A: Prop, B: Prop>(nq: Not<"q_id"<A, B>>) -> Not<"q_id"<B, A>> {
+    Rc::new(move |ba| nq("q"_commute(ba)))
+}
+
+/// Negated symmetry `¬(a "aq_sym" b) => ¬(b "aq_sym" a)`.
+pub fn n"aq"_commute<A: Prop, B: Prop>(nq: Not<"aq_id"<A, B>>) -> Not<"aq_id"<B, A>> {
+    Rc::new(move |ba| nq("aq"_commute(ba)))
+}
+
+/// Transitivity `(a "q_sym" b) ⋀ (b "q_sym" c) => (a "q_sym" c)`.
+pub fn "q"_transitivity<A: Prop, B: Prop, C: Prop>(
+    f: "q_id"<A, B>,
+    g: "q_id"<B, C>
+) -> "q_id"<A, C> {
+    (eq::transitivity(f.0, g.0), (f.1.0, g.1.1))
+}
+
+/// Transitivity `(a "aq_sym" b) ⋀ (b "aq_sym" c) => (a "aq_sym" c)`.
+pub fn "aq"_transitivity<A: Prop, B: Prop, C: Prop>(
+    f: "aq_id"<A, B>,
+    g: "aq_id"<B, C>
+) -> "aq_id"<A, C> {
+    (eq::transitivity(f.0, g.0), (f.1.0, g.1.1))
+}
+
+/// `"qu_sym"a => (a "q_sym" a)`.
+pub fn "qu"_to_"q"<A: Prop>(x: "qu_id"<A>) -> "q_id"<A, A> {
+    (eq::refl(), (x.clone(), x))
+}
+
+/// `"qu_sym"¬a => (a "q_sym" a)`.
+pub fn "qu"n_to_"aq"<A: Prop>(x: "qu_id"<Not<A>>) -> "aq_id"<A, A> {
+    (eq::refl(), (x.clone(), x))
+}
+
+/// `(a "q_sym" a) => "qu_sym"a`.
+pub fn "q"_to_"qu"<A: Prop>(f: "q_id"<A, A>) -> "qu_id"<A> {
+    f.1.0
+}
+
+/// `(a "aq_sym" a) => "qu_sym"¬a`.
+pub fn "aq"_to_"qu"n<A: Prop>(f: "aq_id"<A, A>) -> "qu_id"<Not<A>> {
+    f.1.0
+}
+
+/// `(a "q_sym" b) => (a == b)`.
+pub fn "q"_to_eq<A: Prop, B: Prop>(f: "q_id"<A, B>) -> Eq<A, B> {
+    f.0
+}
+
+/// `(a "aq_sym" b) => (a == b)`.
+pub fn "aq"_to_eq<A: Prop, B: Prop>(f: "aq_id"<A, B>) -> Eq<A, B> {
+    f.0
+}
+
+/// `(a "q_sym" b) => (a "q_sym" a)`.
+pub fn "q"_left<A: Prop, B: Prop>(f: "q_id"<A, B>) -> "q_id"<A, A> {
+    "q"_transitivity(f.clone(), "q"_commute(f))
+}
+
+/// `(a "aq_sym" b) => (a "aq_sym" a)`.
+pub fn "aq"_left<A: Prop, B: Prop>(f: "aq_id"<A, B>) -> "aq_id"<A, A> {
+    "aq"_transitivity(f.clone(), "aq"_commute(f))
+}
+
+/// `(a "q_sym" b) => (b "q_sym" b)`.
+pub fn "q"_right<A: Prop, B: Prop>(f: "q_id"<A, B>) -> "q_id"<B, B> {
+    "q"_transitivity("q"_commute(f.clone()), f)
+}
+
+/// `(a "aq_sym" b) => (b "aq_sym" b)`.
+pub fn "aq"_right<A: Prop, B: Prop>(f: "aq_id"<A, B>) -> "aq_id"<B, B> {
+    "aq"_transitivity("aq"_commute(f.clone()), f)
+}
+"}
