@@ -239,6 +239,20 @@ pub fn from_hom_eq_2<A: Prop, B: Prop>(
 /// Homotopy Level.
 ///
 /// For theoretical background, see [nLab - homotopy levels](https://ncatlab.org/nlab/show/homotopy+level).
+pub trait HomotopyLevel0<A: Prop, B: Prop>: HomotopyEquivalence<A, B, N = Z> {
+    /// A type such that it proves homotopy level 0.
+    type H0: Prop;
+    /// Homotopy level 0.
+    fn h0<X: LProp>(ty_x: Ty<X, Self>) -> HomEq<Z, Self::H0, X>;
+}
+
+impl<A: Prop, B: Prop> HomotopyLevel0<A, B> for True {
+    type H0 = True;
+    fn h0<X: LProp>(_ty_x: Ty<X, Self>) -> HomEq<Z, True, X> {
+        True
+    }
+}
+
 /// Homotopy Level.
 ///
 /// For theoretical background, see [nLab - homotopy levels](https://ncatlab.org/nlab/show/homotopy+level).
