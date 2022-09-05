@@ -258,6 +258,21 @@ pub fn uniform_not_double<A: Prop>(
     }
 }
 
+/// `uniform(a == a)`.
+pub fn uniform_refl<A: Prop>() -> Uniform<Eq<A, A>> {
+    Left(eq_refl::<A>)
+}
+
+/// `uniform(a == b) => uniform(b == a)`.
+pub fn uniform_symmetry<A: Prop, B: Prop>(
+    f: Uniform<Eq<A, B>>
+) -> Uniform<Eq<B, A>> {
+    match f {
+        Left(t_ab) => Left(eq_symmetry(t_ab)),
+        Right(p_ab) => Right(neq_symmetry(p_ab)),
+    }
+}
+
 /// `uniform(a == b) ∧ uniform(b == c) => uniform(a == c)`.
 pub fn uniform_transitivity<A: Prop, B: Prop, C: Prop>(
     f: Uniform<Eq<A, B>>,
