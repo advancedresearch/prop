@@ -1,4 +1,3 @@
-
 # Prop
 Propositional logic with types in Rust.
 
@@ -17,6 +16,7 @@ Abbreviations:
 - PSI: Path Semantical Intuitionistic/Constructive Propositional Logic
 - EPS: Path Semantical Intuitionistic/Constructive Propositional Logic for Existential Philosophy
 - PSL: Path Semantical Classical Propositional Logic
+- PSQ: Path Semantical Quantum Propositional Logic
 
 ### Motivation
 
@@ -47,15 +47,12 @@ This library contains:
 - Automatic lifting of Excluded Middle of Non-Existence to existential propositions
 - Automatic lifting of Excluded Middle to decidable propositions
 - Double Negation for proofs of `Prop`
-- A model of Path Semantical Quality in IPL (see "quality" module)
+- A model of Path Semantical Quality/Aquality in IPL (see "quality" module)
+- A model of Path Semantical Qubit in IPL (see "qubit" module)
+- A model of Path Semantical Con-Quality in IPL (see "con_qubit" module)
 - A model of Seshatic Queenity (see "queenity" module)
 - Formalization of the core axiom of Path Semantics
 - Tactics organized in modules by constructs (e.g. `and` or `imply`)
-
-Due to first-order logic requiring dependent types,
-which is not yet supported in Rust,
-this library is limited to zeroth-order logic (propositional logic).
-However, this library has limited support for first-order logic in the "quantify" module.
 
 ### Examples
 

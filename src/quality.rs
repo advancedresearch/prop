@@ -6,6 +6,8 @@
 //!
 //! For a different implementation of quality, see [PSI in Avalog](https://github.com/advancedresearch/avalog/blob/master/source/psi.txt).
 //!
+//! There is also an implementation in [Pocket-Prover](https://github.com/advancedresearch/pocket_prover).
+//!
 //! ### Work-around for symbolic distinction
 //!
 //! IPL does not support symbolic distinction, so quality must be assumed explicitly.
@@ -74,6 +76,22 @@
 //! - `¬¬(a ~~ b)`
 //!
 //! The 2-avatar integrates `(a ~~ b)` and `¬¬(a ~~ b)` using `⋁`.
+//!
+//! ### Aquality
+//!
+//! Aquality is a Seshatic relation that is symmetric to quality.
+//!
+//! One can think about aquality vs quality as a perspective
+//! where Seshatism and Platonism becomes mirror images of each other.
+//!
+//! The core axiom biases mathematics toward Platonism,
+//! but this choice is arbitrary since `¬~x == ~¬x`.
+//! Therefore, "Platonism" is whatever theory/philosophy
+//! that is associated with the quality/aquality used in a core axiom.
+//! The dual theory/philosophy is Seshatism.
+//!
+//! Dualities of this form is common in mathematics,
+//! so Seshatism vs Platonism is often used to talk about analogues of other dualities as well.
 
 use crate::*;
 
