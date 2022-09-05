@@ -17,6 +17,7 @@
 //! one can make tautological theorem proving more powerful.
 
 use crate::*;
+use quality::Q;
 
 /// A tautological proposition.
 pub type Tauto<A> = fn() -> A;
@@ -29,6 +30,22 @@ pub type Uniform<A> = Or<Tauto<A>, Para<A>>;
 
 /// A proposition is a theory when non-uniform.
 pub type Theory<A> = Not<Uniform<A>>;
+
+/// Lift equality with tautological distinction into quality.
+pub fn lift_q<A: Prop, B: Prop>(
+    _: Eq<A, B>,
+    _: Theory<Eq<A, B>>
+) -> Q<A, B> {unimplemented!()}
+
+/// `(a ~~ b) ∧ (a == c)  =>  (c ~~ b)`.
+pub fn q_in_left_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, g: Tauto<Eq<A, C>>) -> Q<C, B> {
+    Q(eq::commute(eq::transitivity(eq::commute(quality::to_eq(f)), g())))
+}
+
+/// `(a ~~ b) ∧ (b == c)  =>  (a ~~ c)`.
+pub fn q_in_right_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, g: Tauto<Eq<B, C>>) -> Q<A, C> {
+    Q(eq::transitivity(quality::to_eq(f), g()))
+}
 
 /// `true => true`.
 pub fn tr() -> True {True}
@@ -69,11 +86,31 @@ pub fn from_eq_false<A: Prop>(
     unimplemented!()
 }
 
-/// `x == x`.
-pub fn eq_refl<A: Prop>() -> Tauto<Eq<A, A>> {eq::refl::<A>}
+/// `x => ¬¬x`.
+pub fn not_double<A: Prop>(_: Tauto<A>) -> Tauto<Not<Not<A>>> {
+    unimplemented!()
+}
 
-/// `(x == y) => (y == x)`.
+/// `(¬¬x == false) => (x == false)`.
+pub fn para_not_double<A: Prop>(_: Para<Not<Not<A>>>) -> Para<A> {
+    unimplemented!()
+}
+
+/// `(x == false) => (¬¬x == false)`.
+pub fn para_not_rev_double<A: Prop>(_: Para<A>) -> Para<Not<Not<A>>> {
+    unimplemented!()
+}
+
+/// `x == x`.
+pub use eq::refl as eq_refl;
+
+/// `((x == y) == true) => ((y == x) == true)`.
 pub fn eq_symmetry<A: Prop, B: Prop>(_: Tauto<Eq<A, B>>) -> Tauto<Eq<B, A>> {
+    unimplemented!()
+}
+
+/// `((x == y) == false) => ((y == x) == false)`.
+pub fn neq_symmetry<A: Prop, B: Prop>(_: Para<Eq<A, B>>) -> Para<Eq<B, A>> {
     unimplemented!()
 }
 
@@ -82,6 +119,32 @@ pub fn eq_transitivity<A: Prop, B: Prop, C: Prop>(
     _: Tauto<Eq<A, B>>,
     _: Tauto<Eq<B, C>>
 ) -> Tauto<Eq<A, C>> {
+    unimplemented!()
+}
+
+pub use eq_transitivity as eq_in_right_arg;
+
+/// `(a == b) ∧ (a == c) => (c == b)`.
+pub fn eq_in_left_arg<A: Prop, B: Prop, C: Prop>(
+    f: Tauto<Eq<A, B>>,
+    g: Tauto<Eq<A, C>>,
+) -> Tauto<Eq<C, B>> {
+    eq_transitivity(eq_symmetry(g), f)
+}
+
+/// `((a == b) == false) ∧ ((b == c) == true) => ((a == c) == false)`.
+pub fn para_eq_transitivity_left<A: Prop, B: Prop, C: Prop>(
+    _: Para<Eq<A, B>>,
+    _: Tauto<Eq<B, C>>
+) -> Para<Eq<A, C>> {
+    unimplemented!()
+}
+
+/// `((a == b) == true) ∧ ((b == c) == false) => ((a == c) == false)`.
+pub fn para_eq_transitivity_right<A: Prop, B: Prop, C: Prop>(
+    _: Tauto<Eq<A, B>>,
+    _: Para<Eq<B, C>>
+) -> Para<Eq<A, C>> {
     unimplemented!()
 }
 
@@ -185,11 +248,34 @@ pub fn imply_in_right_arg<A: Prop, B: Prop, C: Prop>(
     unimplemented!()
 }
 
-/// If something is provable from a tautology,
-/// then it is provable without the tautology.
-pub fn imply_reduce_left_arg<A: Prop, B: Prop>(
-    _: Imply<Tauto<A>, B>
-) -> B {
+/// `uniform(a) => uniform(¬¬a)`.
+pub fn uniform_not_double<A: Prop>(
+    f: Uniform<A>
+) -> Uniform<Not<Not<A>>> {
+    match f {
+        Left(x) => Left(not_double(x)),
+        Right(x) => Right(para_not_rev_double(x)),
+    }
+}
+
+/// `uniform(a == b) ∧ uniform(b == c) => uniform(a == c)`.
+pub fn uniform_transitivity<A: Prop, B: Prop, C: Prop>(
+    f: Uniform<Eq<A, B>>,
+    g: Uniform<Eq<B, C>>
+) -> Uniform<Eq<A, C>> {
+    match (f, g) {
+        (Left(t_ab), Left(t_bc)) => Left(eq_transitivity(t_ab, t_bc)),
+        (Left(t_ab), Right(p_bc)) => Right(para_eq_transitivity_right(t_ab, p_bc)),
+        (Right(p_ab), Left(t_bc)) => Right(para_eq_transitivity_left(p_ab, t_bc)),
+        (Right(p_ab), Right(p_bc)) => uniform_from_para_transitivity(p_ab, p_bc),
+    }
+}
+
+/// `((a == b) == false) ∧ ((b == c) == false) => uniform(a == c)`.
+pub fn uniform_from_para_transitivity<A: Prop, B: Prop, C: Prop>(
+    _: Para<Eq<A, B>>,
+    _: Para<Eq<B, C>>,
+) -> Uniform<Eq<A, C>> {
     unimplemented!()
 }
 
