@@ -124,8 +124,11 @@ pub trait QId: 'static + Clone {
     }
 }
 
-/// Definition `(a ~~ b) == ((a == b) ⋀ (a ~~ a) ⋀ (b ~~ b))`.
+/// Quality definition `(a ~~ b) == ((a == b) ⋀ ~a ⋀ ~b)`.
 pub type Q<A, B> = And<Eq<A, B>, And<Qu<A>, Qu<B>>>;
+
+/// Aquality definition `(a ~~ b) == ((a == b) ⋀ ~¬a ⋀ ~¬b)`.
+pub type Aq<A, B> = And<Eq<A, B>, And<Qu<Not<A>>, Qu<Not<B>>>>;
 
 /// Symmetry `(a ~~ b) => (b ~~ a)`.
 pub fn commute<A: Prop, B: Prop>((eq, and_qu): Q<A, B>) -> Q<B, A> {
