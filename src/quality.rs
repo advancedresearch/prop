@@ -174,7 +174,7 @@ pub fn assume_pure_platonism<A: Prop, B: Prop>() -> PurePlatonism<A, B> {
 
 /// Equality lift `(a == b) => ( (a ~~ b) ⋁ ¬¬(a ~~ b) )`.
 #[cfg(feature = "pure_platonism")]
-pub fn eq_lift<A: Prop, B: Prop>(eq: Eq<A, B>) -> Or<Q<A, B>, Not<Not<Q<A, B>>>> {
+pub fn eq_lift<A: Prop, B: Prop>(_: Eq<A, B>) -> Or<Q<A, B>, Not<Not<Q<A, B>>>> {
     unimplemented!()
 }
 
@@ -303,13 +303,13 @@ pub fn sesh_absurd<A: Prop, B: Prop>(f: Not<Q<A, A>>) -> B {
 
 /// `(a ~~ b) ∧ (a == c)  =>  (c ~~ b)`.
 #[cfg(feature = "subst_equality")]
-pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, g: Eq<A, C>) -> Q<C, B> {
+pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(_: Q<A, B>, _: Eq<A, C>) -> Q<C, B> {
     unimplemented!()
 }
 
 /// `(a ~~ b) ∧ (b == c)  =>  (a ~~ c)`.
 #[cfg(feature = "subst_equality")]
-pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, g: Eq<B, C>) -> Q<A, C> {
+pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(_: Q<A, B>, _: Eq<B, C>) -> Q<A, C> {
     unimplemented!()
 }
 
