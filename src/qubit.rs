@@ -4,7 +4,7 @@
 
 use crate::*;
 use nat::{Z, S};
-use quality::Q;
+use quality::{Aq, Q};
 
 /// Represents a recursive qubit proposition.
 #[derive(Clone)]
@@ -25,6 +25,13 @@ impl<A: Prop> Qubit<S<Z>, A> {
     pub fn to_q(self) -> Q<A, A> {(eq::refl(), (self.clone(), self))}
     /// Convert from self-quality.
     pub fn from_q((_, (x, _)): Q<A, A>) -> Self {x}
+}
+
+impl<A: Prop> Qubit<S<Z>, Not<A>> {
+    /// Convert to self-quality.
+    pub fn to_aq(self) -> Aq<A, A> {(eq::refl(), (self.clone(), self))}
+    /// Convert from self-quality.
+    pub fn from_aq((_, (x, _)): Aq<A, A>) -> Self {x}
 }
 
 /// `¬~a => ~¬a`.
@@ -66,4 +73,18 @@ pub fn from_eq_q<A: Prop, B: Prop>(x: Eq<Q<A, A>, Q<B, B>>) -> Eq<Qubit<S<Z>, A>
         Rc::new(move |qa| Qubit::from_q(x2.0(qa.to_q()))),
         Rc::new(move |qb| Qubit::from_q(x.1(qb.to_q())))
     )
+}
+
+/// `(~a == ~b) => (~¬a == ~¬b)`.`
+pub fn eq_to_eq_inv<A: Prop, B: Prop>(eq_q: Eq<Qu<A>, Qu<B>>) -> Eq<Qu<Not<A>>, Qu<Not<B>>> {
+    let eq_q = eq::symmetry(eq::modus_tollens(eq_q));
+    let eq_q = eq::in_left_arg(eq_q, (
+        Rc::new(move |x| qubit::sesh_to_inv(x)),
+        Rc::new(move |x| qubit::inv_to_sesh(x))
+    ));
+    let eq_q = eq::in_right_arg(eq_q, (
+        Rc::new(move |x| qubit::sesh_to_inv(x)),
+        Rc::new(move |x| qubit::inv_to_sesh(x))
+    ));
+    eq_q
 }
