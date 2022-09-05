@@ -1,8 +1,12 @@
+#[cfg(feature = "quantify")]
 use prop::*;
+#[cfg(feature = "quantify")]
 use prop::univalence::{Univ};
+#[cfg(feature = "quantify")]
 use prop::quantify::{App2, Pred};
+#[cfg(feature = "quantify")]
 use prop::quality::{EqQ, Q};
-
+#[cfg(feature = "quantify")]
 use std::rc::Rc;
 
 /// This example shows that symbolic distinction is equal to univalence.
@@ -14,6 +18,7 @@ use std::rc::Rc;
 ///
 /// Since the predicate is modeled by both symbolic distinction and univalence,
 /// it proves that symbolic distinction is equal to univalence.
+#[cfg(feature = "quantify")]
 pub trait SymbolicDistinction: Pred {
     /// Definition of symbolic distinction.
     fn def<A: Prop, B: Prop>() -> Eq<App2<Self, A, B>, EqQ<A, B>>;
