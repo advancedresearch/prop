@@ -4,10 +4,8 @@
 
 use crate::*;
 
-pub use commute as symmetry;
-
 /// `a ∨ b => b ∨ a`.
-pub fn commute<A: Prop, B: Prop>(or: Or<A, B>) -> Or<B, A> {
+pub fn symmetry<A: Prop, B: Prop>(or: Or<A, B>) -> Or<B, A> {
     use Either::*;
 
     match or {

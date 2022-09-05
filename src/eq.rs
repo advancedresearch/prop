@@ -4,8 +4,8 @@
 
 use crate::*;
 
-pub use commute as symmetry;
-pub use neq_commute as neq_symmetry;
+
+
 
 /// `(a = b) ∧ (b = c) => (a = c)`.
 pub fn transitivity<A: Prop, B: Prop, C: Prop>((f0, f1): Eq<A, B>, (g0, g1): Eq<B, C>) -> Eq<A, C> {
@@ -19,13 +19,13 @@ pub fn double_neg<A: Prop>(a: A) -> Eq<A, Not<Not<A>>> {
 }
 
 /// `(a = b) => (b = a)`.
-pub fn commute<A: Prop, B: Prop>((f0, f1): Eq<A, B>) -> Eq<B, A> {
+pub fn symmetry<A: Prop, B: Prop>((f0, f1): Eq<A, B>) -> Eq<B, A> {
     (f1, f0)
 }
 
 /// `¬(a = b) => ¬(b = a)`.
-pub fn neq_commute<A: Prop, B: Prop>(neq: Not<Eq<A, B>>) -> Not<Eq<B, A>> {
-    Rc::new(move |eq| neq(commute(eq)))
+pub fn neq_symmetry<A: Prop, B: Prop>(neq: Not<Eq<A, B>>) -> Not<Eq<B, A>> {
+    Rc::new(move |eq| neq(symmetry(eq)))
 }
 
 /// `(a => b) = (¬a ∨ b)`.
@@ -139,12 +139,12 @@ pub fn swap_right<A: Prop, B: Prop, C: Prop>((f0, f1): Eq<A, Eq<B, C>>) -> Eq<A,
 
 /// `(a = b) = c  =>  (b = a) = c`.
 pub fn swap_left<A: Prop, B: Prop, C: Prop>(f: Eq<Eq<A, B>, C>) -> Eq<Eq<B, A>, C> {
-    commute(swap_right(commute(f)))
+    symmetry(swap_right(symmetry(f)))
 }
 
 /// `(a = b) ∧ (a = c)  =>  (c = b)`
 pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(f: Eq<A, B>, g: Eq<A, C>) -> Eq<C, B> {
-    commute(transitivity(commute(f), g))
+    symmetry(transitivity(symmetry(f), g))
 }
 
 /// See transitivity.
@@ -153,19 +153,19 @@ pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(f: Eq<A, B>, g: Eq<B, C>) -> Eq<A
 }
 
 /// `(a = b) = (b = a)`.
-pub fn commute_eq<A: Prop, B: Prop>() -> Eq<Eq<A, B>, Eq<B, A>> {
-    (Rc::new(move |x| eq::commute(x)),
-     Rc::new(move |x| eq::commute(x)))
+pub fn symmetry_eq<A: Prop, B: Prop>() -> Eq<Eq<A, B>, Eq<B, A>> {
+    (Rc::new(move |x| eq::symmetry(x)),
+     Rc::new(move |x| eq::symmetry(x)))
 }
 
 /// `((a = b) = c)  =  (a = (b = c))`.
 pub fn assoc_eq<A: DProp, B: DProp, C: DProp>() -> Eq<Eq<Eq<A, B>, C>, Eq<A, Eq<B, C>>> {
     (Rc::new(move |x| eq::assoc(x)), Rc::new(move |x| {
-        let x2 = eq::commute(x);
-        let x3 = eq::in_left_arg(x2, commute_eq());
+        let x2 = eq::symmetry(x);
+        let x3 = eq::in_left_arg(x2, symmetry_eq());
         let x4 = eq::assoc(x3);
-        let x5 = eq::commute(x4);
-        eq::in_left_arg(x5, commute_eq())
+        let x5 = eq::symmetry(x4);
+        eq::in_left_arg(x5, symmetry_eq())
     }))
 }
 
@@ -173,16 +173,16 @@ pub fn assoc_eq<A: DProp, B: DProp, C: DProp>() -> Eq<Eq<Eq<A, B>, C>, Eq<A, Eq<
 pub fn transpose<A: DProp, B: DProp, C: DProp, D: DProp>(
     f: Eq<Eq<A, B>, Eq<C, D>>
 ) -> Eq<Eq<A, C>, Eq<B, D>> {
-    let f = eq::in_left_arg(f, eq::commute_eq());
-    let f = eq::in_right_arg(f, eq::commute_eq());
+    let f = eq::in_left_arg(f, eq::symmetry_eq());
+    let f = eq::in_right_arg(f, eq::symmetry_eq());
     let f = eq::assoc(f);
-    let f = eq::in_right_arg(f, eq::commute_eq());
+    let f = eq::in_right_arg(f, eq::symmetry_eq());
     let f = eq::in_right_arg(f, eq::assoc_eq());
-    let f = eq::commute(f);
+    let f = eq::symmetry(f);
     let f = eq::assoc(f);
-    let f = eq::commute(f);
+    let f = eq::symmetry(f);
     let f = eq::assoc(f);
-    eq::in_left_arg(f, eq::commute_eq())
+    eq::in_left_arg(f, eq::symmetry_eq())
 }
 
 /// `(a = b) = (c = b)  =>  (a = c)`.
@@ -196,7 +196,7 @@ pub fn inv_triangle<A: DProp, B: DProp, C: DProp>(
     f: Eq<Not<Eq<A, B>>, Not<Eq<C, B>>>
 ) -> Eq<A, C> {
     let f = eq::rev_modus_tollens(f);
-    let f = eq::commute(f);
+    let f = eq::symmetry(f);
     eq::triangle(f)
 }
 
@@ -218,5 +218,5 @@ pub fn neq_right<A: Prop, B: Prop, C: Prop>(
     eq_ab: Eq<A, B>,
     neq_bc: Not<Eq<B, C>>
 ) -> Not<Eq<A, C>> {
-    Rc::new(move |eq_ac| neq_bc(transitivity(commute(eq_ab.clone()), eq_ac)))
+    Rc::new(move |eq_ac| neq_bc(transitivity(symmetry(eq_ab.clone()), eq_ac)))
 }

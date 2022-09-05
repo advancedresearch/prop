@@ -36,8 +36,6 @@ use nat::{Nat, S, Z};
 use nat::{EqNat, Dec, Lt};
 use path_semantics::{Ty, LProp};
 
-pub use hom_eq_commute as hom_eq_symmetry;
-
 /// A homotopy path between paths `A` and `B`.
 pub type Hom<A, B> = Imply<Imply<A, B>, Q<A, B>>;
 
@@ -205,7 +203,7 @@ pub fn hom_eq_transitivity<N: HLev, A: Prop, B: Prop, C: Prop>(
 }
 
 /// `hom_eq(n, a, b) => hom_eq(n, b, a)`.
-pub fn hom_eq_commute<N: HLev, A: Prop, B: Prop>(ab: HomEq<N, A, B>) -> HomEq<N, B, A> {
+pub fn hom_eq_symmetry<N: HLev, A: Prop, B: Prop>(ab: HomEq<N, A, B>) -> HomEq<N, B, A> {
     HomotopyEquivalence::cast(ab.symmetry())
 }
 
