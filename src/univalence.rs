@@ -66,8 +66,8 @@ pub fn univ_to_eqq<A: Prop, B: Prop>(univ: Univ<A, B>) -> EqQ<A, B> {
 }
 
 /// Lift `(a == b) == (a ~~ b)` to `(a == b) ~~ (a ~~ b)`.
-pub fn eq_lift<A: Prop, B: Prop>(eq_eq_q: Eq<Eq<A, B>, Q<A, B>>) -> Univ<A, B> {
-    Q(eq_eq_q)
+pub fn eq_lift<A: Prop, B: Prop>(_eq_eq_q: Eq<Eq<A, B>, Q<A, B>>) -> Univ<A, B> {
+    unimplemented!()
 }
 
 /// `((a => b) => (a ~~ b)) => ((a == b) ~~ (a ~~ b))`.

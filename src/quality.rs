@@ -78,6 +78,7 @@
 use crate::*;
 
 use univalence::HomEq2;
+use qubit::Qu;
 
 pub use commute as symmetry;
 pub use nq_commute as nq_symmetry;
@@ -123,26 +124,12 @@ pub trait QId: 'static + Clone {
     }
 }
 
-/// Quality between `A` and `B` (`A ~~ B`).
-#[derive(Clone)]
-pub struct Q<A, B>(pub(crate) Eq<A, B>);
-
 /// Definition `(a ~~ b) == ((a == b) ⋀ (a ~~ a) ⋀ (b ~~ b))`.
-pub fn def<A: Prop, B: Prop>() -> Eq<Q<A, B>, And<Eq<A, B>, And<Q<A, A>, Q<B, B>>>> {
-    (
-        Rc::new(move |q_ab| {
-            (quality::to_eq(q_ab.clone()), (quality::left(q_ab.clone()), quality::right(q_ab)))
-        }),
-        Rc::new(move |(eq_ab, and_qa_qb): And<Eq<A, B>, And<Q<A, A>, Q<B, B>>>| {
-            let h2: HomEq2<A, B> = univalence::to_hom_eq_2(eq_ab, and::to_eq_pos(and_qa_qb.clone()));
-            quality::hom_in_right_arg(and_qa_qb.0, h2)
-        })
-    )
-}
+pub type Q<A, B> = And<Eq<A, B>, And<Qu<A>, Qu<B>>>;
 
 /// Symmetry `(a ~~ b) => (b ~~ a)`.
-pub fn commute<A: Prop, B: Prop>(Q((ab, ba)): Q<A, B>) -> Q<B, A> {
-    Q((ba, ab))
+pub fn commute<A: Prop, B: Prop>((eq, and_qu): Q<A, B>) -> Q<B, A> {
+    (eq::commute(eq), and::commute(and_qu))
 }
 
 /// Negated symmetry `¬(a ~~ b) => ¬(b ~~ a)`.
@@ -152,10 +139,10 @@ pub fn nq_commute<A: Prop, B: Prop>(nq: Not<Q<A, B>>) -> Not<Q<B, A>> {
 
 /// Transitivity `(a ~~ b) ⋀ (b ~~ c) => (a ~~ c)`.
 pub fn transitivity<A: Prop, B: Prop, C: Prop>(
-    Q((ab, ba)): Q<A, B>,
-    Q((bc, cb)): Q<B, C>
+    (eq_ab, (qu_a, _)): Q<A, B>,
+    (eq_bc, (_, qu_c)): Q<B, C>
 ) -> Q<A, C> {
-    Q((Rc::new(move |a| bc(ab(a))), Rc::new(move |c| ba(cb(c)))))
+    (eq::transitivity(eq_ab, eq_bc), (qu_a, qu_c))
 }
 
 /// `(a ~~ b) ⋀ ¬(a ~~ c) => ¬(b ~~ c)`.
@@ -175,24 +162,24 @@ pub fn nq_right<A: Prop, B: Prop, C: Prop>(
 }
 
 /// Equality maybe lift `(a == b) => ( (a ~~ b) ⋁ true )`.
-pub fn eq_maybe_lift<A: Prop, B: Prop>(eq: Eq<A, B>) -> Or<Q<A, B>, True> {
-    Left(Q(eq))
+pub fn eq_maybe_lift<A: Prop, B: Prop>(_: Eq<A, B>) -> Or<Q<A, B>, True> {
+    Right(True)
 }
 
 /// Equality lift `(a == b) => ( (a ~~ b) ⋁ ¬¬(a ~~ b) )`.
 #[cfg(feature = "pure_platonism")]
 pub fn assume_pure_platonism<A: Prop, B: Prop>() -> PurePlatonism<A, B> {
-    Rc::new(move |eq| Left(Q(eq)))
+    Rc::new(move |eq| eq_lift(eq))
 }
 
 /// Equality lift `(a == b) => ( (a ~~ b) ⋁ ¬¬(a ~~ b) )`.
 #[cfg(feature = "pure_platonism")]
 pub fn eq_lift<A: Prop, B: Prop>(eq: Eq<A, B>) -> Or<Q<A, B>, Not<Not<Q<A, B>>>> {
-    Left(Q(eq))
+    unimplemented!()
 }
 
 /// Converts to equality `(a ~~ b) => (a == b)`.
-pub fn to_eq<A: Prop, B: Prop>(Q(eq): Q<A, B>) -> Eq<A, B> {
+pub fn to_eq<A: Prop, B: Prop>((eq, _): Q<A, B>) -> Eq<A, B> {
     eq
 }
 
@@ -317,29 +304,33 @@ pub fn sesh_absurd<A: Prop, B: Prop>(f: Not<Q<A, A>>) -> B {
 /// `(a ~~ b) ∧ (a == c)  =>  (c ~~ b)`.
 #[cfg(feature = "subst_equality")]
 pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, g: Eq<A, C>) -> Q<C, B> {
-    Q(eq::commute(eq::transitivity(eq::commute(quality::to_eq(f)), g)))
+    unimplemented!()
 }
 
 /// `(a ~~ b) ∧ (b == c)  =>  (a ~~ c)`.
 #[cfg(feature = "subst_equality")]
 pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, g: Eq<B, C>) -> Q<A, C> {
-    Q(eq::transitivity(quality::to_eq(f), g))
+    unimplemented!()
 }
 
 /// `(a ~~ b) ∧ hom_eq(2, a, c)  =>  (c ~~ b)`.
-pub fn hom_in_left_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, (eq_q, (eq_ac, True)): HomEq2<A, C>) -> Q<C, B> {
-    let (eq_ab, (qa, qb)) = def().0(f);
+pub fn hom_in_left_arg<A: Prop, B: Prop, C: Prop>(
+    (eq_ab, (qa, qb)): Q<A, B>,
+    (eq_q, (eq_ac, True)): HomEq2<A, C>
+) -> Q<C, B> {
     let eq2: Eq<C, B> = eq::transitivity(eq::symmetry(qubit::to_eq(eq_ac)), eq_ab);
-    let qc: Q<C, C> = qubit::to_eq_q(eq_q).0(qa);
-    def().1((eq2, (qc, qb)))
+    let qc: Qu<C> = eq_q.0(qa);
+    (eq2, (qc, qb))
 }
 
 /// `(a ~~ b) ∧ hom_eq(2, b, c)  =>  (a ~~ c)`.
-pub fn hom_in_right_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, (eq_q, (eq_bc, True)): HomEq2<B, C>) -> Q<A, C> {
-    let (eq_ab, (qa, qb)) = def().0(f);
+pub fn hom_in_right_arg<A: Prop, B: Prop, C: Prop>(
+    (eq_ab, (qa, qb)): Q<A, B>,
+    (eq_q, (eq_bc, True)): HomEq2<B, C>
+) -> Q<A, C> {
     let eq2: Eq<A, C> = eq::transitivity(eq_ab, qubit::to_eq(eq_bc));
-    let qc: Q<C, C> = qubit::to_eq_q(eq_q).0(qb);
-    def().1((eq2, (qa, qc)))
+    let qc: Qu<C> = eq_q.0(qb);
+    (eq2, (qa, qc))
 }
 
 /// `¬(a ~~ b) ⋀ (a == c)  =>  ¬(c ~~ b)`.
@@ -389,11 +380,15 @@ pub fn sesh_hom_in_right_arg<A: Prop, B: Prop, C: Prop>(
 }
 
 /// `¬(a ~~ a) => (¬a ~~ ¬a)`.
-pub fn sesh_to_q_inv<A: Prop>(_: Not<Q<A, A>>) -> Q<Not<A>, Not<A>> {
-    Q(eq::modus_tollens(eq::refl()))
+pub fn sesh_to_q_inv<A: Prop>(f: Not<Q<A, A>>) -> Q<Not<A>, Not<A>> {
+    let sesh: Not<Qu<A>> = Rc::new(move |x| f((eq::refl(), (x.clone(), x))));
+    let qu: Qu<Not<A>> = qubit::sesh_to_inv(sesh);
+    (eq::refl(), (qu.clone(), qu))
 }
 
 /// `(¬a ~~ ¬a) => ¬(a ~~ a)`.
-pub fn q_inv_to_sesh<A: Prop>(_: Q<Not<A>, Not<A>>) -> Not<Q<A, A>> {
-    unimplemented!()
+pub fn q_inv_to_sesh<A: Prop>((_, (nqu, _)): Q<Not<A>, Not<A>>) -> Not<Q<A, A>> {
+    Rc::new(move |q| {
+        qubit::inv_to_sesh(nqu.clone())(Qu::from_q(q))
+    })
 }
