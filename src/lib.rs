@@ -105,6 +105,7 @@ use std::rc::Rc;
 use Either::*;
 
 pub mod and;
+#[cfg(feature = "avatar_extensions")]
 pub mod avatar_extensions;
 pub mod imply;
 pub mod eq;
