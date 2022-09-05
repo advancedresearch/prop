@@ -60,11 +60,6 @@
 //! - Formalization of the core axiom of Path Semantics
 //! - Tactics organized in modules by constructs (e.g. `and` or `imply`)
 //!
-//! Due to first-order logic requiring dependent types,
-//! which is not yet supported in Rust,
-//! this library is limited to zeroth-order logic (propositional logic).
-//! However, this library has limited support for first-order logic in the "quantify" module.
-//!
 //! ### Examples
 //!
 //! ```rust
@@ -120,6 +115,7 @@ pub mod quality;
 pub mod qubit;
 pub mod queenity;
 pub mod univalence;
+#[cfg(feature = "quantify")]
 pub mod quantify;
 pub mod existence;
 pub mod con_qubit;

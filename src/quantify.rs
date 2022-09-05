@@ -2,6 +2,11 @@
 //!
 //! This module contains traits for emulating predicates with
 //! for-all (`All`) and there-exists (`Any`) quantifiers.
+//!
+//! Due to first-order logic requiring dependent types,
+//! which is not yet supported in Rust,
+//! this library is limited to zeroth-order logic (propositional logic).
+//! However, this library has limited support for first-order logic.
 
 use crate::*;
 
