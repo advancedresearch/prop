@@ -22,6 +22,7 @@
 //! - PSI: Path Semantical Intuitionistic/Constructive Propositional Logic
 //! - EPS: Path Semantical Intuitionistic/Constructive Propositional Logic for Existential Philosophy
 //! - PSL: Path Semantical Classical Propositional Logic
+//! - PSQ: Path Semantical Quantum Propositional Logic
 //!
 //! ### Motivation
 //!
@@ -52,7 +53,9 @@
 //! - Automatic lifting of Excluded Middle of Non-Existence to existential propositions
 //! - Automatic lifting of Excluded Middle to decidable propositions
 //! - Double Negation for proofs of `Prop`
-//! - A model of Path Semantical Quality in IPL (see "quality" module)
+//! - A model of Path Semantical Quality/Aquality in IPL (see "quality" module)
+//! - A model of Path Semantical Qubit in IPL (see "qubit" module)
+//! - A model of Path Semantical Con-Quality in IPL (see "con_qubit" module)
 //! - A model of Seshatic Queenity (see "queenity" module)
 //! - Formalization of the core axiom of Path Semantics
 //! - Tactics organized in modules by constructs (e.g. `and` or `imply`)
