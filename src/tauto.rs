@@ -18,6 +18,7 @@
 
 use crate::*;
 use quality::Q;
+use qubit::Qu;
 
 /// A tautological proposition.
 pub type Tauto<A> = fn() -> A;
@@ -33,18 +34,29 @@ pub type Theory<A> = Not<Uniform<A>>;
 
 /// Lift equality with tautological distinction into quality.
 pub fn lift_q<A: Prop, B: Prop>(
-    eq_ab: Eq<A, B>,
+    _: Eq<A, B>,
     _: Theory<Eq<A, B>>
-) -> Q<A, B> {Q(eq_ab)}
+) -> Q<A, B> {unimplemented!()}
+
+/// `~a ∧ tauto(a == b)  =>  ~b`.
+pub fn qu_in_arg<A: Prop, B: Prop>(_: Qu<A>, _: Tauto<Eq<A, B>>) -> Qu<B> {
+    unimplemented!()
+}
 
 /// `(a ~~ b) ∧ (a == c)  =>  (c ~~ b)`.
-pub fn q_in_left_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, g: Tauto<Eq<A, C>>) -> Q<C, B> {
-    Q(eq::commute(eq::transitivity(eq::commute(quality::to_eq(f)), g())))
+pub fn q_in_left_arg<A: Prop, B: Prop, C: Prop>(
+    (eq_ab, (qu_a, qu_b)): Q<A, B>,
+    g: Tauto<Eq<A, C>>
+) -> Q<C, B> {
+    (eq::in_left_arg(eq_ab, g()), (qu_in_arg(qu_a, g), qu_b))
 }
 
 /// `(a ~~ b) ∧ (b == c)  =>  (a ~~ c)`.
-pub fn q_in_right_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, g: Tauto<Eq<B, C>>) -> Q<A, C> {
-    Q(eq::transitivity(quality::to_eq(f), g()))
+pub fn q_in_right_arg<A: Prop, B: Prop, C: Prop>(
+    (eq_ab, (qu_a, qu_b)): Q<A, B>,
+    g: Tauto<Eq<B, C>>
+) -> Q<A, C> {
+    (eq::in_right_arg(eq_ab, g()), (qu_a, qu_in_arg(qu_b, g)))
 }
 
 /// `true => true`.

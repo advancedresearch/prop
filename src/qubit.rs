@@ -10,6 +10,9 @@ use quality::Q;
 #[derive(Clone)]
 pub struct Qubit<N, A>(N, A);
 
+/// The qubit proposition `~a`.
+pub type Qu<A> = Qubit<S<Z>, A>;
+
 impl<A: Prop> Qubit<Z, A> {
     /// Get proposition.
     pub fn to(self) -> A {self.1}
@@ -19,10 +22,15 @@ impl<A: Prop> Qubit<Z, A> {
 
 impl<A: Prop> Qubit<S<Z>, A> {
     /// Convert to self-quality.
-    pub fn to_q(self) -> Q<A, A> {Q((self.1.clone().map_any(), self.1.map_any()))}
+    pub fn to_q(self) -> Q<A, A> {(eq::refl(), (self.clone(), self))}
     /// Convert from self-quality.
-    pub fn from_q(_: Q<A, A>) -> Self {unimplemented!()}
+    pub fn from_q((_, (x, _)): Q<A, A>) -> Self {x}
 }
+
+/// `¬~a => ~¬a`.
+pub fn sesh_to_inv<A: Prop>(_: Not<Qu<A>>) -> Qu<Not<A>> {unimplemented!()}
+/// `~¬a => ¬~a`.
+pub fn inv_to_sesh<A: Prop>(_: Qu<Not<A>>) -> Not<Qu<A>> {unimplemented!()}
 
 /// Convert to equality.
 pub fn to_eq<A: Prop, B: Prop>(x: Eq<Qubit<Z, A>, Qubit<Z, B>>) -> Eq<A, B> {
