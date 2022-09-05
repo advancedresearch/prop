@@ -84,12 +84,12 @@ pub trait Commutative<T, U>: Product<T, U> {
 
 impl<T: Prop, U: Prop> Commutative<T, U> for And<T, U> {
     type Out = And<U, T>;
-    fn commute(self) -> Self::Out {and::commute(self)}
+    fn commute(self) -> Self::Out {and::symmetry(self)}
 }
 
 impl<T: Prop, U: Prop> Commutative<T, U> for Eq<T, U> {
     type Out = Eq<U, T>;
-    fn commute(self) -> Self::Out {eq::commute(self)}
+    fn commute(self) -> Self::Out {eq::symmetry(self)}
 }
 
 /// `a ∧ b  =>  -(a * b) = (-a) * b`.

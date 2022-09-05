@@ -80,9 +80,6 @@ use crate::*;
 use univalence::HomEq2;
 use qubit::Qu;
 
-pub use commute as symmetry;
-pub use nq_commute as nq_symmetry;
-
 /// Lifts equality into quality.
 pub type EqQ<A, B> = Imply<Eq<A, B>, Q<A, B>>;
 /// Pure Platonism assumption.
@@ -131,13 +128,13 @@ pub type Q<A, B> = And<Eq<A, B>, And<Qu<A>, Qu<B>>>;
 pub type Aq<A, B> = And<Eq<A, B>, And<Qu<Not<A>>, Qu<Not<B>>>>;
 
 /// Symmetry `(a ~~ b) => (b ~~ a)`.
-pub fn commute<A: Prop, B: Prop>((eq, and_qu): Q<A, B>) -> Q<B, A> {
-    (eq::commute(eq), and::commute(and_qu))
+pub fn symmetry<A: Prop, B: Prop>((eq, and_qu): Q<A, B>) -> Q<B, A> {
+    (eq::symmetry(eq), and::symmetry(and_qu))
 }
 
 /// Negated symmetry `¬(a ~~ b) => ¬(b ~~ a)`.
-pub fn nq_commute<A: Prop, B: Prop>(nq: Not<Q<A, B>>) -> Not<Q<B, A>> {
-    Rc::new(move |q| nq(commute(q)))
+pub fn nq_symmetry<A: Prop, B: Prop>(nq: Not<Q<A, B>>) -> Not<Q<B, A>> {
+    Rc::new(move |q| nq(symmetry(q)))
 }
 
 /// Transitivity `(a ~~ b) ⋀ (b ~~ c) => (a ~~ c)`.

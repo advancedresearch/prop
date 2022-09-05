@@ -22,11 +22,6 @@
 
 use crate::*;
 
-pub use cq_commute as cq_symmetry;
-pub use caq_commute as caq_symmetry;
-pub use ncq_commute as ncq_symmetry;
-pub use ncaq_commute as ncaq_symmetry;
-
 /// Path semantical con-quality `a .~~ b`.
 pub type Cq<A, B> = And<Eq<A, B>, And<ConQubit<A>, ConQubit<B>>>;
 
@@ -129,23 +124,23 @@ pub fn and_neg_to_caq<A: Prop, B: Prop>(and: And<Not<A>, Not<B>>) -> Caq<A, B> {
 }
 
 /// Symmetry `(a .~~ b) => (b .~~ a)`.
-pub fn cq_commute<A: Prop, B: Prop>(f: Cq<A, B>) -> Cq<B, A> {
+pub fn cq_symmetry<A: Prop, B: Prop>(f: Cq<A, B>) -> Cq<B, A> {
     (eq::symmetry(f.0), (f.1.1, f.1.0))
 }
 
 /// Symmetry `(a .~¬~ b) => (b .~¬~ a)`.
-pub fn caq_commute<A: Prop, B: Prop>(f: Caq<A, B>) -> Caq<B, A> {
+pub fn caq_symmetry<A: Prop, B: Prop>(f: Caq<A, B>) -> Caq<B, A> {
     (eq::symmetry(f.0), (f.1.1, f.1.0))
 }
 
 /// Negated symmetry `¬(a .~~ b) => ¬(b .~~ a)`.
-pub fn ncq_commute<A: Prop, B: Prop>(nq: Not<Cq<A, B>>) -> Not<Cq<B, A>> {
-    Rc::new(move |ba| nq(cq_commute(ba)))
+pub fn ncq_symmetry<A: Prop, B: Prop>(nq: Not<Cq<A, B>>) -> Not<Cq<B, A>> {
+    Rc::new(move |ba| nq(cq_symmetry(ba)))
 }
 
 /// Negated symmetry `¬(a .~¬~ b) => ¬(b .~¬~ a)`.
-pub fn ncaq_commute<A: Prop, B: Prop>(nq: Not<Caq<A, B>>) -> Not<Caq<B, A>> {
-    Rc::new(move |ba| nq(caq_commute(ba)))
+pub fn ncaq_symmetry<A: Prop, B: Prop>(nq: Not<Caq<A, B>>) -> Not<Caq<B, A>> {
+    Rc::new(move |ba| nq(caq_symmetry(ba)))
 }
 
 /// Transitivity `(a .~~ b) ⋀ (b .~~ c) => (a .~~ c)`.
@@ -196,20 +191,20 @@ pub fn caq_to_eq<A: Prop, B: Prop>(f: Caq<A, B>) -> Eq<A, B> {
 
 /// `(a .~~ b) => (a .~~ a)`.
 pub fn cq_left<A: Prop, B: Prop>(f: Cq<A, B>) -> Cq<A, A> {
-    cq_transitivity(f.clone(), cq_commute(f))
+    cq_transitivity(f.clone(), cq_symmetry(f))
 }
 
 /// `(a .~¬~ b) => (a .~¬~ a)`.
 pub fn caq_left<A: Prop, B: Prop>(f: Caq<A, B>) -> Caq<A, A> {
-    caq_transitivity(f.clone(), caq_commute(f))
+    caq_transitivity(f.clone(), caq_symmetry(f))
 }
 
 /// `(a .~~ b) => (b .~~ b)`.
 pub fn cq_right<A: Prop, B: Prop>(f: Cq<A, B>) -> Cq<B, B> {
-    cq_transitivity(cq_commute(f.clone()), f)
+    cq_transitivity(cq_symmetry(f.clone()), f)
 }
 
 /// `(a .~¬~ b) => (b .~¬~ b)`.
 pub fn caq_right<A: Prop, B: Prop>(f: Caq<A, B>) -> Caq<B, B> {
-    caq_transitivity(caq_commute(f.clone()), f)
+    caq_transitivity(caq_symmetry(f.clone()), f)
 }
