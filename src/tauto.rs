@@ -33,9 +33,9 @@ pub type Theory<A> = Not<Uniform<A>>;
 
 /// Lift equality with tautological distinction into quality.
 pub fn lift_q<A: Prop, B: Prop>(
-    _: Eq<A, B>,
+    eq_ab: Eq<A, B>,
     _: Theory<Eq<A, B>>
-) -> Q<A, B> {unimplemented!()}
+) -> Q<A, B> {Q(eq_ab)}
 
 /// `(a ~~ b) ∧ (a == c)  =>  (c ~~ b)`.
 pub fn q_in_left_arg<A: Prop, B: Prop, C: Prop>(f: Q<A, B>, g: Tauto<Eq<A, C>>) -> Q<C, B> {
