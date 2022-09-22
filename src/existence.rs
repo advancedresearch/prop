@@ -182,6 +182,13 @@ pub fn crosseq_adjoint<A: Prop, B: Prop>(
     crosseq_symmetry(eqnn_to_crosseq(g4))
 }
 
+/// `(a =x= ¬b) => (¬a =x= b)`.
+pub fn rev_crosseq_adjoint<A: Prop, B: Prop>(
+    f: CrossEq<A, Not<B>>
+) -> CrossEq<Not<A>, B> {
+    crosseq_symmetry(crosseq_adjoint(crosseq_symmetry(f)))
+}
+
 /// Proves that any Catuṣkoṭi with relative excluded middle is absurd.
 ///
 /// A Catuṣkoṭi is a 4-value logic.
