@@ -42,6 +42,11 @@ pub fn anti<A: Prop>((f0, f1): Eq<A, Not<A>>) -> False {
     na(a)
 }
 
+/// `(a == ¬b) => ¬(a == b)`.
+pub fn eq_a_nb_to_neq_ab<A: Prop, B: Prop>(f: Eq<A, Not<B>>) -> Not<Eq<A, B>> {
+    Rc::new(move |eq_ab| anti(in_left_arg(f.clone(), eq_ab)))
+}
+
 /// There is an `a : A` is the same as `A` being true.
 ///
 /// With other words, a proof means it is true,
