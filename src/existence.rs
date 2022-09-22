@@ -84,6 +84,22 @@ pub fn excm_to_e<A: Prop>(excm: ExcM<A>) -> E<A> {
     }
 }
 
+/// `(¬¬a ∨ ¬a) => (¬¬¬a ∨ ¬¬a)`.
+pub fn en<A: Prop>(en: E<A>) -> E<Not<A>> {
+    match en {
+        Left(nna) => Right(nna),
+        Right(na) => Left(not::double(na)),
+    }
+}
+
+/// `(¬¬¬a ∨ ¬¬a) => (¬¬a ∨ ¬a)`.
+pub fn rev_en<A: Prop>(en: E<Not<A>>) -> E<A> {
+    match en {
+        Left(nnna) => Right(not::rev_triple(nnna)),
+        Right(nna) => Left(nna),
+    }
+}
+
 /// `¬(¬¬a ∧ ¬¬b) => (¬a ∨ ¬b)`.
 pub fn or_from_de_morgan<A: EProp, B: EProp>(
     p: Not<And<NN<A>, NN<B>>>
