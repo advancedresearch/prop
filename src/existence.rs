@@ -95,21 +95,19 @@ pub fn or_from_de_morgan<A: EProp, B: EProp>(
     }
 }
 
+/// `(a =x= b) => (¬a == ¬b)`.
+pub fn crosseq_to_eqn<A: Prop, B: Prop>(
+    (a_nnb, b_nna): CrossEq<A, B>
+) -> Eq<Not<A>, Not<B>> {
+    (
+        Rc::new(move |na| imply::modus_tollens(b_nna.clone())(not::double(na))),
+        Rc::new(move |nb| imply::modus_tollens(a_nnb.clone())(not::double(nb))),
+    )
+}
+
 /// `(a =x= b) => (¬¬a == ¬¬b)`.
-pub fn crosseq_to_eqnn<A: EProp, B: EProp>(cross_eq: CrossEq<A, B>) -> EqNN<A, B> {
-    let (ab, ba) = cross_eq;
-    match (A::e(), B::e()) {
-        (Left(nna), Left(nnb)) => and::to_eq_pos((nna, nnb)),
-        (Left(nna), Right(nb)) =>
-            not::absurd(nna, imply::modus_tollens(ab)(not::double(nb))),
-        (Right(na), Left(nnb)) =>
-            not::absurd(nnb, imply::modus_tollens(ba)(not::double(na))),
-        (Right(na), Right(nb)) =>
-            (
-                Rc::new(move |nna| not::absurd(nna, na.clone())),
-                Rc::new(move |nnb| not::absurd(nnb, nb.clone())),
-            )
-    }
+pub fn crosseq_to_eqnn<A: Prop, B: Prop>(cross_eq: CrossEq<A, B>) -> EqNN<A, B> {
+    eq::symmetry(eq::modus_tollens(crosseq_to_eqn(cross_eq)))
 }
 
 /// `(¬¬a == ¬¬b) => (a =x= b)`.
@@ -121,12 +119,44 @@ pub fn eqnn_to_crosseq<A: Prop, B: Prop>(eq: EqNN<A, B>) -> CrossEq<A, B> {
     )
 }
 
+/// `(¬a == ¬b) => (a =x= b)`.
+pub fn eqn_to_crosseq<A: Prop, B: Prop>(eq: Eq<Not<A>, Not<B>>) -> CrossEq<A, B> {
+    eqnn_to_crosseq(eq::symmetry(eq::modus_tollens(eq)))
+}
+
+/// `a =x= a`.
+pub fn crosseq_refl<A: Prop>() -> CrossEq<A, A> {
+    let a_nna = Rc::new(move |a| not::double(a));
+    (a_nna.clone(), a_nna)
+}
+
+/// `(a =x= b) => (b =x= a)`.
+pub fn crosseq_symmetry<A: Prop, B: Prop>(
+    cross_eq: CrossEq<A, B>
+) -> CrossEq<B, A> {
+    and::symmetry(cross_eq)
+}
+
 /// `(a =x= b) ⋀ (b =x= c) => (a =x= c)`.
-pub fn crosseq_transitivity<A: EProp, B: EProp, C: EProp>(
+pub fn crosseq_transitivity<A: Prop, B: Prop, C: Prop>(
     ab: CrossEq<A, B>,
     bc: CrossEq<B, C>,
 ) -> CrossEq<A, C> {
     eqnn_to_crosseq(eq::transitivity(crosseq_to_eqnn(ab), crosseq_to_eqnn(bc)))
+}
+
+/// `(¬a =x= b) => (a =x= ¬b)`.
+pub fn crosseq_adjoint<A: Prop, B: Prop>(
+    f: CrossEq<Not<A>, B>
+) -> CrossEq<A, Not<B>> {
+    let g: EqNN<Not<A>, B> = crosseq_to_eqnn(f);
+    let g2: EqNN<Not<B>, NN<A>> = eq::modus_tollens(g);
+    let g3: Eq<NN<NN<A>>, NN<A>> = (
+        Rc::new(move |nnnna| not::rev_triple(nnnna)),
+        Rc::new(move |nna| not::double(nna))
+    );
+    let g4: EqNN<Not<B>, A> = eq::in_right_arg(g2, g3);
+    crosseq_symmetry(eqnn_to_crosseq(g4))
 }
 
 /// Proves that any Catuṣkoṭi with relative excluded middle is absurd.
