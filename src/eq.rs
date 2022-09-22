@@ -4,9 +4,6 @@
 
 use crate::*;
 
-
-
-
 /// `(a = b) ∧ (b = c) => (a = c)`.
 pub fn transitivity<A: Prop, B: Prop, C: Prop>((f0, f1): Eq<A, B>, (g0, g1): Eq<B, C>) -> Eq<A, C> {
     (Rc::new(move |x| g0(f0(x))), Rc::new(move |x| f1(g1(x))))
@@ -36,6 +33,13 @@ pub fn imply_to_or<A: DProp, B: DProp>() -> Eq<Imply<A, B>, Or<Not<A>, B>> {
 /// `a = a`.
 pub fn refl<A: Prop>() -> Eq<A, A> {
     (Rc::new(move |x| x), Rc::new(move |x| x))
+}
+
+/// `(a == ¬a) => false`.
+pub fn anti<A: Prop>((f0, f1): Eq<A, Not<A>>) -> False {
+    let na: Not<A> = Rc::new(move |a| f0(a.clone())(a));
+    let a = f1(na.clone());
+    na(a)
 }
 
 /// There is an `a : A` is the same as `A` being true.
