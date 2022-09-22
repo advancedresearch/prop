@@ -147,6 +147,32 @@ pub fn eqn_to_crosseq<A: Prop, B: Prop>(eq: Eq<Not<A>, Not<B>>) -> CrossEq<A, B>
     eqnn_to_crosseq(eq::symmetry(eq::modus_tollens(eq)))
 }
 
+/// `(a =x= b) => ((¬¬a ∨ ¬a) == (¬¬b ∨ ¬b))`.
+pub fn crosseq_to_eqe<A: Prop, B: Prop>(cross_eq: CrossEq<A, B>) -> Eq<E<A>, E<B>> {
+    let (eqnn0, eqnn1) = crosseq_to_eqnn(cross_eq.clone());
+    let (eqn0, eqn1) = crosseq_to_eqn(cross_eq.clone());
+    (
+        Rc::new(move |ea| {
+            match ea {
+                Left(nna) => Left(eqnn0(nna)),
+                Right(na) => Right(eqn0(na)),
+            }
+        }),
+        Rc::new(move |eb| {
+            match eb {
+                Left(nnb) => Left(eqnn1(nnb)),
+                Right(nb) => Right(eqn1(nb)),
+            }
+        })
+    )
+}
+
+/// `(¬a =x= b) => ((¬¬a ∨ ¬a) == (¬¬b ∨ ¬b))`.
+pub fn crosseq_adj_to_eqe<A: Prop, B: Prop>(cross_eq: CrossEq<Not<A>, B>) -> Eq<E<A>, E<B>> {
+    let eq_en_e: Eq<E<Not<A>>, E<A>> = (Rc::new(move |en| rev_en(en)), Rc::new(move |e| en(e)));
+    eq::in_left_arg(crosseq_to_eqe(cross_eq), eq_en_e)
+}
+
 /// `a =x= a`.
 pub fn crosseq_refl<A: Prop>() -> CrossEq<A, A> {
     let a_nna = Rc::new(move |a| not::double(a));
