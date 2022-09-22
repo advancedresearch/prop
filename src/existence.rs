@@ -173,6 +173,45 @@ pub fn crosseq_adj_to_eqe<A: Prop, B: Prop>(cross_eq: CrossEq<Not<A>, B>) -> Eq<
     eq::in_left_arg(crosseq_to_eqe(cross_eq), eq_en_e)
 }
 
+/// `(¬a =x= b) => ¬(a =x= b)`.
+pub fn crosseq_adj_to_ncrosseq<A: Prop, B: Prop>(
+    f: CrossEq<Not<A>, B>
+) -> Not<CrossEq<A, B>> {
+    Rc::new(move |cross_eq| {
+        let g: EqNN<B, A> = eq::symmetry(crosseq_to_eqnn(cross_eq));
+        let g2: EqNN<Not<A>, B> = crosseq_to_eqnn(f.clone());
+        eq::anti(eq::symmetry(eq::in_right_arg(g2, g)))
+    })
+}
+
+/// `((¬¬a ∨ ¬a) ⋀ (¬¬b ∨ ¬b)) => ((a =x= b) ⋁ (¬a =x= b))`.
+pub fn and_ea_eb_to_or_crosseq<A: Prop, B: Prop>(
+    ea: E<A>,
+    eb: E<B>
+) -> Or<CrossEq<A, B>, CrossEq<Not<A>, B>> {
+    match (ea, eb) {
+        (Left(nna), Left(nnb)) =>
+            Left(eqnn_to_crosseq(and::to_eq_pos((nna, nnb)))),
+        (Right(na), Right(nb)) =>
+            Left(eqn_to_crosseq(and::to_eq_pos((na, nb)))),
+        (Left(nna), Right(nb)) =>
+            Right(eqn_to_crosseq(and::to_eq_pos((nna, nb)))),
+        (Right(na), Left(nnb)) =>
+            Right(rev_crosseq_adjoint(eqn_to_crosseq(and::to_eq_pos((na, nnb))))),
+    }
+}
+
+/// `((¬¬a ∨ ¬a) ⋀ (¬¬b ∨ ¬b)) => ((a =x= b) ⋁ ¬(a =x= b))`.
+pub fn and_ea_eb_to_excm_crosseq<A: Prop, B: Prop>(
+    ea: E<A>,
+    eb: E<B>
+) -> ExcM<CrossEq<A, B>> {
+    match and_ea_eb_to_or_crosseq(ea, eb) {
+        Left(x) => Left(x),
+        Right(y) => Right(crosseq_adj_to_ncrosseq(y)),
+    }
+}
+
 /// `a =x= a`.
 pub fn crosseq_refl<A: Prop>() -> CrossEq<A, A> {
     let a_nna = Rc::new(move |a| not::double(a));
