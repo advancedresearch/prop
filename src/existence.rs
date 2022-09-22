@@ -111,6 +111,13 @@ pub fn or_from_de_morgan<A: EProp, B: EProp>(
     }
 }
 
+/// `(a == b) => (a =x= b)`.
+pub fn eq_to_crosseq<A: Prop, B: Prop>(
+    f: Eq<A, B>
+) -> CrossEq<A, B> {
+    eqnn_to_crosseq(eq::modus_tollens(eq::modus_tollens(f)))
+}
+
 /// `(a =x= b) => (¬a == ¬b)`.
 pub fn crosseq_to_eqn<A: Prop, B: Prop>(
     (a_nnb, b_nna): CrossEq<A, B>
