@@ -98,6 +98,16 @@ pub fn para_from_eq_false<A: Prop>(
     unimplemented!()
 }
 
+/// `¬(x^true) => (¬x)^true`.
+pub fn tauto_not<A: Prop>(_: Not<Tauto<A>>) -> Tauto<Not<A>> {
+    unimplemented!()
+}
+
+/// `(¬x)^true => ¬(x^true)`.
+pub fn tauto_rev_not<A: Prop>(_: Tauto<Not<A>>) -> Not<Tauto<A>> {
+    unimplemented!()
+}
+
 /// `x => ¬¬x`.
 pub fn tauto_not_double<A: Prop>(_: Tauto<A>) -> Tauto<Not<Not<A>>> {
     unimplemented!()
