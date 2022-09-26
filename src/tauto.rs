@@ -29,6 +29,8 @@ pub trait PowImply<A, B>: Fn(A) -> B {}
 
 impl<A> PowImply<A, True> for Pow<True, A> {}
 impl<A> PowImply<False, A> for Pow<A, False> {}
+impl<A> PowImply<Tauto<A>, Tauto<Eq<A, True>>> for Pow<Tauto<Eq<A, True>>, Tauto<A>> {}
+impl<A> PowImply<Tauto<Eq<A, True>>, Tauto<A>> for Pow<Tauto<A>, Tauto<Eq<A, True>>> {}
 impl<A> PowImply<True, Eq<A, A>> for Pow<Eq<A, A>, True> {}
 impl<A, B> PowImply<Pow<Not<A>, B>, Not<Pow<A, B>>>
     for Pow<Not<Pow<A, B>>, Pow<Not<A>, B>> {}
@@ -206,16 +208,16 @@ pub fn consistency() -> Not<Tauto<False>> {
 
 /// `a^true => (a == true)^true`.
 pub fn tauto_to_eq_true<A: Prop>(
-    _: Tauto<A>
+    x: Tauto<A>
 ) -> Tauto<Eq<A, True>> {
-    unimplemented!()
+    pow()(x)
 }
 
 /// `(a == true)^true => a^true`.
 pub fn tauto_from_eq_true<A: Prop>(
-    _: Tauto<Eq<A, True>>
+    x: Tauto<Eq<A, True>>
 ) -> Tauto<A> {
-    unimplemented!()
+    pow()(x)
 }
 
 /// `false^a => (a == false)^true`.
@@ -551,4 +553,5 @@ mod tests {
     fn check7<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, Or<A, B>>, And<Pow<C, A>, Pow<C, B>>>()}
     fn check8<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, Eq<A, B>>, Eq<Pow<C, A>, Pow<C, B>>>()}
     fn check9<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, Imply<A, B>>, Imply<Pow<C, B>, Pow<C, A>>>()}
+    fn check10<A: Prop, B: Prop, C: Prop>() {pow_eq::<Tauto<A>, Tauto<Eq<A, True>>>()}
 }
