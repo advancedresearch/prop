@@ -37,6 +37,8 @@ impl<A> PowImply<Tauto<A>, Tauto<Not<Not<A>>>> for Pow<Tauto<Not<Not<A>>>, Tauto
 impl<A> PowImply<Para<Not<Not<A>>>, Para<A>> for Pow<Para<A>, Para<Not<Not<A>>>> {}
 impl<A> PowImply<Para<A>, Para<Not<Not<A>>>> for Pow<Para<Not<Not<A>>>, Para<A>> {}
 impl<A> PowImply<True, Eq<A, A>> for Pow<Eq<A, A>, True> {}
+impl<A, B> PowImply<Tauto<Eq<A, B>>, Tauto<Eq<B, A>>> for Pow<Tauto<Eq<B, A>>, Tauto<Eq<A, B>>> {}
+impl<A, B> PowImply<Para<Eq<A, B>>, Para<Eq<B, A>>> for Pow<Para<Eq<B, A>>, Para<Eq<A, B>>> {}
 impl<A, B> PowImply<Pow<Not<A>, B>, Not<Pow<A, B>>>
     for Pow<Not<Pow<A, B>>, Pow<Not<A>, B>> {}
 impl<A, B> PowImply<Not<Pow<A, B>>, Pow<Not<A>, B>>
@@ -269,14 +271,14 @@ pub fn para_not_double<A: Prop>(x: Para<A>) -> Para<Not<Not<A>>> {
 /// `x == x`.
 pub fn eq_refl<A: Prop>() -> Tauto<Eq<A, A>> {tauto()}
 
-/// `((x == y) == true) => ((y == x) == true)`.
-pub fn tauto_eq_symmetry<A: Prop, B: Prop>(_: Tauto<Eq<A, B>>) -> Tauto<Eq<B, A>> {
-    unimplemented!()
+/// `(x == y)^true => (y == x)^true`.
+pub fn tauto_eq_symmetry<A: Prop, B: Prop>(x: Tauto<Eq<A, B>>) -> Tauto<Eq<B, A>> {
+    pow()(x)
 }
 
-/// `((x == y) == false) => ((y == x) == false)`.
-pub fn para_eq_symmetry<A: Prop, B: Prop>(_: Para<Eq<A, B>>) -> Para<Eq<B, A>> {
-    unimplemented!()
+/// `false^(x == y) => false^(y == x)`.
+pub fn para_eq_symmetry<A: Prop, B: Prop>(x: Para<Eq<A, B>>) -> Para<Eq<B, A>> {
+    pow()(x)
 }
 
 /// `(a == b) ∧ (b == c) => (a == c)`.
