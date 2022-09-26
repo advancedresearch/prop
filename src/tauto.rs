@@ -328,17 +328,27 @@ pub fn imply_refl<A: Prop>() -> Imply<A, A> {
     Rc::new(move |x| x)
 }
 
-/// `(a => b) ∧ (b => c) => (a => c)`.
+/// `(a => b)^true ∧ (b => c)^true => (a => c)^true`.
 pub fn tauto_imply_transitivity<A: Prop, B: Prop, C: Prop>(
-    _: Tauto<Imply<A, B>>,
-    _: Tauto<Imply<B, C>>,
+    ab: Tauto<Imply<A, B>>,
+    bc: Tauto<Imply<B, C>>,
 ) -> Tauto<Imply<A, C>> {
-    unimplemented!()
+    fn f<A: Prop, B: Prop, C: Prop>(_: True) -> Imply<And<Imply<A, B>, Imply<B, C>>, Imply<A, C>> {
+        Rc::new(move |(ab, bc)| imply::transitivity(ab, bc))
+    }
+    let f = hooo_imply()(f::<A, B, C>);
+    let x = hooo_rev_and()((ab, bc));
+    f(x)
 }
 
-/// `(a ∧ b) => (a == b)`.
-pub fn tauto_and_to_eq_pos<A: Prop, B: Prop>(_: Tauto<A>, _: Tauto<B>) -> Tauto<Eq<A, B>> {
-    unimplemented!()
+/// `(a^true ∧ b^true) => (a == b)^true`.
+pub fn tauto_and_to_eq_pos<A: Prop, B: Prop>(a: Tauto<A>, b: Tauto<B>) -> Tauto<Eq<A, B>> {
+    fn f<A: Prop, B: Prop>(_: True) -> Imply<And<A, B>, Eq<A, B>> {
+        Rc::new(move |ab| and::to_eq_pos(ab))
+    }
+    let f = hooo_imply()(f::<A, B>);
+    let x = hooo_rev_and()((a, b));
+    f(x)
 }
 
 /// `(a == true) => ((a ⋁ b) == true)`.
