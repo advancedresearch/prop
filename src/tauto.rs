@@ -30,6 +30,10 @@ pub trait PowImply<A, B>: Fn(A) -> B {}
 impl<A> PowImply<A, True> for Pow<True, A> {}
 impl<A> PowImply<False, A> for Pow<A, False> {}
 impl<A> PowImply<True, Eq<A, A>> for Pow<Eq<A, A>, True> {}
+impl<A, B> PowImply<Pow<Not<A>, B>, Not<Pow<A, B>>>
+    for Pow<Not<Pow<A, B>>, Pow<Not<A>, B>> {}
+impl<A, B> PowImply<Not<Pow<A, B>>, Pow<Not<A>, B>>
+    for Pow<Pow<Not<A>, B>, Not<Pow<A, B>>> {}
 impl<A, B, C> PowImply<Pow<And<A, B>, C>, And<Pow<A, C>, Pow<B, C>>>
     for Pow<And<Pow<A, C>, Pow<B, C>>, Pow<And<A, B>, C>> {}
 impl<A, B, C> PowImply<And<Pow<A, C>, Pow<B, C>>, Pow<And<A, B>, C>>
@@ -53,6 +57,12 @@ pub fn tauto<A>() -> Tauto<A>
 pub fn para<A>() -> Para<A>
     where Para<A>: PowImply<A, False>
 {pow()}
+
+/// `(¬(a^b))^((¬a)^b)`.
+pub fn hooo_not<A, B>() -> Pow<Not<Pow<A, B>>, Pow<Not<A>, B>> {pow()}
+
+/// `((¬a)^b)^(¬(a^b))`.
+pub fn hooo_rev_not<A, B>() -> Pow<Pow<Not<A>, B>, Not<Pow<A, B>>> {pow()}
 
 /// `(a^c ⋀ b^c)^((a ⋀ b)^c)`.
 pub fn hooo_and<A, B, C>() -> Pow<And<Pow<A, C>, Pow<B, C>>, Pow<And<A, B>, C>> {pow()}
@@ -457,4 +467,5 @@ mod tests {
     fn check1<A>() {pow_eq::<True, Eq<A, A>>()}
     fn check2<A, B, C>() {pow_eq::<And<Pow<A, C>, Pow<B, C>>, Pow<And<A, B>, C>>()}
     fn check3<A, B, C>() {pow_eq::<Or<Pow<A, C>, Pow<B, C>>, Pow<Or<A, B>, C>>()}
+    fn check4<A, B>() {pow_eq::<Not<Pow<A, B>>, Pow<Not<A>, B>>()}
 }
