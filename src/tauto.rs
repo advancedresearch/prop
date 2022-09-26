@@ -38,17 +38,6 @@ pub type Pow<A, B> = fn(B) -> A;
 /// Implemented by exponential propositions.
 pub trait PowImply<A, B>: Fn(A) -> B {}
 
-impl<A> PowImply<A, True> for Pow<True, A> {}
-impl<A> PowImply<False, A> for Pow<A, False> {}
-impl<A> PowImply<Tauto<A>, Tauto<Eq<A, True>>> for Pow<Tauto<Eq<A, True>>, Tauto<A>> {}
-impl<A> PowImply<Tauto<Eq<A, True>>, Tauto<A>> for Pow<Tauto<A>, Tauto<Eq<A, True>>> {}
-impl<A> PowImply<Para<A>, Tauto<Eq<A, False>>> for Pow<Tauto<Eq<A, False>>, Para<A>> {}
-impl<A> PowImply<Tauto<Eq<A, False>>, Para<A>> for Pow<Para<A>, Tauto<Eq<A, False>>> {}
-impl<A> PowImply<Tauto<A>, Tauto<Not<Not<A>>>> for Pow<Tauto<Not<Not<A>>>, Tauto<A>> {}
-impl<A> PowImply<Para<Not<Not<A>>>, Para<A>> for Pow<Para<A>, Para<Not<Not<A>>>> {}
-impl<A> PowImply<Para<A>, Para<Not<Not<A>>>> for Pow<Para<Not<Not<A>>>, Para<A>> {}
-
-impl<A> PowImply<True, Eq<A, A>> for Pow<Eq<A, A>, True> {}
 impl<A, B> PowImply<Tauto<Eq<A, B>>, Tauto<Eq<B, A>>> for Pow<Tauto<Eq<B, A>>, Tauto<Eq<A, B>>> {}
 impl<A, B, C> PowImply<And<Tauto<Eq<A, B>>, Tauto<Eq<B, C>>>, Tauto<Eq<A, C>>>
     for Pow<Tauto<Eq<A, C>>, And<Tauto<Eq<A, B>>, Tauto<Eq<B, C>>>> {}
@@ -90,10 +79,10 @@ impl<A, B, C> PowImply<Pow<C, Eq<A, B>>, Eq<Pow<C, A>, Pow<C, B>>>
     for Pow<Eq<Pow<C, A>, Pow<C, B>>, Pow<C, Eq<A, B>>> {}
 impl<A, B, C> PowImply<Eq<Pow<C, A>, Pow<C, B>>, Pow<C, Eq<A, B>>>
     for Pow<Pow<C, Eq<A, B>>, Eq<Pow<C, A>, Pow<C, B>>> {}
-impl<A, B, C> PowImply<Pow<C, Imply<A, B>>, Imply<Pow<C, B>, Pow<C, A>>>
-    for Pow<Imply<Pow<C, B>, Pow<C, A>>, Pow<C, Imply<A, B>>> {}
-impl<A, B, C> PowImply<Imply<Pow<C, B>, Pow<C, A>>, Pow<C, Imply<A, B>>>
-    for Pow<Pow<C, Imply<A, B>>, Imply<Pow<C, B>, Pow<C, A>>> {}
+impl<A, B, C> PowImply<Pow<C, Imply<A, B>>, Not<Imply<Pow<C, B>, Pow<C, A>>>>
+    for Pow<Not<Imply<Pow<C, B>, Pow<C, A>>>, Pow<C, Imply<A, B>>> {}
+impl<A, B, C> PowImply<Not<Imply<Pow<C, B>, Pow<C, A>>>, Pow<C, Imply<A, B>>>
+    for Pow<Pow<C, Imply<A, B>>, Not<Imply<Pow<C, B>, Pow<C, A>>>> {}
 
 /// Get instance of exponential proposition.
 pub fn pow<A: Prop, B: Prop>() -> Pow<A, B>
@@ -103,7 +92,9 @@ pub fn pow<A: Prop, B: Prop>() -> Pow<A, B>
 /// Get tautological proposition.
 pub fn tauto<A: Prop>() -> Tauto<A>
     where Tauto<A>: PowImply<True, A>
-{pow()}
+{
+    pow()
+}
 
 /// Get paradoxical proposition.
 pub fn para<A: Prop>() -> Para<A>
@@ -174,13 +165,13 @@ pub fn hooo_imply<A: Prop, B: Prop, C: Prop>()
 pub fn hooo_rev_imply<A: Prop, B: Prop, C: Prop>()
 -> Pow<Pow<Imply<A, B>, C>, Imply<Pow<A, C>, Pow<B, C>>> {pow()}
 
-/// `(c^b => c^a)^(c^(a => b))`.
+/// `(¬(c^b => c^a))^(c^(a => b))`.
 pub fn hooo_dual_imply<A: Prop, B: Prop, C: Prop>()
--> Pow<Imply<Pow<C, B>, Pow<C, A>>, Pow<C, Imply<A, B>>> {pow()}
+-> Pow<Not<Imply<Pow<C, B>, Pow<C, A>>>, Pow<C, Imply<A, B>>> {pow()}
 
-/// `(c^(a => b))^(c^b => c^a)`.
+/// `(c^(a => b))^(¬(c^b => c^a))`.
 pub fn hooo_dual_rev_imply<A: Prop, B: Prop, C: Prop>()
--> Pow<Pow<C, Imply<A, B>>, Imply<Pow<C, B>, Pow<C, A>>> {pow()}
+-> Pow<Pow<C, Imply<A, B>>, Not<Imply<Pow<C, B>, Pow<C, A>>>> {pow()}
 
 /// A tautological proposition.
 pub type Tauto<A> = fn(True) -> A;
@@ -221,11 +212,17 @@ pub fn q_in_right_arg<A: Prop, B: Prop, C: Prop>(
     (eq::in_right_arg(eq_ab, g(True)), (qu_a, qu_in_arg(qu_b, g)))
 }
 
-/// `true^true`.
-pub fn tr() -> Pow<True, True> {tauto()}
+/// `true^a`.
+pub fn tr<A: Prop>() -> Pow<True, A> {
+    fn f<A: Prop>(_: A) -> True {True}
+    f::<A>
+}
 
-/// `false^false`.
-pub fn fa() -> Pow<False, False> {para()}
+/// `a^false`.
+pub fn fa<A: Prop>() -> Pow<A, False> {
+    fn f<A: Prop>(fa: False) -> A {imply::absurd()(fa)}
+    f::<A>
+}
 
 /// A consistent logic can't prove `false` without further assumptions.
 pub fn consistency() -> Not<Tauto<False>> {
@@ -236,28 +233,37 @@ pub fn consistency() -> Not<Tauto<False>> {
 pub fn tauto_to_eq_true<A: Prop>(
     x: Tauto<A>
 ) -> Tauto<Eq<A, True>> {
-    pow()(x)
+    fn f<A: Prop>(_: True) -> Imply<A, Eq<A, True>> {
+        Rc::new(move |a| (True.map_any(), a.map_any()))
+    }
+    let f = hooo_imply()(f);
+    f(x)
 }
 
 /// `(a == true)^true => a^true`.
 pub fn tauto_from_eq_true<A: Prop>(
     x: Tauto<Eq<A, True>>
 ) -> Tauto<A> {
-    pow()(x)
+    fn f<A: Prop>(_: True) -> Imply<Eq<A, True>, A> {
+        Rc::new(move |eq| eq.1(True))
+    }
+    let f = hooo_imply()(f);
+    f(x)
 }
 
 /// `false^a => (a == false)^true`.
-pub fn para_to_eq_false<A: Prop>(
+pub fn para_to_eq_false<A: DProp>(
     x: Para<A>
 ) -> Tauto<Eq<A, False>> {
-    pow()(x)
-}
-
-/// `(a == false)^true => false^a`.
-pub fn para_from_eq_false<A: Prop>(
-    x: Tauto<Eq<A, False>>
-) -> Para<A> {
-    pow()(x)
+    let y: Not<Tauto<A>> = Rc::new(move |tauto_a| {
+        x(tauto_a(True))
+    });
+    let eq: Eq<Not<Tauto<False>>, Not<Tauto<A>>> = (
+        y.map_any(),
+        consistency().map_any(),
+    );
+    let eq2: Eq<Tauto<A>, Tauto<False>> = eq::rev_modus_tollens(eq);
+    hooo_rev_eq()(eq2)
 }
 
 /// `¬(x^true) => (¬x)^true`.
@@ -272,23 +278,27 @@ pub fn tauto_rev_not<A: Prop>(x: Tauto<Not<A>>) -> Not<Tauto<A>> {
 
 /// `x^true => (¬¬x)^true`.
 pub fn tauto_not_double<A: Prop>(x: Tauto<A>) -> Tauto<Not<Not<A>>> {
-    pow()(x)
+    fn f<A: Prop>(_: True) -> Imply<A, Not<Not<A>>> {
+        Rc::new(move |a| not::double(a))
+    }
+    let f = hooo_imply()(f);
+    f(x)
 }
 
-/// `false^(¬¬x) => false^x`.
-pub fn para_rev_not_double<A: Prop>(x: Para<Not<Not<A>>>) -> Para<A> {
-    pow()(x)
+/// `false^(¬x) => ¬false^x`.
+pub fn para_rev_not<A: Prop>(x: Para<Not<A>>) -> Not<Para<A>> {
+    let y: Not<Imply<Para<False>, Para<A>>> = hooo_dual_imply()(x);
+    let y2: Not<Para<A>> = Rc::new(move |para_na| {
+        y(para_na.map_any())
+    });
+    y2
 }
 
-/// `false^x => false^(¬¬x)`.
-///
-/// The reason this is possible, is due to `(¬¬¬a => ¬a)^true`.
-pub fn para_not_double<A: Prop>(x: Para<A>) -> Para<Not<Not<A>>> {
-    pow()(x)
+/// `(x == x)^true`.
+pub fn eq_refl<A: Prop>() -> Tauto<Eq<A, A>> {
+    fn f<A: Prop>(_: True) -> Eq<A, A> {eq::refl()}
+    f::<A>
 }
-
-/// `x == x`.
-pub fn eq_refl<A: Prop>() -> Tauto<Eq<A, A>> {tauto()}
 
 /// `(x == y)^true => (y == x)^true`.
 pub fn tauto_eq_symmetry<A: Prop, B: Prop>(x: Tauto<Eq<A, B>>) -> Tauto<Eq<B, A>> {
@@ -464,16 +474,6 @@ pub fn tauto_modus_ponens<A: Prop, B: Prop>(
     unimplemented!()
 }
 
-/// `uniform(a) => uniform(¬¬a)`.
-pub fn uniform_not_double<A: Prop>(
-    f: Uniform<A>
-) -> Uniform<Not<Not<A>>> {
-    match f {
-        Left(x) => Left(tauto_not_double(x)),
-        Right(x) => Right(para_not_double(x)),
-    }
-}
-
 /// `uniform(a == a)`.
 pub fn uniform_refl<A: Prop>() -> Uniform<Eq<A, A>> {
     Left(eq_refl())
@@ -580,7 +580,6 @@ mod tests {
         pow_eq::<B, A>()
     }
 
-    fn check1<A: Prop>() {pow_eq::<True, Eq<A, A>>()}
     fn check2<A: Prop, B: Prop, C: Prop>() {pow_eq::<And<Pow<A, C>, Pow<B, C>>, Pow<And<A, B>, C>>()}
     fn check3<A: Prop, B: Prop, C: Prop>() {pow_eq::<Or<Pow<A, C>, Pow<B, C>>, Pow<Or<A, B>, C>>()}
     fn check4<A: Prop, B: Prop>() {pow_eq::<Not<Pow<A, B>>, Pow<Not<A>, B>>()}
@@ -588,7 +587,5 @@ mod tests {
     fn check6<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, And<A, B>>, Or<Pow<C, A>, Pow<C, B>>>()}
     fn check7<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, Or<A, B>>, And<Pow<C, A>, Pow<C, B>>>()}
     fn check8<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, Eq<A, B>>, Eq<Pow<C, A>, Pow<C, B>>>()}
-    fn check9<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, Imply<A, B>>, Imply<Pow<C, B>, Pow<C, A>>>()}
-    fn check10<A: Prop, B: Prop, C: Prop>() {pow_eq::<Tauto<A>, Tauto<Eq<A, True>>>()}
-    fn check11<A: Prop, B: Prop, C: Prop>() {pow_eq::<Para<A>, Tauto<Eq<A, False>>>()}
+    fn check9<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, Imply<A, B>>, Not<Imply<Pow<C, B>, Pow<C, A>>>>()}
 }
