@@ -58,6 +58,10 @@ impl<A, B, C> PowImply<Pow<C, Or<A, B>>, And<Pow<C, A>, Pow<C, B>>>
     for Pow<And<Pow<C, A>, Pow<C, B>>, Pow<C, Or<A, B>>> {}
 impl<A, B, C> PowImply<And<Pow<C, A>, Pow<C, B>>, Pow<C, Or<A, B>>>
     for Pow<Pow<C, Or<A, B>>, And<Pow<C, A>, Pow<C, B>>> {}
+impl<A, B, C> PowImply<Pow<C, Eq<A, B>>, Eq<Pow<C, A>, Pow<C, B>>>
+    for Pow<Eq<Pow<C, A>, Pow<C, B>>, Pow<C, Eq<A, B>>> {}
+impl<A, B, C> PowImply<Eq<Pow<C, A>, Pow<C, B>>, Pow<C, Eq<A, B>>>
+    for Pow<Pow<C, Eq<A, B>>, Eq<Pow<C, A>, Pow<C, B>>> {}
 
 /// Get instance of exponential proposition.
 pub fn pow<A: Prop, B: Prop>() -> Pow<A, B>
@@ -121,6 +125,14 @@ pub fn hooo_eq<A: Prop, B: Prop, C: Prop>()
 /// `((a == b)^c)^(a^c == b^c)`.
 pub fn hooo_rev_eq<A: Prop, B: Prop, C: Prop>()
 -> Pow<Pow<Eq<A, B>, C>, Eq<Pow<A, C>, Pow<B, C>>> {pow()}
+
+/// `(c^a == c^b)^(c^(a == b))`.
+pub fn hooo_dual_eq<A: Prop, B: Prop, C: Prop>()
+-> Pow<Eq<Pow<C, A>, Pow<C, B>>, Pow<C, Eq<A, B>>> {pow()}
+
+/// `(c^(a == b))^(c^a == c^b)`.
+pub fn hooo_dual_rev_eq<A: Prop, B: Prop, C: Prop>()
+-> Pow<Pow<C, Eq<A, B>>, Eq<Pow<C, A>, Pow<C, B>>> {pow()}
 
 /// `(a^c => b^c)^((a => b)^c)`.
 pub fn hooo_imply<A: Prop, B: Prop, C: Prop>()
@@ -525,4 +537,5 @@ mod tests {
     fn check5<A: Prop, B: Prop, C: Prop>() {pow_eq::<Imply<Pow<A, C>, Pow<B, C>>, Pow<Imply<A, B>, C>>()}
     fn check6<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, And<A, B>>, Or<Pow<C, A>, Pow<C, B>>>()}
     fn check7<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, Or<A, B>>, And<Pow<C, A>, Pow<C, B>>>()}
+    fn check8<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, Eq<A, B>>, Eq<Pow<C, A>, Pow<C, B>>>()}
 }
