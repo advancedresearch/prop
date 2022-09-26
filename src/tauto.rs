@@ -192,6 +192,19 @@ pub fn tauto_right_or<A: Prop, B: Prop>(
     unimplemented!()
 }
 
+/// `(a^true ⋁ b^true) => (a ⋁ b)^true`.
+pub fn tauto_or<A: Prop, B: Prop>(or_ab: Or<Tauto<A>, Tauto<B>>) -> Tauto<Or<A, B>> {
+    match or_ab {
+        Left(tauto_a) => tauto_left_or(tauto_a),
+        Right(tauto_b) => tauto_right_or(tauto_b),
+    }
+}
+
+/// `(a ⋁ b)^true => (a^true ⋁ b^true)`.
+pub fn tauto_rev_or<A: Prop, B: Prop>(_: Tauto<Or<A, B>>) -> Or<Tauto<A>, Tauto<B>> {
+    unimplemented!()
+}
+
 /// `(a == false) ∧ (b == false) => ((a ⋁ b) == false)`.
 pub fn para_to_or<A: Prop, B: Prop>(
     _: Para<A>,
