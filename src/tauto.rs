@@ -114,7 +114,7 @@ pub fn tauto_not_double<A: Prop>(_: Tauto<A>) -> Tauto<Not<Not<A>>> {
 }
 
 /// `false^(¬¬x) => false^x`.
-pub fn para_not_double<A: Prop>(_: Para<Not<Not<A>>>) -> Para<A> {
+pub fn para_rev_not_double<A: Prop>(_: Para<Not<Not<A>>>) -> Para<A> {
     unimplemented!()
 }
 
