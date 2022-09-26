@@ -31,6 +31,8 @@ impl<A> PowImply<A, True> for Pow<True, A> {}
 impl<A> PowImply<False, A> for Pow<A, False> {}
 impl<A> PowImply<Tauto<A>, Tauto<Eq<A, True>>> for Pow<Tauto<Eq<A, True>>, Tauto<A>> {}
 impl<A> PowImply<Tauto<Eq<A, True>>, Tauto<A>> for Pow<Tauto<A>, Tauto<Eq<A, True>>> {}
+impl<A> PowImply<Para<A>, Tauto<Eq<A, False>>> for Pow<Tauto<Eq<A, False>>, Para<A>> {}
+impl<A> PowImply<Tauto<Eq<A, False>>, Para<A>> for Pow<Para<A>, Tauto<Eq<A, False>>> {}
 impl<A> PowImply<True, Eq<A, A>> for Pow<Eq<A, A>, True> {}
 impl<A, B> PowImply<Pow<Not<A>, B>, Not<Pow<A, B>>>
     for Pow<Not<Pow<A, B>>, Pow<Not<A>, B>> {}
@@ -222,16 +224,16 @@ pub fn tauto_from_eq_true<A: Prop>(
 
 /// `false^a => (a == false)^true`.
 pub fn para_to_eq_false<A: Prop>(
-    _: Para<A>
+    x: Para<A>
 ) -> Tauto<Eq<A, False>> {
-    unimplemented!()
+    pow()(x)
 }
 
 /// `(a == false)^true => false^a`.
 pub fn para_from_eq_false<A: Prop>(
-    _: Tauto<Eq<A, False>>
+    x: Tauto<Eq<A, False>>
 ) -> Para<A> {
-    unimplemented!()
+    pow()(x)
 }
 
 /// `¬(x^true) => (¬x)^true`.
@@ -554,4 +556,5 @@ mod tests {
     fn check8<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, Eq<A, B>>, Eq<Pow<C, A>, Pow<C, B>>>()}
     fn check9<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, Imply<A, B>>, Imply<Pow<C, B>, Pow<C, A>>>()}
     fn check10<A: Prop, B: Prop, C: Prop>() {pow_eq::<Tauto<A>, Tauto<Eq<A, True>>>()}
+    fn check11<A: Prop, B: Prop, C: Prop>() {pow_eq::<Para<A>, Tauto<Eq<A, False>>>()}
 }
