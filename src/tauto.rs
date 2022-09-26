@@ -52,49 +52,59 @@ impl<A, B, C> PowImply<Imply<Pow<A, C>, Pow<B, C>>, Pow<Imply<A, B>, C>>
     for Pow<Pow<Imply<A, B>, C>, Imply<Pow<A, C>, Pow<B, C>>> {}
 
 /// Get instance of exponential proposition.
-pub fn pow<A, B>() -> Pow<A, B>
+pub fn pow<A: Prop, B: Prop>() -> Pow<A, B>
     where Pow<A, B>: PowImply<B, A>
 {unimplemented!()}
 
 /// Get tautological proposition.
-pub fn tauto<A>() -> Tauto<A>
+pub fn tauto<A: Prop>() -> Tauto<A>
     where Tauto<A>: PowImply<True, A>
 {pow()}
 
 /// Get paradoxical proposition.
-pub fn para<A>() -> Para<A>
+pub fn para<A: Prop>() -> Para<A>
     where Para<A>: PowImply<A, False>
 {pow()}
 
 /// `(¬(a^b))^((¬a)^b)`.
-pub fn hooo_not<A, B>() -> Pow<Not<Pow<A, B>>, Pow<Not<A>, B>> {pow()}
+pub fn hooo_not<A: Prop, B: Prop>()
+-> Pow<Not<Pow<A, B>>, Pow<Not<A>, B>> {pow()}
 
 /// `((¬a)^b)^(¬(a^b))`.
-pub fn hooo_rev_not<A, B>() -> Pow<Pow<Not<A>, B>, Not<Pow<A, B>>> {pow()}
+pub fn hooo_rev_not<A: Prop, B: Prop>()
+-> Pow<Pow<Not<A>, B>, Not<Pow<A, B>>> {pow()}
 
 /// `(a^c ⋀ b^c)^((a ⋀ b)^c)`.
-pub fn hooo_and<A, B, C>() -> Pow<And<Pow<A, C>, Pow<B, C>>, Pow<And<A, B>, C>> {pow()}
+pub fn hooo_and<A: Prop, B: Prop, C: Prop>()
+-> Pow<And<Pow<A, C>, Pow<B, C>>, Pow<And<A, B>, C>> {pow()}
 
 /// `((a ⋀ b)^c)^(a^c ⋀ b^c)`.
-pub fn hooo_rev_and<A, B, C>() -> Pow<Pow<And<A, B>, C>, And<Pow<A, C>, Pow<B, C>>> {pow()}
+pub fn hooo_rev_and<A: Prop, B: Prop, C: Prop>()
+-> Pow<Pow<And<A, B>, C>, And<Pow<A, C>, Pow<B, C>>> {pow()}
 
 /// `(a^c ⋁ b^c)^((a ⋁ b)^c)`.
-pub fn hooo_or<A, B, C>() -> Pow<Or<Pow<A, C>, Pow<B, C>>, Pow<Or<A, B>, C>> {pow()}
+pub fn hooo_or<A: Prop, B: Prop, C: Prop>()
+-> Pow<Or<Pow<A, C>, Pow<B, C>>, Pow<Or<A, B>, C>> {pow()}
 
 /// `((a ⋁ b)^c)^(a^c ⋁ b^c)`.
-pub fn hooo_rev_or<A, B, C>() -> Pow<Pow<Or<A, B>, C>, Or<Pow<A, C>, Pow<B, C>>> {pow()}
+pub fn hooo_rev_or<A: Prop, B: Prop, C: Prop>()
+-> Pow<Pow<Or<A, B>, C>, Or<Pow<A, C>, Pow<B, C>>> {pow()}
 
 /// `(a^c == b^c)^((a == b)^c)`.
-pub fn hooo_eq<A, B, C>() -> Pow<Eq<Pow<A, C>, Pow<B, C>>, Pow<Eq<A, B>, C>> {pow()}
+pub fn hooo_eq<A: Prop, B: Prop, C: Prop>()
+-> Pow<Eq<Pow<A, C>, Pow<B, C>>, Pow<Eq<A, B>, C>> {pow()}
 
 /// `((a == b)^c)^(a^c == b^c)`.
-pub fn hooo_rev_eq<A, B, C>() -> Pow<Pow<Eq<A, B>, C>, Eq<Pow<A, C>, Pow<B, C>>> {pow()}
+pub fn hooo_rev_eq<A: Prop, B: Prop, C: Prop>()
+-> Pow<Pow<Eq<A, B>, C>, Eq<Pow<A, C>, Pow<B, C>>> {pow()}
 
 /// `(a^c => b^c)^((a => b)^c)`.
-pub fn hooo_imply<A, B, C>() -> Pow<Imply<Pow<A, C>, Pow<B, C>>, Pow<Imply<A, B>, C>> {pow()}
+pub fn hooo_imply<A: Prop, B: Prop, C: Prop>()
+-> Pow<Imply<Pow<A, C>, Pow<B, C>>, Pow<Imply<A, B>, C>> {pow()}
 
 /// `((a => b)^c)^(a^c => b^c)`.
-pub fn hooo_rev_imply<A, B, C>() -> Pow<Pow<Imply<A, B>, C>, Imply<Pow<A, C>, Pow<B, C>>> {pow()}
+pub fn hooo_rev_imply<A: Prop, B: Prop, C: Prop>()
+-> Pow<Pow<Imply<A, B>, C>, Imply<Pow<A, C>, Pow<B, C>>> {pow()}
 
 /// A tautological proposition.
 pub type Tauto<A> = fn(True) -> A;
@@ -469,7 +479,7 @@ pub fn theory_and<A: Prop, B: Prop>(
 mod tests {
     use super::*;
 
-    fn pow_eq<A, B>()
+    fn pow_eq<A: Prop, B: Prop>()
         where Pow<A, B>: PowImply<B, A>,
               Pow<B, A>: PowImply<A, B>
     {
@@ -477,16 +487,16 @@ mod tests {
         let _: Pow<B, A> = pow();
     }
 
-    fn pow_eq_symmetry<A, B>()
+    fn pow_eq_symmetry<A: Prop, B: Prop>()
         where Pow<A, B>: PowImply<B, A>,
               Pow<B, A>: PowImply<A, B>
     {
         pow_eq::<B, A>()
     }
 
-    fn check1<A>() {pow_eq::<True, Eq<A, A>>()}
-    fn check2<A, B, C>() {pow_eq::<And<Pow<A, C>, Pow<B, C>>, Pow<And<A, B>, C>>()}
-    fn check3<A, B, C>() {pow_eq::<Or<Pow<A, C>, Pow<B, C>>, Pow<Or<A, B>, C>>()}
-    fn check4<A, B>() {pow_eq::<Not<Pow<A, B>>, Pow<Not<A>, B>>()}
-    fn check5<A, B, C>() {pow_eq::<Imply<Pow<A, C>, Pow<B, C>>, Pow<Imply<A, B>, C>>()}
+    fn check1<A: Prop>() {pow_eq::<True, Eq<A, A>>()}
+    fn check2<A: Prop, B: Prop, C: Prop>() {pow_eq::<And<Pow<A, C>, Pow<B, C>>, Pow<And<A, B>, C>>()}
+    fn check3<A: Prop, B: Prop, C: Prop>() {pow_eq::<Or<Pow<A, C>, Pow<B, C>>, Pow<Or<A, B>, C>>()}
+    fn check4<A: Prop, B: Prop>() {pow_eq::<Not<Pow<A, B>>, Pow<Not<A>, B>>()}
+    fn check5<A: Prop, B: Prop, C: Prop>() {pow_eq::<Imply<Pow<A, C>, Pow<B, C>>, Pow<Imply<A, B>, C>>()}
 }
