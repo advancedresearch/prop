@@ -36,8 +36,16 @@ impl<A> PowImply<Tauto<Eq<A, False>>, Para<A>> for Pow<Para<A>, Tauto<Eq<A, Fals
 impl<A> PowImply<Tauto<A>, Tauto<Not<Not<A>>>> for Pow<Tauto<Not<Not<A>>>, Tauto<A>> {}
 impl<A> PowImply<Para<Not<Not<A>>>, Para<A>> for Pow<Para<A>, Para<Not<Not<A>>>> {}
 impl<A> PowImply<Para<A>, Para<Not<Not<A>>>> for Pow<Para<Not<Not<A>>>, Para<A>> {}
+
 impl<A> PowImply<True, Eq<A, A>> for Pow<Eq<A, A>, True> {}
 impl<A, B> PowImply<Tauto<Eq<A, B>>, Tauto<Eq<B, A>>> for Pow<Tauto<Eq<B, A>>, Tauto<Eq<A, B>>> {}
+impl<A, B, C> PowImply<And<Tauto<Eq<A, B>>, Tauto<Eq<B, C>>>, Tauto<Eq<A, C>>>
+    for Pow<Tauto<Eq<A, C>>, And<Tauto<Eq<A, B>>, Tauto<Eq<B, C>>>> {}
+impl<A, B, C> PowImply<And<Para<Eq<A, B>>, Tauto<Eq<B, C>>>, Para<Eq<A, C>>>
+    for Pow<Para<Eq<A, C>>, And<Para<Eq<A, B>>, Tauto<Eq<B, C>>>> {}
+impl<A, B, C> PowImply<And<Tauto<Eq<A, B>>, Para<Eq<B, C>>>, Para<Eq<A, C>>>
+    for Pow<Para<Eq<A, C>>, And<Tauto<Eq<A, B>>, Para<Eq<B, C>>>> {}
+
 impl<A, B> PowImply<Para<Eq<A, B>>, Para<Eq<B, A>>> for Pow<Para<Eq<B, A>>, Para<Eq<A, B>>> {}
 impl<A, B> PowImply<Pow<Not<A>, B>, Not<Pow<A, B>>>
     for Pow<Not<Pow<A, B>>, Pow<Not<A>, B>> {}
@@ -281,12 +289,12 @@ pub fn para_eq_symmetry<A: Prop, B: Prop>(x: Para<Eq<A, B>>) -> Para<Eq<B, A>> {
     pow()(x)
 }
 
-/// `(a == b) ∧ (b == c) => (a == c)`.
+/// `(a == b)^true ∧ (b == c)^true => (a == c)^true`.
 pub fn tauto_eq_transitivity<A: Prop, B: Prop, C: Prop>(
-    _: Tauto<Eq<A, B>>,
-    _: Tauto<Eq<B, C>>
+    ab: Tauto<Eq<A, B>>,
+    bc: Tauto<Eq<B, C>>
 ) -> Tauto<Eq<A, C>> {
-    unimplemented!()
+    pow()((ab, bc))
 }
 
 pub use tauto_eq_transitivity as tauto_eq_in_right_arg;
@@ -299,20 +307,20 @@ pub fn tauto_eq_in_left_arg<A: Prop, B: Prop, C: Prop>(
     tauto_eq_transitivity(tauto_eq_symmetry(g), f)
 }
 
-/// `((a == b) == false) ∧ ((b == c) == true) => ((a == c) == false)`.
+/// `(false^(a == b) ∧ (b == c)^true) => false^(a == c)`.
 pub fn para_eq_transitivity_left<A: Prop, B: Prop, C: Prop>(
-    _: Para<Eq<A, B>>,
-    _: Tauto<Eq<B, C>>
+    ab: Para<Eq<A, B>>,
+    bc: Tauto<Eq<B, C>>
 ) -> Para<Eq<A, C>> {
-    unimplemented!()
+    pow()((ab, bc))
 }
 
-/// `((a == b) == true) ∧ ((b == c) == false) => ((a == c) == false)`.
+/// `((a == b)^true ∧ false^(b == c)) => false^(a == c)`.
 pub fn para_eq_transitivity_right<A: Prop, B: Prop, C: Prop>(
-    _: Tauto<Eq<A, B>>,
-    _: Para<Eq<B, C>>
+    ab: Tauto<Eq<A, B>>,
+    bc: Para<Eq<B, C>>
 ) -> Para<Eq<A, C>> {
-    unimplemented!()
+    pow()((ab, bc))
 }
 
 /// `x => x`.
