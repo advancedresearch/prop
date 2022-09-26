@@ -38,12 +38,12 @@ pub fn lift_q<A: Prop, B: Prop>(
     _: Theory<Eq<A, B>>
 ) -> Q<A, B> {unimplemented!()}
 
-/// `~a ∧ tauto(a == b)  =>  ~b`.
+/// `~a ∧ (a == b)^true  =>  ~b`.
 pub fn qu_in_arg<A: Prop, B: Prop>(_: Qu<A>, _: Tauto<Eq<A, B>>) -> Qu<B> {
     unimplemented!()
 }
 
-/// `(a ~~ b) ∧ (a == c)  =>  (c ~~ b)`.
+/// `(a ~~ b) ∧ (a == c)^true  =>  (c ~~ b)`.
 pub fn q_in_left_arg<A: Prop, B: Prop, C: Prop>(
     (eq_ab, (qu_a, qu_b)): Q<A, B>,
     g: Tauto<Eq<A, C>>
@@ -51,7 +51,7 @@ pub fn q_in_left_arg<A: Prop, B: Prop, C: Prop>(
     (eq::in_left_arg(eq_ab, g()), (qu_in_arg(qu_a, g), qu_b))
 }
 
-/// `(a ~~ b) ∧ (b == c)  =>  (a ~~ c)`.
+/// `(a ~~ b) ∧ (b == c)^true  =>  (a ~~ c)`.
 pub fn q_in_right_arg<A: Prop, B: Prop, C: Prop>(
     (eq_ab, (qu_a, qu_b)): Q<A, B>,
     g: Tauto<Eq<B, C>>
@@ -59,10 +59,10 @@ pub fn q_in_right_arg<A: Prop, B: Prop, C: Prop>(
     (eq::in_right_arg(eq_ab, g()), (qu_a, qu_in_arg(qu_b, g)))
 }
 
-/// `true => true`.
+/// `true^true`.
 pub fn tr() -> True {True}
 
-/// `false => false`.
+/// `false^false`.
 pub fn fa(x: False) -> False {x}
 
 /// A consistent logic can't prove `false` without further assumptions.
@@ -70,28 +70,28 @@ pub fn consistency() -> Not<Tauto<False>> {
     Rc::new(move |f| f())
 }
 
-/// `a => (a == true)`.
+/// `a^true => (a == true)^true`.
 pub fn tauto_to_eq_true<A: Prop>(
     _: Tauto<A>
 ) -> Tauto<Eq<A, True>> {
     unimplemented!()
 }
 
-/// `(a == true) => a`.
+/// `(a == true)^true => a^true`.
 pub fn tauto_from_eq_true<A: Prop>(
     _: Tauto<Eq<A, True>>
 ) -> Tauto<A> {
     unimplemented!()
 }
 
-/// `¬a => (a == false)`.
+/// `false^a => (a == false)^true`.
 pub fn para_to_eq_false<A: Prop>(
     _: Para<A>
 ) -> Tauto<Eq<A, False>> {
     unimplemented!()
 }
 
-/// `(a == false) => ¬a`.
+/// `(a == false)^true => false^a`.
 pub fn para_from_eq_false<A: Prop>(
     _: Tauto<Eq<A, False>>
 ) -> Para<A> {
@@ -108,17 +108,17 @@ pub fn tauto_rev_not<A: Prop>(_: Tauto<Not<A>>) -> Not<Tauto<A>> {
     unimplemented!()
 }
 
-/// `x => ¬¬x`.
+/// `x^true => (¬¬x)^true`.
 pub fn tauto_not_double<A: Prop>(_: Tauto<A>) -> Tauto<Not<Not<A>>> {
     unimplemented!()
 }
 
-/// `(¬¬x == false) => (x == false)`.
+/// `false^(¬¬x) => false^x`.
 pub fn para_not_double<A: Prop>(_: Para<Not<Not<A>>>) -> Para<A> {
     unimplemented!()
 }
 
-/// `(x == false) => (¬¬x == false)`.
+/// `false^x => false^(¬¬x)`.
 pub fn para_not_rev_double<A: Prop>(_: Para<A>) -> Para<Not<Not<A>>> {
     unimplemented!()
 }
