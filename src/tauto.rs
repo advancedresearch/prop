@@ -119,7 +119,9 @@ pub fn para_rev_not_double<A: Prop>(_: Para<Not<Not<A>>>) -> Para<A> {
 }
 
 /// `false^x => false^(¬¬x)`.
-pub fn para_not_rev_double<A: Prop>(_: Para<A>) -> Para<Not<Not<A>>> {
+///
+/// The reason this is possible, is due to `(¬¬¬a => ¬a)^true`.
+pub fn para_not_double<A: Prop>(_: Para<A>) -> Para<Not<Not<A>>> {
     unimplemented!()
 }
 
@@ -296,7 +298,7 @@ pub fn uniform_not_double<A: Prop>(
 ) -> Uniform<Not<Not<A>>> {
     match f {
         Left(x) => Left(tauto_not_double(x)),
-        Right(x) => Right(para_not_rev_double(x)),
+        Right(x) => Right(para_not_double(x)),
     }
 }
 
