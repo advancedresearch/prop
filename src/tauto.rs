@@ -20,8 +20,44 @@ use crate::*;
 use quality::Q;
 use qubit::Qu;
 
+/// `a^b`.
+pub type Pow<A, B> = fn(B) -> A;
+
+#[marker]
+/// Implemented by exponential propositions.
+pub trait PowImply<A, B>: Fn(A) -> B {}
+
+impl<A> PowImply<A, True> for Pow<True, A> {}
+impl<A> PowImply<False, A> for Pow<A, False> {}
+impl<A> PowImply<True, Eq<A, A>> for Pow<Eq<A, A>, True> {}
+impl<A, B, C> PowImply<Pow<And<A, B>, C>, And<Pow<A, C>, Pow<B, C>>>
+    for Pow<And<Pow<A, C>, Pow<B, C>>, Pow<And<A, B>, C>> {}
+impl<A, B, C> PowImply<And<Pow<A, C>, Pow<B, C>>, Pow<And<A, B>, C>>
+    for Pow<Pow<And<A, B>, C>, And<Pow<A, C>, Pow<B, C>>> {}
+
+/// Get instance of exponential proposition.
+pub fn pow<A, B>() -> Pow<A, B>
+    where Pow<A, B>: PowImply<B, A>
+{unimplemented!()}
+
+/// Get tautological proposition.
+pub fn tauto<A>() -> Tauto<A>
+    where Tauto<A>: PowImply<True, A>
+{pow()}
+
+/// Get paradoxical proposition.
+pub fn para<A>() -> Para<A>
+    where Para<A>: PowImply<A, False>
+{pow()}
+
+/// `(a^c ⋀ b^c)^((a ⋀ b)^c)`.
+pub fn hooo_and<A, B, C>() -> Pow<And<Pow<A, C>, Pow<B, C>>, Pow<And<A, B>, C>> {pow()}
+
+/// `((a ⋀ b)^c)^(a^c ⋀ b^c)`.
+pub fn hooo_rev_and<A, B, C>() -> Pow<Pow<And<A, B>, C>, And<Pow<A, C>, Pow<B, C>>> {pow()}
+
 /// A tautological proposition.
-pub type Tauto<A> = fn() -> A;
+pub type Tauto<A> = fn(True) -> A;
 
 /// A paradoxical proposition.
 pub type Para<A> = fn(A) -> False;
@@ -48,7 +84,7 @@ pub fn q_in_left_arg<A: Prop, B: Prop, C: Prop>(
     (eq_ab, (qu_a, qu_b)): Q<A, B>,
     g: Tauto<Eq<A, C>>
 ) -> Q<C, B> {
-    (eq::in_left_arg(eq_ab, g()), (qu_in_arg(qu_a, g), qu_b))
+    (eq::in_left_arg(eq_ab, g(True)), (qu_in_arg(qu_a, g), qu_b))
 }
 
 /// `(a ~~ b) ∧ (b == c)^true  =>  (a ~~ c)`.
@@ -56,18 +92,18 @@ pub fn q_in_right_arg<A: Prop, B: Prop, C: Prop>(
     (eq_ab, (qu_a, qu_b)): Q<A, B>,
     g: Tauto<Eq<B, C>>
 ) -> Q<A, C> {
-    (eq::in_right_arg(eq_ab, g()), (qu_a, qu_in_arg(qu_b, g)))
+    (eq::in_right_arg(eq_ab, g(True)), (qu_a, qu_in_arg(qu_b, g)))
 }
 
 /// `true^true`.
-pub fn tr() -> True {True}
+pub fn tr() -> Pow<True, True> {tauto()}
 
 /// `false^false`.
-pub fn fa(x: False) -> False {x}
+pub fn fa() -> Pow<False, False> {para()}
 
 /// A consistent logic can't prove `false` without further assumptions.
 pub fn consistency() -> Not<Tauto<False>> {
-    Rc::new(move |f| f())
+    Rc::new(move |f| f(True))
 }
 
 /// `a^true => (a == true)^true`.
@@ -126,7 +162,7 @@ pub fn para_not_double<A: Prop>(_: Para<A>) -> Para<Not<Not<A>>> {
 }
 
 /// `x == x`.
-pub use eq::refl as eq_refl;
+pub fn eq_refl<A: Prop>() -> Tauto<Eq<A, A>> {tauto()}
 
 /// `((x == y) == true) => ((y == x) == true)`.
 pub fn tauto_eq_symmetry<A: Prop, B: Prop>(_: Tauto<Eq<A, B>>) -> Tauto<Eq<B, A>> {
@@ -304,7 +340,7 @@ pub fn uniform_not_double<A: Prop>(
 
 /// `uniform(a == a)`.
 pub fn uniform_refl<A: Prop>() -> Uniform<Eq<A, A>> {
-    Left(eq_refl::<A>)
+    Left(eq_refl())
 }
 
 /// `uniform(a == b) => uniform(b == a)`.
@@ -386,4 +422,28 @@ pub fn theory_and<A: Prop, B: Prop>(
             Right(p_b) => g(Right(p_b)),
         }
     })
+}
+
+#[cfg(test)]
+#[allow(dead_code)]
+mod tests {
+    use super::*;
+
+    fn pow_eq<A, B>()
+        where Pow<A, B>: PowImply<B, A>,
+              Pow<B, A>: PowImply<A, B>
+    {
+        let _: Pow<A, B> = pow();
+        let _: Pow<B, A> = pow();
+    }
+
+    fn pow_eq_symmetry<A, B>()
+        where Pow<A, B>: PowImply<B, A>,
+              Pow<B, A>: PowImply<A, B>
+    {
+        pow_eq::<B, A>()
+    }
+
+    fn check1<A>() {pow_eq::<True, Eq<A, A>>()}
+    fn check2<A, B, C>() {pow_eq::<And<Pow<A, C>, Pow<B, C>>, Pow<And<A, B>, C>>()}
 }
