@@ -34,6 +34,8 @@ impl<A> PowImply<Tauto<Eq<A, True>>, Tauto<A>> for Pow<Tauto<A>, Tauto<Eq<A, Tru
 impl<A> PowImply<Para<A>, Tauto<Eq<A, False>>> for Pow<Tauto<Eq<A, False>>, Para<A>> {}
 impl<A> PowImply<Tauto<Eq<A, False>>, Para<A>> for Pow<Para<A>, Tauto<Eq<A, False>>> {}
 impl<A> PowImply<Tauto<A>, Tauto<Not<Not<A>>>> for Pow<Tauto<Not<Not<A>>>, Tauto<A>> {}
+impl<A> PowImply<Para<Not<Not<A>>>, Para<A>> for Pow<Para<A>, Para<Not<Not<A>>>> {}
+impl<A> PowImply<Para<A>, Para<Not<Not<A>>>> for Pow<Para<Not<Not<A>>>, Para<A>> {}
 impl<A> PowImply<True, Eq<A, A>> for Pow<Eq<A, A>, True> {}
 impl<A, B> PowImply<Pow<Not<A>, B>, Not<Pow<A, B>>>
     for Pow<Not<Pow<A, B>>, Pow<Not<A>, B>> {}
@@ -253,15 +255,15 @@ pub fn tauto_not_double<A: Prop>(x: Tauto<A>) -> Tauto<Not<Not<A>>> {
 }
 
 /// `false^(¬¬x) => false^x`.
-pub fn para_rev_not_double<A: Prop>(_: Para<Not<Not<A>>>) -> Para<A> {
-    unimplemented!()
+pub fn para_rev_not_double<A: Prop>(x: Para<Not<Not<A>>>) -> Para<A> {
+    pow()(x)
 }
 
 /// `false^x => false^(¬¬x)`.
 ///
 /// The reason this is possible, is due to `(¬¬¬a => ¬a)^true`.
-pub fn para_not_double<A: Prop>(_: Para<A>) -> Para<Not<Not<A>>> {
-    unimplemented!()
+pub fn para_not_double<A: Prop>(x: Para<A>) -> Para<Not<Not<A>>> {
+    pow()(x)
 }
 
 /// `x == x`.
