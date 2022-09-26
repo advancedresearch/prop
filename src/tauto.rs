@@ -46,6 +46,10 @@ impl<A, B, C> PowImply<Pow<Eq<A, B>, C>, Eq<Pow<A, C>, Pow<B, C>>>
     for Pow<Eq<Pow<A, C>, Pow<B, C>>, Pow<Eq<A, B>, C>> {}
 impl<A, B, C> PowImply<Eq<Pow<A, C>, Pow<B, C>>, Pow<Eq<A, B>, C>>
     for Pow<Pow<Eq<A, B>, C>, Eq<Pow<A, C>, Pow<B, C>>> {}
+impl<A, B, C> PowImply<Pow<Imply<A, B>, C>, Imply<Pow<A, C>, Pow<B, C>>>
+    for Pow<Imply<Pow<A, C>, Pow<B, C>>, Pow<Imply<A, B>, C>> {}
+impl<A, B, C> PowImply<Imply<Pow<A, C>, Pow<B, C>>, Pow<Imply<A, B>, C>>
+    for Pow<Pow<Imply<A, B>, C>, Imply<Pow<A, C>, Pow<B, C>>> {}
 
 /// Get instance of exponential proposition.
 pub fn pow<A, B>() -> Pow<A, B>
@@ -85,6 +89,12 @@ pub fn hooo_eq<A, B, C>() -> Pow<Eq<Pow<A, C>, Pow<B, C>>, Pow<Eq<A, B>, C>> {po
 
 /// `((a == b)^c)^(a^c == b^c)`.
 pub fn hooo_rev_eq<A, B, C>() -> Pow<Pow<Eq<A, B>, C>, Eq<Pow<A, C>, Pow<B, C>>> {pow()}
+
+/// `(a^c => b^c)^((a => b)^c)`.
+pub fn hooo_imply<A, B, C>() -> Pow<Imply<Pow<A, C>, Pow<B, C>>, Pow<Imply<A, B>, C>> {pow()}
+
+/// `((a => b)^c)^(a^c => b^c)`.
+pub fn hooo_rev_imply<A, B, C>() -> Pow<Pow<Imply<A, B>, C>, Imply<Pow<A, C>, Pow<B, C>>> {pow()}
 
 /// A tautological proposition.
 pub type Tauto<A> = fn(True) -> A;
@@ -478,4 +488,5 @@ mod tests {
     fn check2<A, B, C>() {pow_eq::<And<Pow<A, C>, Pow<B, C>>, Pow<And<A, B>, C>>()}
     fn check3<A, B, C>() {pow_eq::<Or<Pow<A, C>, Pow<B, C>>, Pow<Or<A, B>, C>>()}
     fn check4<A, B>() {pow_eq::<Not<Pow<A, B>>, Pow<Not<A>, B>>()}
+    fn check5<A, B, C>() {pow_eq::<Imply<Pow<A, C>, Pow<B, C>>, Pow<Imply<A, B>, C>>()}
 }
