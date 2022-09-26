@@ -20,6 +20,17 @@ use crate::*;
 use quality::Q;
 use qubit::Qu;
 
+impl<A: DProp> Decidable for Tauto<A> {
+    fn decide() -> ExcM<Tauto<A>> {
+        fn f<A: DProp>(_: True) -> ExcM<A> {A::decide()}
+        let f: Or<Tauto<A>, Tauto<Not<A>>> = hooo_or()(f::<A>);
+        match f {
+            Left(tauto_a) => Left(tauto_a),
+            Right(tauto_na) => Right(hooo_not()(tauto_na))
+        }
+    }
+}
+
 /// `a^b`.
 pub type Pow<A, B> = fn(B) -> A;
 
