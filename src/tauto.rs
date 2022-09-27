@@ -44,6 +44,7 @@ impl<A, B, C> PowImply<And<Tauto<Eq<A, B>>, Para<Eq<B, C>>>, Para<Eq<A, C>>>
     for Pow<Para<Eq<A, C>>, And<Tauto<Eq<A, B>>, Para<Eq<B, C>>>> {}
 
 impl<A, B> PowImply<Para<Eq<A, B>>, Para<Eq<B, A>>> for Pow<Para<Eq<B, A>>, Para<Eq<A, B>>> {}
+
 impl<A, B> PowImply<Pow<Not<A>, B>, Not<Pow<A, B>>>
     for Pow<Not<Pow<A, B>>, Pow<Not<A>, B>> {}
 impl<A, B> PowImply<Not<Pow<A, B>>, Pow<Not<A>, B>>
@@ -258,12 +259,12 @@ pub fn para_to_eq_false<A: DProp>(
 
 /// `¬(x^true) => (¬x)^true`.
 pub fn tauto_not<A: Prop>(x: Not<Tauto<A>>) -> Tauto<Not<A>> {
-    pow()(x)
+    hooo_rev_not()(x)
 }
 
 /// `(¬x)^true => ¬(x^true)`.
 pub fn tauto_rev_not<A: Prop>(x: Tauto<Not<A>>) -> Not<Tauto<A>> {
-    pow()(x)
+    hooo_not()(x)
 }
 
 /// `x^true => (¬¬x)^true`.
