@@ -329,6 +329,14 @@ pub fn tauto_eq_in_left_arg<A: Prop, B: Prop, C: Prop>(
     tauto_eq_transitivity(tauto_eq_symmetry(g), f)
 }
 
+/// `(false^a ∧ (a == b)^true) => false^b`.
+pub fn para_in_arg<A: Prop, B: Prop>(
+    para_a: Para<A>,
+    tauto_eq_a_b: Tauto<Eq<A, B>>
+) -> Para<B> {
+    unimplemented!()
+}
+
 /// `(false^(a == b) ∧ (b == c)^true) => false^(a == c)`.
 pub fn para_eq_transitivity_left<A: Prop, B: Prop, C: Prop>(
     ab: Para<Eq<A, B>>,
