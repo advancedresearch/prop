@@ -147,9 +147,9 @@ pub fn in_right<A: Prop, B: Prop, C: Prop, F>(
     ab: Imply<A, B>,
     f: F
 ) -> Imply<A, C>
-    where F: Fn(B) -> C + 'static
+    where F: Fn(A, B) -> C + 'static
 {
-    Rc::new(move |a| f(ab(a)))
+    Rc::new(move |a| f(a.clone(), ab(a)))
 }
 
 /// `(a => c) ∧ (b => c)  =>  ((a ∧ b) => c)`.
