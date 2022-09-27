@@ -161,6 +161,30 @@ pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(f: Eq<A, B>, g: Eq<B, C>) -> Eq<A
     transitivity(f, g)
 }
 
+/// Makes it easier to traverse.
+pub fn in_left<A: Prop, B: Prop, C: Prop, F, G>(
+    eq_ab: Eq<A, B>,
+    f: F,
+    g: G,
+) -> Eq<C, B>
+    where F: Fn(A) -> C + 'static,
+          G: Fn(C) -> A + 'static
+{
+    in_left_arg(eq_ab, (Rc::new(move |a| f(a)), Rc::new(move |c| g(c))))
+}
+
+/// Makes it easier to traverse.
+pub fn in_right<A: Prop, B: Prop, C: Prop, F, G>(
+    eq_ab: Eq<A, B>,
+    f: F,
+    g: G,
+) -> Eq<A, C>
+    where F: Fn(B) -> C + 'static,
+          G: Fn(C) -> B + 'static
+{
+    eq::symmetry(in_left(eq::symmetry(eq_ab), f, g))
+}
+
 /// `(a = b) = (b = a)`.
 pub fn symmetry_eq<A: Prop, B: Prop>() -> Eq<Eq<A, B>, Eq<B, A>> {
     (Rc::new(move |x| eq::symmetry(x)),
