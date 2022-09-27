@@ -91,6 +91,20 @@ pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(
     (x, g(y))
 }
 
+/// Makes it easier to traverse.
+pub fn in_left<A: Prop, B: Prop, C: Prop, F>(
+    (x, y): And<A, B>, f: F
+) -> And<C, B> where F: Fn(A) -> C {
+    (f(x), y)
+}
+
+/// Makes it easier to traverse.
+pub fn in_right<A: Prop, B: Prop, C: Prop, F>(
+    (x, y): And<A, B>, f: F
+) -> And<A, C> where F: Fn(B) -> C {
+    (x, f(y))
+}
+
 /// `¬(a => b)  =>  (a ∧ ¬b)`.
 pub fn from_imply<A: DProp, B: DProp>(f: Not<Imply<A, B>>) -> And<A, Not<B>> {
     // `(¬a ∨ b)  =>  (a => b)`
