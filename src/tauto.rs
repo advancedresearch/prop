@@ -38,9 +38,6 @@ pub type Pow<A, B> = fn(B) -> A;
 /// Implemented by exponential propositions.
 pub trait PowImply<A, B>: Fn(A) -> B {}
 
-impl<A, B> PowImply<Tauto<Eq<A, B>>, Tauto<Eq<B, A>>> for Pow<Tauto<Eq<B, A>>, Tauto<Eq<A, B>>> {}
-impl<A, B, C> PowImply<And<Tauto<Eq<A, B>>, Tauto<Eq<B, C>>>, Tauto<Eq<A, C>>>
-    for Pow<Tauto<Eq<A, C>>, And<Tauto<Eq<A, B>>, Tauto<Eq<B, C>>>> {}
 impl<A, B, C> PowImply<And<Para<Eq<A, B>>, Tauto<Eq<B, C>>>, Para<Eq<A, C>>>
     for Pow<Para<Eq<A, C>>, And<Para<Eq<A, B>>, Tauto<Eq<B, C>>>> {}
 impl<A, B, C> PowImply<And<Tauto<Eq<A, B>>, Para<Eq<B, C>>>, Para<Eq<A, C>>>
@@ -302,7 +299,11 @@ pub fn eq_refl<A: Prop>() -> Tauto<Eq<A, A>> {
 
 /// `(x == y)^true => (y == x)^true`.
 pub fn tauto_eq_symmetry<A: Prop, B: Prop>(x: Tauto<Eq<A, B>>) -> Tauto<Eq<B, A>> {
-    pow()(x)
+    fn f<A: Prop, B: Prop>(_: True) -> Imply<Eq<A, B>, Eq<B, A>> {
+        Rc::new(move |ab| eq::symmetry(ab))
+    }
+    let f = hooo_imply()(f);
+    f(x)
 }
 
 /// `false^(x == y) => false^(y == x)`.
@@ -315,7 +316,13 @@ pub fn tauto_eq_transitivity<A: Prop, B: Prop, C: Prop>(
     ab: Tauto<Eq<A, B>>,
     bc: Tauto<Eq<B, C>>
 ) -> Tauto<Eq<A, C>> {
-    pow()((ab, bc))
+    fn f<A: Prop, B: Prop, C: Prop>(_: True) ->
+    Imply<Eq<A, B>, Imply<Eq<B, C>, Eq<A, C>>> {
+        Rc::new(move |ab| Rc::new(move |bc| eq::transitivity(ab.clone(), bc)))
+    }
+    let f = hooo_imply()(f);
+    let g = hooo_imply()(f(ab));
+    g(bc)
 }
 
 pub use tauto_eq_transitivity as tauto_eq_in_right_arg;
