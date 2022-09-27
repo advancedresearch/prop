@@ -34,6 +34,9 @@ impl<A: DProp> Decidable for Tauto<A> {
 /// `a^b`.
 pub type Pow<A, B> = fn(B) -> A;
 
+/// Power equivalence `=^=`.
+pub type PowEq<A, B> = And<Pow<B, A>, Pow<A, B>>;
+
 /// `a^b => (a^b)^c`.
 pub fn pow_lift<A: Prop, B: Prop, C: Prop>(a: Pow<A, B>) -> Pow<Pow<A, B>, C> {
     unimplemented!()
@@ -62,6 +65,23 @@ pub fn pow_transitivity<A: Prop, B: Prop, C: Prop>(
     );
     let f: Imply<Imply<Pow<B, A>, Pow<Pow<C, B>, A>>, Pow<C, A>> = imply::chain(f)(ab);
     f(pow_lift(bc).map_any())
+}
+
+/// `x =^= x`.
+pub fn pow_eq_refl<A: Prop>() -> PowEq<A, A> {
+    fn f<A: Prop>(a: A) -> A {a}
+    (f, f)
+}
+/// `(x =^= y) => (y =^= x)`.
+pub fn pow_eq_symmetry<A: Prop, B: Prop>((ab, ba): PowEq<A, B>) -> PowEq<B, A> {(ba, ab)}
+/// `(x =^= y) ⋀ (y =^= z) => (x =^= z)`.
+pub fn pow_eq_transitivity<A: Prop, B: Prop, C: Prop>(
+    (ab, ba): PowEq<A, B>,
+    (bc, cb): PowEq<B, C>
+) -> PowEq<A, C> {
+    let ca: Pow<A, C> = pow_transitivity(cb, ba);
+    let ac: Pow<C, A> = pow_transitivity(ab, bc);
+    (ac, ca)
 }
 
 #[marker]
