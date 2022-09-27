@@ -48,34 +48,38 @@ impl<A, B> PowImply<Pow<Not<A>, B>, Not<Pow<A, B>>>
     for Pow<Not<Pow<A, B>>, Pow<Not<A>, B>> {}
 impl<A, B> PowImply<Not<Pow<A, B>>, Pow<Not<A>, B>>
     for Pow<Pow<Not<A>, B>, Not<Pow<A, B>>> {}
+
 impl<A, B, C> PowImply<Pow<And<A, B>, C>, And<Pow<A, C>, Pow<B, C>>>
     for Pow<And<Pow<A, C>, Pow<B, C>>, Pow<And<A, B>, C>> {}
 impl<A, B, C> PowImply<And<Pow<A, C>, Pow<B, C>>, Pow<And<A, B>, C>>
     for Pow<Pow<And<A, B>, C>, And<Pow<A, C>, Pow<B, C>>> {}
-impl<A, B, C> PowImply<Pow<Or<A, B>, C>, Or<Pow<A, C>, Pow<B, C>>>
-    for Pow<Or<Pow<A, C>, Pow<B, C>>, Pow<Or<A, B>, C>> {}
-impl<A, B, C> PowImply<Or<Pow<A, C>, Pow<B, C>>, Pow<Or<A, B>, C>>
-    for Pow<Pow<Or<A, B>, C>, Or<Pow<A, C>, Pow<B, C>>> {}
-impl<A, B, C> PowImply<Pow<Eq<A, B>, C>, Eq<Pow<A, C>, Pow<B, C>>>
-    for Pow<Eq<Pow<A, C>, Pow<B, C>>, Pow<Eq<A, B>, C>> {}
-impl<A, B, C> PowImply<Eq<Pow<A, C>, Pow<B, C>>, Pow<Eq<A, B>, C>>
-    for Pow<Pow<Eq<A, B>, C>, Eq<Pow<A, C>, Pow<B, C>>> {}
-impl<A, B, C> PowImply<Pow<Imply<A, B>, C>, Imply<Pow<A, C>, Pow<B, C>>>
-    for Pow<Imply<Pow<A, C>, Pow<B, C>>, Pow<Imply<A, B>, C>> {}
-impl<A, B, C> PowImply<Imply<Pow<A, C>, Pow<B, C>>, Pow<Imply<A, B>, C>>
-    for Pow<Pow<Imply<A, B>, C>, Imply<Pow<A, C>, Pow<B, C>>> {}
 impl<A, B, C> PowImply<Pow<C, And<A, B>>, Or<Pow<C, A>, Pow<C, B>>>
     for Pow<Or<Pow<C, A>, Pow<C, B>>, Pow<C, And<A, B>>> {}
 impl<A, B, C> PowImply<Or<Pow<C, A>, Pow<C, B>>, Pow<C, And<A, B>>>
     for Pow<Pow<C, And<A, B>>, Or<Pow<C, A>, Pow<C, B>>> {}
+
+impl<A, B, C> PowImply<Pow<Or<A, B>, C>, Or<Pow<A, C>, Pow<B, C>>>
+    for Pow<Or<Pow<A, C>, Pow<B, C>>, Pow<Or<A, B>, C>> {}
+impl<A, B, C> PowImply<Or<Pow<A, C>, Pow<B, C>>, Pow<Or<A, B>, C>>
+    for Pow<Pow<Or<A, B>, C>, Or<Pow<A, C>, Pow<B, C>>> {}
 impl<A, B, C> PowImply<Pow<C, Or<A, B>>, And<Pow<C, A>, Pow<C, B>>>
     for Pow<And<Pow<C, A>, Pow<C, B>>, Pow<C, Or<A, B>>> {}
 impl<A, B, C> PowImply<And<Pow<C, A>, Pow<C, B>>, Pow<C, Or<A, B>>>
     for Pow<Pow<C, Or<A, B>>, And<Pow<C, A>, Pow<C, B>>> {}
-impl<A, B, C> PowImply<Pow<C, Eq<A, B>>, Eq<Pow<C, A>, Pow<C, B>>>
-    for Pow<Eq<Pow<C, A>, Pow<C, B>>, Pow<C, Eq<A, B>>> {}
-impl<A, B, C> PowImply<Eq<Pow<C, A>, Pow<C, B>>, Pow<C, Eq<A, B>>>
-    for Pow<Pow<C, Eq<A, B>>, Eq<Pow<C, A>, Pow<C, B>>> {}
+
+impl<A, B, C> PowImply<Pow<Eq<A, B>, C>, Eq<Pow<A, C>, Pow<B, C>>>
+    for Pow<Eq<Pow<A, C>, Pow<B, C>>, Pow<Eq<A, B>, C>> {}
+impl<A, B, C> PowImply<Eq<Pow<A, C>, Pow<B, C>>, Pow<Eq<A, B>, C>>
+    for Pow<Pow<Eq<A, B>, C>, Eq<Pow<A, C>, Pow<B, C>>> {}
+impl<A, B, C> PowImply<Pow<C, Eq<A, B>>, Not<Eq<Pow<C, A>, Pow<C, B>>>>
+    for Pow<Not<Eq<Pow<C, A>, Pow<C, B>>>, Pow<C, Eq<A, B>>> {}
+impl<A, B, C> PowImply<Not<Eq<Pow<C, A>, Pow<C, B>>>, Pow<C, Eq<A, B>>>
+    for Pow<Pow<C, Eq<A, B>>, Not<Eq<Pow<C, A>, Pow<C, B>>>> {}
+
+impl<A, B, C> PowImply<Pow<Imply<A, B>, C>, Imply<Pow<A, C>, Pow<B, C>>>
+    for Pow<Imply<Pow<A, C>, Pow<B, C>>, Pow<Imply<A, B>, C>> {}
+impl<A, B, C> PowImply<Imply<Pow<A, C>, Pow<B, C>>, Pow<Imply<A, B>, C>>
+    for Pow<Pow<Imply<A, B>, C>, Imply<Pow<A, C>, Pow<B, C>>> {}
 impl<A, B, C> PowImply<Pow<C, Imply<A, B>>, Not<Imply<Pow<C, B>, Pow<C, A>>>>
     for Pow<Not<Imply<Pow<C, B>, Pow<C, A>>>, Pow<C, Imply<A, B>>> {}
 impl<A, B, C> PowImply<Not<Imply<Pow<C, B>, Pow<C, A>>>, Pow<C, Imply<A, B>>>
@@ -146,13 +150,13 @@ pub fn hooo_eq<A: Prop, B: Prop, C: Prop>()
 pub fn hooo_rev_eq<A: Prop, B: Prop, C: Prop>()
 -> Pow<Pow<Eq<A, B>, C>, Eq<Pow<A, C>, Pow<B, C>>> {pow()}
 
-/// `(c^a == c^b)^(c^(a == b))`.
+/// `(¬(c^a == c^b))^(c^(a == b))`.
 pub fn hooo_dual_eq<A: Prop, B: Prop, C: Prop>()
--> Pow<Eq<Pow<C, A>, Pow<C, B>>, Pow<C, Eq<A, B>>> {pow()}
+-> Pow<Not<Eq<Pow<C, A>, Pow<C, B>>>, Pow<C, Eq<A, B>>> {pow()}
 
-/// `(c^(a == b))^(c^a == c^b)`.
+/// `(c^(a == b))^¬(c^a == c^b)`.
 pub fn hooo_dual_rev_eq<A: Prop, B: Prop, C: Prop>()
--> Pow<Pow<C, Eq<A, B>>, Eq<Pow<C, A>, Pow<C, B>>> {pow()}
+-> Pow<Pow<C, Eq<A, B>>, Not<Eq<Pow<C, A>, Pow<C, B>>>> {pow()}
 
 /// `(a^c => b^c)^((a => b)^c)`.
 pub fn hooo_imply<A: Prop, B: Prop, C: Prop>()
@@ -593,6 +597,6 @@ mod tests {
     fn check5<A: Prop, B: Prop, C: Prop>() {pow_eq::<Imply<Pow<A, C>, Pow<B, C>>, Pow<Imply<A, B>, C>>()}
     fn check6<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, And<A, B>>, Or<Pow<C, A>, Pow<C, B>>>()}
     fn check7<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, Or<A, B>>, And<Pow<C, A>, Pow<C, B>>>()}
-    fn check8<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, Eq<A, B>>, Eq<Pow<C, A>, Pow<C, B>>>()}
+    fn check8<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, Eq<A, B>>, Not<Eq<Pow<C, A>, Pow<C, B>>>>()}
     fn check9<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, Imply<A, B>>, Not<Imply<Pow<C, B>, Pow<C, A>>>>()}
 }
