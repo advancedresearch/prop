@@ -132,6 +132,26 @@ pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(f: Imply<A, B>, (g0, _): Eq<B, C>
     transitivity(f, g0)
 }
 
+/// Makes it easier to traverse.
+pub fn in_left<A: Prop, B: Prop, C: Prop, F>(
+    ab: Imply<A, B>,
+    f: F
+) -> Imply<C, B>
+    where F: Fn(C) -> A + 'static
+{
+    Rc::new(move |c| ab(f(c)))
+}
+
+/// Makes it easier to traverse.
+pub fn in_right<A: Prop, B: Prop, C: Prop, F>(
+    ab: Imply<A, B>,
+    f: F
+) -> Imply<A, C>
+    where F: Fn(B) -> C + 'static
+{
+    Rc::new(move |a| f(ab(a)))
+}
+
 /// `(a => c) ∧ (b => c)  =>  ((a ∧ b) => c)`.
 pub fn join<A: Prop, B: Prop, C: Prop>(f: Imply<A, C>, _: Imply<B, C>) -> Imply<And<A, B>, C> {
     Rc::new(move |(a, _)| f.clone()(a))
