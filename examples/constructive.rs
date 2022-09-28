@@ -52,8 +52,8 @@ pub fn or_is_safe<A: Prop, B: Prop>(
     safe_b: Safe<B>
 ) -> Safe<Or<A, B>> {
     match (safe_a, safe_b) {
-        (Left(tauto_a), _) => Left(tauto_left_or(tauto_a)),
-        (_, Left(tauto_b)) => Left(tauto_right_or(tauto_b)),
+        (Left(tauto_a), _) => Left(tauto_or_left(tauto_a)),
+        (_, Left(tauto_b)) => Left(tauto_or_right(tauto_b)),
         (Right(n_tauto_a), Right(n_tauto_b)) => Right(Rc::new(move |tauto_or_ab| {
             match tauto_rev_or(tauto_or_ab) {
                 Left(tauto_a) => n_tauto_a(tauto_a),

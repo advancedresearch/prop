@@ -494,7 +494,7 @@ pub fn tauto_and_to_eq_pos<A: Prop, B: Prop>(a: Tauto<A>, b: Tauto<B>) -> Tauto<
 }
 
 /// `a^true => (a ⋁ b)^true`.
-pub fn tauto_left_or<A: Prop, B: Prop>(
+pub fn tauto_or_left<A: Prop, B: Prop>(
     x: Tauto<A>
 ) -> Tauto<Or<A, B>> {
     fn f<A: Prop, B: Prop>(_: True) -> Imply<A, Or<A, B>> {
@@ -505,7 +505,7 @@ pub fn tauto_left_or<A: Prop, B: Prop>(
 }
 
 /// `b^true => (a ⋁ b)^true`.
-pub fn tauto_right_or<A: Prop, B: Prop>(
+pub fn tauto_or_right<A: Prop, B: Prop>(
     x: Tauto<B>
 ) -> Tauto<Or<A, B>> {
     fn f<A: Prop, B: Prop>(_: True) -> Imply<B, Or<A, B>> {
@@ -518,8 +518,8 @@ pub fn tauto_right_or<A: Prop, B: Prop>(
 /// `(a^true ⋁ b^true) => (a ⋁ b)^true`.
 pub fn tauto_or<A: Prop, B: Prop>(or_ab: Or<Tauto<A>, Tauto<B>>) -> Tauto<Or<A, B>> {
     match or_ab {
-        Left(tauto_a) => tauto_left_or(tauto_a),
-        Right(tauto_b) => tauto_right_or(tauto_b),
+        Left(tauto_a) => tauto_or_left(tauto_a),
+        Right(tauto_b) => tauto_or_right(tauto_b),
     }
 }
 
