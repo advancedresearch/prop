@@ -379,6 +379,9 @@ pub fn tauto_eq_in_left_arg<A: Prop, B: Prop, C: Prop>(
     tauto_eq_transitivity(tauto_eq_symmetry(g), f)
 }
 
+/// `uniform(a) ⋁ false^uniform(a)`.
+pub fn program<A: Prop>() -> Or<Uniform<A>, Para<Uniform<A>>> {unimplemented!()}
+
 /// `(a^true == b^true) => (false^a == false^b)`.
 pub fn eq_tauto_to_eq_para<A: Prop, B: Prop>(
     _: Eq<Tauto<A>, Tauto<B>>
