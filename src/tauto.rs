@@ -447,6 +447,25 @@ pub fn eq_para_to_eq_tauto<A: Prop, B: Prop>(
     unimplemented!()
 }
 
+/// `(a^true == false^a) => false^uniform(a)`.
+pub fn eq_tauto_para_to_para_uniform<A: Prop>(eq: Eq<Tauto<A>, Para<A>>) -> Para<Uniform<A>> {
+    match program::<A>() {
+        Left(Left(tauto_a)) => imply::absurd()(eq.0(tauto_a)(tauto_a(True))),
+        Left(Right(para_a)) => imply::absurd()(para_a(eq.1(para_a)(True))),
+        Right(para_uni) => para_uni,
+    }
+}
+
+/// `false^uniform(a) => (a^true == false^a)`.
+pub fn para_uniform_to_eq_tauto_para<A: Prop>(
+    para_uni: Para<Uniform<A>>
+) -> Eq<Tauto<A>, Para<A>> {
+    (
+        Rc::new(move |tauto_a| imply::absurd()(para_uni(Left(tauto_a)))),
+        Rc::new(move |para_a| imply::absurd()(para_uni(Right(para_a)))),
+    )
+}
+
 /// `(false^a ∧ (a == b)^true) => false^b`.
 pub fn para_in_arg<A: Prop, B: Prop>(
     para_a: Para<A>,
