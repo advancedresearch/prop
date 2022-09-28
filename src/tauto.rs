@@ -681,11 +681,16 @@ pub fn uniform_dual_and<A: Prop, B: Prop>(
     }
 }
 
-/// `uniform(a ∧ b) => uniform(a ⋁ b)`.
-pub fn uniform_and_to_or<A: Prop, B: Prop>(
-    _: Uniform<And<A, B>>,
+/// `uniform(a) ∧ uniform(b) => uniform(a ⋁ b)`.
+pub fn uniform_dual_rev_or<A: Prop, B: Prop>(
+    a: Uniform<A>,
+    b: Uniform<B>,
 ) -> Uniform<Or<A, B>> {
-    unimplemented!()
+    match (a, b) {
+        (Left(tauto_a), _) => Left(tauto_or_left(tauto_a)),
+        (_, Left(tauto_b)) => Left(tauto_or_right(tauto_b)),
+        (Right(para_a), Right(para_b)) => Right(para_to_or(para_a, para_b)),
+    }
 }
 
 /// `uniform(a) => (a ⋁ ¬a)`.
