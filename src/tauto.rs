@@ -398,7 +398,9 @@ pub fn para_in_arg<A: Prop, B: Prop>(
     para_a: Para<A>,
     tauto_eq_a_b: Tauto<Eq<A, B>>
 ) -> Para<B> {
-    unimplemented!()
+    let eq = hooo_eq()(tauto_eq_a_b);
+    let eq2 = eq_tauto_to_eq_para(eq);
+    eq2.0(para_a)
 }
 
 /// `(false^(a == b) ∧ (b == c)^true) => false^(a == c)`.
