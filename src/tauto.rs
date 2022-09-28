@@ -721,7 +721,6 @@ pub fn uniform_transitivity<A: Prop, B: Prop, C: Prop>(
     }
 }
 
-/// `((a == b) == false) ∧ ((b == c) == false) => uniform(a == c)`.
 /// `(false^(a == b) ∧ false^(b == c)) => uniform(a == c)`.
 pub fn uniform_from_para_transitivity<A: Prop, B: Prop, C: Prop>(
     _: Para<Eq<A, B>>,
