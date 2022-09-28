@@ -42,6 +42,25 @@ pub fn pow_lift<A: Prop, B: Prop, C: Prop>(_: Pow<A, B>) -> Pow<Pow<A, B>, C> {
     unimplemented!()
 }
 
+/// `(a => b^a) => b^a`.
+pub fn imply_pow<A: Prop, B: Prop>(_: Imply<A, Pow<B, A>>) -> Pow<B, A> {
+    unimplemented!()
+}
+
+/// `((a => b^a) == b^a)^true`.
+fn imply_pow_eq<A: Prop, B: Prop>(_: True) -> Eq<Imply<A, Pow<B, A>>, Pow<B, A>> {
+    (Rc::new(move |aba| imply_pow(aba)), Rc::new(move |ba| ba.map_any()))
+}
+
+/// `(a => b)^c => (b^a)^c`.
+pub fn pow_imply<A: Prop, B: Prop, C: Prop>(x: Pow<Imply<A, B>, C>) -> Pow<Pow<B, A>, C> {
+    let y: Imply<Pow<A, C>, Pow<B, C>> = hooo_imply::<A, B, C>()(x);
+    let f: Imply<Pow<B, C>, Pow<Pow<B, A>, C>> = Rc::new(move |x| pow_swap_exp(pow_lift(x)));
+    let g: Imply<Pow<A, C>, Pow<Pow<B, A>, C>> = imply::transitivity(y, f);
+    let g2: Pow<Imply<A, Pow<B, A>>, C> = hooo_rev_imply()(g);
+    pow_in_left_arg(g2, imply_pow_eq)
+}
+
 /// `(a^b)^c => a^(b ⋀ c)`.
 pub fn pow_lower<A: Prop, B: Prop, C: Prop>(_: Pow<Pow<A, B>, C>) -> Pow<A, And<B, C>> {
     unimplemented!()
