@@ -658,10 +658,14 @@ pub fn uniform_from_para_transitivity<A: Prop, B: Prop, C: Prop>(
 
 /// `uniform(a) ∧ uniform(b) => uniform(a ∧ b)`.
 pub fn uniform_and<A: Prop, B: Prop>(
-    _: Uniform<A>,
-    _: Uniform<B>
+    uni_a: Uniform<A>,
+    uni_b: Uniform<B>
 ) -> Uniform<And<A, B>> {
-    unimplemented!()
+    match (uni_a, uni_b) {
+        (Left(tauto_a), Left(tauto_b)) => Left(hooo_rev_and()((tauto_a, tauto_b))),
+        (_, Right(para_b)) => Right(hooo_dual_rev_and()(Right(para_b))),
+        (Right(para_a), _) => Right(hooo_dual_rev_and()(Left(para_a))),
+    }
 }
 
 /// `uniform(a ∧ b) => uniform(a) ∧ uniform(b)`.
