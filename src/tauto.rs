@@ -654,6 +654,16 @@ pub fn uniform_from_para_transitivity<A: Prop, B: Prop, C: Prop>(
     _: Para<Eq<B, C>>,
 ) -> Uniform<Eq<A, C>> {
     unimplemented!()
+
+/// `uniform(a) ⋀ (a == b)^true => uniform(b)`.
+pub fn uniform_in_arg<A: Prop, B: Prop>(
+    uni: Uniform<A>,
+    eq: Tauto<Eq<A, B>>
+) -> Uniform<B> {
+    match uni {
+        Left(tauto_a) => Left(hooo_eq()(eq).0(tauto_a)),
+        Right(para_a) => Right(para_in_arg(para_a, eq))
+    }
 }
 
 /// `uniform(a) ∧ uniform(b) => uniform(a ∧ b)`.
