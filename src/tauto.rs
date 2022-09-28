@@ -63,6 +63,16 @@ pub fn pow_in_right_arg<A: Prop, B: Prop, C: Prop>(
     unimplemented!()
 }
 
+/// `a^(b ⋀ c) => a^(c ⋀ b)`
+pub fn pow_right_and_symmetry<A: Prop, B: Prop, C: Prop>(
+    x: Pow<A, And<B, C>>
+) -> Pow<A, And<C, B>> {
+    fn f<A: Prop, B: Prop>(_: True) -> Eq<And<A, B>, And<B, A>> {
+        (Rc::new(move |ab| and::symmetry(ab)), Rc::new(move |ba| and::symmetry(ba)))
+    }
+    pow_in_right_arg(x, f::<B, C>)
+}
+
 /// `b^a ⋀ c^b => c^a`.
 pub fn pow_transitivity<A: Prop, B: Prop, C: Prop>(
     ab: Pow<B, A>,
