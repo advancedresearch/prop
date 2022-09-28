@@ -462,6 +462,28 @@ pub fn tauto_eq_in_left_arg<A: Prop, B: Prop, C: Prop>(
 /// `uniform(a) ⋁ false^uniform(a)`.
 pub fn program<A: Prop>() -> Or<Uniform<A>, Para<Uniform<A>>> {unimplemented!()}
 
+/// `(a^true => b^true) => (false^b => false^a)`.
+pub fn imply_tauto_to_imply_para<A: Prop, B: Prop>(
+    x: Imply<Tauto<A>, Tauto<B>>
+) -> Imply<Para<B>, Para<A>> {
+    fn f<A: Prop, B: Prop>(_: True) -> Imply<Pow<B, A>, Imply<Para<B>, Para<A>>> {
+        fn g<A: Prop, B: Prop>(
+            (para_b, pow_b_a): And<Para<B>, Pow<B, A>>
+        ) -> Para<A> {
+            pow_transitivity(pow_b_a, para_b)
+        }
+        let g: Pow<Pow<Para<A>, Para<B>>, Pow<B, A>> = pow_rev_lower(g::<A, B>);
+        Rc::new(move |pow_a_b| {
+            let h: Pow<Para<A>, Para<B>> = g(pow_a_b);
+            Rc::new(move |para_b| h(para_b))
+        })
+    }
+    let f: Imply<Tauto<Pow<B, A>>, Tauto<Imply<Para<B>, Para<A>>>> = hooo_imply()(f);
+    let f = imply::in_left(f, |tauto_imply| pow_imply(tauto_imply));
+    let y: Tauto<Imply<A, B>> = hooo_rev_imply()(x);
+    f(y)(True)
+}
+
 /// `(a^true == b^true) => (false^a == false^b)`.
 pub fn eq_tauto_to_eq_para<A: Prop, B: Prop>(
     _: Eq<Tauto<A>, Tauto<B>>
