@@ -486,16 +486,11 @@ pub fn imply_tauto_to_imply_para<A: Prop, B: Prop>(
 
 /// `(a^true == b^true) => (false^a == false^b)`.
 pub fn eq_tauto_to_eq_para<A: Prop, B: Prop>(
-    _: Eq<Tauto<A>, Tauto<B>>
+    x: Eq<Tauto<A>, Tauto<B>>
 ) -> Eq<Para<A>, Para<B>> {
-    unimplemented!()
-}
-
-/// `(a^true == b^true) => (false^a == false^b)`.
-pub fn eq_para_to_eq_tauto<A: Prop, B: Prop>(
-    _: Eq<Para<A>, Para<B>>
-) -> Eq<Tauto<A>, Tauto<B>> {
-    unimplemented!()
+    let y0 = imply_tauto_to_imply_para(x.0);
+    let y1 = imply_tauto_to_imply_para(x.1);
+    (y1, y0)
 }
 
 /// `(a^true == false^a) => false^uniform(a)`.
