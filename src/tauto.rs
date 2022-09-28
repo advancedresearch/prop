@@ -493,18 +493,26 @@ pub fn tauto_and_to_eq_pos<A: Prop, B: Prop>(a: Tauto<A>, b: Tauto<B>) -> Tauto<
     f(x)
 }
 
-/// `(a == true) => ((a ⋁ b) == true)`.
+/// `a^true => (a ⋁ b)^true`.
 pub fn tauto_left_or<A: Prop, B: Prop>(
-    _: Tauto<A>
+    x: Tauto<A>
 ) -> Tauto<Or<A, B>> {
-    unimplemented!()
+    fn f<A: Prop, B: Prop>(_: True) -> Imply<A, Or<A, B>> {
+        Rc::new(move |a| Left(a))
+    }
+    let f = hooo_imply()(f);
+    f(x)
 }
 
-/// `(b == true) => ((a ⋁ b) == true)`.
+/// `b^true => (a ⋁ b)^true`.
 pub fn tauto_right_or<A: Prop, B: Prop>(
-    _: Tauto<B>
+    x: Tauto<B>
 ) -> Tauto<Or<A, B>> {
-    unimplemented!()
+    fn f<A: Prop, B: Prop>(_: True) -> Imply<B, Or<A, B>> {
+        Rc::new(move |b| Right(b))
+    }
+    let f = hooo_imply()(f);
+    f(x)
 }
 
 /// `(a^true ⋁ b^true) => (a ⋁ b)^true`.
@@ -516,83 +524,100 @@ pub fn tauto_or<A: Prop, B: Prop>(or_ab: Or<Tauto<A>, Tauto<B>>) -> Tauto<Or<A, 
 }
 
 /// `(a ⋁ b)^true => (a^true ⋁ b^true)`.
-pub fn tauto_rev_or<A: Prop, B: Prop>(_: Tauto<Or<A, B>>) -> Or<Tauto<A>, Tauto<B>> {
-    unimplemented!()
+pub fn tauto_rev_or<A: Prop, B: Prop>(x: Tauto<Or<A, B>>) -> Or<Tauto<A>, Tauto<B>> {
+    hooo_or()(x)
 }
 
-/// `(a == false) ∧ (b == false) => ((a ⋁ b) == false)`.
+/// `(false^a ∧ b^false) => false^(a ⋁ b)`.
 pub fn para_to_or<A: Prop, B: Prop>(
-    _: Para<A>,
-    _: Para<B>
+    para_a: Para<A>,
+    para_b: Para<B>
 ) -> Para<Or<A, B>> {
-    unimplemented!()
+    hooo_dual_rev_or()((para_a, para_b))
 }
 
-/// `((a ⋁ b) == false) => (a == false) ∧ (b == false)`.
+/// `false^(a ⋁ b) => false^a ∧ false^b`.
 pub fn para_from_or<A: Prop, B: Prop>(
-    _: Para<Or<A, B>>,
+    x: Para<Or<A, B>>,
 ) -> And<Para<A>, Para<B>> {
-    unimplemented!()
+    hooo_dual_or()(x)
 }
 
-/// `((a ∧ b) == false) => (a == false) ⋁ (b == false)`.
+/// `false^(a ∧ b) => false^a ⋁ false^b`.
 pub fn para_and_to_or<A: Prop, B: Prop>(
-    _: Para<And<A, B>>
+    x: Para<And<A, B>>
 ) -> Or<Para<A>, Para<B>> {
-    unimplemented!()
+    hooo_dual_and()(x)
 }
 
-/// `(a == true) ∧ (b == true) => ((a ∧ b) == true)`.
+/// `a^true ∧ b^true => (a ∧ b)^true`.
 pub fn tauto_and<A: Prop, B: Prop>(
-    _: Tauto<A>,
-    _: Tauto<B>,
+    tauto_a: Tauto<A>,
+    tauto_b: Tauto<B>,
 ) -> Tauto<And<A, B>> {
-    unimplemented!()
+    hooo_rev_and()((tauto_a, tauto_b))
 }
 
-/// `((a ∧ b) == true) => (a == true) ∧ (b == true)`.
+/// `(a ∧ b)^true => a^true ∧ b^true`.
 pub fn tauto_rev_and<A: Prop, B: Prop>(
-    _: Tauto<And<A, B>>,
+    tauto_and_a_b: Tauto<And<A, B>>,
 ) -> And<Tauto<A>, Tauto<B>> {
-    unimplemented!()
+    hooo_and()(tauto_and_a_b)
 }
 
-/// `(a == false) => ((a ∧ b) == false)`.
+/// `false^a => false^(a ∧ b)`.
 pub fn para_left_and<A: Prop, B: Prop>(
-    _: Para<A>,
+    para_a: Para<A>,
 ) -> Para<And<A, B>> {
-    unimplemented!()
+    pow_lower(pow_lift(para_a))
 }
 
-/// `(b == false) => ((a ∧ b) == false)`.
+/// `false^b => false^(a ∧ b)`.
 pub fn para_right_and<A: Prop, B: Prop>(
-    _: Para<B>,
+    para_b: Para<B>,
 ) -> Para<And<A, B>> {
-    unimplemented!()
+    pow_right_and_symmetry(pow_lower(pow_lift(para_b)))
 }
 
-/// `(a => b) ∧ (a == c)  =>  (c => b)`.
+/// `(a => b)^true ∧ (a == c)^true  =>  (c => b)^true`.
 pub fn tauto_imply_in_left_arg<A: Prop, B: Prop, C: Prop>(
-    _: Tauto<Imply<A, B>>,
-    _: Tauto<Eq<A, C>>
+    ab: Tauto<Imply<A, B>>,
+    eq_a_c: Tauto<Eq<A, C>>
 ) -> Tauto<Imply<C, B>> {
-    unimplemented!()
+    fn f<A: Prop, B: Prop, C: Prop>(_: True)
+    -> Imply<And<Imply<A, B>, Eq<A, C>>, Imply<C, B>> {
+        Rc::new(move |(ab, eq_a_c)| imply::in_left_arg(ab, eq_a_c))
+    }
+    let f = hooo_imply()(f);
+    let x = hooo_rev_and()((ab, eq_a_c));
+    f(x)
 }
 
-/// `(a => b) ∧ (b == c)  =>  (a => c)`.
+/// `(a => b)^true ∧ (b == c)^true  =>  (a => c)^true`.
 pub fn tauto_imply_in_right_arg<A: Prop, B: Prop, C: Prop>(
-    _: Tauto<Imply<A, B>>,
-    _: Tauto<Eq<B, C>>
+    ab: Tauto<Imply<A, B>>,
+    eq_b_c: Tauto<Eq<B, C>>
 ) -> Tauto<Imply<A, C>> {
-    unimplemented!()
+    fn f<A: Prop, B: Prop, C: Prop>(_: True)
+    -> Imply<And<Imply<A, B>, Eq<B, C>>, Imply<A, C>> {
+        Rc::new(move |(ab, eq_b_c)| imply::in_right_arg(ab, eq_b_c))
+    }
+    let f = hooo_imply()(f);
+    let x = hooo_rev_and()((ab, eq_b_c));
+    f(x)
 }
 
-/// `(a => b) ∧ a  =>  b`.
+/// `(a => b)^true ∧ a^true  =>  b^true`.
 pub fn tauto_modus_ponens<A: Prop, B: Prop>(
-    _: Tauto<Imply<A, B>>,
-    _: Tauto<A>,
+    ab: Tauto<Imply<A, B>>,
+    a: Tauto<A>,
 ) -> Tauto<B> {
-    unimplemented!()
+    fn f<A: Prop, B: Prop>(_: True) -> Imply<And<Imply<A, B>, A>, B> {
+        Rc::new(move |(ab, a)| ab(a))
+    }
+    let f = hooo_imply()(f);
+    let x = hooo_rev_and()((ab, a));
+    f(x)
 }
 
 /// `uniform(a == a)`.
