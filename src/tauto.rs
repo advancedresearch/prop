@@ -42,6 +42,22 @@ pub fn pow_lift<A: Prop, B: Prop, C: Prop>(_: Pow<A, B>) -> Pow<Pow<A, B>, C> {
     unimplemented!()
 }
 
+/// `a^b ⋀ (a == c)^true => c^b`.
+pub fn pow_in_left_arg<A: Prop, B: Prop, C: Prop>(
+    _x: Pow<A, B>,
+    _tauto_eq_b_c: Tauto<Eq<A, C>>,
+) -> Pow<C, B> {
+    unimplemented!()
+}
+
+/// `a^b ⋀ (b == c)^true => a^c`.
+pub fn pow_in_right_arg<A: Prop, B: Prop, C: Prop>(
+    _x: Pow<A, B>,
+    _tauto_eq_b_c: Tauto<Eq<B, C>>,
+) -> Pow<A, C> {
+    unimplemented!()
+}
+
 /// `b^a ⋀ c^b => c^a`.
 pub fn pow_transitivity<A: Prop, B: Prop, C: Prop>(
     ab: Pow<B, A>,
