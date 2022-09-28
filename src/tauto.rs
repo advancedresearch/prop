@@ -752,6 +752,16 @@ pub fn uniform_and<A: Prop, B: Prop>(
     }
 }
 
+/// `false^uniform(a ∧ b) => false^(uniform(a) ∧ uniform(b))`.
+pub fn para_uniform_and<A: Prop, B: Prop>(
+    x: Para<Uniform<And<A, B>>>
+) -> Para<And<Uniform<A>, Uniform<B>>> {
+    fn f<A: Prop, B: Prop>((a, b): And<Uniform<A>, Uniform<B>>) -> Uniform<And<A, B>> {
+        uniform_and(a, b)
+    }
+    pow_transitivity(f::<A, B>, x)
+}
+
 /// `uniform(a ∧ b) => uniform(a) ⋁ uniform(b)`.
 pub fn uniform_dual_and<A: Prop, B: Prop>(
     uni_and: Uniform<And<A, B>>,
