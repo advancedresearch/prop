@@ -85,6 +85,20 @@ pub fn pow_swap_exp<A: Prop, B: Prop, C: Prop>(
     pow_rev_lower(pow_right_and_symmetry(pow_lower(x)))
 }
 
+/// `¬a^b => a^(¬b)`.
+pub fn pow_not<A: Prop, B: Prop>(x: Not<Pow<A, B>>) -> Pow<A, Not<B>> {
+    hooo_dual_rev_imply()(Rc::new(move |y: Imply<Pow<A, False>, Pow<A, B>>|
+        imply::absurd()(x(y(fa())))))
+}
+
+/// `a^(¬b) => ¬a^b`.
+pub fn pow_rev_not<A: Prop, B: Prop>(x: Pow<A, Not<B>>) -> Not<Pow<A, B>> {
+    let y = hooo_dual_imply()(x);
+    Rc::new(move |pow_a_b| {
+        y(pow_a_b.map_any())
+    })
+}
+
 /// `b^a ⋀ c^b => c^a`.
 pub fn pow_transitivity<A: Prop, B: Prop, C: Prop>(
     ab: Pow<B, A>,
@@ -379,11 +393,7 @@ pub fn tauto_not_double<A: Prop>(x: Tauto<A>) -> Tauto<Not<Not<A>>> {
 
 /// `false^(¬x) => ¬false^x`.
 pub fn para_rev_not<A: Prop>(x: Para<Not<A>>) -> Not<Para<A>> {
-    let y: Not<Imply<Para<False>, Para<A>>> = hooo_dual_imply()(x);
-    let y2: Not<Para<A>> = Rc::new(move |para_na| {
-        y(para_na.map_any())
-    });
-    y2
+    pow_rev_not(x)
 }
 
 /// `(x == x)^true`.
