@@ -38,7 +38,7 @@ pub type Pow<A, B> = fn(B) -> A;
 pub type PowEq<A, B> = And<Pow<B, A>, Pow<A, B>>;
 
 /// `a^b => (a^b)^c`.
-pub fn pow_lift<A: Prop, B: Prop, C: Prop>(a: Pow<A, B>) -> Pow<Pow<A, B>, C> {
+pub fn pow_lift<A: Prop, B: Prop, C: Prop>(_: Pow<A, B>) -> Pow<Pow<A, B>, C> {
     unimplemented!()
 }
 
@@ -377,6 +377,20 @@ pub fn tauto_eq_in_left_arg<A: Prop, B: Prop, C: Prop>(
     g: Tauto<Eq<A, C>>,
 ) -> Tauto<Eq<C, B>> {
     tauto_eq_transitivity(tauto_eq_symmetry(g), f)
+}
+
+/// `(a^true == b^true) => (false^a == false^b)`.
+pub fn eq_tauto_to_eq_para<A: Prop, B: Prop>(
+    _: Eq<Tauto<A>, Tauto<B>>
+) -> Eq<Para<A>, Para<B>> {
+    unimplemented!()
+}
+
+/// `(a^true == b^true) => (false^a == false^b)`.
+pub fn eq_para_to_eq_tauto<A: Prop, B: Prop>(
+    _: Eq<Para<A>, Para<B>>
+) -> Eq<Tauto<A>, Tauto<B>> {
+    unimplemented!()
 }
 
 /// `(false^a ∧ (a == b)^true) => false^b`.
