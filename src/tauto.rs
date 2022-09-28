@@ -47,6 +47,11 @@ pub fn pow_lower<A: Prop, B: Prop, C: Prop>(_: Pow<Pow<A, B>, C>) -> Pow<A, And<
     unimplemented!()
 }
 
+/// `a^(b ⋀ c) => (a^b)^c`.
+pub fn pow_rev_lower<A: Prop, B: Prop, C: Prop>(_: Pow<A, And<B, C>>) -> Pow<Pow<A, B>, C> {
+    unimplemented!()
+}
+
 /// `a^b ⋀ (a == c)^true => c^b`.
 pub fn pow_in_left_arg<A: Prop, B: Prop, C: Prop>(
     _x: Pow<A, B>,
@@ -71,6 +76,13 @@ pub fn pow_right_and_symmetry<A: Prop, B: Prop, C: Prop>(
         (Rc::new(move |ab| and::symmetry(ab)), Rc::new(move |ba| and::symmetry(ba)))
     }
     pow_in_right_arg(x, f::<B, C>)
+}
+
+/// `(a^b)^c => (a^c)^b`.
+pub fn pow_swap_exp<A: Prop, B: Prop, C: Prop>(
+    x: Pow<Pow<A, B>, C>
+) -> Pow<Pow<A, C>, B> {
+    pow_rev_lower(pow_right_and_symmetry(pow_lower(x)))
 }
 
 /// `b^a ⋀ c^b => c^a`.
