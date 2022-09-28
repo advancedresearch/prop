@@ -42,6 +42,11 @@ pub fn pow_lift<A: Prop, B: Prop, C: Prop>(_: Pow<A, B>) -> Pow<Pow<A, B>, C> {
     unimplemented!()
 }
 
+/// `(a^b)^c => a^(b ⋀ c)`.
+pub fn pow_lower<A: Prop, B: Prop, C: Prop>(_: Pow<Pow<A, B>, C>) -> Pow<A, And<B, C>> {
+    unimplemented!()
+}
+
 /// `a^b ⋀ (a == c)^true => c^b`.
 pub fn pow_in_left_arg<A: Prop, B: Prop, C: Prop>(
     _x: Pow<A, B>,
