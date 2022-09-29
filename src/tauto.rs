@@ -717,15 +717,15 @@ pub fn uniform_transitivity<A: Prop, B: Prop, C: Prop>(
         (Left(t_ab), Left(t_bc)) => Left(tauto_eq_transitivity(t_ab, t_bc)),
         (Left(t_ab), Right(p_bc)) => Right(para_eq_transitivity_right(t_ab, p_bc)),
         (Right(p_ab), Left(t_bc)) => Right(para_eq_transitivity_left(p_ab, t_bc)),
-        (Right(p_ab), Right(p_bc)) => uniform_from_para_transitivity(p_ab, p_bc),
+        (Right(p_ab), Right(p_bc)) => Left(tauto_from_para_transitivity(p_ab, p_bc)),
     }
 }
 
-/// `(false^(a == b) ∧ false^(b == c)) => uniform(a == c)`.
-pub fn uniform_from_para_transitivity<A: Prop, B: Prop, C: Prop>(
+/// `(false^(a == b) ∧ false^(b == c)) => (a == c)^true`.
+pub fn tauto_from_para_transitivity<A: Prop, B: Prop, C: Prop>(
     _: Para<Eq<A, B>>,
     _: Para<Eq<B, C>>,
-) -> Uniform<Eq<A, C>> {
+) -> Tauto<Eq<A, C>> {
     unimplemented!()
 }
 
