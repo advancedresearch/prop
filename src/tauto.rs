@@ -802,13 +802,6 @@ pub fn uniform_to_excm<A: Prop>(
     }
 }
 
-/// `(a ⋁ ¬a) => uniform(a)`.
-pub fn uniform_from_excm<A: Prop>(
-    _: Tauto<ExcM<A>>
-) -> Uniform<A> {
-    unimplemented!()
-}
-
 /// `theory(a) ⋀ theory(b) => theory(a ⋀ b)`.
 pub fn theory_and<A: Prop, B: Prop>(
     f: Theory<A>,
