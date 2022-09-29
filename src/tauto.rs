@@ -787,11 +787,19 @@ pub fn uniform_dual_rev_or<A: Prop, B: Prop>(
     }
 }
 
-/// `uniform(a) => (a ⋁ ¬a)`.
+/// `uniform(a) => (a ⋁ ¬a)^true`.
 pub fn uniform_to_excm<A: Prop>(
-    _: Uniform<A>
+    uni: Uniform<A>
 ) -> Tauto<ExcM<A>> {
-    unimplemented!()
+    fn f<A: Prop>(para_a: Para<A>) -> Tauto<Not<A>> {
+        hooo_rev_not()(Rc::new(move |tauto_a: Tauto<A>| {
+            para_a((tauto_a)(True))
+        }))
+    }
+    match uni {
+        Left(tauto) => tauto_or_left(tauto),
+        Right(para) => tauto_or_right(f(para)),
+    }
 }
 
 /// `(a ⋁ ¬a) => uniform(a)`.
