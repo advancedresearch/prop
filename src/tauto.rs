@@ -169,8 +169,6 @@ impl<A, B, C> PowImply<And<Para<Eq<A, B>>, Tauto<Eq<B, C>>>, Para<Eq<A, C>>>
 impl<A, B, C> PowImply<And<Tauto<Eq<A, B>>, Para<Eq<B, C>>>, Para<Eq<A, C>>>
     for Pow<Para<Eq<A, C>>, And<Tauto<Eq<A, B>>, Para<Eq<B, C>>>> {}
 
-impl<A, B> PowImply<Para<Eq<A, B>>, Para<Eq<B, A>>> for Pow<Para<Eq<B, A>>, Para<Eq<A, B>>> {}
-
 impl<A, B> PowImply<Pow<Not<A>, B>, Not<Pow<A, B>>>
     for Pow<Not<Pow<A, B>>, Pow<Not<A>, B>> {}
 impl<A, B> PowImply<Not<Pow<A, B>>, Pow<Not<A>, B>>
@@ -432,7 +430,7 @@ pub fn tauto_eq_symmetry<A: Prop, B: Prop>(x: Tauto<Eq<A, B>>) -> Tauto<Eq<B, A>
 
 /// `false^(x == y) => false^(y == x)`.
 pub fn para_eq_symmetry<A: Prop, B: Prop>(x: Para<Eq<A, B>>) -> Para<Eq<B, A>> {
-    pow()(x)
+    pow_transitivity(eq::symmetry, x)
 }
 
 /// `(a == b)^true ∧ (b == c)^true => (a == c)^true`.
