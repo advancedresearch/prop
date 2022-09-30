@@ -77,6 +77,14 @@ pub fn pow_refl<A: Prop>() -> Pow<A, A> {
     f::<A>
 }
 
+/// `(a^b)^a`.
+pub fn pow_uni<A: Prop, B: Prop>(a: A) -> Pow<A, B> {
+    fn f<A: Prop, B: Prop>(a: A) -> Imply<B, A> {
+        a.map_any()
+    }
+    pow_imply(f)(a)
+}
+
 /// `a^b ⋀ (a == c)^true => c^b`.
 pub fn pow_in_left_arg<A: Prop, B: Prop, C: Prop>(
     x: Pow<A, B>,
