@@ -48,7 +48,7 @@ pub fn imply_pow<A: Prop, B: Prop>(_: Imply<A, Pow<B, A>>) -> Pow<B, A> {
 }
 
 /// `((a => b^a) == b^a)^true`.
-fn imply_pow_eq<A: Prop, B: Prop>(_: True) -> Eq<Imply<A, Pow<B, A>>, Pow<B, A>> {
+pub fn imply_pow_eq<A: Prop, B: Prop>(_: True) -> Eq<Imply<A, Pow<B, A>>, Pow<B, A>> {
     (Rc::new(move |aba| imply_pow(aba)), Rc::new(move |ba| ba.map_any()))
 }
 
