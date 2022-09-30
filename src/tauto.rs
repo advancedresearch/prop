@@ -76,12 +76,9 @@ pub fn pow_rev_lower<A: Prop, B: Prop, C: Prop>(x: Pow<A, And<B, C>>) -> Pow<Pow
             }
         })
     }
-    fn g<A: Prop, B: Prop, C: Prop>(_: True) -> Eq<Pow<C, And<A, B>>, Or<Pow<C, A>, Pow<C, B>>> {
-        (Rc::new(move |x| hooo_dual_and()(x)), Rc::new(move |x| hooo_dual_rev_and()(x)))
-    }
     let f = hooo_imply()(f);
     let x: Pow<Pow<A, And<B, C>>, Pow<C, B>> = pow_lift(x);
-    let x = pow_in_left_arg(x, g);
+    let x = pow_transitivity(x, hooo_dual_and());
     let cbc = pow_uni::<C, B>;
     pow_transitivity(cbc, f(x))
 }
