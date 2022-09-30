@@ -71,6 +71,12 @@ pub fn pow_rev_lower<A: Prop, B: Prop, C: Prop>(_: Pow<A, And<B, C>>) -> Pow<Pow
     unimplemented!()
 }
 
+/// `a^a`.
+pub fn pow_refl<A: Prop>() -> Pow<A, A> {
+    fn f<A: Prop>(a: A) -> A {a}
+    f::<A>
+}
+
 /// `a^b ⋀ (a == c)^true => c^b`.
 pub fn pow_in_left_arg<A: Prop, B: Prop, C: Prop>(
     x: Pow<A, B>,
