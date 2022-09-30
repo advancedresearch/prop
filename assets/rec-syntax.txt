@@ -1,0 +1,117 @@
+// Rust-syntax in Piston-Meta for recursive analysis
+
+_seps: "|!:.,;<>(){}[]"
+
+29 , = [.w? "," .w?]
+28 ; = [.w? ";" .w?]
+
+27 trait_call_args = .s?(, ty)
+26 trait_inh = {
+    ["Fn" "(" .w? .s?(, ty) .w? ")" .w! "->" .w! ty]
+  }
+25 trait_arg = .._seps!
+24 trait_args = .s?(, trait_arg)
+
+27 type_args = .s?(, .._seps!)
+26 branch = {
+    [branch_pat .w! "=>" .w! {
+      [expr {"," ?[.w? !.."}"!]}]
+      ["{" .w? exprs .w? "}"]
+    }]
+  }
+25 branch_pat = {
+    [?.._seps! "(" .w? .s!(, branch_pat) .w? ")"]
+    .._seps!
+  }
+
+24 call_gen_args = .s?(, ty)
+23 call_args = .s?(, expr)
+22 call = [.._seps!:"name" ?{
+    ["::<" .w? call_gen_args .w? ">"]
+    ["::" .._seps!]
+  } {
+    ["!" .r?({
+      ["{" .w? macro_args .w? "}"]
+      ["(" .w? macro_args .w? ")"]
+    })]
+    .r?(["(" .w? call_args .w? ")"])
+  }
+    ?[.w? "." call]
+  ]
+
+21 gen_constr = [.._seps! ?["<" .w? .s?(, ty) .w? ">"]]
+20 where_expr = [.._seps! ?["<" .w? .s?(, .._seps!) .w? ">"] .w? ":" .w? gen_constr]
+19 fn_decl_arg = [{
+    branch_pat
+    .._seps!
+  } .w? ":" .w? struct_call]
+18 fn_decl_args = .s?(, fn_decl_arg)
+17 fn_decl = ["fn" .w! .._seps!:"name" ?["<" .w? gen_args .w? ">"]
+  "(" .w? fn_decl_args .w? ")" .w? ?["->" .w? struct_call] .w?
+  ?["where " .w? .s!.(, where_expr) .w?]
+  "{" .w? exprs .w? "}"]
+
+16 impl_method = ["fn" .w! .._seps! "(" .w? .w? ")" .w? "->" .w? struct_call .w?
+  "{" .w? exprs .w? "}"]
+
+15 struct_args = .s?(, struct_call)
+14 struct_call = [.._seps! ?["<" .w? struct_args .w? ">"]]
+13 trait_call = [.._seps! ?["<" .w? trait_call_args .w? ">"]]
+12 ty_fn_args = .s?(, ty)
+11 ty = {
+    ["fn" "(" .w? ty_fn_args .w? ")" .w! "->" .w! ty]
+    struct_call
+    .._seps!
+  }
+
+10 gen_args = .s?(, gen_arg)
+9 gen_arg = [.._seps! .w? ?[":" .w? gen_constr]]
+
+8 let = ["let " .._seps!:"name" ?[.w? ":" .w? struct_call] .w! "=" .w! expr]
+
+7 closure_arg = [{
+    branch_pat
+    .._seps!:"name"
+  } .w? ?[":" .w! ty]]
+6 closure_args = .s?(, closure_arg)
+
+5 exprs = [.l(fn_decl:"fn") .w? .s!.(; expr)]
+4 expr = {
+    let:"let"
+    ["match " expr .w! "{" .w? .r?([.w? branch]) .w? "}"]
+    [?"move " "|" .w? closure_args .w? "|" .w! {
+      ["{" .w? exprs .w? "}"]
+      expr
+    }]
+    ["(" .w? .s?(, expr) .w? ")"]
+    call:"call"
+    .._seps!
+  }
+
+3 mod_decl = ["mod " .._seps!:"name" .w! "{" .w? doc .w? "}"]
+
+2 macro_args = .r?([?"," .w? {
+    ["$" .._seps! {.w! "," !..")"!}]
+    .._seps!
+  }])
+1 macro_branch = ["(" .w? .r?([.w? {
+    ["$" .._seps! ":" "tt" {.w! "," !..")"!}]
+    .._seps!
+  }]) .w? ")" .w! "=>" .w! "{" .w? doc .w? "}"]
+
+0 doc = .l([.w? {
+  ["//" ..."\n"?]
+  ["impl<" .w? gen_args .w? ">" .w! trait_call .w! "for" .w! struct_call .w?
+    "{" .w? .l(impl_method:"method") .w? "}"]
+  ["#[" .._seps! ?["(" .w? .._seps! .w? ")"] "]"]
+  ["macro_rules! " .._seps! .w! "{" .w? .s?(; macro_branch) .w? "}"]
+  [?"pub " {
+    ["use " ...";"? ";"]
+    ["type " .._seps! ?["<" .w? type_args .w? ">"] .w! "=" .w! ty .w? ";"]
+    ["trait " .._seps! ?["<" .w? trait_args .w? ">"] ?[":" .w! trait_inh .w!
+      "{" .w? .w? "}"]]
+    mod_decl:"mod"
+    fn_decl:"fn"
+  }]
+  call
+}])
