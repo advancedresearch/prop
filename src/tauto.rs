@@ -82,7 +82,7 @@ pub fn pow_in_left_arg<A: Prop, B: Prop, C: Prop>(
     x: Pow<A, B>,
     tauto_eq_b_c: Tauto<Eq<A, C>>,
 ) -> Pow<C, B> {
-    fn f<A: Prop, B: Prop, C: Prop>(b: B) -> Imply<And<A, Eq<A, C>>, C> {
+    fn f<A: Prop, B: Prop, C: Prop>(_: B) -> Imply<And<A, Eq<A, C>>, C> {
         Rc::new(move |(a, eq)| eq.0(a))
     }
     let f: Imply<Pow<And<A, Eq<A, C>>, B>, Pow<C, B>> = hooo_imply()(f);
@@ -96,10 +96,13 @@ pub fn pow_in_left_arg<A: Prop, B: Prop, C: Prop>(
 
 /// `a^b ⋀ (b == c)^true => a^c`.
 pub fn pow_in_right_arg<A: Prop, B: Prop, C: Prop>(
-    _x: Pow<A, B>,
-    _tauto_eq_b_c: Tauto<Eq<B, C>>,
+    x: Pow<A, B>,
+    tauto_eq_b_c: Tauto<Eq<B, C>>,
 ) -> Pow<A, C> {
-    unimplemented!()
+    let y = pow_swap_exp(pow_lift(tauto_eq_b_c))(True);
+    let y = hooo_eq()(y);
+    let bc: Pow<B, C> = y.1(pow_refl());
+    pow_transitivity(bc, x)
 }
 
 /// `a^(b ⋀ c) => a^(c ⋀ b)`
