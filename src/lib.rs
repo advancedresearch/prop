@@ -17,7 +17,7 @@
 //! Abbreviations:
 //!
 //! - IPL: Intuitionistic/Constructive Propositional Logic
-//! - EP: Intuitionistic/Constructive Propositional Logic for Existential Philosophy
+//! - EL: Existential Logic (Excluded Middle of Non-Existence)
 //! - PL: Classical Propositional Logic
 //! - PSI: Path Semantical Intuitionistic/Constructive Propositional Logic
 //! - EPS: Path Semantical Intuitionistic/Constructive Propositional Logic for Existential Philosophy
@@ -45,10 +45,10 @@
 //! This library contains:
 //!
 //! - `Prop`: Propositions that might or might not be decidable (constructive logic)
-//! - `EProp`: Existential propositions (type theoretic existential philosophy)
+//! - `EProp`: Existential propositions (existential logic)
 //! - `DProp`: Decidable propositions (classical logic)
 //! - `LProp`: Like `Prop`, but with path semantics (path semantical constructive logic)
-//! - `ELProp`: Like `EProp`, but with path semantics (path semantical existential philosophy)
+//! - `ELProp`: Like `EProp`, but with path semantics (path semantical existential logic)
 //! - `DLProp`: Like `DProp`, but with path semantics (path semantical classical logic)
 //! - Automatic lifting of Excluded Middle of Non-Existence to existential propositions
 //! - Automatic lifting of Excluded Middle to decidable propositions

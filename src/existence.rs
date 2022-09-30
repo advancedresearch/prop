@@ -1,4 +1,4 @@
-//! # Type Theoretic Existential Philosophy
+//! # Existential Logic
 //!
 //! When reasoning about existence in existential philosophy,
 //! one can not assume that one's own existence is of the
