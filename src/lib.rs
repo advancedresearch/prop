@@ -20,7 +20,7 @@
 //! - EL: Existential Logic (Excluded Middle of Non-Existence)
 //! - PL: Classical Propositional Logic
 //! - PSI: Path Semantical Intuitionistic/Constructive Propositional Logic
-//! - EPS: Path Semantical Intuitionistic/Constructive Propositional Logic for Existential Philosophy
+//! - PSEL: Path Semantical Existential Logic
 //! - PSL: Path Semantical Classical Propositional Logic
 //! - PSQ: Path Semantical Quantum Propositional Logic
 //!
@@ -58,6 +58,7 @@
 //! - A model of Path Semantical Con-Quality in IPL (see "con_qubit" module)
 //! - A model of Seshatic Queenity (see "queenity" module)
 //! - Formalization of the core axiom of Path Semantics
+//! - Exponential Propositions (HOOO) for tautological/paradoxical theorem proving
 //! - Tactics organized in modules by constructs (e.g. `and` or `imply`)
 //!
 //! ### Examples
