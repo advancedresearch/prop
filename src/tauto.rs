@@ -78,8 +78,8 @@ pub fn pow_rev_lower<A: Prop, B: Prop, C: Prop>(x: Pow<A, And<B, C>>) -> Pow<Pow
     }
     let f = hooo_imply()(f);
     let x: Pow<Pow<A, And<B, C>>, Pow<C, B>> = pow_lift(x);
-    let x = pow_transitivity(x, hooo_dual_and());
-    let cbc = pow_uni::<C, B>;
+    let x: Pow<Or<Pow<A, B>, Pow<A, C>>, Pow<C, B>> = pow_transitivity(x, hooo_dual_and());
+    let cbc: Pow<Pow<C, B>, C> = pow_uni::<C, B>;
     pow_transitivity(cbc, f(x))
 }
 
@@ -366,7 +366,7 @@ pub fn tr<A: Prop>() -> Pow<True, A> {
 
 /// `a^false`.
 pub fn fa<A: Prop>() -> Pow<A, False> {
-    fn f<A: Prop>(fa: False) -> A {imply::absurd()(fa)}
+    fn f<A: Prop>(x: False) -> A {imply::absurd()(x)}
     f::<A>
 }
 
@@ -508,7 +508,7 @@ pub fn imply_tauto_to_imply_para<A: Prop, B: Prop>(
         })
     }
     let f: Imply<Tauto<Pow<B, A>>, Tauto<Imply<Para<B>, Para<A>>>> = hooo_imply()(f);
-    let f = imply::in_left(f, |tauto_imply| pow_imply(tauto_imply));
+    let f = imply::in_left(f, |x| pow_imply(x));
     let y: Tauto<Imply<A, B>> = hooo_rev_imply()(x);
     f(y)(True)
 }
@@ -806,7 +806,7 @@ pub fn uniform_dual_and<A: Prop, B: Prop>(
     uni_and: Uniform<And<A, B>>,
 ) -> Or<Uniform<A>, Uniform<B>> {
     match uni_and {
-        Left(tauto_and) => Left(Left(hooo_and()(tauto_and).0)),
+        Left(x) => Left(Left(hooo_and()(x).0)),
         Right(para_and) => match hooo_dual_and()(para_and) {
             Left(para_a) => Left(Right(para_a)),
             Right(para_b) => Right(Right(para_b)),
@@ -832,12 +832,12 @@ pub fn uniform_to_excm<A: Prop>(
 ) -> Tauto<ExcM<A>> {
     fn f<A: Prop>(para_a: Para<A>) -> Tauto<Not<A>> {
         hooo_rev_not()(Rc::new(move |tauto_a: Tauto<A>| {
-            para_a((tauto_a)(True))
+            para_a(tauto_a(True))
         }))
     }
     match uni {
-        Left(tauto) => tauto_or_left(tauto),
-        Right(para) => tauto_or_right(f(para)),
+        Left(t) => tauto_or_left(t),
+        Right(p) => tauto_or_right(f(p)),
     }
 }
 
