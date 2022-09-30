@@ -25,7 +25,7 @@ This means, either we know `x` is constructive or non-constructive.
 use prop::*;
 use std::rc::Rc;
 use prop::Either::*;
-use prop::tauto::*;
+use prop::hooo::*;
 
 fn main() {
 }
