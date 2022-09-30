@@ -205,9 +205,6 @@ pub fn pow_eq_transitivity<A: Prop, B: Prop, C: Prop>(
 /// Implemented by exponential propositions.
 pub trait PowImply<A, B>: Fn(A) -> B {}
 
-impl<A, B, C> PowImply<And<Tauto<Eq<A, B>>, Para<Eq<B, C>>>, Para<Eq<A, C>>>
-    for Pow<Para<Eq<A, C>>, And<Tauto<Eq<A, B>>, Para<Eq<B, C>>>> {}
-
 impl<A, B> PowImply<Pow<Not<A>, B>, Not<Pow<A, B>>>
     for Pow<Not<Pow<A, B>>, Pow<Not<A>, B>> {}
 impl<A, B> PowImply<Not<Pow<A, B>>, Pow<Not<A>, B>>
@@ -577,7 +574,12 @@ pub fn para_eq_transitivity_right<A: Prop, B: Prop, C: Prop>(
     ab: Tauto<Eq<A, B>>,
     bc: Para<Eq<B, C>>
 ) -> Para<Eq<A, C>> {
-    pow()((ab, bc))
+    let eq_para_a_para_b = eq_tauto_to_eq_para(hooo_eq()(ab));
+    let y = hooo_dual_eq()(bc);
+    let y = imply::in_left(y, move |x: Eq<Para<A>, Para<C>>| {
+        eq::transitivity(eq::symmetry(eq_para_a_para_b.clone()), x)
+    });
+    hooo_dual_rev_eq()(y)
 }
 
 /// `x => x`.
