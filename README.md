@@ -11,10 +11,10 @@ Supports theorem proving in [Classical Propositional Logic](https://en.wikipedia
 Abbreviations:
 
 - IPL: Intuitionistic/Constructive Propositional Logic
-- EP: Intuitionistic/Constructive Propositional Logic for Existential Philosophy
+- EL: Existential Logic (Excluded Middle of Non-Existence)
 - PL: Classical Propositional Logic
 - PSI: Path Semantical Intuitionistic/Constructive Propositional Logic
-- EPS: Path Semantical Intuitionistic/Constructive Propositional Logic for Existential Philosophy
+- PSEL: Path Semantical Existential Logic
 - PSL: Path Semantical Classical Propositional Logic
 - PSQ: Path Semantical Quantum Propositional Logic
 
@@ -39,10 +39,10 @@ proofs in constructive logic.
 This library contains:
 
 - `Prop`: Propositions that might or might not be decidable (constructive logic)
-- `EProp`: Existential propositions (type theoretic existential philosophy)
+- `EProp`: Existential propositions (existential logic)
 - `DProp`: Decidable propositions (classical logic)
 - `LProp`: Like `Prop`, but with path semantics (path semantical constructive logic)
-- `ELProp`: Like `EProp`, but with path semantics (path semantical existential philosophy)
+- `ELProp`: Like `EProp`, but with path semantics (path semantical existential logic)
 - `DLProp`: Like `DProp`, but with path semantics (path semantical classical logic)
 - Automatic lifting of Excluded Middle of Non-Existence to existential propositions
 - Automatic lifting of Excluded Middle to decidable propositions
@@ -52,6 +52,7 @@ This library contains:
 - A model of Path Semantical Con-Quality in IPL (see "con_qubit" module)
 - A model of Seshatic Queenity (see "queenity" module)
 - Formalization of the core axiom of Path Semantics
+- Exponential Propositions (HOOO) for tautological/paradoxical theorem proving
 - Tactics organized in modules by constructs (e.g. `and` or `imply`)
 
 ### Examples
