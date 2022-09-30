@@ -91,10 +91,7 @@ pub fn pow_refl<A: Prop>() -> Pow<A, A> {
 
 /// `(a^b)^a`.
 pub fn pow_uni<A: Prop, B: Prop>(a: A) -> Pow<A, B> {
-    fn f<A: Prop, B: Prop>(a: A) -> Imply<B, A> {
-        a.map_any()
-    }
-    pow_imply(f)(a)
+    unimplemented!()
 }
 
 /// `a^b ⋀ (a == c)^true => c^b`.
