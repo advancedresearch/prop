@@ -1,4 +1,4 @@
-//! # Tautological Propositions
+//! # Exponential Propositions
 //!
 //! By using function pointers,
 //! one can force construction of propositions
@@ -6,15 +6,15 @@
 //! such that the proposition is tautological true,
 //! instead of just assuming it is true.
 //!
-//! Some theorems about tautological propositions
-//! are true, even though they are impossible to code.
+//! When `a` is tautological provable from `b`,
+//! one expresses it as `a^b`.
 //!
-//! For example, if you have a tautological equality `x == y`,
-//! then you can construct the tautological symmetric equality `y == x`,
-//! even though you don't have a concrete proof yet.
+//! It turns out that this has the same semantics
+//! as [Higher Order Operator Overloading](https://github.com/advancedresearch/path_semantics/blob/master/sequences.md#higher-order-operator-overloading) (HOOO).
 //!
-//! By pretending that one can anyway,
-//! one can make tautological theorem proving more powerful.
+//! One motivation for developing HOOO for Exponential Propositions
+//! is to allow substitution in quality `~~` and qubit `~` operator
+//! for Path Semantical Quantum Propositional Logic (PSQ).
 
 use crate::*;
 use quality::Q;
@@ -90,7 +90,7 @@ pub fn pow_refl<A: Prop>() -> Pow<A, A> {
 }
 
 /// `(a^b)^a`.
-pub fn pow_uni<A: Prop, B: Prop>(a: A) -> Pow<A, B> {
+pub fn pow_uni<A: Prop, B: Prop>(_: A) -> Pow<A, B> {
     unimplemented!()
 }
 

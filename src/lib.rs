@@ -119,7 +119,7 @@ pub mod univalence;
 pub mod quantify;
 pub mod existence;
 pub mod con_qubit;
-pub mod tauto;
+pub mod hooo;
 
 /// Logical true.
 #[derive(Copy, Clone)]
