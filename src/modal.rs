@@ -10,7 +10,15 @@ type Nec<A> = Tauto<A>;
 /// `◇a`.
 type Pos<A> = Para<Para<A>>;
 
-/// `¬□¬p <=> ◇p`.
+/// `¬◇a => false^a`.
+pub fn npos_to_para<A: DProp>(npos: Not<Pos<A>>) -> Para<A> {
+    match Para::<A>::decide() {
+        Left(para_a) => para_a,
+        Right(npara_a) => imply::absurd()(pow_not(npos)(npara_a)),
+    }
+}
+
+/// `¬□¬a <=> ◇a`.
 pub fn eq_nnecn_pos<A: Prop>() -> Eq<Not<Nec<Not<A>>>, Pos<A>> {
     (
         Rc::new(move |n_nec_na| {
@@ -39,7 +47,7 @@ pub fn nec_to_nposn<A: Prop>(nec_a: Nec<A>) -> Not<Pos<Not<A>>> {
     })
 }
 
-/// `¬◇¬p <=> □p`.
+/// `¬◇¬a <=> □a`.
 pub fn eq_nposn_nec<A: DProp>() -> Eq<Not<Pos<Not<A>>>, Nec<A>> {
     (
         Rc::new(move |n_pos_na| {
