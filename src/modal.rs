@@ -18,6 +18,11 @@ pub fn npos_to_para<A: DProp>(npos: Not<Pos<A>>) -> Para<A> {
     }
 }
 
+/// `false^a => ¬◇a`.
+pub fn para_to_npos<A: Prop>(para_a: Para<A>) -> Not<Pos<A>> {
+    Rc::new(move |pos_a| pos_a(para_a))
+}
+
 /// `¬□¬a <=> ◇a`.
 pub fn eq_nnecn_pos<A: Prop>() -> Eq<Not<Nec<Not<A>>>, Pos<A>> {
     (
