@@ -193,6 +193,24 @@ pub fn pow_eq_transitivity<A: Prop, B: Prop, C: Prop>(
     (ac, ca)
 }
 
+/// `(x =^= y) => (a == b)^true`.
+pub fn pow_eq_to_tauto_eq<A: Prop, B: Prop>((ba, ab): PowEq<A, B>) -> Tauto<Eq<A, B>> {
+    fn f<A: Prop, B: Prop>(_: True) -> Imply<Pow<A, B>, Imply<B, A>> {
+        Rc::new(move |ba| Rc::new(move |b| ba(b)))
+    }
+    let f1 = hooo_imply()(f);
+    let tauto_ba = f1(pow_lift(ab));
+    let f2 = hooo_imply()(f);
+    let tauto_ab = f2(pow_lift(ba));
+    hooo_rev_and()((tauto_ab, tauto_ba))
+}
+
+/// `(a == b)^true => (x =^= y)`.
+pub fn tauto_eq_to_pow_eq<A: Prop, B: Prop>(x: Tauto<Eq<A, B>>) -> PowEq<A, B> {
+    let (ab, ba) = hooo_and()(x);
+    (pow_imply(ab)(True), pow_imply(ba)(True))
+}
+
 #[marker]
 /// Implemented by exponential propositions.
 pub trait PowImply<A, B>: Fn(A) -> B {}
