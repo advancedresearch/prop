@@ -20,13 +20,21 @@ use crate::*;
 use quality::Q;
 use qubit::Qu;
 
-impl<A: DProp> Decidable for Tauto<A> {
-    fn decide() -> ExcM<Tauto<A>> {
+impl<A: DProp, B: Prop> Decidable for Pow<A, B> {
+    fn decide() -> ExcM<Pow<A, B>> {
         fn f<A: DProp>(_: True) -> ExcM<A> {A::decide()}
         let f: Or<Tauto<A>, Tauto<Not<A>>> = hooo_or()(f::<A>);
         match f {
-            Left(tauto_a) => Left(tauto_a),
-            Right(tauto_na) => Right(hooo_not()(tauto_na))
+            Left(tauto_a) => Left(pow_swap_exp(pow_lift(tauto_a))(True)),
+            Right(tauto_na) => {
+                fn f<A: Prop>(para_a: Para<A>) -> Not<A> {
+                    Rc::new(move |a| para_a(a))
+                }
+                let x: Para<A> = pow_imply(tauto_na)(True);
+                let x = pow_lift(x);
+                let y = pow_transitivity(x, f);
+                Right(hooo_not()(y))
+            }
         }
     }
 }
