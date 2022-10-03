@@ -121,6 +121,7 @@ pub mod quantify;
 pub mod existence;
 pub mod con_qubit;
 pub mod hooo;
+pub mod modal;
 
 /// Logical true.
 #[derive(Copy, Clone)]
