@@ -74,3 +74,11 @@ pub fn eq_nposn_nec<A: DProp>() -> Eq<Not<Pos<Not<A>>>, Nec<A>> {
         Rc::new(move |nec_a| nec_to_nposn(nec_a)),
     )
 }
+
+/// `¬□a == □¬a`.
+pub fn listing_mobius<A: Prop>() -> Eq<Not<Nec<A>>, Nec<Not<A>>> {
+    (
+        Rc::new(move |nnec_a| hooo_rev_not()(nnec_a)),
+        Rc::new(move |nec_na| hooo_not()(nec_na)),
+    )
+}
