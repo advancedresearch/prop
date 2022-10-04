@@ -482,7 +482,7 @@ pub fn para_rev_not<A: Prop>(x: Para<Not<A>>) -> Not<Para<A>> {
 }
 
 /// `false^(¬x) => false^(¬¬¬x)`.
-pub fn para_triple<A: Prop>(x: Para<Not<A>>) -> Para<Not<Not<Not<A>>>> {
+pub fn para_not_triple<A: Prop>(x: Para<Not<A>>) -> Para<Not<Not<Not<A>>>> {
     fn f<A: Prop>(_: True) -> Eq<Not<A>, Not<Not<Not<A>>>> {
         (Rc::new(move |x| not::double(x)), Rc::new(move |x| not::rev_triple(x)))
     }
@@ -490,7 +490,7 @@ pub fn para_triple<A: Prop>(x: Para<Not<A>>) -> Para<Not<Not<Not<A>>>> {
 }
 
 /// `false^(¬¬¬x) => false^(¬x)`.
-pub fn para_rev_triple<A: Prop>(x: Para<Not<Not<Not<A>>>>) -> Para<Not<A>> {
+pub fn para_not_rev_triple<A: Prop>(x: Para<Not<Not<Not<A>>>>) -> Para<Not<A>> {
     fn f<A: Prop>(_: True) -> Eq<Not<A>, Not<Not<Not<A>>>> {
         (Rc::new(move |x| not::double(x)), Rc::new(move |x| not::rev_triple(x)))
     }
