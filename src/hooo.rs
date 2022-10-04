@@ -481,6 +481,22 @@ pub fn para_rev_not<A: Prop>(x: Para<Not<A>>) -> Not<Para<A>> {
     pow_rev_not(x)
 }
 
+/// `false^(¬x) => false^(¬¬¬x)`.
+pub fn para_triple<A: Prop>(x: Para<Not<A>>) -> Para<Not<Not<Not<A>>>> {
+    fn f<A: Prop>(_: True) -> Eq<Not<A>, Not<Not<Not<A>>>> {
+        (Rc::new(move |x| not::double(x)), Rc::new(move |x| not::rev_triple(x)))
+    }
+    para_in_arg(x, f)
+}
+
+/// `false^(¬¬¬x) => false^(¬x)`.
+pub fn para_rev_triple<A: Prop>(x: Para<Not<Not<Not<A>>>>) -> Para<Not<A>> {
+    fn f<A: Prop>(_: True) -> Eq<Not<A>, Not<Not<Not<A>>>> {
+        (Rc::new(move |x| not::double(x)), Rc::new(move |x| not::rev_triple(x)))
+    }
+    para_in_arg(x, tauto_eq_symmetry(f))
+}
+
 /// `(x == x)^true`.
 pub fn eq_refl<A: Prop>() -> Tauto<Eq<A, A>> {
     fn f<A: Prop>(_: True) -> Eq<A, A> {eq::refl()}
