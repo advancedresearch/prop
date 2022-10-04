@@ -491,6 +491,19 @@ pub fn para_rev_not<A: Prop>(x: Para<Not<A>>) -> Not<Para<A>> {
     pow_rev_not(x)
 }
 
+/// `false^a => false^(¬¬a)`.
+pub fn para_not_double<A: Prop>(x: Para<A>) -> Para<Not<Not<A>>> {
+    fn f<A: Prop>(a: A) -> Not<Not<A>> {not::double(a)}
+    let f = pow_not_double_up(f);
+    pow_transitivity(f, x)
+}
+
+/// `false^(¬¬a) => false^a`.
+pub fn para_not_rev_double<A: Prop>(x: Para<Not<Not<A>>>) -> Para<A> {
+    fn f<A: Prop>(a: A) -> Not<Not<A>> {not::double(a)}
+    pow_transitivity(f, x)
+}
+
 /// `false^(¬x) => false^(¬¬¬x)`.
 pub fn para_not_triple<A: Prop>(x: Para<Not<A>>) -> Para<Not<Not<Not<A>>>> {
     fn f<A: Prop>(_: True) -> Eq<Not<A>, Not<Not<Not<A>>>> {
