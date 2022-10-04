@@ -11,7 +11,7 @@ such that no proofs call themselves.
 */
 
 fn main() {
-    ~ data := unwrap(load(meta: "assets/rec-syntax.txt", file: "src/tauto.rs"))
+    ~ data := unwrap(load(meta: "assets/rec-syntax.txt", file: "src/hooo.rs"))
     ~ start_fns := sift i {if is_start(data[i], "fn") {clone(i)} else {continue}}
     ~ end_fns := sift i {if is_end(data[i], "fn") {clone(i)} else {continue}}
     ~ start_methods := sift i {if is_start(data[i], "method") {clone(i)} else {continue}}

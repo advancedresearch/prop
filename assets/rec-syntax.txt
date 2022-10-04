@@ -67,7 +67,10 @@ _seps: "|!:.,;<>(){}[]"
 10 gen_args = .s?(, gen_arg)
 9 gen_arg = [.._seps! .w? ?[":" .w? gen_constr]]
 
-8 let = ["let " .._seps!:"name" ?[.w? ":" .w? struct_call] .w! "=" .w! expr]
+8 let = ["let " {
+    ["(" .w? .._seps! , .._seps! .w? ")"]
+    .._seps!:"name"
+  } ?[.w? ":" .w? struct_call] .w! "=" .w! expr]
 
 7 closure_arg = [{
     branch_pat
