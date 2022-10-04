@@ -20,6 +20,31 @@ impl<A: Prop> Decidable for Pos<A> {
     }
 }
 
+/// `a^true => □a`.
+pub fn tauto_to_nec<A: Prop>(tauto_a: Tauto<A>) -> Nec<A> {
+    Rc::new(move |pos_na| {
+        match Para::<Not<A>>::decide() {
+            Left(para_na) => pos_to_para_para(pos_na)(para_na),
+            Right(npara_na) => {
+                let para_a = para_not_rev_double(pow_not(npara_na));
+                para_a(tauto_a(True))
+            }
+        }
+    })
+}
+
+/// `□a => a^true`.
+pub fn nec_to_tauto<A: DProp>(nec_a: Nec<A>) -> Tauto<A> {
+    match Tauto::<A>::decide() {
+        Left(tauto_a) => tauto_a,
+        Right(ntauto_a) => {
+            let para_a = tauto_not_to_para(hooo_rev_not()(ntauto_a));
+            let x: Para<Not<A>> = npos_to_para(nec_a);
+            imply::absurd()(pow_rev_not(x)(para_a))
+        }
+    }
+}
+
 /// `¬◇a => false^a`.
 pub fn npos_to_para<A: Prop>(npos: Not<Pos<A>>) -> Para<A> {
     match Para::<A>::decide() {
