@@ -59,6 +59,7 @@
 //! - A model of Seshatic Queenity (see "queenity" module)
 //! - Formalization of the core axiom of Path Semantics
 //! - Exponential Propositions (HOOO) for tautological/paradoxical theorem proving
+//! - A model of Modal Logic derived from Exponential Propositions and Theory of Avatar Extensions
 //! - Tactics organized in modules by constructs (e.g. `and` or `imply`)
 //!
 //! ### Examples

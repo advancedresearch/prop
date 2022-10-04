@@ -1,6 +1,34 @@
 //! # Modal Logic
 //!
 //! This modal logic builds upon the `hooo` module using Exponential Propositions.
+//!
+//! ### 1-Avatar and Unsafe code
+//!
+//! HOOO Exponential Propositions uses a uniform involution,
+//! which might be thought of as a space using [Listing-Möbius shifts](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip/listing-mobius-shifts.pdf).
+//!
+//! This happens because `not[not] <=> not` is self-dual by itself:
+//!
+//! - The HOOO rule `(a □ b)^c == (a^c □ b^c)` uses `not` in the normal sense
+//! - The HOOO rule `c^(a □ b) == (c^a □[¬] c^b)` uses `not[not]` in the dual sense
+//!
+//! As a consequence, the usual semantics of "necessary" and "possibly" is collapsed,
+//! where is it possible to prove `¬◇p == ◇¬p` and `¬□p == □¬p`.
+//!
+//! According [Avatar Semantics](https://advancedresearch.github.io/avatar-extensions/summary.html#avatar-semantics),
+//! this is not a problem, because one can reconstruct hypercube topologies in Avatar Graphs
+//! from the smallest Möbius topologies possible, by identifying the diagonals using
+//! highest N-avatars. This is done by introducing a 1-avatar that covers products in
+//! Avatar Algebra.
+//!
+//! This 1-avatar is a new-type `Pos` (possibly) that protects the content from being readable.
+//! The content is accessed under special circumstances where integration of information
+//! is checked by a higher N-avatar. This means, safe invariants using unsafe code.
+//!
+//! By constructing the semantics of "necessary" and "possibly" on top of this 1-avatar,
+//! one can still prove theorems using HOOO Exponential Propositions safely.
+//!
+//! Safe proofs are preferrable, but one can use unsafe code in edge cases by being careful.
 
 use crate::*;
 use hooo::*;
