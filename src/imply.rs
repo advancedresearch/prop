@@ -22,6 +22,18 @@ pub fn rev_modus_tollens<A: DProp, B: DProp>(f: Imply<Not<B>, Not<A>>) -> Imply<
     }))
 }
 
+/// `(¬b => ¬a)  =>  (a => b)`.
+pub fn rev_modus_tollens_excm<A: Prop, B: Prop>(
+    f: Imply<Not<B>, Not<A>>,
+    excm_a: ExcM<A>,
+    excm_b: ExcM<B>,
+) -> Imply<A, B> {
+    imply::rev_double_neg_excm(Rc::new(move |x| {
+        let f = f.clone();
+        Rc::new(move |y| match x(f(y)) {})
+    }), excm_a, excm_b)
+}
+
 /// `(a => b) ∧ (b => c)  =>  (a => c)`.
 pub fn transitivity<A: Prop, B: Prop, C: Prop>(
     f: Imply<A, B>,
@@ -65,6 +77,21 @@ pub fn rev_double_neg<A: DProp, B: DProp>(f: Imply<Not<Not<A>>, Not<Not<B>>>) ->
     let a = <A as Decidable>::decide();
     let b = <B as Decidable>::decide();
     match (a, b) {
+        (_, Left(b)) => b.map_any(),
+        (Right(a), _) => Rc::new(move |x| match a(x) {}),
+        (Left(a), Right(b)) => match f(not::double(a))(b) {}
+    }
+}
+
+/// `(¬¬a => ¬¬b)  =>  (a => b)`.
+pub fn rev_double_neg_excm<A: Prop, B: Prop>(
+    f: Imply<Not<Not<A>>, Not<Not<B>>>,
+    excm_a: ExcM<A>,
+    excm_b: ExcM<B>,
+) -> Imply<A, B> {
+    use Either::*;
+
+    match (excm_a, excm_b) {
         (_, Left(b)) => b.map_any(),
         (Right(a), _) => Rc::new(move |x| match a(x) {}),
         (Left(a), Right(b)) => match f(not::double(a))(b) {}
