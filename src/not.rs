@@ -11,9 +11,14 @@ pub fn double<A: Prop>(a: A) -> Not<Not<A>> {
 
 /// `¬¬a => a`.
 pub fn rev_double<A: DProp>(f: Not<Not<A>>) -> A {
+    rev_double_excm(f, A::decide())
+}
+
+/// `¬¬a => a`.
+pub fn rev_double_excm<A: Prop>(f: Not<Not<A>>, excm: ExcM<A>) -> A {
     use Either::*;
 
-    match A::decide() {
+    match excm {
         Left(a) => a,
         Right(not_a) => match f(not_a) {},
     }
