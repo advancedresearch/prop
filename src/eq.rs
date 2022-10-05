@@ -69,6 +69,17 @@ pub fn rev_modus_tollens<A: DProp, B: DProp>((f0, f1): Eq<Not<A>, Not<B>>) -> Eq
     (f02, f12)
 }
 
+/// `(¬a = ¬b) => (b = a)`.
+pub fn rev_modus_tollens_excm<A: Prop, B: Prop>(
+    (f0, f1): Eq<Not<A>, Not<B>>,
+    excm_a: ExcM<A>,
+    excm_b: ExcM<B>,
+) -> Eq<B, A> {
+    let f02 = imply::rev_modus_tollens_excm(f0, excm_b.clone(), excm_a.clone());
+    let f12 = imply::rev_modus_tollens_excm(f1, excm_a, excm_b);
+    (f02, f12)
+}
+
 /// `(true = a) => a`.
 pub fn is_true<A: Prop>((f0, _): Eq<True, A>) -> A {
     f0(True)
