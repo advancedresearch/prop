@@ -7,10 +7,7 @@
 //! HOOO Exponential Propositions uses a uniform involution,
 //! which might be thought of as a space using [Listing-Möbius shifts](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip/listing-mobius-shifts.pdf).
 //!
-//! This happens because `not[not] <=> not` is self-dual by itself:
-//!
-//! - The HOOO rule `(a □ b)^c == (a^c □ b^c)` uses `not` in the normal sense
-//! - The HOOO rule `c^(a □ b) == (c^a □[¬] c^b)` uses `not[not]` in the dual sense
+//! This happens because `false^(¬a) == ¬(false^a)`.
 //!
 //! As a consequence, the usual semantics of "necessary" and "possibly" is collapsed,
 //! where is it possible to prove `¬◇p == ◇¬p` and `¬□p == □¬p`.
