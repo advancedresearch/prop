@@ -20,22 +20,38 @@ use crate::*;
 use quality::Q;
 use qubit::Qu;
 
-impl<A: DProp, B: Prop> Decidable for Pow<A, B> {
-    fn decide() -> ExcM<Pow<A, B>> {
-        fn f<A: DProp>(_: True) -> ExcM<A> {A::decide()}
-        let f: Or<Tauto<A>, Tauto<Not<A>>> = hooo_or()(f::<A>);
-        match f {
-            Left(tauto_a) => Left(pow_swap_exp(pow_lift(tauto_a))(True)),
-            Right(tauto_na) => {
-                fn f<A: Prop>(para_a: Para<A>) -> Not<A> {
-                    Rc::new(move |a| para_a(a))
-                }
-                let x: Para<A> = pow_imply(tauto_na)(True);
-                let x = pow_lift(x);
-                let y = pow_transitivity(x, f);
-                Right(hooo_not()(y))
-            }
-        }
+impl<A: DProp, B: DProp> Decidable for Pow<A, B> {
+    fn decide() -> ExcM<Self> {decide()}
+}
+
+/// `a^b ⋁ ¬(a^b)`.
+pub fn decide<A: DProp, B: DProp>() -> ExcM<Pow<A, B>> {
+    fn f<A: Prop>(a: A) -> A {a}
+    fn g<A: Prop, B: Prop>((b, nb): And<B, Not<B>>) -> A {
+        not::absurd(nb, b)
+    }
+    match (A::decide(), B::decide()) {
+        (Left(a), _) => Left(pow_swap_exp(pow_lift(f))(a)),
+        (Right(na), Left(b)) => Right(Rc::new(move |pow_ab| {
+            let a = pow_ab(b.clone());
+            na(a)
+        })),
+        (_, Right(nb)) => Left(pow_rev_lower(g)(nb)),
+    }
+}
+
+/// `a^true ⋁ ¬(a^true)`.
+pub fn tauto_decide<A: DProp>() -> ExcM<Tauto<A>> {
+    decide()
+}
+
+/// `false^a ⋁ ¬(false^a)`.
+pub fn para_decide<A: Prop>() -> ExcM<Para<A>> {
+    fn f<A: Prop>((a, na): And<A, Not<A>>) -> False {na(a)}
+    let f = hooo_dual_and()(f);
+    match f {
+        Left(para_a) => Left(para_a),
+        Right(para_na) => Right(pow_rev_not(para_na)),
     }
 }
 
@@ -159,11 +175,6 @@ pub fn pow_rev_not<A: Prop, B: Prop>(x: Pow<A, Not<B>>) -> Not<Pow<A, B>> {
     })
 }
 
-/// `(¬¬a)^b => a^(¬¬b)`.
-pub fn pow_not_double_up<A: Prop, B: Prop>(x: Pow<Not<Not<A>>, B>) -> Pow<A, Not<Not<B>>> {
-    pow_not(hooo_not()(pow_not(hooo_not()(x))))
-}
-
 /// `a^(¬¬b) => (¬¬a)^b`.
 pub fn pow_not_double_down<A: Prop, B: Prop>(x: Pow<A, Not<Not<B>>>) -> Pow<Not<Not<A>>, B> {
     hooo_rev_not()(pow_rev_not(hooo_rev_not()(pow_rev_not(x))))
@@ -279,10 +290,6 @@ pub fn tauto<A: Prop>() -> Tauto<A>
 pub fn para<A: Prop>() -> Para<A>
     where Para<A>: PowImply<A, False>
 {pow()}
-
-/// `(¬(a^b))^((¬a)^b)`.
-pub fn hooo_not<A: Prop, B: Prop>()
--> Pow<Not<Pow<A, B>>, Pow<Not<A>, B>> {pow()}
 
 /// `((¬a)^b)^(¬(a^b))`.
 pub fn hooo_rev_not<A: Prop, B: Prop>()
@@ -449,7 +456,8 @@ pub fn para_to_eq_false<A: DProp>(
         y.map_any(),
         consistency().map_any(),
     );
-    let eq2: Eq<Tauto<A>, Tauto<False>> = eq::rev_modus_tollens(eq);
+    let eq2: Eq<Tauto<A>, Tauto<False>> = eq::rev_modus_tollens_excm(
+        eq, tauto_decide(), tauto_decide());
     hooo_rev_eq()(eq2)
 }
 
@@ -460,7 +468,7 @@ pub fn tauto_not<A: Prop>(x: Not<Tauto<A>>) -> Tauto<Not<A>> {
 
 /// `(¬x)^true => ¬(x^true)`.
 pub fn tauto_rev_not<A: Prop>(x: Tauto<Not<A>>) -> Not<Tauto<A>> {
-    hooo_not()(x)
+    Rc::new(move |tauto_a| x(True)(tauto_a(True)))
 }
 
 /// `(¬a)^true => false^a`.
@@ -493,9 +501,14 @@ pub fn para_rev_not<A: Prop>(x: Para<Not<A>>) -> Not<Para<A>> {
 
 /// `false^a => false^(¬¬a)`.
 pub fn para_not_double<A: Prop>(x: Para<A>) -> Para<Not<Not<A>>> {
-    fn f<A: Prop>(a: A) -> Not<Not<A>> {not::double(a)}
-    let f = pow_not_double_up(f);
-    pow_transitivity(f, x)
+    match para_decide::<Not<Not<A>>>() {
+        Left(y) => y,
+        Right(y) => {
+            let y: Not<Not<Para<Not<A>>>> = imply::in_left(y, |x| pow_not(x));
+            let y: Not<Not<Not<Para<A>>>> = imply::in_left(y, |x| imply::in_left(x, |y| pow_rev_not(y)));
+            not::absurd(not::rev_triple(y), x)
+        }
+    }
 }
 
 /// `false^(¬¬a) => false^a`.
