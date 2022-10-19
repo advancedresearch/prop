@@ -234,7 +234,9 @@ pub fn tauto_eq_to_pow_eq<A: Prop, B: Prop>(x: Tauto<Eq<A, B>>) -> PowEq<A, B> {
 }
 
 #[marker]
-/// Implemented by exponential propositions.
+/// Implemented by axiomatic exponential propositions.
+///
+/// This is used by `pow` to instantiate an exponential proposition axiomatically.
 pub trait PowImply<A, B>: Fn(A) -> B {}
 
 impl<A, B> PowImply<Not<Pow<A, B>>, Pow<Not<A>, B>>
