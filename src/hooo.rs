@@ -237,8 +237,6 @@ pub fn tauto_eq_to_pow_eq<A: Prop, B: Prop>(x: Tauto<Eq<A, B>>) -> PowEq<A, B> {
 /// Implemented by exponential propositions.
 pub trait PowImply<A, B>: Fn(A) -> B {}
 
-impl<A, B> PowImply<Pow<Not<A>, B>, Not<Pow<A, B>>>
-    for Pow<Not<Pow<A, B>>, Pow<Not<A>, B>> {}
 impl<A, B> PowImply<Not<Pow<A, B>>, Pow<Not<A>, B>>
     for Pow<Pow<Not<A>, B>, Not<Pow<A, B>>> {}
 
@@ -992,7 +990,6 @@ mod tests {
 
     fn check2<A: Prop, B: Prop, C: Prop>() {pow_eq::<And<Pow<A, C>, Pow<B, C>>, Pow<And<A, B>, C>>()}
     fn check3<A: Prop, B: Prop, C: Prop>() {pow_eq::<Or<Pow<A, C>, Pow<B, C>>, Pow<Or<A, B>, C>>()}
-    fn check4<A: Prop, B: Prop>() {pow_eq::<Not<Pow<A, B>>, Pow<Not<A>, B>>()}
     fn check5<A: Prop, B: Prop, C: Prop>() {pow_eq::<Imply<Pow<A, C>, Pow<B, C>>, Pow<Imply<A, B>, C>>()}
     fn check6<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, And<A, B>>, Or<Pow<C, A>, Pow<C, B>>>()}
     fn check7<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, Or<A, B>>, And<Pow<C, A>, Pow<C, B>>>()}
