@@ -78,7 +78,7 @@ _seps: "|!:.,;<>(){}[]"
   } .w? ?[":" .w! ty]]
 6 closure_args = .s?(, closure_arg)
 
-5 exprs = [.l(fn_decl:"fn") .w? .s!.(; expr)]
+5 exprs = [.l([.w? fn_decl:"fn"]) .w? .s!.(; expr)]
 4 expr = {
     let:"let"
     ["match " expr .w! "{" .w? .r?([.w? branch]) .w? "}"]
