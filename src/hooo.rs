@@ -107,11 +107,8 @@ pub fn pow_rev_lower<A: Prop, B: Prop, C: Prop>(x: Pow<A, And<B, C>>) -> Pow<Pow
     pow_transitivity(cbc, f(x))
 }
 
-/// `a^a`.
-pub fn pow_refl<A: Prop>() -> Pow<A, A> {
-    fn f<A: Prop>(a: A) -> A {a}
-    f::<A>
-}
+/// `a => a`.
+pub fn pow_refl<A: Prop>(x: A) -> A {x}
 
 /// `(a^b)^a`.
 pub fn pow_uni<A: Prop, B: Prop>(_: A) -> Pow<A, B> {
@@ -142,7 +139,7 @@ pub fn pow_in_right_arg<A: Prop, B: Prop, C: Prop>(
 ) -> Pow<A, C> {
     let y = pow_swap_exp(pow_lift(tauto_eq_b_c))(True);
     let y = hooo_eq(y);
-    let bc: Pow<B, C> = y.1(pow_refl());
+    let bc: Pow<B, C> = y.1(pow_refl);
     pow_transitivity(bc, x)
 }
 
