@@ -64,7 +64,7 @@ pub fn nec_to_tauto<A: DProp>(nec_a: Nec<A>) -> Tauto<A> {
     match tauto_decide() {
         Left(tauto_a) => tauto_a,
         Right(ntauto_a) => {
-            let para_a = tauto_not_to_para(hooo_rev_not()(ntauto_a));
+            let para_a = tauto_not_to_para(hooo_rev_not(ntauto_a));
             let x: Para<Not<A>> = npos_to_para(nec_a);
             imply::absurd()(pow_rev_not(x)(para_a))
         }
@@ -225,7 +225,7 @@ pub fn to_pos_tauto_eq<A: Prop>(
     fn f<A: Prop>(_: True) -> Imply<Pos<A>, Para<Para<A>>> {
         Rc::new(move |pos_a| unsafe {pos_to_para_para(pos_a)})
     }
-    hooo_rev_and()((y, f::<A>))
+    hooo_rev_and((y, f::<A>))
 }
 
 /// `¬◇a => false^(¬(false^a))`.
