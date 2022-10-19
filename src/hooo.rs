@@ -27,9 +27,7 @@ impl<A: DProp, B: DProp> Decidable for Pow<A, B> {
 /// `a^b ⋁ ¬(a^b)`.
 pub fn decide<A: DProp, B: DProp>() -> ExcM<Pow<A, B>> {
     fn f<A: Prop>(a: A) -> A {a}
-    fn g<A: Prop, B: Prop>((b, nb): And<B, Not<B>>) -> A {
-        not::absurd(nb, b)
-    }
+    fn g<A: Prop, B: Prop>((b, nb): And<B, Not<B>>) -> A {not::absurd(nb, b)}
     match (A::decide(), B::decide()) {
         (Left(a), _) => Left(pow_swap_exp(pow_lift(f))(a)),
         (Right(na), Left(b)) => Right(Rc::new(move |pow_ab| {
@@ -110,10 +108,8 @@ pub fn pow_rev_lower<A: Prop, B: Prop, C: Prop>(x: Pow<A, And<B, C>>) -> Pow<Pow
 /// `a => a`.
 pub fn pow_refl<A: Prop>(x: A) -> A {x}
 
-/// `(a^b)^a`.
-pub fn pow_uni<A: Prop, B: Prop>(_: A) -> Pow<A, B> {
-    unimplemented!()
-}
+/// `a => a^b`.
+pub fn pow_uni<A: Prop, B: Prop>(_: A) -> Pow<A, B> {unimplemented!()}
 
 /// `a^b ⋀ (a == c)^true => c^b`.
 pub fn pow_in_left_arg<A: Prop, B: Prop, C: Prop>(
