@@ -15,6 +15,19 @@
 //! One motivation for developing HOOO for Exponential Propositions
 //! is to allow substitution in quality `~~` and qubit `~` operator
 //! for Path Semantical Quantum Propositional Logic (PSQ).
+//!
+//! ### Comment conventions
+//!
+//! When a function comment says `a => b`, it is actually `(a => b)^true`.
+//!
+//! The exponent is left out to make the comments more consistent for the whole library.
+//! Otherwise, it would be proper to use notation for Exponential Propositions everywhere,
+//! but this is unpractical since Exponential Propositions is viewed as an extension of
+//! normal Propositional Logic. One would like other modules to not use this notation
+//! unless they rely on this extensions explicitly.
+//!
+//! When `a^true` is used explicitly, the function returns a function pointer instead of using a
+//! `_: True` argument, since it is natural in programming to not add unused arguments.
 
 use crate::*;
 use quality::Q;
