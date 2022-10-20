@@ -965,7 +965,7 @@ pub fn theory_and<A: Prop, B: Prop>(
     })
 }
 
-/// `false^((false^a)^(a^true) ⋀ (a^true)^(false^a))`.
+/// `(false^a)^(a^true) ⋀ (a^true)^(false^a) => false`.
 ///
 /// This is also known as [Liar's paradox](https://en.wikipedia.org/wiki/Liar_paradox).
 pub fn para_liar<A: Prop>(
