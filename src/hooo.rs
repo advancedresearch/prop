@@ -24,7 +24,7 @@
 //! Otherwise, it would be proper to use notation for Exponential Propositions everywhere,
 //! but this is unpractical since Exponential Propositions is viewed as an extension of
 //! normal Propositional Logic. One would like other modules to not use this notation
-//! unless they rely on this extensions explicitly.
+//! unless they rely on this extension explicitly.
 //!
 //! When `a^true` is used explicitly, the function returns a function pointer instead of using a
 //! `_: True` argument, since it is natural in programming to not add unused arguments.
