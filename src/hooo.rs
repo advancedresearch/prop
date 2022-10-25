@@ -298,7 +298,12 @@ pub fn para<A: Prop>() -> Para<A>
 {pow()}
 
 /// `¬(a^b) => (¬a)^b`.
-pub fn hooo_rev_not<A: Prop, B: Prop>(x: Not<Pow<A, B>>) -> Pow<Not<A>, B> {pow()(x)}
+pub fn hooo_rev_not<A: Prop, B: Prop>(x: Not<Pow<A, B>>) -> Pow<Not<A>, B> {
+    fn f<A: Prop, B: Prop>((_, npow_ab): And<B, Not<Pow<A, B>>>) -> Not<A> {
+        Rc::new(move |a| npow_ab(pow_uni(a)))
+    }
+    pow_rev_lower(f)(x)
+}
 
 /// `(a ⋀ b)^c => (a^c ⋀ b^c)`.
 pub fn hooo_and<A: Prop, B: Prop, C: Prop>(x: Pow<And<A, B>, C>) -> And<Pow<A, C>, Pow<B, C>> {
