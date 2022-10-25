@@ -73,8 +73,8 @@ pub type Pow<A, B> = fn(B) -> A;
 pub type PowEq<A, B> = And<Pow<B, A>, Pow<A, B>>;
 
 /// `a^b => (a^b)^c`.
-pub fn pow_lift<A: Prop, B: Prop, C: Prop>(_: Pow<A, B>) -> Pow<Pow<A, B>, C> {
-    unimplemented!()
+pub fn pow_lift<A: Prop, B: Prop, C: Prop>(x: Pow<A, B>) -> Pow<Pow<A, B>, C> {
+    pow_uni(x)
 }
 
 /// `(a => b^a) => b^a`.
