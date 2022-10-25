@@ -101,8 +101,9 @@ pub fn pow_imply<A: Prop, B: Prop, C: Prop>(x: Pow<Imply<A, B>, C>) -> Pow<Pow<B
 }
 
 /// `(a^b)^c => a^(b ⋀ c)`.
-pub fn pow_lower<A: Prop, B: Prop, C: Prop>(_: Pow<Pow<A, B>, C>) -> Pow<A, And<B, C>> {
-    unimplemented!()
+pub fn pow_lower<A: Prop, B: Prop, C: Prop>(x: Pow<Pow<A, B>, C>) -> Pow<A, And<B, C>> {
+    fn f<A: Prop, B: Prop, C: Prop>(((b, c), g): And<And<B, C>, Pow<Pow<A, B>, C>>) -> A {g(c)(b)}
+    pow_rev_lower(f)(x)
 }
 
 /// `a^(b ⋀ c) => (a^b)^c`.
