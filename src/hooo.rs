@@ -78,8 +78,12 @@ pub fn pow_lift<A: Prop, B: Prop, C: Prop>(_: Pow<A, B>) -> Pow<Pow<A, B>, C> {
 }
 
 /// `(a => b^a) => b^a`.
-pub fn imply_pow<A: Prop, B: Prop>(_: Imply<A, Pow<B, A>>) -> Pow<B, A> {
-    unimplemented!()
+pub fn imply_pow<A: Prop, B: Prop>(x: Imply<A, Pow<B, A>>) -> Pow<B, A> {
+    fn f<A: Prop>(_: True) -> Eq<And<A, A>, A> {
+        (Rc::new(move |and_aa| and_aa.0), Rc::new(move |a| (a.clone(), a)))
+    }
+    let x: Pow<B, And<A, A>> = pow_lower(hooo_imply(pow_uni(x))(pow_refl));
+    pow_in_right_arg(x, f)
 }
 
 /// `((a => b^a) == b^a)^true`.
