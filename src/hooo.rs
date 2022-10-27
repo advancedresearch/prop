@@ -73,31 +73,8 @@ pub type Pow<A, B> = fn(B) -> A;
 pub type PowEq<A, B> = And<Pow<B, A>, Pow<A, B>>;
 
 /// `a^b => (a^b)^c`.
-pub fn pow_lift<A: Prop, B: Prop, C: Prop>(x: Pow<A, B>) -> Pow<Pow<A, B>, C> {
-    pow_uni(x)
-}
-
-/// `(a => b^a) => b^a`.
-pub fn imply_pow<A: Prop, B: Prop>(x: Imply<A, Pow<B, A>>) -> Pow<B, A> {
-    fn f<A: Prop>(_: True) -> Eq<And<A, A>, A> {
-        (Rc::new(move |and_aa| and_aa.0), Rc::new(move |a| (a.clone(), a)))
-    }
-    let x: Pow<B, And<A, A>> = pow_lower(hooo_imply(pow_uni(x))(pow_refl));
-    pow_in_right_arg(x, f)
-}
-
-/// `((a => b^a) == b^a)^true`.
-pub fn imply_pow_eq<A: Prop, B: Prop>(_: True) -> Eq<Imply<A, Pow<B, A>>, Pow<B, A>> {
-    (Rc::new(move |aba| imply_pow(aba)), Rc::new(move |ba| ba.map_any()))
-}
-
-/// `(a => b)^c => (b^a)^c`.
-pub fn pow_imply<A: Prop, B: Prop, C: Prop>(x: Pow<Imply<A, B>, C>) -> Pow<Pow<B, A>, C> {
-    let y: Imply<Pow<A, C>, Pow<B, C>> = hooo_imply::<A, B, C>(x);
-    let f: Imply<Pow<B, C>, Pow<Pow<B, A>, C>> = Rc::new(move |x| pow_swap_exp(pow_lift(x)));
-    let g: Imply<Pow<A, C>, Pow<Pow<B, A>, C>> = imply::transitivity(y, f);
-    let g2: Pow<Imply<A, Pow<B, A>>, C> = hooo_rev_imply(g);
-    pow_in_left_arg(g2, imply_pow_eq)
+pub fn pow_lift<A: Prop, B: Prop, C: Prop>(_: Pow<A, B>) -> Pow<Pow<A, B>, C> {
+    unimplemented!()
 }
 
 /// `(a^b)^c => a^(b ⋀ c)`.
@@ -107,27 +84,12 @@ pub fn pow_lower<A: Prop, B: Prop, C: Prop>(x: Pow<Pow<A, B>, C>) -> Pow<A, And<
 }
 
 /// `a^(b ⋀ c) => (a^b)^c`.
-pub fn pow_rev_lower<A: Prop, B: Prop, C: Prop>(x: Pow<A, And<B, C>>) -> Pow<Pow<A, B>, C> {
-    fn f<A: Prop, B: Prop, C: Prop>(c: Pow<C, B>) -> Imply<Or<Pow<A, B>, Pow<A, C>>, Pow<A, B>> {
-        Rc::new(move |or| {
-            match or {
-                Left(x) => x,
-                Right(y) => pow_transitivity(c, y),
-            }
-        })
-    }
-    let f = hooo_imply(f);
-    let x: Pow<Pow<A, And<B, C>>, Pow<C, B>> = pow_lift(x);
-    let x: Pow<Or<Pow<A, B>, Pow<A, C>>, Pow<C, B>> = pow_transitivity(x, hooo_dual_and);
-    let cbc: Pow<Pow<C, B>, C> = pow_uni::<C, B>;
-    pow_transitivity(cbc, f(x))
+pub fn pow_rev_lower<A: Prop, B: Prop, C: Prop>(_: Pow<A, And<B, C>>) -> Pow<Pow<A, B>, C> {
+    unimplemented!()
 }
 
 /// `a => a`.
 pub fn pow_refl<A: Prop>(x: A) -> A {x}
-
-/// `a => a^b`.
-pub fn pow_uni<A: Prop, B: Prop>(_: A) -> Pow<A, B> {unimplemented!()}
 
 /// `a^b ⋀ (a == c)^true => c^b`.
 pub fn pow_in_left_arg<A: Prop, B: Prop, C: Prop>(
@@ -247,8 +209,9 @@ pub fn pow_eq_to_tauto_eq<A: Prop, B: Prop>((ba, ab): PowEq<A, B>) -> Tauto<Eq<A
 
 /// `(a == b)^true => (x =^= y)`.
 pub fn tauto_eq_to_pow_eq<A: Prop, B: Prop>(x: Tauto<Eq<A, B>>) -> PowEq<A, B> {
-    let (ab, ba) = hooo_and(x);
-    (pow_imply(ab)(True), pow_imply(ba)(True))
+    let pow_ab: Pow<A, B> = pow_in_right_arg(pow_refl, x.clone());
+    let pow_ba: Pow<B, A> = pow_in_left_arg(pow_refl, x);
+    (pow_ba, pow_ab)
 }
 
 #[marker]
@@ -303,11 +266,8 @@ pub fn para<A: Prop>() -> Para<A>
 {pow()}
 
 /// `¬(a^b) => (¬a)^b`.
-pub fn hooo_rev_not<A: Prop, B: Prop>(x: Not<Pow<A, B>>) -> Pow<Not<A>, B> {
-    fn f<A: Prop, B: Prop>((_, npow_ab): And<B, Not<Pow<A, B>>>) -> Not<A> {
-        Rc::new(move |a| npow_ab(pow_uni(a)))
-    }
-    pow_rev_lower(f)(x)
+pub fn hooo_rev_not<A: Prop, B: Prop>(_: Not<Pow<A, B>>) -> Pow<Not<A>, B> {
+    unimplemented!()
 }
 
 /// `(a ⋀ b)^c => (a^c ⋀ b^c)`.
@@ -504,7 +464,8 @@ pub fn tauto_rev_not<A: Prop>(x: Tauto<Not<A>>) -> Not<Tauto<A>> {
 
 /// `(¬a)^true => false^a`.
 pub fn tauto_not_to_para<A: Prop>(x: Tauto<Not<A>>) -> Para<A> {
-    pow_imply(x)(True)
+    fn f<A: Prop>((a, tauto_na): And<A, Tauto<Not<A>>>) -> False {tauto_na(True)(a)}
+    pow_rev_lower(f)(x)
 }
 
 /// `false^a => (¬a)^true`.
@@ -615,22 +576,16 @@ pub fn program<A: Prop>() -> Or<Uniform<A>, Para<Uniform<A>>> {unimplemented!()}
 pub fn imply_tauto_to_imply_para<A: Prop, B: Prop>(
     x: Imply<Tauto<A>, Tauto<B>>
 ) -> Imply<Para<B>, Para<A>> {
-    fn f<A: Prop, B: Prop>(_: True) -> Imply<Pow<B, A>, Imply<Para<B>, Para<A>>> {
-        fn g<A: Prop, B: Prop>(
-            (para_b, pow_b_a): And<Para<B>, Pow<B, A>>
-        ) -> Para<A> {
-            pow_transitivity(pow_b_a, para_b)
+    Rc::new(move |para_b| {
+        match para_decide::<A>() {
+            Left(para_a) => para_a,
+            Right(npara_a) => {
+                let nb: Not<B> = Rc::new(move |b| para_b(b));
+                let na: Not<A> = imply::modus_tollens(hooo_rev_imply(x.clone())(True))(nb);
+                imply::absurd()(pow_not(npara_a)(na))
+            }
         }
-        let g: Pow<Pow<Para<A>, Para<B>>, Pow<B, A>> = pow_rev_lower(g::<A, B>);
-        Rc::new(move |pow_a_b| {
-            let h: Pow<Para<A>, Para<B>> = g(pow_a_b);
-            Rc::new(move |para_b| h(para_b))
-        })
-    }
-    let f: Imply<Tauto<Pow<B, A>>, Tauto<Imply<Para<B>, Para<A>>>> = hooo_imply(f);
-    let f = imply::in_left(f, |x| pow_imply(x));
-    let y: Tauto<Imply<A, B>> = hooo_rev_imply(x);
-    f(y)(True)
+    })
 }
 
 /// `(a^true == b^true) => (false^a == false^b)`.
