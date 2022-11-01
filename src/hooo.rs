@@ -948,6 +948,82 @@ pub fn para_liar<A: Prop>(
     }
 }
 
+/// `(a => b)^true => b^a`.
+pub fn tauto_imply_to_pow<A: Prop, B: Prop>(
+    x: Tauto<Imply<A, B>>
+) -> Pow<B, A> {
+    fn f<A: Prop, B: Prop>((a, x): And<A, Tauto<Imply<A, B>>>) -> B {
+        x(True)(a)
+    }
+    pow_rev_lower(f)(x)
+}
+
+/// `b^a => (a => b)^true`.
+pub fn pow_to_tauto_imply<A: Prop, B: Prop>(
+    x: Pow<B, A>
+) -> Tauto<Imply<A, B>> {
+    fn f<A: Prop, B: Prop>((_, x): And<True, Pow<B, A>>) -> Imply<A, B> {
+        Rc::new(move |a| x(a))
+    }
+    pow_rev_lower(f)(x)
+}
+
+/// `(a => b)^true => (b^a)^true`.
+pub fn tauto_pow_imply<A: Prop, B: Prop>(
+    x: Tauto<Imply<A, B>>
+) -> Pow<Pow<B, A>, True> {
+    pow_lift(tauto_imply_to_pow(x))
+}
+
+/// `(b^a)^true => (a => b)^true`.
+pub fn tauto_imply_pow<A: Prop, B: Prop>(
+    x: Pow<Pow<B, A>, True>
+) -> Tauto<Imply<A, B>> {
+    pow_to_tauto_imply(x(True))
+}
+
+/// `(a => b)^true => b^(a^true)`.
+pub fn tauto_imply_to_pow_tauto<A: Prop, B: Prop>(
+    x: Tauto<Imply<A, B>>
+) -> Pow<B, Tauto<A>> {
+    fn f<A: Prop, B: Prop>((tauto_a, x): And<Tauto<A>, Tauto<Imply<A, B>>>) -> Tauto<B> {
+        hooo_imply(x)(tauto_a)
+    }
+    fn g<A: Prop>(_: True) -> Eq<And<True, A>, A> {
+        (Rc::new(move |x| x.1), Rc::new(move |a| (True, a)))
+    }
+    let y: Pow<Tauto<B>, Tauto<A>> = pow_rev_lower(f)(x);
+    let y: Pow<B, And<True, Tauto<A>>> = pow_lower(y);
+    pow_in_right_arg(y, g)
+}
+
+/// `b^(a^true) => (a => b)^true`.
+pub fn pow_tauto_to_tauto_imply<A: Prop, B: Prop>(
+    x: Pow<B, Tauto<A>>
+) -> Tauto<Imply<A, B>> {
+    fn g<A: Prop>(_: True) -> Eq<A, And<True, A>> {
+        (Rc::new(move |a| (True, a)), Rc::new(move |x| x.1))
+    }
+    let y: Pow<B, And<True, Tauto<A>>> = pow_in_right_arg(x, g);
+    let y: Pow<Tauto<B>, Tauto<A>> = pow_rev_lower(y);
+    let y = Rc::new(move |tauto_a| y(tauto_a));
+    hooo_rev_imply(y)
+}
+
+/// `b^(a^true) => b^a`.
+pub fn pow_tauto_to_pow<A: Prop, B: Prop>(
+    x: Pow<B, Tauto<A>>
+) -> Pow<B, A> {
+    tauto_imply_to_pow(pow_tauto_to_tauto_imply(x))
+}
+
+/// `b^a => b^(a^true)`.
+pub fn pow_to_pow_tauto<A: Prop, B: Prop>(
+    x: Pow<B, A>
+) -> Pow<B, Tauto<A>> {
+    tauto_imply_to_pow_tauto(pow_to_tauto_imply(x))
+}
+
 #[cfg(test)]
 #[allow(dead_code)]
 mod tests {
