@@ -39,15 +39,34 @@ impl<A: DProp, B: DProp> Decidable for Pow<A, B> {
 
 /// `a^b ⋁ ¬(a^b)`.
 pub fn decide<A: DProp, B: DProp>() -> ExcM<Pow<A, B>> {
-    fn f<A: Prop>(a: A) -> A {a}
-    fn g<A: Prop, B: Prop>((b, nb): And<B, Not<B>>) -> A {not::absurd(nb, b)}
-    match (A::decide(), B::decide()) {
-        (Left(a), _) => Left(pow_swap_exp(pow_lift(f))(a)),
-        (Right(na), Left(b)) => Right(Rc::new(move |pow_ab| {
-            let a = pow_ab(b.clone());
-            na(a)
-        })),
-        (_, Right(nb)) => Left(pow_rev_lower(g)(nb)),
+    fn f<A: DProp, B: Prop>(_: B) -> ExcM<A> {A::decide()}
+    match hooo_or(f) {
+        Left(pow_ab) => Left(pow_ab),
+        Right(pow_na_b) => {
+            match para_decide::<B>() {
+                Left(para_b) => Left(pow_transitivity(para_b, fa())),
+                Right(npara_b) => {
+                    match para_decide::<A>() {
+                        Left(para_a) => {
+                            Right(Rc::new(move |pow_ab| {
+                                let para_b = pow_transitivity(pow_ab, para_a);
+                                let nb: Not<B> = Rc::new(move |b| para_b(b));
+                                let para_nb = pow_not(npara_b.clone());
+                                para_nb(nb)
+                            }))
+                        }
+                        Right(npara_a) => {
+                            let para_na = pow_not(npara_a);
+                            let para_b = pow_transitivity(pow_na_b, para_na);
+                            let nb: Not<B> = Rc::new(move |b| para_b(b));
+                            let para_nb = pow_not(npara_b);
+                            imply::absurd()(para_nb(nb))
+                        }
+                    }
+
+                }
+            }
+        }
     }
 }
 
