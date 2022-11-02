@@ -981,10 +981,10 @@ pub fn para_liar<A: Prop>(
 pub fn tauto_imply_to_pow<A: Prop, B: Prop>(
     x: Tauto<Imply<A, B>>
 ) -> Pow<B, A> {
-    fn f<A: Prop, B: Prop>((a, x): And<A, Tauto<Imply<A, B>>>) -> B {
-        x(True)(a)
+    fn f<A: Prop, B: Prop>(a: A) -> Imply<Tauto<Imply<A, B>>, B> {
+        Rc::new(move |x| x(True)(a.clone()))
     }
-    pow_rev_lower(f)(x)
+    hooo_imply(f)(pow_lift(x))
 }
 
 /// `b^a => (a => b)^true`.
