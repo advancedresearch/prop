@@ -331,29 +331,12 @@ pub fn hooo_dual_rev_or<A: Prop, B: Prop, C: Prop>(
 
 /// `(a == b)^c => (a^c == b^c)`.
 pub fn hooo_eq<A: Prop, B: Prop, C: Prop>(x: Pow<Eq<A, B>, C>) -> Eq<Pow<A, C>, Pow<B, C>> {
-    (Rc::new(move |pow_ac| {
-        fn f<A: Prop, B: Prop, C: Prop>((c, (x, y)): And<C, And<Pow<A, C>, Pow<Eq<A, B>, C>>>) -> B {
-            y(c.clone()).0(x(c))
-        }
-        pow_rev_lower(f)((pow_ac, x))
-    }), Rc::new(move |pow_bc| {
-        fn f<A: Prop, B: Prop, C: Prop>((c, (x, y)): And<C, And<Pow<B, C>, Pow<Eq<A, B>, C>>>) -> A {
-            y(c.clone()).1(x(c))
-        }
-        pow_rev_lower(f)((pow_bc, x))
-    }))
+    pow()(x)
 }
 
 /// `(a^c == b^c) => (a == b)^c`.
 pub fn hooo_rev_eq<A: Prop, B: Prop, C: Prop>(x: Eq<Pow<A, C>, Pow<B, C>>) -> Pow<Eq<A, B>, C> {
-    fn f<A: Prop, B: Prop, C: Prop>((c, x): And<C, Eq<Pow<A, C>, Pow<B, C>>>) -> Eq<A, B> {
-        fn h<A: Prop, B: Prop>((_, a): And<B, A>) -> A {a}
-        let c2 = c.clone();
-        let x2 = x.clone();
-        (Rc::new(move |a| x.0(pow_rev_lower(h)(a))(c.clone())),
-         Rc::new(move |b| x2.1(pow_rev_lower(h)(b))(c2.clone())))
-    }
-    pow_rev_lower(f)(x)
+    pow()(x)
 }
 
 /// `c^(a == b) => ¬(c^a == c^b)`.
