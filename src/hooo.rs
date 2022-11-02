@@ -98,8 +98,20 @@ pub fn pow_lift<A: Prop, B: Prop, C: Prop>(_: Pow<A, B>) -> Pow<Pow<A, B>, C> {
 
 /// `(a^b)^c => a^(b ⋀ c)`.
 pub fn pow_lower<A: Prop, B: Prop, C: Prop>(x: Pow<Pow<A, B>, C>) -> Pow<A, And<B, C>> {
-    fn f<A: Prop, B: Prop, C: Prop>(((b, c), g): And<And<B, C>, Pow<Pow<A, B>, C>>) -> A {g(c)(b)}
-    pow_rev_lower(f)(x)
+    fn f<A: Prop, B: Prop, C: Prop>(pow_ab: Pow<A, B>) -> Pow<A, And<B, C>> {
+        fn g<A: Prop, B: Prop>((a, _): And<A, B>) -> A {a}
+        pow_transitivity(g, pow_ab)
+    }
+    fn g<A: Prop, B: Prop, C: Prop>(_: C) -> Imply<Pow<A, B>, Pow<A, And<B, C>>> {
+        Rc::new(move |pow_ab| f(pow_ab))
+    }
+    fn h<A: Prop, B: Prop, C: Prop>(x: Pow<Pow<A, And<B, C>>, C>) -> Pow<A, And<B, C>> {
+        fn f2<A: Prop, B: Prop, C: Prop>((b, c): And<B, C>) -> Imply<Pow<Pow<A, And<B, C>>, C>, A> {
+            Rc::new(move |x| x(c.clone())((b.clone(), c.clone())))
+        }
+        hooo_imply(f2)(pow_lift(x))
+    }
+    h(hooo_imply(g)(x))
 }
 
 /// `a^(b ⋀ c) => (a^b)^c`.
