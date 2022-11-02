@@ -138,10 +138,12 @@ pub fn pow_in_right_arg<A: Prop, B: Prop, C: Prop>(
     x: Pow<A, B>,
     tauto_eq_b_c: Tauto<Eq<B, C>>,
 ) -> Pow<A, C> {
-    let y = pow_swap_exp(pow_lift(tauto_eq_b_c))(True);
-    let y = hooo_eq(y);
-    let bc: Pow<B, C> = y.1(pow_refl);
-    pow_transitivity(bc, x)
+    fn f<B: Prop, C: Prop>(c: C) -> Imply<Tauto<Eq<B, C>>, B> {
+        Rc::new(move |x| x(True).1(c.clone()))
+    }
+    let y: Pow<Tauto<Eq<B, C>>, C> = pow_lift(tauto_eq_b_c);
+    let pow_bc: Pow<B, C> = hooo_imply(f)(y);
+    pow_transitivity(pow_bc, x)
 }
 
 /// `a^(b ⋀ c) => a^(c ⋀ b)`
