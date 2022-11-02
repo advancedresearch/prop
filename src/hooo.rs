@@ -491,8 +491,10 @@ pub fn tauto_rev_not<A: Prop>(x: Tauto<Not<A>>) -> Not<Tauto<A>> {
 
 /// `(¬a)^true => false^a`.
 pub fn tauto_not_to_para<A: Prop>(x: Tauto<Not<A>>) -> Para<A> {
-    fn f<A: Prop>((a, tauto_na): And<A, Tauto<Not<A>>>) -> False {tauto_na(True)(a)}
-    pow_rev_lower(f)(x)
+    fn f<A: Prop>(a: A) -> Imply<Tauto<Not<A>>, False> {
+        Rc::new(move |x| x(True)(a.clone()))
+    }
+    hooo_imply(f)(pow_lift(x))
 }
 
 /// `false^a => (¬a)^true`.
