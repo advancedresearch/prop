@@ -125,18 +125,12 @@ pub fn pow_refl<A: Prop>(x: A) -> A {x}
 /// `a^b ⋀ (a == c)^true => c^b`.
 pub fn pow_in_left_arg<A: Prop, B: Prop, C: Prop>(
     x: Pow<A, B>,
-    tauto_eq_b_c: Tauto<Eq<A, C>>,
+    tauto_eq_a_c: Tauto<Eq<A, C>>,
 ) -> Pow<C, B> {
-    fn f<A: Prop, B: Prop, C: Prop>(_: B) -> Imply<And<A, Eq<A, C>>, C> {
-        Rc::new(move |(a, eq)| eq.0(a))
+    fn f<A: Prop, C: Prop>((a, x): And<A, Tauto<Eq<A, C>>>) -> C {
+        x(True).0(a)
     }
-    let f: Imply<Pow<And<A, Eq<A, C>>, B>, Pow<C, B>> = hooo_imply(f);
-    let f = imply::in_left(f, |x: And<Pow<A, B>, Pow<Eq<A, C>, B>>| {
-        let x: Pow<And<A, Eq<A, C>>, B> = hooo_rev_and(x);
-        x
-    });
-    let y = pow_swap_exp(pow_lift(tauto_eq_b_c))(True);
-    f((x, y))
+    pow_transitivity(hooo_rev_and((x, pow_lift(tauto_eq_a_c))), f)
 }
 
 /// `a^b ⋀ (b == c)^true => a^c`.
