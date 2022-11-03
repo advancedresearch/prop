@@ -98,6 +98,21 @@ pub fn rev_double_neg_excm<A: Prop, B: Prop>(
     }
 }
 
+/// `(¬¬a => ¬¬b) ∧ ((a ∨ ¬a) == (b ∨ ¬b))  =>  (a => b)`.
+pub fn rev_double_neg_eq_excm<A: Prop, B: Prop>(
+    f: Imply<Not<Not<A>>, Not<Not<B>>>,
+    eq_excm_a_excm_b: Eq<ExcM<A>, ExcM<B>>,
+) -> Imply<A, B> {
+    use Either::*;
+
+    Rc::new(move |a| {
+        match eq_excm_a_excm_b.0(Left(a.clone())) {
+            Left(b) => b,
+            Right(nb) => match f(not::double(a))(nb) {}
+        }
+    })
+}
+
 /// `(a => b) => (¬a ∨ b)`.
 pub fn to_or<A: DProp, B: DProp>(f: Imply<A, B>) -> Or<Not<A>, B> {
     use Either::*;
