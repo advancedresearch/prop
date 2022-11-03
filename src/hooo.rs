@@ -592,7 +592,29 @@ pub fn tauto_eq_in_left_arg<A: Prop, B: Prop, C: Prop>(
 }
 
 /// `uniform(a) ⋁ false^uniform(a)`.
-pub fn program<A: Prop>() -> Or<Uniform<A>, Para<Uniform<A>>> {unimplemented!()}
+pub fn program<A: Prop>() -> Or<Uniform<A>, Para<Uniform<A>>> {
+    match para_decide::<A>() {
+        Left(para_a) => Left(Right(para_a)),
+        Right(npara_a) => {
+            match para_decide::<Tauto<A>>() {
+                Left(para_tauto_a) => {
+                    fn f<A: Prop>(para_a: Para<A>) -> Not<A> {Rc::new(move |a| para_a(a))}
+                    let x = pow_transitivity(f, pow_not(npara_a));
+                    Right(hooo_dual_rev_or((para_tauto_a, x)))
+                }
+                Right(npara_tauto_a) => {
+                    fn f<A: Prop>(ntr: Not<True>) -> A {imply::absurd()(ntr(True))}
+                    fn g<A: Prop>(_: True) -> Eq<Not<Tauto<A>>, Pow<A, Not<True>>> {
+                        (Rc::new(move |ntauto_a| pow_not(ntauto_a)),
+                         Rc::new(move |pow_a_ntr| pow_rev_not(pow_a_ntr)))
+                    }
+                    let x = pow_in_right_arg(pow_not(npara_tauto_a), g);
+                    imply::absurd()(x(f))
+                }
+            }
+        }
+    }
+}
 
 /// `(a^true => b^true) => (false^b => false^a)`.
 pub fn imply_tauto_to_imply_para<A: Prop, B: Prop>(
