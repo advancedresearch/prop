@@ -759,7 +759,7 @@ pub fn tauto_rev_or<A: Prop, B: Prop>(x: Tauto<Or<A, B>>) -> Or<Tauto<A>, Tauto<
     hooo_or(x)
 }
 
-/// `(false^a ∧ b^false) => false^(a ⋁ b)`.
+/// `(false^a ∧ false^b) => false^(a ⋁ b)`.
 pub fn para_to_or<A: Prop, B: Prop>(
     para_a: Para<A>,
     para_b: Para<B>
