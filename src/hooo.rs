@@ -1024,13 +1024,9 @@ pub fn tauto_imply_to_pow_tauto<A: Prop, B: Prop>(
 pub fn pow_tauto_to_tauto_imply<A: Prop, B: Prop>(
     x: Pow<B, Tauto<A>>
 ) -> Tauto<Imply<A, B>> {
-    fn g<A: Prop>(_: True) -> Eq<A, And<True, A>> {
-        (Rc::new(move |a| (True, a)), Rc::new(move |x| x.1))
-    }
-    let y: Pow<B, And<True, Tauto<A>>> = pow_in_right_arg(x, g);
-    let y: Pow<Tauto<B>, Tauto<A>> = pow_rev_lower(y);
-    let y = Rc::new(move |tauto_a| y(tauto_a));
-    hooo_rev_imply(y)
+    let y: Imply<Tauto<A>, Tauto<Tauto<A>>> = Rc::new(move |x| pow_lift(x));
+    let x = hooo_imply(tauto_imply_pow(pow_lift(x)));
+    hooo_rev_imply(imply::transitivity(y, x))
 }
 
 /// `b^(a^true) => b^a`.
