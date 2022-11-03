@@ -390,6 +390,26 @@ pub fn hooo_dual_rev_imply<A: Prop, B: Prop, C: Prop>(
     x: Not<Imply<Pow<C, B>, Pow<C, A>>>
 ) -> Pow<C, Imply<A, B>> {pow()(x)}
 
+/// `(¬(b => a))^c => ¬(b^c => a^c)`.
+pub fn hooo_nrimply<A: Prop, B: Prop, C: Prop>(
+    x: Pow<Not<Imply<B, A>>, C>
+) -> Not<Imply<Pow<B, C>, Pow<A, C>>> {pow()(x)}
+
+/// `¬(b^c => a^c) => (¬(b => a))^c`.
+pub fn hooo_rev_nrimply<A: Prop, B: Prop, C: Prop>(
+    x: Not<Imply<Pow<B, C>, Pow<A, C>>>
+) -> Pow<Not<Imply<B, A>>, C> {pow()(x)}
+
+/// `c^(¬(b => a)) => (c^a => c^b)`.
+pub fn hooo_dual_nrimply<A: Prop, B: Prop, C: Prop>(
+    x: Pow<C, Not<Imply<B, A>>>
+) -> Imply<Pow<C, A>, Pow<C, B>> {pow()(x)}
+
+/// `(c^a => c^b) => c^(¬(b => a))`.
+pub fn hooo_dual_rev_nrimply<A: Prop, B: Prop, C: Prop>(
+    x: Imply<Pow<C, A>, Pow<C, B>>
+) -> Pow<C, Not<Imply<B, A>>> {pow()(x)}
+
 /// A tautological proposition.
 pub type Tauto<A> = fn(True) -> A;
 
