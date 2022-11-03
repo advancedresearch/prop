@@ -281,8 +281,13 @@ pub fn para<A: Prop>() -> Para<A>
 {pow()}
 
 /// `¬(a^b) => (¬a)^b`.
-pub fn hooo_rev_not<A: Prop, B: Prop>(_: Not<Pow<A, B>>) -> Pow<Not<A>, B> {
-    unimplemented!()
+pub fn hooo_rev_not<A: Prop, B: Prop>(x: Not<Pow<A, B>>) -> Pow<Not<A>, B> {
+    fn f<A: Prop, B: Prop>(_: True) -> Eq<Pow<A, Not<B>>, Not<Pow<A, B>>> {
+        (Rc::new(move |x| pow_rev_not(x)), Rc::new(move |x| pow_not(x)))
+    }
+    let y: Imply<Pow<A, B>, Pow<Pow<A, B>, B>> = Rc::new(move |x| pow_lift(x));
+    let x = hooo_imply(pow_in_left_arg(pow_lift(pow_not(x)), f));
+    hooo_rev_imply(imply::transitivity(y, x))
 }
 
 /// `(a ⋀ b)^c => (a^c ⋀ b^c)`.
