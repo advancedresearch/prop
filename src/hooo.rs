@@ -991,10 +991,11 @@ pub fn tauto_imply_to_pow<A: Prop, B: Prop>(
 pub fn pow_to_tauto_imply<A: Prop, B: Prop>(
     x: Pow<B, A>
 ) -> Tauto<Imply<A, B>> {
-    fn f<A: Prop, B: Prop>((_, x): And<True, Pow<B, A>>) -> Imply<A, B> {
-        Rc::new(move |a| x(a))
+    fn f<A: Prop, B: Prop>(_: True) -> Imply<Pow<B, A>, Imply<A, B>> {
+        Rc::new(|pow_ba| Rc::new(move |a| pow_ba(a)))
     }
-    pow_rev_lower(f)(x)
+    let f: Imply<Pow<Pow<B, A>, True>, Tauto<Imply<A, B>>> = hooo_imply(f);
+    f(pow_lift(x))
 }
 
 /// `(a => b)^true => (b^a)^true`.
