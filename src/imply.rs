@@ -34,6 +34,17 @@ pub fn rev_modus_tollens_excm<A: Prop, B: Prop>(
     }), excm_a, excm_b)
 }
 
+/// `(¬b => ¬a) ∧ ((a ∨ ¬a) == (b ∨ ¬b))  =>  (a => b)`.
+pub fn rev_modus_tollens_eq_excm<A: Prop, B: Prop>(
+    f: Imply<Not<B>, Not<A>>,
+    eq_excm_a_excm_b: Eq<ExcM<A>, ExcM<B>>,
+) -> Imply<A, B> {
+    imply::rev_double_neg_eq_excm(Rc::new(move |x| {
+        let f = f.clone();
+        Rc::new(move |y| match x(f(y)) {})
+    }), eq_excm_a_excm_b)
+}
+
 /// `(a => b) ∧ (b => c)  =>  (a => c)`.
 pub fn transitivity<A: Prop, B: Prop, C: Prop>(
     f: Imply<A, B>,
