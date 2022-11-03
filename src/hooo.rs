@@ -350,6 +350,26 @@ pub fn hooo_dual_rev_eq<A: Prop, B: Prop, C: Prop>(
     x: Not<Eq<Pow<C, A>, Pow<C, B>>>
 ) -> Pow<C, Eq<A, B>> {pow()(x)}
 
+/// `(¬(a == b))^c => ¬(a^c == b^c)`.
+pub fn hooo_neq<A: Prop, B: Prop, C: Prop>(x: Pow<NEq<A, B>, C>) -> NEq<Pow<A, C>, Pow<B, C>> {
+    pow()(x)
+}
+
+/// `¬(a^c == b^c) => (¬(a == b))^c`.
+pub fn hooo_rev_neq<A: Prop, B: Prop, C: Prop>(x: NEq<Pow<A, C>, Pow<B, C>>) -> Pow<NEq<A, B>, C> {
+    pow()(x)
+}
+
+/// `c^(¬(a == b)) => (c^a == c^b)`.
+pub fn hooo_dual_neq<A: Prop, B: Prop, C: Prop>(
+    x: Pow<C, NEq<A, B>>
+) -> Eq<Pow<C, A>, Pow<C, B>> {pow()(x)}
+
+/// `(c^a == c^b) => c^(¬(a == b))`.
+pub fn hooo_dual_rev_neq<A: Prop, B: Prop, C: Prop>(
+    x: Eq<Pow<C, A>, Pow<C, B>>
+) -> Pow<C, NEq<A, B>> {pow()(x)}
+
 /// `(a => b)^c => (a^c => b^c)`.
 pub fn hooo_imply<A: Prop, B: Prop, C: Prop>(
     x: Pow<Imply<A, B>, C>
