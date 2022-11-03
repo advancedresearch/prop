@@ -547,6 +547,13 @@ pub fn para_not_rev_triple<A: Prop>(x: Para<Not<Not<Not<A>>>>) -> Para<Not<A>> {
     para_in_arg(x, tauto_eq_symmetry(f))
 }
 
+/// `(¬(false^a) == ¬(false^b)) => (false^a == false^b)`.
+pub fn eq_not_para_to_eq_para<A: Prop, B: Prop>(
+    eq_npara_a_npara_b: Eq<Not<Para<A>>, Not<Para<B>>>
+) -> Eq<Para<A>, Para<B>> {
+    eq::symmetry(eq::rev_modus_tollens_excm(eq_npara_a_npara_b, para_decide(), para_decide()))
+}
+
 /// `(x == x)^true`.
 pub fn eq_refl<A: Prop>() -> Tauto<Eq<A, A>> {
     fn f<A: Prop>(_: True) -> Eq<A, A> {eq::refl()}
