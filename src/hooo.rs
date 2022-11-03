@@ -114,11 +114,6 @@ pub fn pow_lower<A: Prop, B: Prop, C: Prop>(x: Pow<Pow<A, B>, C>) -> Pow<A, And<
     h(hooo_imply(g)(x))
 }
 
-/// `a^(b ⋀ c) => (a^b)^c`.
-pub fn pow_rev_lower<A: Prop, B: Prop, C: Prop>(_: Pow<A, And<B, C>>) -> Pow<Pow<A, B>, C> {
-    unimplemented!()
-}
-
 /// `a => a`.
 pub fn pow_refl<A: Prop>(x: A) -> A {x}
 
@@ -152,13 +147,6 @@ pub fn pow_right_and_symmetry<A: Prop, B: Prop, C: Prop>(
 ) -> Pow<A, And<C, B>> {
     fn f<A: Prop, B: Prop>((a, b): And<A, B>) -> And<B, A> {(b, a)}
     pow_transitivity(f, x)
-}
-
-/// `(a^b)^c => (a^c)^b`.
-pub fn pow_swap_exp<A: Prop, B: Prop, C: Prop>(
-    x: Pow<Pow<A, B>, C>
-) -> Pow<Pow<A, C>, B> {
-    pow_rev_lower(pow_right_and_symmetry(pow_lower(x)))
 }
 
 /// `¬a^b => a^(¬b)`.
