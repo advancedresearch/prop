@@ -928,10 +928,42 @@ pub fn uniform_transitivity<A: Prop, B: Prop, C: Prop>(
 
 /// `(false^(a == b) ∧ false^(b == c)) => (a == c)^true`.
 pub fn tauto_from_para_transitivity<A: Prop, B: Prop, C: Prop>(
-    _: Para<Eq<A, B>>,
-    _: Para<Eq<B, C>>,
+    para_eq_ab: Para<Eq<A, B>>,
+    para_eq_bc: Para<Eq<B, C>>,
 ) -> Tauto<Eq<A, C>> {
-    unimplemented!()
+    let x: Not<Eq<Para<A>, Para<B>>> = hooo_dual_eq(para_eq_ab);
+    let y: Not<Eq<Para<B>, Para<C>>> = hooo_dual_eq(para_eq_bc);
+    match (para_decide::<A>(), para_decide::<B>(), para_decide::<C>()) {
+        (Left(para_a), Left(para_b), _) => imply::absurd()(x((para_b.map_any(), para_a.map_any()))),
+        (_, Left(para_b), Left(para_c)) => imply::absurd()(y((para_c.map_any(), para_b.map_any()))),
+        (Left(para_a), _, Left(para_c)) => {
+            let z: Eq<Tauto<A>, Tauto<C>> = (
+                Rc::new(move |tauto_a| imply::absurd()(para_a(tauto_a(True)))),
+                Rc::new(move |tauto_c| imply::absurd()(para_c(tauto_c(True))))
+            );
+            hooo_rev_eq(z)
+        }
+        (_, Right(npara_b), Right(npara_c)) => {
+            imply::absurd()(y(eq_not_para_to_eq_para((npara_c.map_any(), npara_b.map_any()))))
+        }
+        (Right(npara_a), Right(npara_b), _) => {
+            imply::absurd()(x(eq_not_para_to_eq_para((npara_b.map_any(), npara_a.map_any()))))
+        }
+        (Right(npara_a), _, Right(npara_c)) => {
+            let y: Eq<Para<A>, Para<C>> = eq_not_para_to_eq_para((npara_c.map_any(), npara_a.map_any()));
+            let y: Para<Not<Eq<A, C>>> = hooo_dual_rev_neq(y);
+            match program::<Eq<A, C>>() {
+                Left(Left(tauto_eq_ac)) => tauto_eq_ac,
+                Left(Right(para_eq_ac)) => imply::absurd()(pow_rev_not(y)(para_eq_ac)),
+                Right(para_uni_eq_ac) => {
+                    let nuni_eq_ac = Rc::new(move |x| para_uni_eq_ac(x));
+                    let (x, _): And<Not<Tauto<Eq<A, C>>>, Not<Para<Eq<A, C>>>> = and::from_de_morgan(nuni_eq_ac);
+                    let x: Tauto<Not<Eq<A, C>>> = hooo_rev_not(x);
+                    imply::absurd()(y(x(True)))
+                }
+            }
+        }
+    }
 }
 
 /// `uniform(a) ⋀ (a == b)^true => uniform(b)`.
