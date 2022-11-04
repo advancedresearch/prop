@@ -22,7 +22,7 @@ pub fn rev_modus_tollens<A: DProp, B: DProp>(f: Imply<Not<B>, Not<A>>) -> Imply<
     }))
 }
 
-/// `(¬b => ¬a)  =>  (a => b)`.
+/// `(¬b => ¬a) ∧ (a ∨ ¬a) ∧ (b ∨ ¬b)  =>  (a => b)`.
 pub fn rev_modus_tollens_excm<A: Prop, B: Prop>(
     f: Imply<Not<B>, Not<A>>,
     excm_a: ExcM<A>,
