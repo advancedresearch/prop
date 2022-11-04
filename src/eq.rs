@@ -69,7 +69,7 @@ pub fn rev_modus_tollens<A: DProp, B: DProp>((f0, f1): Eq<Not<A>, Not<B>>) -> Eq
     (f02, f12)
 }
 
-/// `(¬a = ¬b) => (b = a)`.
+/// `(¬a = ¬b) ∧ (a ∨ ¬a) ∧ (b ∨ ¬b)  =>  (b = a)`.
 pub fn rev_modus_tollens_excm<A: Prop, B: Prop>(
     (f0, f1): Eq<Not<A>, Not<B>>,
     excm_a: ExcM<A>,
@@ -80,7 +80,7 @@ pub fn rev_modus_tollens_excm<A: Prop, B: Prop>(
     (f02, f12)
 }
 
-/// `(¬a = ¬b) ∧ ((a ∨ ¬a) == (b ∨ ¬b)) => (b = a)`.
+/// `(¬a = ¬b) ∧ ((a ∨ ¬a) == (b ∨ ¬b))  =>  (b = a)`.
 pub fn rev_modus_tollens_eq_excm<A: Prop, B: Prop>(
     (f0, f1): Eq<Not<A>, Not<B>>,
     eq_excm_a_excm_b: Eq<ExcM<A>, ExcM<B>>,
@@ -90,7 +90,7 @@ pub fn rev_modus_tollens_eq_excm<A: Prop, B: Prop>(
     (f02, f12)
 }
 
-/// `(¬a == ¬b) ∧ (a => (b ∨ ¬b)) ∧ (b => (b ∨ ¬b)) => (b == a)`.
+/// `(¬a == ¬b) ∧ (a => (b ∨ ¬b)) ∧ (b => (b ∨ ¬b))  =>  (b == a)`.
 pub fn rev_modus_tollens_imply_excm<A: Prop, B: Prop>(
     (f0, f1): Eq<Not<A>, Not<B>>,
     a_excm_b: Imply<A, ExcM<B>>,
