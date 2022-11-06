@@ -1143,6 +1143,14 @@ pub fn pow_to_pow_tauto<A: Prop, B: Prop>(
     tauto_imply_to_pow_tauto(pow_to_tauto_imply(x))
 }
 
+/// `¬¬(c^(a == b)) => c^(a == b)`.
+pub fn dual_eq_not_rev_double<A: Prop, B: Prop, C: Prop>(
+    x: Not<Not<Pow<C, Eq<A, B>>>>
+) -> Pow<C, Eq<A, B>> {
+    let x: Not<Eq<Pow<C, A>, Pow<C, B>>> = imply::in_left(x, |y| pow_rev_not(hooo_dual_rev_neq(y)));
+    hooo_dual_rev_eq(x)
+}
+
 #[cfg(test)]
 #[allow(dead_code)]
 mod tests {
