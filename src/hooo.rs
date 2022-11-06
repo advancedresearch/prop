@@ -1184,6 +1184,17 @@ pub fn tauto_imply_left_tauto<A: Prop, B: Prop>(
     hooo_rev_imply(imply::in_left_arg(hooo_imply(x), y))
 }
 
+/// `(a^true => b)^true => (a => b)^true`.
+pub fn tauto_imply_left_rev_tauto<A: Prop, B: Prop>(
+    x: Tauto<Imply<Tauto<A>, B>>
+) -> Tauto<Imply<A, B>> {
+    let y: Eq<Tauto<Tauto<A>>, Tauto<A>> = (
+        Rc::new(move |x| x(True)),
+        Rc::new(move |x| pow_lift(x))
+    );
+    hooo_rev_imply(imply::in_left_arg(hooo_imply(x), y))
+}
+
 #[cfg(test)]
 #[allow(dead_code)]
 mod tests {
