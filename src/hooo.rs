@@ -292,13 +292,22 @@ pub fn hooo_rev_not<A: Prop, B: Prop>(x: Not<Pow<A, B>>) -> Pow<Not<A>, B> {
 
 /// `(a ⋀ b)^c => (a^c ⋀ b^c)`.
 pub fn hooo_and<A: Prop, B: Prop, C: Prop>(x: Pow<And<A, B>, C>) -> And<Pow<A, C>, Pow<B, C>> {
-    pow()(x)
+    fn f<A: Prop, B: Prop>((a, _): And<A, B>) -> A {a}
+    fn g<A: Prop, B: Prop>((_, b): And<A, B>) -> B {b}
+    (pow_transitivity(x.clone(), f), pow_transitivity(x, g))
 }
 
 /// `(a^c ⋀ b^c) => (a ⋀ b)^c`.
 pub fn hooo_rev_and<A: Prop, B: Prop, C: Prop>(
     x: And<Pow<A, C>, Pow<B, C>>
-) -> Pow<And<A, B>, C> {pow()(x)}
+) -> Pow<And<A, B>, C> {
+    fn f<A: Prop, B: Prop, C: Prop>(_: C) -> Imply<A, Imply<B, And<A, B>>> {
+        Rc::new(move |a| Rc::new(move |b| (a.clone(), b)))
+    }
+    let g = Rc::new(move |x| hooo_imply(x));
+    let f = imply::transitivity(hooo_imply(f), g);
+    f(x.0)(x.1)
+}
 
 /// `c^(a ⋀ b) => (c^a ⋁ c^b)`.
 pub fn hooo_dual_and<A: Prop, B: Prop, C: Prop>(
