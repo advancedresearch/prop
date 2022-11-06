@@ -1151,6 +1151,17 @@ pub fn dual_eq_not_rev_double<A: Prop, B: Prop, C: Prop>(
     hooo_dual_rev_eq(x)
 }
 
+/// `(a => b)^true => (a => b^true)^true`.
+pub fn tauto_imply_right_tauto<A: Prop, B: Prop>(
+    x: Tauto<Imply<A, B>>
+) -> Tauto<Imply<A, Tauto<B>>> {
+    let y: Eq<Tauto<B>, Tauto<Tauto<B>>> = (
+        Rc::new(move |x| pow_lift(x)),
+        Rc::new(move |x| x(True))
+    );
+    hooo_rev_imply(imply::in_right_arg(hooo_imply(x), y))
+}
+
 #[cfg(test)]
 #[allow(dead_code)]
 mod tests {
