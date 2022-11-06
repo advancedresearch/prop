@@ -332,12 +332,18 @@ pub fn hooo_dual_rev_or<A: Prop, B: Prop, C: Prop>(
 
 /// `(a == b)^c => (a^c == b^c)`.
 pub fn hooo_eq<A: Prop, B: Prop, C: Prop>(x: Pow<Eq<A, B>, C>) -> Eq<Pow<A, C>, Pow<B, C>> {
-    pow()(x)
+    fn f<A: Prop, B: Prop>(x: Eq<A, B>) -> Imply<A, B> {x.0}
+    fn g<A: Prop, B: Prop>(x: Eq<A, B>) -> Imply<B, A> {x.1}
+    let x1 = pow_transitivity(x.clone(), f);
+    let x2 = pow_transitivity(x, g);
+    (hooo_imply(x1), hooo_imply(x2))
 }
 
 /// `(a^c == b^c) => (a == b)^c`.
 pub fn hooo_rev_eq<A: Prop, B: Prop, C: Prop>(x: Eq<Pow<A, C>, Pow<B, C>>) -> Pow<Eq<A, B>, C> {
-    pow()(x)
+    let x1 = hooo_rev_imply(x.0);
+    let x2 = hooo_rev_imply(x.1);
+    hooo_rev_and((x1, x2))
 }
 
 /// `c^(a == b) => ¬(c^a == c^b)`.
