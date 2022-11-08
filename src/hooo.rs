@@ -317,7 +317,12 @@ pub fn hooo_dual_and<A: Prop, B: Prop, C: Prop>(
 /// `(c^a ⋁ c^b) => c^(a ⋀ b)`.
 pub fn hooo_dual_rev_and<A: Prop, B: Prop, C: Prop>(
     x: Or<Pow<C, A>, Pow<C, B>>
-) -> Pow<C, And<A, B>> {pow()(x)}
+) -> Pow<C, And<A, B>> {
+    match x {
+        Left(pow_ca) => pow_lower(pow_lift(pow_ca)),
+        Right(pow_cb) => pow_transitivity(and::symmetry, pow_lower(pow_lift(pow_cb))),
+    }
+}
 
 /// `(a ⋁ b)^c => (a^c ⋁ b^c)`.
 pub fn hooo_or<A: Prop, B: Prop, C: Prop>(
