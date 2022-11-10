@@ -123,6 +123,7 @@ pub mod existence;
 pub mod con_qubit;
 pub mod hooo;
 pub mod modal;
+pub mod ava_modal;
 
 /// Logical true.
 #[derive(Copy, Clone)]

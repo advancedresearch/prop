@@ -2,233 +2,169 @@
 //!
 //! This modal logic builds upon the `hooo` module using Exponential Propositions.
 //!
-//! ### 1-Avatar and Unsafe code
+//! The Modal Logic variant derived is S5 or stronger.
+//! For more information about variants of Modal Logic, see [wikipedia article](https://en.wikipedia.org/wiki/Modal_logic).
 //!
-//! HOOO Exponential Propositions uses a uniform involution,
-//! which might be thought of as a space using [Listing-Möbius shifts](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip/listing-mobius-shifts.pdf).
-//!
-//! This happens because `false^(¬a) == ¬(false^a)`.
-//!
-//! As a consequence, the usual semantics of "necessary" and "possibly" is collapsed,
-//! where is it possible to prove `¬◇p == ◇¬p` and `¬□p == □¬p`.
-//!
-//! According [Avatar Semantics](https://advancedresearch.github.io/avatar-extensions/summary.html#avatar-semantics),
-//! this is not a problem, because one can reconstruct hypercube topologies in Avatar Graphs
-//! from the smallest Möbius topologies possible, by identifying the diagonals using
-//! highest N-avatars. This is done by introducing a 1-avatar that covers products in
-//! Avatar Algebra.
-//!
-//! This 1-avatar is a new-type `Pos` (possibly) that protects the content from being readable.
-//! The content is accessed under special circumstances where integration of information
-//! is checked by a higher N-avatar. This means, safe invariants using unsafe code.
-//!
-//! By constructing the semantics of "necessary" and "possibly" on top of this 1-avatar,
-//! one can still prove theorems using HOOO Exponential Propositions safely.
-//!
-//! Safe proofs are preferrable, but one can use unsafe code in edge cases by being careful.
+//! It is currently known that HOOO Exponential Propositions implies S5,
+//! but it is unknown whether S5 implies HOOO Exponential Propositions.
 
 use crate::*;
 use hooo::*;
 
-pub use protection::*;
+/// A proposition is possibly true if it is either a tautology or a theory.
+pub type Pos<A> = Or<Tauto<A>, Theory<A>>;
 
-mod protection {
-    use super::*;
+/// A proposition is necessarily true if it is a tautology.
+pub type Nec<A> = Tauto<A>;
 
-    /// `◇a`.
-    #[derive(Clone)]
-    pub struct Pos<A>(Para<Para<A>>);
-    /// `□a`.
-    pub type Nec<A> = Not<Pos<Not<A>>>;
-
-    impl<A> Pos<A> {
-        /// Create a new possibly proposition.
-        pub fn new(x: Para<Para<A>>) -> Self {Pos(x)}
-    }
-
-    /// `◇a => (false^(false^a))`.
-    pub unsafe fn pos_to_para_para<A: Prop>(Pos(x): Pos<A>) -> Para<Para<A>> {x}
-}
-
-impl<A: Prop> Decidable for Pos<A> {
-    fn decide() -> ExcM<Pos<A>> {
-        match para_decide() {
-            Left(x) => Left(Pos::new(x)),
-            Right(y) => Right(imply::in_left(y, |x| unsafe {pos_to_para_para(x)})),
-        }
+/// `¬(false^a) => ◇a`.
+pub fn npara_to_pos<A: Prop>(npara: Not<Para<A>>) -> Pos<A> {
+    match program::<A>() {
+        Left(Left(tauto_a)) => Left(tauto_a),
+        Left(Right(para_a)) => not::absurd(npara, para_a),
+        Right(para_uni_a) => Right(Rc::new(move |x| para_uni_a(x))),
     }
 }
 
-/// `□a => a^true`.
-pub fn nec_to_tauto<A: DProp>(nec_a: Nec<A>) -> Tauto<A> {
-    match tauto_decide() {
-        Left(tauto_a) => tauto_a,
-        Right(ntauto_a) => {
-            let para_a = tauto_not_to_para(hooo_rev_not(ntauto_a));
-            let x: Para<Not<A>> = npos_to_para(nec_a);
-            imply::absurd()(pow_rev_not(x)(para_a))
-        }
-    }
-}
-
-/// `a^true => □a`.
-pub unsafe fn tauto_to_nec<A: Prop>(tauto_a: Tauto<A>) -> Nec<A> {
-    Rc::new(move |pos_na| {
-        match para_decide() {
-            Left(para_na) => pos_to_para_para(pos_na)(para_na),
-            Right(npara_na) => {
-                let para_a = para_not_rev_double(pow_not(npara_na));
-                para_a(tauto_a(True))
-            }
+/// `◇a => ¬(false^a)`.
+pub fn pos_to_npara<A: Prop>(pos: Pos<A>) -> Not<Para<A>> {
+    Rc::new(move |para_a| {
+        match pos.clone() {
+            Left(tauto_a) => para_a(tauto_a(True)),
+            Right(theory_a) => theory_a(Right(para_a)),
         }
     })
 }
 
 /// `¬◇a => false^a`.
 pub fn npos_to_para<A: Prop>(npos: Not<Pos<A>>) -> Para<A> {
-    match para_decide() {
+    match para_decide::<A>() {
         Left(para_a) => para_a,
-        Right(npara_a) => imply::absurd()(pos_not(npos)(npara_a)),
+        Right(npara_a) => not::absurd(npos, npara_to_pos(npara_a)),
     }
 }
 
 /// `false^a => ¬◇a`.
-pub unsafe fn para_to_npos<A: Prop>(para_a: Para<A>) -> Not<Pos<A>> {
-    Rc::new(move |pos_a| pos_to_para_para(pos_a)(para_a))
+pub fn para_to_npos<A: Prop>(para_a: Para<A>) -> Not<Pos<A>> {
+    Rc::new(move |pos| match pos {
+        Left(tauto_a) => para_a(tauto_a(True)),
+        Right(theory_a) => theory_a(Right(para_a))
+    })
 }
 
-/// `¬□¬a <=> ◇a`.
-pub fn eq_nnecn_pos<A: Prop>() -> Eq<Not<Nec<Not<A>>>, Pos<A>> {
-    fn f<A: Prop>(_: True) -> Eq<Not<Para<A>>, Not<Para<Not<Not<A>>>>> {
-        (
-            Rc::new(move |x| pow_rev_not(para_not_triple(pow_not(x)))),
-            Rc::new(move |x| pow_rev_not(para_not_rev_triple(pow_not(x))))
-        )
+/// `¬◇a => ◇¬a`.
+pub fn npos_to_posn<A: Prop>(npos_a: Not<Pos<A>>) -> Pos<Not<A>> {
+    let para_a = npos_to_para(npos_a);
+    Left(para_to_tauto_not(para_a))
+}
+
+/// `◇¬a => ¬◇a`.
+pub fn posn_to_npos<A: Prop>(pos_na: Pos<Not<A>>) -> Not<Pos<A>> {
+    Rc::new(move |pos_a| {
+        match (pos_a, pos_na.clone()) {
+            (Left(tauto_a), Left(tauto_na)) => tauto_not_to_para(tauto_na)(tauto_a(True)),
+            (Left(tauto_a), Right(theory_na)) => theory_na(Right(tauto_to_para_not(tauto_a))),
+            (Right(theory_a), Left(tauto_na)) => theory_a(Right(tauto_not_to_para(tauto_na))),
+            (Right(theory_a), Right(theory_na)) => {
+                let (ntauto_a, _) = and::from_de_morgan(theory_a);
+                theory_na(Left(hooo_rev_not(ntauto_a)))
+            }
+        }
+    })
+}
+
+/// `□a => ¬◇¬a`.
+pub fn nec_to_nposn<A: Prop>(tauto_a: Nec<A>) -> Not<Pos<Not<A>>> {
+    Rc::new(move |pos_na| posn_to_npos(pos_na)(Left(tauto_a)))
+}
+
+/// `¬◇¬a => □a`.
+pub fn nposn_to_tauto<A: Prop>(npos_na: Not<Pos<Not<A>>>) -> Nec<A> {
+    match program::<A>() {
+        Left(Left(tauto_a)) => tauto_a,
+        Left(Right(para_a)) => not::absurd(npos_na, npos_to_posn(para_to_npos(para_a))),
+        Right(para_uni_a) => {
+            let x: Not<Uniform<A>> = Rc::new(move |x| para_uni_a(x));
+            let (ntauto_a, _) = and::from_de_morgan(x);
+            not::absurd(npos_na, Left(hooo_rev_not(ntauto_a)))
+        }
     }
-    fn g<A: Prop>(_: True) -> Eq<Not<Para<A>>, Not<Para<Not<Not<A>>>>> {
-        (
-            Rc::new(move |x| pow_rev_not(para_not_triple(pow_not(x)))),
-            Rc::new(move |x| pow_rev_not(para_not_rev_double(pow_not(x))))
-        )
+}
+
+/// `◇a => ¬□¬a`.
+pub fn pos_to_nnecn<A: Prop>(pos_a: Pos<A>) -> Not<Nec<Not<A>>> {
+    Rc::new(move |tauto_na| match pos_a.clone() {
+        Left(tauto_a) => tauto_na(True)(tauto_a(True)),
+        Right(theory_a) => theory_a(Right(tauto_not_to_para(tauto_na))),
+    })
+}
+
+/// `¬□¬a => ◇a`.
+pub fn nnecn_to_pos<A: Prop>(ntauto_na: Not<Nec<Not<A>>>) -> Pos<A> {
+    match program::<A>() {
+        Left(Left(tauto_a)) => Left(tauto_a),
+        Left(Right(para_a)) => {
+            not::absurd(imply::in_left(ntauto_na, |x| para_to_tauto_not(x)), para_a)
+        }
+        Right(para_uni_a) => {
+            let x: Not<Uniform<A>> = Rc::new(move |x| para_uni_a(x));
+            let (ntauto_a, _) = and::from_de_morgan(x);
+            not::absurd(ntauto_na, hooo_rev_not(ntauto_a))
+        }
     }
-    (
-        Rc::new(move |nnec_na| {
-            match Pos::<A>::decide() {
-                Left(pos_a) => pos_a,
-                Right(npos_a) => {
-                    let x = pos_not(npos_a);
-                    let x = para_in_arg(x, f);
-                    let x = pow_rev_not(x);
-                    let x = imply::in_left(x, |y| unsafe {pos_to_para_para(y)});
-                    imply::absurd()(nnec_na(x))
+}
+
+/// `(|- a) => (|- □a)`.
+///
+/// This is added as an axiom since Rust can't prove `fn(()) -> A` is the same as `fn() -> A`.
+pub fn n<A: Prop>(_: fn() -> A) -> fn() -> Nec<A> {
+    unimplemented!()
+}
+
+/// `□(a => b) => (□a => □b)`.
+pub fn k<A: Prop, B: Prop>(x: Nec<Imply<A, B>>) -> Imply<Nec<A>, Nec<B>> {
+    hooo_imply(x)
+}
+
+/// `□a => a`.
+pub fn t<A: Prop>(x: Nec<A>) -> A {x(True)}
+
+/// `a => □◇a`.
+pub fn b<A: Prop>(a: A) -> Nec<Pos<A>> {
+    match program::<Pos<A>>() {
+        Left(Left(tauto_pos_a)) => tauto_pos_a,
+        Left(Right(para_pos_a)) => {
+            let x: Not<Pos<A>> = Rc::new(move |x| para_pos_a(x));
+            imply::absurd()(npos_to_para(x)(a))
+        }
+        Right(para_uni_pos_a) => {
+            let x: Not<Uniform<Pos<A>>> = Rc::new(move |x| para_uni_pos_a(x));
+            let (ntauto_pos_a, _) = and::from_de_morgan(x);
+            let x: Not<Pos<A>> = hooo_rev_not(ntauto_pos_a)(True);
+            match npos_to_posn(x.clone()) {
+                Left(tauto_na) => not::absurd(tauto_na(True), a),
+                Right(theory_na) => {
+                    let (y, _) = and::from_de_morgan(theory_na);
+                    let y: Not<Para<A>> = imply::in_left(y, |x| para_to_tauto_not(x));
+                    not::absurd(x, npara_to_pos(y))
                 }
             }
-        }),
-        Rc::new(move |x| {
-            let x = unsafe {pos_to_para_para(x)};
-            let x = not::double(x);
-            let x = imply::in_left(x, |y| pow_rev_not(y));
-            let x = imply::in_left(x, |y| para_in_arg(y, tauto_eq_symmetry(g)));
-            let x: Not<Not<Para<Para<Not<Not<A>>>>>> = imply::in_left(x, |y| pow_not(y));
-            nnpara_para_to_nnpos(x)
-        })
-    )
-}
-
-/// `¬◇¬a <=> □a`.
-pub fn eq_nposn_nec<A: Prop>() -> Eq<Not<Pos<Not<A>>>, Nec<A>> {
-    eq::refl()
-}
-
-/// `¬□a == ◇¬a`.
-pub fn eq_nnec_posn<A: Prop>() -> Eq<Not<Nec<A>>, Pos<Not<A>>> {
-    fn g<A: Prop>(_: True) -> Eq<Not<Not<Para<Not<A>>>>, Para<Not<A>>> {
-        fn f<A: Prop>(_: True) -> Eq<Not<Not<Not<A>>>, Not<A>> {
-            (Rc::new(move |x| not::rev_triple(x)), Rc::new(move |x| not::double(x)))
         }
-        (
-            Rc::new(move |x| {
-                let x = imply::in_left(x, |y| pow_rev_not(y));
-                para_in_arg(pow_not(x), f)
-            }),
-            Rc::new(move |x| {
-                let x = para_in_arg(x, tauto_eq_symmetry(f));
-                let x: Not<Para<Not<Not<A>>>> = pow_rev_not(x);
-                imply::in_left(x, |y| pow_not(y))
-            })
-        )
     }
-    (
-        Rc::new(move |nnec_a: Not<Not<Pos<Not<A>>>>| {
-            let x = unsafe {nnpos_to_nnpara_para(nnec_a)};
-            let x = imply::in_left(x, |y| pow_rev_not(y));
-            let x = pow_not(x);
-            Pos::new(para_in_arg(x, g))
-        }),
-        Rc::new(move |pos_na| {
-            let x = unsafe {pos_to_para_para(pos_na)};
-            let x: Para<Not<Not<Para<Not<A>>>>> = para_in_arg(x, tauto_eq_symmetry(g));
-            let x = pow_rev_not(x);
-            let x: Not<Not<Para<Para<Not<A>>>>> = imply::in_left(x, |y| pow_not(y));
-            imply::in_left(x, |y| imply::in_left(y, |x| Pos::new(x)))
-        })
-    )
 }
 
-/// `¬◇a == □¬a`.
-pub fn eq_posn_nnec<A: Prop>() -> Eq<Not<Pos<A>>, Nec<Not<A>>> {
-    fn f<A: Prop>(_: True) -> Eq<Not<Para<A>>, Not<Para<Not<Not<A>>>>> {
-        fn g<A: Prop>(_: True) -> Eq<Not<Not<Not<A>>>, Not<A>> {
-            (Rc::new(move |x| not::rev_triple(x)), Rc::new(move |x| not::double(x)))
+/// `□a => □□a`.
+pub fn four<A: Prop>(nec_a: Nec<A>) -> Nec<Nec<A>> {pow_lift(nec_a)}
+
+/// `◇a => □◇a`.
+pub fn five<A: Prop>(pos_a: Pos<A>) -> Nec<Pos<A>> {
+    match program::<Pos<A>>() {
+        Left(Left(tauto_pos_a)) => tauto_pos_a,
+        Left(Right(para_pos_a)) => imply::absurd()(para_pos_a(pos_a)),
+        Right(para_uni_pos_a) => {
+            let x: Not<Uniform<Pos<A>>> = Rc::new(move |x| para_uni_pos_a(x));
+            let (ntauto_pos_a, _) = and::from_de_morgan(x);
+            not::absurd(hooo_rev_not(ntauto_pos_a)(True), pos_a)
         }
-        (
-            Rc::new(move |x| {
-                let x = pow_not(x);
-                let x = para_in_arg(x, tauto_eq_symmetry(g));
-                pow_rev_not(x)
-            }),
-            Rc::new(move |x| {
-                let x = pow_not(x);
-                let x = para_in_arg(x, g);
-                pow_rev_not(x)
-            })
-        )
     }
-    (
-        Rc::new(move |x| {
-            let x = pos_not(x);
-            let x = para_in_arg(x, f);
-            imply::in_left(pow_rev_not(x), |y| unsafe {pos_to_para_para(y)})
-        }),
-        Rc::new(move |x| {
-            let x = pos_not(x);
-            let x = para_in_arg(x, tauto_eq_symmetry(f));
-            imply::in_left(pow_rev_not(x), |y| unsafe {pos_to_para_para(y)})
-        })
-    )
-}
-
-/// `¬¬◇a => ¬¬(false^(false^a))`.
-pub unsafe fn nnpos_to_nnpara_para<A: Prop>(x: Not<Not<Pos<A>>>) -> Not<Not<Para<Para<A>>>> {
-    imply::in_left(x, |y| imply::in_left(y, |x| pos_to_para_para(x)))
-}
-
-/// `¬¬◇a => ¬¬(false^(false^a))`.
-pub fn nnpara_para_to_nnpos<A: Prop>(x: Not<Not<Para<Para<A>>>>) -> Not<Not<Pos<A>>> {
-    imply::in_left(x, |y| imply::in_left(y, |x| Pos::new(x)))
-}
-
-/// `(false^(false^a) => ◇a)^true) => (false^(false^a) == ◇a)^true)`.
-pub fn to_pos_tauto_eq<A: Prop>(
-    y: Tauto<Imply<Para<Para<A>>, Pos<A>>>
-) -> Tauto<Eq<Para<Para<A>>, Pos<A>>> {
-    fn f<A: Prop>(_: True) -> Imply<Pos<A>, Para<Para<A>>> {
-        Rc::new(move |pos_a| unsafe {pos_to_para_para(pos_a)})
-    }
-    hooo_rev_and((y, f::<A>))
-}
-
-/// `¬◇a => false^(¬(false^a))`.
-pub fn pos_not<A: Prop>(x: Not<Pos<A>>) -> Para<Not<Para<A>>> {
-    pow_not(imply::in_left(x, |y| Pos::new(y)))
 }
