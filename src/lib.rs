@@ -23,6 +23,7 @@
 //! - PSEL: Path Semantical Existential Logic
 //! - PSL: Path Semantical Classical Propositional Logic
 //! - PSQ: Path Semantical Quantum Propositional Logic
+//! - HOOO EP: Higher Order Operator Overloading Exponential Propositions
 //!
 //! ### Motivation
 //!
@@ -59,7 +60,8 @@
 //! - A model of Seshatic Queenity (see "queenity" module)
 //! - Formalization of the core axiom of Path Semantics
 //! - Exponential Propositions (HOOO) for tautological/paradoxical theorem proving
-//! - A model of Modal Logic derived from Exponential Propositions and Theory of Avatar Extensions
+//! - A model of S5 Modal Logic derived from HOOO EP
+//! - A model of Avatar Modal Logic derived from HOOO EP and Theory of Avatar Extensions
 //! - Tactics organized in modules by constructs (e.g. `and` or `imply`)
 //!
 //! ### Examples
