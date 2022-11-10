@@ -1,5 +1,5 @@
 use prop::*;
-use modal::*;
+use ava_modal::*;
 use hooo::*;
 
 // `¬¬¬◇a => ¬□a`.
