@@ -613,6 +613,19 @@ pub fn para_not_rev_triple<A: Prop>(x: Para<Not<Not<Not<A>>>>) -> Para<Not<A>> {
     para_in_arg(x, tauto_eq_symmetry(f))
 }
 
+/// `¬(false^a) => false^(false^a)`.
+pub fn not_para_to_para_para<A: Prop>(npara_a: Not<Para<A>>) -> Para<Para<A>> {
+    match para_decide::<Para<A>>() {
+        Left(para_para_a) => para_para_a,
+        Right(n_para_para_a) => imply::absurd()(pow_not(n_para_para_a)(npara_a)),
+    }
+}
+
+/// `false^(false^a) => ¬(false^a)`.
+pub fn para_para_to_not_para<A: Prop>(para_para_a: Para<Para<A>>) -> Not<Para<A>> {
+    Rc::new(move |para_a| para_para_a(para_a))
+}
+
 /// `(¬(false^a) == ¬(false^b)) => (false^a == false^b)`.
 pub fn eq_not_para_to_eq_para<A: Prop, B: Prop>(
     eq_npara_a_npara_b: Eq<Not<Para<A>>, Not<Para<B>>>
