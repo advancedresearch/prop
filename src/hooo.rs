@@ -264,7 +264,12 @@ type NRImply<A, B> = Not<Imply<B, A>>;
 hooo_impl!{Imply, NRImply}
 
 /// Get instance of exponential proposition.
-pub fn pow<A: Prop, B: Prop>() -> Pow<A, B>
+///
+/// This is made private since it does not distinguish
+/// classical propositions from constructive propositions.
+/// This property must be guarded by wrapper axioms,
+/// or use proofs instead whenever possible.
+fn pow<A: Prop, B: Prop>() -> Pow<A, B>
     where Pow<A, B>: PowImply<B, A>
 {unimplemented!()}
 
