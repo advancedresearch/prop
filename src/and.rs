@@ -134,15 +134,8 @@ pub fn from_imply<A: DProp, B: DProp>(f: Not<Imply<A, B>>) -> And<A, Not<B>> {
 }
 
 /// `(a ∧ ¬b)  =>  ¬(a => b)`.
-pub fn to_imply<A: DProp, B: DProp>(f: And<A, Not<B>>) -> Not<Imply<A, B>> {
-    // `(¬¬a ∧ ¬b)`
-    let g: And<Not<Not<A>>, Not<B>> = and::in_left_arg(f, Rc::new(move |x| not::double(x)));
-    // `¬(¬a ∨ b)`
-    let h: Not<Or<Not<A>, B>> = and::to_de_morgan(g);
-    // `(a => b)  =>  (¬a ∨ b)`
-    let h2: Imply<Imply<A, B>, Or<Not<A>, B>> = Rc::new(move |x| imply::to_or(x));
-    // `¬(a => b)`
-    imply::rev_modus_ponens(h2, h)
+pub fn to_imply<A: Prop, B: Prop>((a, nb): And<A, Not<B>>) -> Not<Imply<A, B>> {
+    Rc::new(move |ab| nb.clone()(ab(a.clone())))
 }
 
 /// `(a ∧ b) => (a = b)`.
