@@ -3,7 +3,7 @@ use ava_modal::*;
 use hooo::*;
 
 // `¬¬¬◇a => ¬□a`.
-pub fn proof1<A: Prop>(nnnpos_a: Not<Not<Not<Pos<A>>>>) -> Not<Nec<A>> {
+pub fn proof1<A: DProp>(nnnpos_a: Not<Not<Not<Pos<A>>>>) -> Not<Nec<A>> {
     imply::in_left(nnnpos_a, |x: Nec<A>| {
         let x = npos_to_para(x);
         let x = pow_rev_not(x);
@@ -13,7 +13,7 @@ pub fn proof1<A: Prop>(nnnpos_a: Not<Not<Not<Pos<A>>>>) -> Not<Nec<A>> {
 }
 
 // `¬◇a => ¬□a`.
-pub fn proof2<A: Prop>(npos_a: Not<Pos<A>>) -> Not<Nec<A>> {
+pub fn proof2<A: DProp>(npos_a: Not<Pos<A>>) -> Not<Nec<A>> {
     proof1(not::double(npos_a))
 }
 

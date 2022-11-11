@@ -18,7 +18,7 @@ pub type Pos<A> = Or<Tauto<A>, Theory<A>>;
 pub type Nec<A> = Tauto<A>;
 
 /// `¬(false^a) => ◇a`.
-pub fn npara_to_pos<A: Prop>(npara: Not<Para<A>>) -> Pos<A> {
+pub fn npara_to_pos<A: DProp>(npara: Not<Para<A>>) -> Pos<A> {
     match program::<A>() {
         Left(Left(tauto_a)) => Left(tauto_a),
         Left(Right(para_a)) => not::absurd(npara, para_a),
@@ -37,7 +37,7 @@ pub fn pos_to_npara<A: Prop>(pos: Pos<A>) -> Not<Para<A>> {
 }
 
 /// `¬◇a => false^a`.
-pub fn npos_to_para<A: Prop>(npos: Not<Pos<A>>) -> Para<A> {
+pub fn npos_to_para<A: DProp>(npos: Not<Pos<A>>) -> Para<A> {
     match para_decide::<A>() {
         Left(para_a) => para_a,
         Right(npara_a) => not::absurd(npos, npara_to_pos(npara_a)),
@@ -53,7 +53,7 @@ pub fn para_to_npos<A: Prop>(para_a: Para<A>) -> Not<Pos<A>> {
 }
 
 /// `¬◇a => ◇¬a`.
-pub fn npos_to_posn<A: Prop>(npos_a: Not<Pos<A>>) -> Pos<Not<A>> {
+pub fn npos_to_posn<A: DProp>(npos_a: Not<Pos<A>>) -> Pos<Not<A>> {
     let para_a = npos_to_para(npos_a);
     Left(para_to_tauto_not(para_a))
 }
@@ -79,7 +79,7 @@ pub fn nec_to_nposn<A: Prop>(tauto_a: Nec<A>) -> Not<Pos<Not<A>>> {
 }
 
 /// `¬◇¬a => □a`.
-pub fn nposn_to_nec<A: Prop>(npos_na: Not<Pos<Not<A>>>) -> Nec<A> {
+pub fn nposn_to_nec<A: DProp>(npos_na: Not<Pos<Not<A>>>) -> Nec<A> {
     match program::<A>() {
         Left(Left(tauto_a)) => tauto_a,
         Left(Right(para_a)) => not::absurd(npos_na, npos_to_posn(para_to_npos(para_a))),
@@ -100,7 +100,7 @@ pub fn pos_to_nnecn<A: Prop>(pos_a: Pos<A>) -> Not<Nec<Not<A>>> {
 }
 
 /// `¬□¬a => ◇a`.
-pub fn nnecn_to_pos<A: Prop>(ntauto_na: Not<Nec<Not<A>>>) -> Pos<A> {
+pub fn nnecn_to_pos<A: DProp>(ntauto_na: Not<Nec<Not<A>>>) -> Pos<A> {
     match program::<A>() {
         Left(Left(tauto_a)) => Left(tauto_a),
         Left(Right(para_a)) => {
@@ -130,7 +130,7 @@ pub fn k<A: Prop, B: Prop>(x: Nec<Imply<A, B>>) -> Imply<Nec<A>, Nec<B>> {
 pub fn t<A: Prop>(x: Nec<A>) -> A {x(True)}
 
 /// `a => □◇a`.
-pub fn b<A: Prop>(a: A) -> Nec<Pos<A>> {
+pub fn b<A: DProp>(a: A) -> Nec<Pos<A>> {
     match program::<Pos<A>>() {
         Left(Left(tauto_pos_a)) => tauto_pos_a,
         Left(Right(para_pos_a)) => {
@@ -157,7 +157,7 @@ pub fn b<A: Prop>(a: A) -> Nec<Pos<A>> {
 pub fn four<A: Prop>(nec_a: Nec<A>) -> Nec<Nec<A>> {pow_lift(nec_a)}
 
 /// `◇a => □◇a`.
-pub fn five<A: Prop>(pos_a: Pos<A>) -> Nec<Pos<A>> {
+pub fn five<A: DProp>(pos_a: Pos<A>) -> Nec<Pos<A>> {
     match program::<Pos<A>>() {
         Left(Left(tauto_pos_a)) => tauto_pos_a,
         Left(Right(para_pos_a)) => imply::absurd()(para_pos_a(pos_a)),

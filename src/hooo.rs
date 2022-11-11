@@ -76,7 +76,7 @@ pub fn tauto_decide<A: DProp>() -> ExcM<Tauto<A>> {
 }
 
 /// `false^a ⋁ ¬(false^a)`.
-pub fn para_decide<A: Prop>() -> ExcM<Para<A>> {
+pub fn para_decide<A: DProp>() -> ExcM<Para<A>> {
     fn f<A: Prop>((a, na): And<A, Not<A>>) -> False {na(a)}
     let f = hooo_dual_and(f);
     match f {
@@ -315,7 +315,9 @@ pub fn hooo_rev_and<A: Prop, B: Prop, C: Prop>(
 }
 
 /// `c^(a ⋀ b) => (c^a ⋁ c^b)`.
-pub fn hooo_dual_and<A: Prop, B: Prop, C: Prop>(
+///
+/// This is only valid for decidable propositions.
+pub fn hooo_dual_and<A: DProp, B: DProp, C: DProp>(
     x: Pow<C, And<A, B>>
 ) -> Or<Pow<C, A>, Pow<C, B>> {pow()(x)}
 
@@ -606,7 +608,7 @@ pub fn para_not_rev_triple<A: Prop>(x: Para<Not<Not<Not<A>>>>) -> Para<Not<A>> {
 }
 
 /// `¬(false^a) => false^(false^a)`.
-pub fn not_para_to_para_para<A: Prop>(npara_a: Not<Para<A>>) -> Para<Para<A>> {
+pub fn not_para_to_para_para<A: DProp>(npara_a: Not<Para<A>>) -> Para<Para<A>> {
     match para_decide::<Para<A>>() {
         Left(para_para_a) => para_para_a,
         Right(n_para_para_a) => imply::absurd()(pow_not(n_para_para_a)(npara_a)),
@@ -682,7 +684,7 @@ pub fn tauto_eq_in_left_arg<A: Prop, B: Prop, C: Prop>(
 }
 
 /// `uniform(a) ⋁ false^uniform(a)`.
-pub fn program<A: Prop>() -> Or<Uniform<A>, Para<Uniform<A>>> {
+pub fn program<A: DProp>() -> Or<Uniform<A>, Para<Uniform<A>>> {
     match para_decide::<A>() {
         Left(para_a) => Left(Right(para_a)),
         Right(npara_a) => {
@@ -864,7 +866,7 @@ pub fn para_from_or<A: Prop, B: Prop>(
 }
 
 /// `false^(a ∧ b) => false^a ⋁ false^b`.
-pub fn para_and_to_or<A: Prop, B: Prop>(
+pub fn para_and_to_or<A: DProp, B: DProp>(
     x: Para<And<A, B>>
 ) -> Or<Para<A>, Para<B>> {
     hooo_dual_and(x)
@@ -956,7 +958,7 @@ pub fn uniform_symmetry<A: Prop, B: Prop>(
 }
 
 /// `uniform(a == b) ∧ uniform(b == c) => uniform(a == c)`.
-pub fn uniform_transitivity<A: Prop, B: Prop, C: Prop>(
+pub fn uniform_transitivity<A: DProp, B: DProp, C: DProp>(
     f: Uniform<Eq<A, B>>,
     g: Uniform<Eq<B, C>>
 ) -> Uniform<Eq<A, C>> {
@@ -969,7 +971,7 @@ pub fn uniform_transitivity<A: Prop, B: Prop, C: Prop>(
 }
 
 /// `(false^(a == b) ∧ false^(b == c)) => (a == c)^true`.
-pub fn tauto_from_para_transitivity<A: Prop, B: Prop, C: Prop>(
+pub fn tauto_from_para_transitivity<A: DProp, B: DProp, C: DProp>(
     para_eq_ab: Para<Eq<A, B>>,
     para_eq_bc: Para<Eq<B, C>>,
 ) -> Tauto<Eq<A, C>> {
@@ -1042,7 +1044,7 @@ pub fn para_uniform_and<A: Prop, B: Prop>(
 }
 
 /// `uniform(a ∧ b) => uniform(a) ⋁ uniform(b)`.
-pub fn uniform_dual_and<A: Prop, B: Prop>(
+pub fn uniform_dual_and<A: DProp, B: DProp>(
     uni_and: Uniform<And<A, B>>,
 ) -> Or<Uniform<A>, Uniform<B>> {
     match uni_and {
@@ -1082,7 +1084,7 @@ pub fn uniform_to_excm<A: Prop>(
 }
 
 /// `theory(a) ⋀ theory(b) => theory(a ⋀ b)`.
-pub fn theory_and<A: Prop, B: Prop>(
+pub fn theory_and<A: DProp, B: DProp>(
     f: Theory<A>,
     g: Theory<B>
 ) -> Theory<And<A, B>> {
