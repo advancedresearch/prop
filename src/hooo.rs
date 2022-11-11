@@ -706,14 +706,8 @@ pub fn imply_tauto_to_imply_para<A: Prop, B: Prop>(
     x: Imply<Tauto<A>, Tauto<B>>
 ) -> Imply<Para<B>, Para<A>> {
     Rc::new(move |para_b| {
-        match para_decide::<A>() {
-            Left(para_a) => para_a,
-            Right(npara_a) => {
-                let nb: Not<B> = Rc::new(move |b| para_b(b));
-                let na: Not<A> = imply::modus_tollens(hooo_rev_imply(x.clone())(True))(nb);
-                imply::absurd()(pow_not(npara_a)(na))
-            }
-        }
+        let x = imply::modus_tollens(x.clone());
+        tauto_not_to_para(tauto_not(x(tauto_rev_not(para_to_tauto_not(para_b)))))
     })
 }
 
