@@ -4,7 +4,7 @@
 
 use crate::*;
 
-/// `a ∧ b => b ∧ a`.
+/// `a ∧ b  =>  b ∧ a`.
 pub fn symmetry<A: Prop, B: Prop>((f0, f1): And<A, B>) -> And<B, A> {
     (f1, f0)
 }
@@ -71,7 +71,7 @@ pub fn exc_both<A: Prop, B: Prop>(
     }
 }
 
-/// `(¬a ∧ ¬b) => ¬(a ∨ b)`.
+/// `(¬a ∧ ¬b)  =>  ¬(a ∨ b)`.
 pub fn to_de_morgan<A: Prop, B: Prop>((f0, f1): And<Not<A>, Not<B>>) -> Not<Or<A, B>> {
     Rc::new(move |or_ab| match or_ab {
         Left(a) => match f0(a) {},
@@ -79,7 +79,7 @@ pub fn to_de_morgan<A: Prop, B: Prop>((f0, f1): And<Not<A>, Not<B>>) -> Not<Or<A
     })
 }
 
-/// `¬(a ∨ b) => (¬a ∧ ¬b)`.
+/// `¬(a ∨ b)  =>  (¬a ∧ ¬b)`.
 pub fn from_de_morgan<A: Prop, B: Prop>(f: Not<Or<A, B>>) -> And<Not<A>, Not<B>> {
     let f2 = f.clone();
     (
@@ -88,10 +88,10 @@ pub fn from_de_morgan<A: Prop, B: Prop>(f: Not<Or<A, B>>) -> And<Not<A>, Not<B>>
     )
 }
 
-/// `(false ∧ a) => false`.
+/// `(false ∧ a)  =>  false`.
 pub fn false_arg<A: Prop>((x, _): And<False, A>) -> False {x}
 
-/// `(true ∧ a) => a`.
+/// `(true ∧ a)  =>  a`.
 pub fn true_arg<A: Prop>((_, x): And<True, A>) -> A {x}
 
 /// `(a ∧ b) ∧ (a => c)  =>  (c ∧ b)`.
@@ -138,12 +138,12 @@ pub fn to_imply<A: Prop, B: Prop>((a, nb): And<A, Not<B>>) -> Not<Imply<A, B>> {
     Rc::new(move |ab| nb.clone()(ab(a.clone())))
 }
 
-/// `(a ∧ b) => (a = b)`.
+/// `(a ∧ b)  =>  (a == b)`.
 pub fn to_eq_pos<A: Prop, B: Prop>((f0, f1): And<A, B>) -> Eq<A, B> {
     (f1.map_any(), f0.map_any())
 }
 
-/// `(¬a ∧ ¬b) => (a = b)`.
+/// `(¬a ∧ ¬b)  =>  (a == b)`.
 pub fn to_eq_neg<A: Prop, B: Prop>((f0, f1): And<Not<A>, Not<B>>) -> Eq<A, B> {
     (Rc::new(move |x| match f0.clone()(x) {}), Rc::new(move |x| match f1.clone()(x) {}))
 }
