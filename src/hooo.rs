@@ -622,7 +622,19 @@ pub fn para_para_to_not_para<A: Prop>(para_para_a: Para<Para<A>>) -> Not<Para<A>
 pub fn eq_not_para_to_eq_para<A: Prop, B: Prop>(
     eq_npara_a_npara_b: Eq<Not<Para<A>>, Not<Para<B>>>
 ) -> Eq<Para<A>, Para<B>> {
-    eq::symmetry(eq::rev_modus_tollens_excm(eq_npara_a_npara_b, para_decide(), para_decide()))
+    fn f<A: Prop>() -> Eq<Not<Not<Para<A>>>, Para<A>> {
+        (
+            Rc::new(move |nnpara_a| {
+                let x: Not<Para<Not<A>>> = imply::in_left(nnpara_a,
+                    |x: Para<Not<A>>| para_rev_not(x));
+                para_not_rev_double(pow_not(x))
+            }),
+            Rc::new(move |para_a| not::double(para_a))
+        )
+    }
+    let x = eq::modus_tollens(eq_npara_a_npara_b);
+    let x: Eq<Para<B>, Not<Not<Para<A>>>> = eq::in_left_arg(x, f());
+    eq::in_left_arg(eq::symmetry(x), f())
 }
 
 /// `(x == x)^true`.
