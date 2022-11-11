@@ -57,7 +57,7 @@ mod protection {
     pub unsafe fn pos_to_para_para<A: Prop>(Pos(x): Pos<A>) -> Para<Para<A>> {x}
 }
 
-impl<A: Prop> Decidable for Pos<A> {
+impl<A: DProp> Decidable for Pos<A> {
     fn decide() -> ExcM<Pos<A>> {
         match para_decide() {
             Left(x) => Left(Pos::new(x)),
@@ -79,7 +79,7 @@ pub fn nec_to_tauto<A: DProp>(nec_a: Nec<A>) -> Tauto<A> {
 }
 
 /// `a^true => □a`.
-pub unsafe fn tauto_to_nec<A: Prop>(tauto_a: Tauto<A>) -> Nec<A> {
+pub unsafe fn tauto_to_nec<A: DProp>(tauto_a: Tauto<A>) -> Nec<A> {
     Rc::new(move |pos_na| {
         match para_decide() {
             Left(para_na) => pos_to_para_para(pos_na)(para_na),
@@ -92,7 +92,7 @@ pub unsafe fn tauto_to_nec<A: Prop>(tauto_a: Tauto<A>) -> Nec<A> {
 }
 
 /// `¬◇a => false^a`.
-pub fn npos_to_para<A: Prop>(npos: Not<Pos<A>>) -> Para<A> {
+pub fn npos_to_para<A: DProp>(npos: Not<Pos<A>>) -> Para<A> {
     match para_decide() {
         Left(para_a) => para_a,
         Right(npara_a) => imply::absurd()(pos_not(npos)(npara_a)),
@@ -105,7 +105,7 @@ pub unsafe fn para_to_npos<A: Prop>(para_a: Para<A>) -> Not<Pos<A>> {
 }
 
 /// `¬□¬a <=> ◇a`.
-pub fn eq_nnecn_pos<A: Prop>() -> Eq<Not<Nec<Not<A>>>, Pos<A>> {
+pub fn eq_nnecn_pos<A: DProp>() -> Eq<Not<Nec<Not<A>>>, Pos<A>> {
     fn f<A: Prop>(_: True) -> Eq<Not<Para<A>>, Not<Para<Not<Not<A>>>>> {
         (
             Rc::new(move |x| pow_rev_not(para_not_triple(pow_not(x)))),
