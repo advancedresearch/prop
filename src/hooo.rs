@@ -715,11 +715,16 @@ pub fn eq_tauto_to_eq_para<A: Prop, B: Prop>(
 
 /// `(a^true == false^a) => false^uniform(a)`.
 pub fn eq_tauto_para_to_para_uniform<A: Prop>(eq: Eq<Tauto<A>, Para<A>>) -> Para<Uniform<A>> {
-    match program::<A>() {
-        Left(Left(tauto_a)) => imply::absurd()(eq.0(tauto_a)(tauto_a(True))),
-        Left(Right(para_a)) => imply::absurd()(para_a(eq.1(para_a)(True))),
-        Right(para_uni) => para_uni,
-    }
+    not::absurd(Para::<A>::nnexcm(), Rc::new(move |excm| {
+        let eq = eq.clone();
+        match excm {
+            Left(para_a) => para_a(eq.1(para_a)(True)),
+            Right(npara_a) => {
+                let x = eq::modus_tollens(eq).0(npara_a.clone());
+                npara_a(tauto_not_to_para(hooo_rev_not(x)))
+            }
+        }
+    }))
 }
 
 /// `false^uniform(a) => (a^true == false^a)`.
