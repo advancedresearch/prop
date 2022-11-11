@@ -586,14 +586,7 @@ pub fn para_rev_not<A: Prop>(x: Para<Not<A>>) -> Not<Para<A>> {
 
 /// `false^a => false^(¬¬a)`.
 pub fn para_not_double<A: Prop>(x: Para<A>) -> Para<Not<Not<A>>> {
-    match para_decide::<Not<Not<A>>>() {
-        Left(y) => y,
-        Right(y) => {
-            let y: Not<Not<Para<Not<A>>>> = imply::in_left(y, |x| pow_not(x));
-            let y: Not<Not<Not<Para<A>>>> = imply::in_left(y, |x| imply::in_left(x, |y| pow_rev_not(y)));
-            not::absurd(not::rev_triple(y), x)
-        }
-    }
+    pow_not(imply::in_left(not::double(x), |x: Para<Not<A>>| pow_rev_not(x)))
 }
 
 /// `false^(¬¬a) => false^a`.

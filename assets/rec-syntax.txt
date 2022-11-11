@@ -26,10 +26,10 @@ _seps: "|!:.,;<>(){}[]"
 
 24 call_gen_args = .s?(, ty)
 23 call_args = .s?(, expr)
-22 call = [.._seps!:"name" ?{
+22 call = [.._seps!:"name" .r?({
     ["::<" .w? call_gen_args .w? ">"]
     ["::" .._seps!]
-  } {
+  }) {
     ["!" .r?({
       ["{" .w? macro_args .w? "}"]
       ["(" .w? macro_args .w? ")"]
