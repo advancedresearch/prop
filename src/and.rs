@@ -91,7 +91,7 @@ pub fn from_de_morgan<A: Prop, B: Prop>(f: Not<Or<A, B>>) -> And<Not<A>, Not<B>>
 /// `(false ∧ a) => false`.
 pub fn false_arg<A: Prop>((x, _): And<False, A>) -> False {x}
 
-/// `(true ∧ a) => true`.
+/// `(true ∧ a) => a`.
 pub fn true_arg<A: Prop>((_, x): And<True, A>) -> A {x}
 
 /// `(a ∧ b) ∧ (a => c)  =>  (c ∧ b)`.
