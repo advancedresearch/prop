@@ -164,19 +164,13 @@ pub fn to_or<A: DProp, B: DProp>(f: Imply<A, B>) -> Or<Not<A>, B> {
 }
 
 /// `(¬a ∨ b) => (a => b)`.
-pub fn from_or<A: DProp, B: DProp>(f: Or<Not<A>, B>) -> Imply<A, B> {
-    use Either::*;
-
-    let a = <A as Decidable>::decide();
-    let b = <B as Decidable>::decide();
-    match (a, b) {
-        (_, Left(b)) => b.map_any(),
-        (Left(a), _) => match f {
-            Left(x) => match x(a) {},
-            Right(b) => b.map_any(),
+pub fn from_or<A: Prop, B: Prop>(f: Or<Not<A>, B>) -> Imply<A, B> {
+    Rc::new(move |a| {
+        match f.clone() {
+            Left(na) => absurd()(na(a)),
+            Right(b) => b,
         }
-        (Right(a), _) => Rc::new(move |x| match a(x) {}),
-    }
+    })
 }
 
 /// `(¬a => b) => (¬b => a)`.
