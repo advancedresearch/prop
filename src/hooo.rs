@@ -476,6 +476,8 @@ pub fn fa<A: Prop>() -> Pow<A, False> {
     f::<A>
 }
 
+/// `¬(false^true)`.
+///
 /// A consistent logic can't prove `false` without further assumptions.
 pub fn consistency() -> Not<Tauto<False>> {
     Rc::new(move |f| f(True))
