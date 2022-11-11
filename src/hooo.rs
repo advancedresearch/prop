@@ -604,10 +604,7 @@ pub fn para_not_rev_double<A: Prop>(x: Para<Not<Not<A>>>) -> Para<A> {
 
 /// `false^(¬x) => false^(¬¬¬x)`.
 pub fn para_not_triple<A: Prop>(x: Para<Not<A>>) -> Para<Not<Not<Not<A>>>> {
-    fn f<A: Prop>(_: True) -> Eq<Not<A>, Not<Not<Not<A>>>> {
-        (Rc::new(move |x| not::double(x)), Rc::new(move |x| not::rev_triple(x)))
-    }
-    para_in_arg(x, f)
+    pow_transitivity(not::rev_triple, x)
 }
 
 /// `false^(¬¬¬x) => false^(¬x)`.
