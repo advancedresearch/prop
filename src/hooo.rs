@@ -232,8 +232,8 @@ pub fn tauto_eq_to_pow_eq<A: Prop, B: Prop>(x: Tauto<Eq<A, B>>) -> PowEq<A, B> {
 #[marker]
 /// Implemented by axiomatic exponential propositions.
 ///
-/// This is used by `pow` to instantiate an exponential proposition axiomatically.
-pub trait PowImply<A, B>: Fn(A) -> B {}
+/// This is used internally to instantiate an exponential proposition axiomatically.
+trait PowImply<A, B>: Fn(A) -> B {}
 
 impl<A, B> PowImply<Not<Pow<A, B>>, Pow<Not<A>, B>>
     for Pow<Pow<Not<A>, B>, Not<Pow<A, B>>> {}
@@ -272,18 +272,6 @@ hooo_impl!{Imply, NRImply}
 fn pow<A: Prop, B: Prop>() -> Pow<A, B>
     where Pow<A, B>: PowImply<B, A>
 {unimplemented!()}
-
-/// Get tautological proposition.
-pub fn tauto<A: Prop>() -> Tauto<A>
-    where Tauto<A>: PowImply<True, A>
-{
-    pow()
-}
-
-/// Get paradoxical proposition.
-pub fn para<A: Prop>() -> Para<A>
-    where Para<A>: PowImply<A, False>
-{pow()}
 
 /// `¬(a^b) => (¬a)^b`.
 pub fn hooo_rev_not<A: Prop, B: Prop>(x: Not<Pow<A, B>>) -> Pow<Not<A>, B> {
