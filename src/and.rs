@@ -123,7 +123,7 @@ pub fn in_right<A: Prop, B: Prop, C: Prop, F>(
 }
 
 /// `¬(a => b)  =>  (a ∧ ¬b)`.
-pub fn from_imply<A: DProp, B: DProp>(f: Not<Imply<A, B>>) -> And<A, Not<B>> {
+pub fn from_imply<A: DProp, B: Prop>(f: Not<Imply<A, B>>) -> And<A, Not<B>> {
     // `(¬a ∨ b)  =>  (a => b)`
     let f2 = Rc::new(move |x| imply::from_or(x));
     // `¬(¬a ∨ b)`
