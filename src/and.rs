@@ -16,6 +16,13 @@ pub fn assoc<A: Prop, B: Prop, C: Prop>(
     (x0, (x1, x2))
 }
 
+/// `a ∧ (b ∧ c) => (a ∧ b) ∧ c`.
+pub fn rev_assoc<A: Prop, B: Prop, C: Prop>(
+    (x0, (x1, x2)): And<A, And<B, C>>
+) -> And<And<A, B>, C> {
+    ((x0, x1), x2)
+}
+
 /// `a ∧ (b ∨ c)  =>  (a ∧ b) ∨ (a ∧ c)`.
 pub fn distrib<A: Prop, B: Prop, C: Prop>(
     (a, x): And<A, Or<B, C>>
