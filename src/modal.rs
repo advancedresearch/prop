@@ -79,7 +79,7 @@ pub fn nec_to_nposn<A: Prop>(tauto_a: Nec<A>) -> Not<Pos<Not<A>>> {
 }
 
 /// `¬◇¬a => □a`.
-pub fn nposn_to_tauto<A: Prop>(npos_na: Not<Pos<Not<A>>>) -> Nec<A> {
+pub fn nposn_to_nec<A: Prop>(npos_na: Not<Pos<Not<A>>>) -> Nec<A> {
     match program::<A>() {
         Left(Left(tauto_a)) => tauto_a,
         Left(Right(para_a)) => not::absurd(npos_na, npos_to_posn(para_to_npos(para_a))),
