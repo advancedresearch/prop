@@ -286,7 +286,7 @@ pub fn hooo_rev_and<A: Prop, B: Prop, C: Prop>(
     x: And<Pow<A, C>, Pow<B, C>>
 ) -> Pow<And<A, B>, C> {
     let g = pow_to_imply(hooo_imply);
-    let f = pow_transitivity(pow_lift(imply::and_map), pow_to_imply);
+    let f = pow_to_imply_lift(imply::and_map);
     let f = imply::transitivity(hooo_imply(f), g);
     f(x.0)(x.1)
 }
