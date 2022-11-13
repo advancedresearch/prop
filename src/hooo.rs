@@ -311,7 +311,12 @@ pub fn hooo_or<A: Prop, B: Prop, C: Prop>(
 /// `(a^c ⋁ b^c) => (a ⋁ b)^c`.
 pub fn hooo_rev_or<A: Prop, B: Prop, C: Prop>(
     x: Or<Pow<A, C>, Pow<B, C>>
-) -> Pow<Or<A, B>, C> {pow()(x)}
+) -> Pow<Or<A, B>, C> {
+    match x {
+        Left(ca) => pow_transitivity(ca, Left),
+        Right(cb) => pow_transitivity(cb, Right),
+    }
+}
 
 /// `c^(a ⋁ b) => (c^a ⋀ c^b)`.
 pub fn hooo_dual_or<A: Prop, B: Prop, C: Prop>(
