@@ -179,18 +179,9 @@ pub fn pow_transitivity<A: Prop, B: Prop, C: Prop>(
             imply::transitivity(b.map_any(), bc.map_any())(a.clone())
         })
     }
-    let f: Imply<Pow<And<B, Imply<B, Pow<C, B>>>, A>, Pow<C, A>> = hooo_imply(f::<A, B, C>);
-    let f = imply::in_left(f,
-        |x: And<Pow<B, A>, Imply<Pow<B, A>, Pow<Pow<C, B>, A>>>| {
-            let x: And<Pow<B, A>, Imply<Pow<B, A>, Pow<Pow<C, B>, A>>> = x;
-            let x: And<Pow<B, A>, Pow<Imply<B, Pow<C, B>>, A>> = and::in_right(x,
-                |x| hooo_rev_imply(x)
-            );
-            hooo_rev_and(x)
-        }
-    );
-    let f: Imply<Imply<Pow<B, A>, Pow<Pow<C, B>, A>>, Pow<C, A>> = imply::chain(f)(ab);
-    f(pow_lift(bc).map_any())
+    let f = hooo_imply(f::<A, B, C>);
+    let f = imply::in_left(f, |x| hooo_rev_and(and::in_right(x, |x| hooo_rev_imply(x))));
+    imply::chain(f)(ab)(pow_lift(bc).map_any())
 }
 
 /// `x =^= x`.
