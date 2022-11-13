@@ -285,10 +285,8 @@ pub fn hooo_and<A: Prop, B: Prop, C: Prop>(x: Pow<And<A, B>, C>) -> And<Pow<A, C
 pub fn hooo_rev_and<A: Prop, B: Prop, C: Prop>(
     x: And<Pow<A, C>, Pow<B, C>>
 ) -> Pow<And<A, B>, C> {
-    fn f<A: Prop, B: Prop, C: Prop>(_: C) -> Imply<A, Imply<B, And<A, B>>> {
-        Rc::new(move |a| Rc::new(move |b| (a.clone(), b)))
-    }
-    let g = Rc::new(move |x| hooo_imply(x));
+    let g = pow_to_imply(hooo_imply);
+    let f = pow_transitivity(pow_lift(imply::and_map), pow_to_imply);
     let f = imply::transitivity(hooo_imply(f), g);
     f(x.0)(x.1)
 }
@@ -1096,6 +1094,11 @@ pub fn para_liar<A: Prop>(
             }
         }
     }))
+}
+
+/// `b^a => (a => b)`.
+pub fn pow_to_imply<A: Prop, B: Prop>(pow_ba: Pow<B, A>) -> Imply<A, B> {
+    Rc::new(move |a| pow_ba(a))
 }
 
 /// `(a => b)^true => b^a`.
