@@ -278,3 +278,8 @@ pub fn or_split_dc<A: Prop, B: Prop, C: DProp>(
         }))
     }
 }
+
+/// `a  =>  (b => (a ∧ b))`.
+pub fn and_map<A: Prop, B: Prop>(a: A) -> Imply<B, And<A, B>> {
+    Rc::new(move |b| (a.clone(), b))
+}
