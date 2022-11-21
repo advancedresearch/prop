@@ -96,6 +96,14 @@ pub fn pow_lift<A: Prop, B: Prop, C: Prop>(_: Pow<A, B>) -> Pow<Pow<A, B>, C> {
     unimplemented!()
 }
 
+/// `(a^b)^b => a^b`.
+pub fn pow_rev_lift_refl<A: Prop, B: Prop>(x: Pow<Pow<A, B>, B>) -> Pow<A, B> {
+    fn f<A: Prop, B: Prop>(b: B) -> Imply<Pow<A, B>, A> {
+        Rc::new(move |pow_ab| pow_ab(b.clone()))
+    }
+    hooo_imply(f)(x)
+}
+
 /// `(a^b)^c => a^(b ⋀ c)`.
 pub fn pow_lower<A: Prop, B: Prop, C: Prop>(x: Pow<Pow<A, B>, C>) -> Pow<A, And<B, C>> {
     fn f<A: Prop, B: Prop, C: Prop>(pow_ab: Pow<A, B>) -> Pow<A, And<B, C>> {
