@@ -571,8 +571,8 @@ pub fn tauto_not_double<A: Prop>(x: Tauto<A>) -> Tauto<Not<Not<A>>> {
 }
 
 /// `false^(¬x) => ¬false^x`.
-pub fn para_rev_not<A: Prop>(x: Para<Not<A>>) -> Not<Para<A>> {
-    pow_rev_not(x)
+pub fn para_rev_not<A: Prop>(para_na: Para<Not<A>>) -> Not<Para<A>> {
+    Rc::new(move |para_a| para_na(Rc::new(move |a| para_a(a))))
 }
 
 /// `false^a => false^(¬¬a)`.
