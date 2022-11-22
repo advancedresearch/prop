@@ -987,7 +987,7 @@ pub fn tauto_from_para_transitivity<A: DProp, B: DProp, C: DProp>(
             let y: Para<Not<Eq<A, C>>> = hooo_dual_rev_neq(y);
             match program::<Eq<A, C>>() {
                 Left(Left(tauto_eq_ac)) => tauto_eq_ac,
-                Left(Right(para_eq_ac)) => imply::absurd()(pow_rev_not(y)(para_eq_ac)),
+                Left(Right(para_eq_ac)) => imply::absurd()(para_rev_not(y)(para_eq_ac)),
                 Right(para_uni_eq_ac) => {
                     let nuni_eq_ac = Rc::new(move |x| para_uni_eq_ac(x));
                     let (x, _): And<Not<Tauto<Eq<A, C>>>, Not<Para<Eq<A, C>>>> = and::from_de_morgan(nuni_eq_ac);
