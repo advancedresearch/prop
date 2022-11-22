@@ -577,7 +577,7 @@ pub fn para_rev_not<A: Prop>(para_na: Para<Not<A>>) -> Not<Para<A>> {
 
 /// `false^a => false^(¬¬a)`.
 pub fn para_not_double<A: Prop>(x: Para<A>) -> Para<Not<Not<A>>> {
-    pow_not(imply::in_left(not::double(x), |x: Para<Not<A>>| pow_rev_not(x)))
+    pow_not(imply::in_left(not::double(x), |x: Para<Not<A>>| para_rev_not(x)))
 }
 
 /// `false^(¬¬a) => false^a`.
