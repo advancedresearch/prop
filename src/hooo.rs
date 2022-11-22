@@ -81,7 +81,7 @@ pub fn para_decide<A: DProp>() -> ExcM<Para<A>> {
     let f = hooo_dual_and(f);
     match f {
         Left(para_a) => Left(para_a),
-        Right(para_na) => Right(pow_rev_not(para_na)),
+        Right(para_na) => Right(para_rev_not(para_na)),
     }
 }
 
