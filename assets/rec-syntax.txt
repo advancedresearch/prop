@@ -79,7 +79,7 @@ _seps: "|!:.,;<>(){}[]"
 6 closure_args = .s?(, closure_arg)
 
 5 exprs = [.l([.w? fn_decl:"fn"]) .w? .s!.(; expr)]
-4 expr = {
+4 expr = [.r?(["//" ..."\n"? .w?]) {
     let:"let"
     ["match " expr .w! "{" .w? .r?([.w? branch]) .w? "}"]
     [?"move " "|" .w? closure_args .w? "|" .w! {
@@ -89,7 +89,7 @@ _seps: "|!:.,;<>(){}[]"
     ["(" .w? .s?(, expr) .w? ")"]
     call:"call"
     .._seps!
-  }
+  }]
 
 3 mod_decl = ["mod " .._seps!:"name" .w! "{" .w? doc .w? "}"]
 
