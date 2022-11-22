@@ -173,7 +173,7 @@ pub fn pow_rev_not<A: Prop, B: Prop>(x: Pow<A, Not<B>>) -> Not<Pow<A, B>> {
 
 /// `a^(¬¬b) => (¬¬a)^b`.
 pub fn pow_not_double_down<A: Prop, B: Prop>(x: Pow<A, Not<Not<B>>>) -> Pow<Not<Not<A>>, B> {
-    hooo_rev_not(pow_rev_not(hooo_rev_not(pow_rev_not(x))))
+    pow_transitivity(not::double, pow_transitivity(x, not::double))
 }
 
 /// `b^a ⋀ c^b => c^a`.
