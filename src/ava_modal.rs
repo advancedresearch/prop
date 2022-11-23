@@ -155,12 +155,12 @@ pub fn eq_nnec_posn<A: Prop>() -> Eq<Not<Nec<A>>, Pos<Not<A>>> {
         }
         (
             Rc::new(move |x| {
-                let x = imply::in_left(x, |y| pow_rev_not(y));
+                let x = imply::in_left(x, |y| para_rev_not(y));
                 para_in_arg(pow_not(x), f)
             }),
             Rc::new(move |x| {
                 let x = para_in_arg(x, tauto_eq_symmetry(f));
-                let x: Not<Para<Not<Not<A>>>> = pow_rev_not(x);
+                let x: Not<Para<Not<Not<A>>>> = para_rev_not(x);
                 imply::in_left(x, |y| pow_not(y))
             })
         )
@@ -168,14 +168,14 @@ pub fn eq_nnec_posn<A: Prop>() -> Eq<Not<Nec<A>>, Pos<Not<A>>> {
     (
         Rc::new(move |nnec_a: Not<Not<Pos<Not<A>>>>| {
             let x = unsafe {nnpos_to_nnpara_para(nnec_a)};
-            let x = imply::in_left(x, |y| pow_rev_not(y));
+            let x = imply::in_left(x, |y| para_rev_not(y));
             let x = pow_not(x);
             Pos::new(para_in_arg(x, g))
         }),
         Rc::new(move |pos_na| {
             let x = unsafe {pos_to_para_para(pos_na)};
             let x: Para<Not<Not<Para<Not<A>>>>> = para_in_arg(x, tauto_eq_symmetry(g));
-            let x = pow_rev_not(x);
+            let x = para_rev_not(x);
             let x: Not<Not<Para<Para<Not<A>>>>> = imply::in_left(x, |y| pow_not(y));
             imply::in_left(x, |y| imply::in_left(y, |x| Pos::new(x)))
         })
