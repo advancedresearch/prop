@@ -6,7 +6,7 @@ use hooo::*;
 pub fn proof1<A: DProp>(nnnpos_a: Not<Not<Not<Pos<A>>>>) -> Not<Nec<A>> {
     imply::in_left(nnnpos_a, |x: Nec<A>| {
         let x = npos_to_para(x);
-        let x = pow_rev_not(x);
+        let x = para_rev_not(x);
         let x: Not<Not<Pos<A>>> = imply::in_left(x, npos_to_para);
         x
     })
