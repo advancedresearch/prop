@@ -677,21 +677,10 @@ pub fn program<A: DProp>() -> Or<Uniform<A>, Para<Uniform<A>>> {
     match para_decide::<A>() {
         Left(para_a) => Left(Right(para_a)),
         Right(npara_a) => {
-            match para_decide::<Tauto<A>>() {
-                Left(para_tauto_a) => {
-                    fn f<A: Prop>(para_a: Para<A>) -> Not<A> {Rc::new(move |a| para_a(a))}
-                    let x = pow_transitivity(f, pow_not(npara_a));
-                    Right(hooo_dual_rev_or((para_tauto_a, x)))
-                }
-                Right(npara_tauto_a) => {
-                    fn f<A: Prop>(ntr: Not<True>) -> A {imply::absurd()(ntr(True))}
-                    fn g<A: Prop>(_: True) -> Eq<Not<Tauto<A>>, Pow<A, Not<True>>> {
-                        (Rc::new(move |ntauto_a| pow_not(ntauto_a)),
-                         Rc::new(move |pow_a_ntr| pow_rev_not(pow_a_ntr)))
-                    }
-                    let x = pow_in_right_arg(pow_not(npara_tauto_a), g);
-                    imply::absurd()(x(f))
-                }
+            let nntauto_a = para_not_to_not_not_tauto(pow_not(npara_a));
+            match tauto_decide::<A>() {
+                Left(tauto_a) => Left(Left(tauto_a)),
+                Right(ntauto_a) => not::absurd(nntauto_a, ntauto_a),
             }
         }
     }
