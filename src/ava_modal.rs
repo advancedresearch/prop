@@ -192,12 +192,12 @@ pub fn eq_posn_nnec<A: Prop>() -> Eq<Not<Pos<A>>, Nec<Not<A>>> {
             Rc::new(move |x| {
                 let x = pow_not(x);
                 let x = para_in_arg(x, tauto_eq_symmetry(g));
-                pow_rev_not(x)
+                para_rev_not(x)
             }),
             Rc::new(move |x| {
                 let x = pow_not(x);
                 let x = para_in_arg(x, g);
-                pow_rev_not(x)
+                para_rev_not(x)
             })
         )
     }
@@ -205,12 +205,12 @@ pub fn eq_posn_nnec<A: Prop>() -> Eq<Not<Pos<A>>, Nec<Not<A>>> {
         Rc::new(move |x| {
             let x = pos_not(x);
             let x = para_in_arg(x, f);
-            imply::in_left(pow_rev_not(x), |y| unsafe {pos_to_para_para(y)})
+            imply::in_left(para_rev_not(x), |y| unsafe {pos_to_para_para(y)})
         }),
         Rc::new(move |x| {
             let x = pos_not(x);
             let x = para_in_arg(x, tauto_eq_symmetry(f));
-            imply::in_left(pow_rev_not(x), |y| unsafe {pos_to_para_para(y)})
+            imply::in_left(para_rev_not(x), |y| unsafe {pos_to_para_para(y)})
         })
     )
 }
