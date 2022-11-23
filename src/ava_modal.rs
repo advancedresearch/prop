@@ -73,7 +73,7 @@ pub fn nec_to_tauto<A: DProp>(nec_a: Nec<A>) -> Tauto<A> {
         Right(ntauto_a) => {
             let para_a = tauto_not_to_para(hooo_rev_not(ntauto_a));
             let x: Para<Not<A>> = npos_to_para(nec_a);
-            imply::absurd()(pow_rev_not(x)(para_a))
+            imply::absurd()(para_rev_not(x)(para_a))
         }
     }
 }
