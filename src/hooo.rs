@@ -163,14 +163,6 @@ pub fn pow_not<A: Prop, B: Prop>(x: Not<Pow<A, B>>) -> Pow<A, Not<B>> {
         imply::absurd()(x(y(fa())))))
 }
 
-/// `a^(¬b) => ¬a^b`.
-pub fn pow_rev_not<A: Prop, B: Prop>(x: Pow<A, Not<B>>) -> Not<Pow<A, B>> {
-    let y = hooo_dual_imply(x);
-    Rc::new(move |pow_a_b| {
-        y(pow_a_b.map_any())
-    })
-}
-
 /// `a^(¬¬b) => (¬¬a)^b`.
 pub fn pow_not_double_down<A: Prop, B: Prop>(x: Pow<A, Not<Not<B>>>) -> Pow<Not<Not<A>>, B> {
     pow_transitivity(not::double, pow_transitivity(x, not::double))
@@ -388,11 +380,6 @@ pub fn hooo_imply<A: Prop, B: Prop, C: Prop>(
 pub fn hooo_rev_imply<A: Prop, B: Prop, C: Prop>(
     x: Imply<Pow<A, C>, Pow<B, C>>
 ) -> Pow<Imply<A, B>, C> {pow()(x)}
-
-/// `c^(a => b) => ¬(c^b => c^a)`.
-pub fn hooo_dual_imply<A: Prop, B: Prop, C: Prop>(
-    x: Pow<C, Imply<A, B>>
-) -> Not<Imply<Pow<C, B>, Pow<C, A>>> {pow()(x)}
 
 /// `¬(c^b => c^a) => c^(a => b)`.
 pub fn hooo_dual_rev_imply<A: Prop, B: Prop, C: Prop>(
