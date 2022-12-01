@@ -605,9 +605,14 @@ pub fn not_para_to_not_not<A: Prop>(npara_a: Not<Para<A>>) -> Not<Not<A>> {
     Rc::new(move |na| pow_not(npara_a.clone())(na))
 }
 
+/// `¬¬a => false^(false^a)`.
+pub fn not_not_to_para_para<A: Prop>(nna: Not<Not<A>>) -> Para<Para<A>> {
+    not_para_to_para_para(not_not_to_not_para(nna))
+}
+
 /// `a => false^(false^a)`.
 pub fn para_para<A: Prop>(a: A) -> Para<Para<A>> {
-    not_para_to_para_para(not_not_to_not_para(not::double(a)))
+    not_not_to_para_para(not::double(a))
 }
 
 /// `(¬(false^a) == ¬(false^b)) => (false^a == false^b)`.
