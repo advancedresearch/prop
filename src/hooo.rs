@@ -595,6 +595,11 @@ pub fn para_para_to_not_para<A: Prop>(para_para_a: Para<Para<A>>) -> Not<Para<A>
     Rc::new(move |para_a| para_para_a(para_a))
 }
 
+/// `¬¬a => ¬(false^a)`.
+pub fn not_not_to_not_para<A: Prop>(nna: Not<Not<A>>) -> Not<Para<A>> {
+    imply::in_left(nna, para_to_not)
+}
+
 /// `(¬(false^a) == ¬(false^b)) => (false^a == false^b)`.
 pub fn eq_not_para_to_eq_para<A: Prop, B: Prop>(
     eq_npara_a_npara_b: Eq<Not<Para<A>>, Not<Para<B>>>
