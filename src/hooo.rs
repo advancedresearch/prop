@@ -586,11 +586,8 @@ pub fn para_not_rev_triple<A: Prop>(x: Para<Not<Not<Not<A>>>>) -> Para<Not<A>> {
 pub fn para_to_not<A: Prop>(para_a: Para<A>) -> Not<A> {Rc::new(move |a| para_a(a))}
 
 /// `¬(false^a) => false^(false^a)`.
-pub fn not_para_to_para_para<A: DProp>(npara_a: Not<Para<A>>) -> Para<Para<A>> {
-    match para_decide::<Para<A>>() {
-        Left(para_para_a) => para_para_a,
-        Right(n_para_para_a) => imply::absurd()(pow_not(n_para_para_a)(npara_a)),
-    }
+pub fn not_para_to_para_para<A: Prop>(npara_a: Not<Para<A>>) -> Para<Para<A>> {
+    pow_transitivity(para_to_not, pow_not(npara_a))
 }
 
 /// `false^(false^a) => ¬(false^a)`.
