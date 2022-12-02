@@ -53,7 +53,7 @@ mod protection {
         pub fn new(x: Para<Para<A>>) -> Self {Pos(x)}
     }
 
-    /// `◇a => (false^(false^a))`.
+    /// `◇a => false^(false^a)`.
     pub unsafe fn pos_to_para_para<A: Prop>(Pos(x): Pos<A>) -> Para<Para<A>> {x}
 }
 
