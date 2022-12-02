@@ -358,7 +358,7 @@ pub fn hooo_neq<A: Prop, B: Prop, C: Prop>(x: Pow<NEq<A, B>, C>) -> NEq<Pow<A, C
 
 /// `¬(a^c == b^c) => (¬(a == b))^c`.
 pub fn hooo_rev_neq<A: Prop, B: Prop, C: Prop>(x: NEq<Pow<A, C>, Pow<B, C>>) -> Pow<NEq<A, B>, C> {
-    pow()(x)
+    hooo_rev_not(imply::in_left(x, |y| hooo_eq(y)))
 }
 
 /// `c^(¬(a == b)) => (c^a == c^b)`.
