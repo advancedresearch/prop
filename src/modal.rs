@@ -36,6 +36,11 @@ pub fn pos_to_npara<A: Prop>(pos: Pos<A>) -> Not<Para<A>> {
     })
 }
 
+/// `false^(false^a) => ◇a`.
+pub fn para_para_to_pos<A: DProp>(para_para_a: Para<Para<A>>) -> Pos<A> {
+    npara_to_pos(hooo::para_para_to_not_para(para_para_a))
+}
+
 /// `¬◇a => false^a`.
 pub fn npos_to_para<A: DProp>(npos: Not<Pos<A>>) -> Para<A> {
     match para_decide::<A>() {
