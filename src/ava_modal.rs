@@ -2,22 +2,21 @@
 //!
 //! This avatar modal logic builds upon the `hooo` module using Exponential Propositions.
 //!
-//! Avatar Modal Logic uses `◇p == false^(false^p)` instead of `◇p == ¬(false^p)`.
-//!
 //! What makes Avatar Modal Logic different from normal Modal Logic,
 //! is that there is a difference between "safe" and "unsafe" proofs:
 //!
-//! - `false^(false^p) => ◇p` is safe
-//! - `◇p => false^(false^p)` is unsafe
+//! - `false^(false^p) => ◇p` is safe (classical in normal Modal Logic)
+//! - `◇p => false^(false^p)` is unsafe (constructive in normal Modal Logic)
+//!
+//! The idea is to reverse decidability, but this reversed decidability should not be mixed
+//! with the normal distinction between classical and constructive proofs.
+//! Instead, one uses safe vs unsafe proofs.
 //!
 //! ### 1-Avatar and Unsafe code
 //!
-//! The expression `false^(false^p)` is a stronger statement than `¬(false^p)`.
-//!
-//! As a consequence, the usual semantics of "necessary" and "possibly" is collapsed,
+//! Without distinction of safe vs unsafe,
+//! the usual semantics of "necessary" and "possibly" is collapsed,
 //! where is it possible to prove `¬◇p == ◇¬p` and `¬□p == □¬p`.
-//!
-//! This happens because `false^(¬a) == ¬(false^a)`.
 //!
 //! According [Avatar Semantics](https://advancedresearch.github.io/avatar-extensions/summary.html#avatar-semantics),
 //! this is not a problem, because one can reconstruct hypercube topologies in Avatar Graphs
