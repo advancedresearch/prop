@@ -108,6 +108,11 @@ pub fn not_not_to_pos<A: Prop>(nna: Not<Not<A>>) -> Pos<A> {
     Pos::new(hooo::not_not_to_para_para(nna))
 }
 
+/// `◇a => ¬¬a`.
+pub unsafe fn pos_to_not_not<A: Prop>(pos: Pos<A>) -> Not<Not<A>> {
+    hooo::para_para_to_not_not(pos_to_para_para(pos))
+}
+
 /// `¬□¬a <=> ◇a`.
 pub fn eq_nnecn_pos<A: DProp>() -> Eq<Not<Nec<Not<A>>>, Pos<A>> {
     fn f<A: Prop>(_: True) -> Eq<Not<Para<A>>, Not<Para<Not<Not<A>>>>> {
