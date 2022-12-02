@@ -374,7 +374,9 @@ pub fn hooo_dual_neq<A: Prop, B: Prop, C: Prop>(
 /// `(c^a == c^b) => c^(¬(a == b))`.
 pub fn hooo_dual_rev_neq<A: Prop, B: Prop, C: Prop>(
     x: Eq<Pow<C, A>, Pow<C, B>>
-) -> Pow<C, NEq<A, B>> {pow()(x)}
+) -> Pow<C, NEq<A, B>> {
+    pow_not(Rc::new(move |y| hooo_dual_eq(y)(x.clone())))
+}
 
 /// `(a => b)^c => (a^c => b^c)`.
 pub fn hooo_imply<A: Prop, B: Prop, C: Prop>(
