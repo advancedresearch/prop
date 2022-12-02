@@ -610,6 +610,11 @@ pub fn not_not_to_para_para<A: Prop>(nna: Not<Not<A>>) -> Para<Para<A>> {
     not_para_to_para_para(not_not_to_not_para(nna))
 }
 
+/// `false^(false^a) => ¬¬a`.
+pub fn para_para_to_not_not<A: Prop>(para_para_a: Para<Para<A>>) -> Not<Not<A>> {
+    Rc::new(move |na| pow_not(para_para_to_not_para(para_para_a))(na))
+}
+
 /// `a => false^(false^a)`.
 pub fn para_para<A: Prop>(a: A) -> Para<Para<A>> {
     not_not_to_para_para(not::double(a))
