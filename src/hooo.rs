@@ -356,11 +356,6 @@ pub fn hooo_dual_rev_eq<A: Prop, B: Prop, C: Prop>(
     x: Not<Eq<Pow<C, A>, Pow<C, B>>>
 ) -> Pow<C, Eq<A, B>> {pow()(x)}
 
-/// `(¬(a == b))^c => ¬(a^c == b^c)`.
-pub fn hooo_neq<A: Prop, B: Prop, C: Prop>(x: Pow<NEq<A, B>, C>) -> NEq<Pow<A, C>, Pow<B, C>> {
-    pow()(x)
-}
-
 /// `¬(a^c == b^c) => (¬(a == b))^c`.
 pub fn hooo_rev_neq<A: Prop, B: Prop, C: Prop>(x: NEq<Pow<A, C>, Pow<B, C>>) -> Pow<NEq<A, B>, C> {
     hooo_rev_not(imply::in_left(x, |y| hooo_eq(y)))
