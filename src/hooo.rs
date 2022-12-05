@@ -388,11 +388,6 @@ pub fn hooo_dual_rev_imply<A: Prop, B: Prop, C: Prop>(
     x: Not<Imply<Pow<C, B>, Pow<C, A>>>
 ) -> Pow<C, Imply<A, B>> {pow()(x)}
 
-/// `(¬(b => a))^c => ¬(b^c => a^c)`.
-pub fn hooo_nrimply<A: Prop, B: Prop, C: Prop>(
-    x: Pow<Not<Imply<B, A>>, C>
-) -> Not<Imply<Pow<B, C>, Pow<A, C>>> {pow()(x)}
-
 /// `¬(b^c => a^c) => (¬(b => a))^c`.
 pub fn hooo_rev_nrimply<A: Prop, B: Prop, C: Prop>(
     x: Not<Imply<Pow<B, C>, Pow<A, C>>>
