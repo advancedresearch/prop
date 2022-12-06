@@ -754,12 +754,12 @@ pub fn para_eq_transitivity_left<A: Prop, B: Prop, C: Prop>(
     ab: Para<Eq<A, B>>,
     bc: Tauto<Eq<B, C>>
 ) -> Para<Eq<A, C>> {
-    let eq_para_b_para_c = eq_tauto_to_eq_para(hooo_eq(bc));
-    let y = hooo_dual_eq(ab);
-    let y = imply::in_left(y, move |x: Eq<Para<A>, Para<C>>| {
-        eq::transitivity(x, eq::symmetry(eq_para_b_para_c.clone()))
-    });
-    hooo_dual_rev_eq(y)
+    fn f<A: Prop, B: Prop, C: Prop>((neq_ab, eq_bc): And<Not<Eq<A, B>>, Eq<B, C>>) -> Not<Eq<A, C>> {
+        Rc::new(move |eq_ac| neq_ab(eq::transitivity(eq_ac, eq::symmetry(eq_bc.clone()))))
+    }
+    let ab = para_to_tauto_not(ab);
+    let x = hooo_rev_and((ab, bc));
+    tauto_not_to_para(pow_transitivity(x, f))
 }
 
 /// `((a == b)^true ∧ false^(b == c)) => false^(a == c)`.
