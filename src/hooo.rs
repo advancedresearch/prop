@@ -157,7 +157,7 @@ pub fn pow_right_and_symmetry<A: Prop, B: Prop, C: Prop>(
     pow_transitivity(f, x)
 }
 
-/// `¬a^b => a^(¬b)`.
+/// `¬(a^b) => a^(¬b)`.
 pub fn pow_not<A: Prop, B: Prop>(x: Not<Pow<A, B>>) -> Pow<A, Not<B>> {
     hooo_dual_rev_imply(Rc::new(move |y: Imply<Pow<A, False>, Pow<A, B>>|
         imply::absurd()(x(y(fa())))))
