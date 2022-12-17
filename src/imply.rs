@@ -160,6 +160,16 @@ pub fn to_or<A: DProp, B: DProp>(f: Imply<A, B>) -> Or<Not<A>, B> {
         (_, Left(b)) => Right(b),
         (Left(a), _) => Right(f(a)),
         (Right(a), _) => Left(a.clone()),
+/// `(a => b) => (¬a ∨ b)`.
+pub fn to_or_da<A: DProp, B: Prop>(f: Imply<A, B>) -> Or<Not<A>, B> {
+    use Either::*;
+
+    match <A as Decidable>::decide() {
+        Left(a) => Right(f(a)),
+        Right(a) => Left(a.clone()),
+    }
+}
+
     }
 }
 
