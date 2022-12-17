@@ -152,9 +152,14 @@ pub fn rev_double_neg_imply_excm<A: Prop, B: Prop>(
 
 /// `(a => b) => (¬a ∨ b)`.
 pub fn to_or_da<A: DProp, B: Prop>(f: Imply<A, B>) -> Or<Not<A>, B> {
+    to_or_excm_a(f, A::decide())
+}
+
+/// `(a => b) ⋀ (a ⋁ ¬a)  =>  (¬a ∨ b)`.
+pub fn to_or_excm_a<A: Prop, B: Prop>(f: Imply<A, B>, excm_a: ExcM<A>) -> Or<Not<A>, B> {
     use Either::*;
 
-    match <A as Decidable>::decide() {
+    match excm_a {
         Left(a) => Right(f(a)),
         Right(a) => Left(a.clone()),
     }
@@ -162,9 +167,14 @@ pub fn to_or_da<A: DProp, B: Prop>(f: Imply<A, B>) -> Or<Not<A>, B> {
 
 /// `(a => b) => (¬a ∨ b)`.
 pub fn to_or_db<A: Prop, B: DProp>(f: Imply<A, B>) -> Or<Not<A>, B> {
+    to_or_excm_b(f, B::decide())
+}
+
+/// `(a => b) => (¬a ∨ b)`.
+pub fn to_or_excm_b<A: Prop, B: Prop>(f: Imply<A, B>, excm_b: ExcM<B>) -> Or<Not<A>, B> {
     use Either::*;
 
-    match <B as Decidable>::decide() {
+    match excm_b {
         Left(b) => Right(b),
         Right(nb) => Left(modus_tollens(f)(nb)),
     }
