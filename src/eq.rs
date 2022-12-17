@@ -4,23 +4,23 @@
 
 use crate::*;
 
-/// `(a = b) ∧ (b = c) => (a = c)`.
+/// `(a == b) ∧ (b == c) => (a == c)`.
 pub fn transitivity<A: Prop, B: Prop, C: Prop>((f0, f1): Eq<A, B>, (g0, g1): Eq<B, C>) -> Eq<A, C> {
     (Rc::new(move |x| g0(f0(x))), Rc::new(move |x| f1(g1(x))))
 }
 
-/// `a => (a = ¬¬a)`.
+/// `a => (a == ¬¬a)`.
 pub fn double_neg<A: Prop>(a: A) -> Eq<A, Not<Not<A>>> {
     let double_neg = a.double_neg();
     (Rc::new(move |x| not::double(x)), Rc::new(move |x| double_neg(x)))
 }
 
-/// `(a = b) => (b = a)`.
+/// `(a == b) => (b == a)`.
 pub fn symmetry<A: Prop, B: Prop>((f0, f1): Eq<A, B>) -> Eq<B, A> {
     (f1, f0)
 }
 
-/// `¬(a = b) => ¬(b = a)`.
+/// `¬(a == b) => ¬(b == a)`.
 pub fn neq_symmetry<A: Prop, B: Prop>(neq: Not<Eq<A, B>>) -> Not<Eq<B, A>> {
     Rc::new(move |eq| neq(symmetry(eq)))
 }
@@ -30,7 +30,7 @@ pub fn imply_to_or<A: DProp, B: DProp>() -> Eq<Imply<A, B>, Or<Not<A>, B>> {
     (Rc::new(move |x| imply::to_or(x)), Rc::new(move |x| imply::from_or(x)))
 }
 
-/// `a = a`.
+/// `a == a`.
 pub fn refl<A: Prop>() -> Eq<A, A> {
     (Rc::new(move |x| x), Rc::new(move |x| x))
 }
@@ -55,21 +55,21 @@ pub fn true_eq<A: Prop>(a: A) -> Eq<A, True> {
     (True.map_any(), Rc::new(move |_| a.clone()))
 }
 
-/// `(a = b) => (¬b = ¬a)`
+/// `(a == b) => (¬b == ¬a)`
 pub fn modus_tollens<A: Prop, B: Prop>((f0, f1): Eq<A, B>) -> Eq<Not<B>, Not<A>> {
     let f02 = imply::modus_tollens(f0);
     let f12 = imply::modus_tollens(f1);
     (f02, f12)
 }
 
-/// `(¬a = ¬b) => (b = a)`.
+/// `(¬a == ¬b) => (b == a)`.
 pub fn rev_modus_tollens<A: DProp, B: DProp>((f0, f1): Eq<Not<A>, Not<B>>) -> Eq<B, A> {
     let f02 = imply::rev_modus_tollens(f0);
     let f12 = imply::rev_modus_tollens(f1);
     (f02, f12)
 }
 
-/// `(¬a = ¬b) ∧ (a ∨ ¬a) ∧ (b ∨ ¬b)  =>  (b = a)`.
+/// `(¬a == ¬b) ∧ (a ∨ ¬a) ∧ (b ∨ ¬b)  =>  (b == a)`.
 pub fn rev_modus_tollens_excm<A: Prop, B: Prop>(
     (f0, f1): Eq<Not<A>, Not<B>>,
     excm_a: ExcM<A>,
@@ -80,7 +80,7 @@ pub fn rev_modus_tollens_excm<A: Prop, B: Prop>(
     (f02, f12)
 }
 
-/// `(¬a = ¬b) ∧ ((a ∨ ¬a) == (b ∨ ¬b))  =>  (b = a)`.
+/// `(¬a == ¬b) ∧ ((a ∨ ¬a) == (b ∨ ¬b))  =>  (b == a)`.
 pub fn rev_modus_tollens_eq_excm<A: Prop, B: Prop>(
     (f0, f1): Eq<Not<A>, Not<B>>,
     eq_excm_a_excm_b: Eq<ExcM<A>, ExcM<B>>,
@@ -101,12 +101,12 @@ pub fn rev_modus_tollens_imply_excm<A: Prop, B: Prop>(
     (f02, f12)
 }
 
-/// `(true = a) => a`.
+/// `(true == a) => a`.
 pub fn is_true<A: Prop>((f0, _): Eq<True, A>) -> A {
     f0(True)
 }
 
-/// `(false = a) => ¬a`.
+/// `(false == a) => ¬a`.
 pub fn is_false<A: Prop>((_, f1): Eq<False, A>) -> Not<A> {
     f1
 }
@@ -116,12 +116,12 @@ pub fn to_eq_false<A: Prop>(n_a: Not<A>) -> Eq<A, False> {
     (n_a, imply::absurd())
 }
 
-/// `¬(a = b) ∧ a  =>  ¬b`.
+/// `¬(a == b) ∧ a  =>  ¬b`.
 pub fn contra<A: Prop, B: DProp>(f: Not<Eq<A, B>>, a: A) -> Not<B> {
     contra_excm(f, a, B::decide())
 }
 
-/// `¬(a = b) ∧ a  =>  ¬b`.
+/// `¬(a == b) ∧ a  =>  ¬b`.
 pub fn contra_excm<A: Prop, B: Prop>(
     f: Not<Eq<A, B>>,
     a: A,
@@ -133,7 +133,7 @@ pub fn contra_excm<A: Prop, B: Prop>(
     }
 }
 
-/// `(a = b) = c  =>  a => (b = c)`
+/// `(a == b) == c  =>  a => (b == c)`
 pub fn assoc_right<A: DProp, B: DProp, C: DProp>((f0, f1): Eq<Eq<A, B>, C>) -> Imply<A, Eq<B, C>> {
     match (A::decide(), C::decide()) {
         (Right(not_a), _) => Rc::new(move |x| match not_a.clone()(x) {}),
@@ -148,7 +148,7 @@ pub fn assoc_right<A: DProp, B: DProp, C: DProp>((f0, f1): Eq<Eq<A, B>, C>) -> I
     }
 }
 
-/// `(a = b) = c  =>  (b = c) => a`.
+/// `(a == b) == c  =>  (b == c) => a`.
 pub fn assoc_left<A: DProp, B: DProp, C: DProp>((f0, f1): Eq<Eq<A, B>, C>) -> Imply<Eq<B, C>, A> {
     match (A::decide(), B::decide(), C::decide()) {
         (Left(a), _, _) => a.map_any(),
@@ -167,23 +167,23 @@ pub fn assoc_left<A: DProp, B: DProp, C: DProp>((f0, f1): Eq<Eq<A, B>, C>) -> Im
     }
 }
 
-/// `(a = b) = c  =>  a = (b = c)`.
+/// `(a == b) == c  =>  a == (b == c)`.
 pub fn assoc<A: DProp, B: DProp, C: DProp>(f: Eq<Eq<A, B>, C>) -> Eq<A, Eq<B, C>> {
     (assoc_right(f.clone()), assoc_left(f))
 }
 
-/// `a = (b = c)  =>  a = (c = b)`.
+/// `a == (b == c)  =>  a == (c == b)`.
 pub fn swap_right<A: Prop, B: Prop, C: Prop>((f0, f1): Eq<A, Eq<B, C>>) -> Eq<A, Eq<C, B>> {
     (Rc::new(move |x| {let (g0, g1) = f0(x); (g1, g0)}),
      Rc::new(move |(g1, g0)| f1((g0, g1))))
 }
 
-/// `(a = b) = c  =>  (b = a) = c`.
+/// `(a == b) == c  =>  (b == a) == c`.
 pub fn swap_left<A: Prop, B: Prop, C: Prop>(f: Eq<Eq<A, B>, C>) -> Eq<Eq<B, A>, C> {
     symmetry(swap_right(symmetry(f)))
 }
 
-/// `(a = b) ∧ (a = c)  =>  (c = b)`
+/// `(a == b) ∧ (a == c)  =>  (c == b)`
 pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(f: Eq<A, B>, g: Eq<A, C>) -> Eq<C, B> {
     symmetry(transitivity(symmetry(f), g))
 }
@@ -217,13 +217,13 @@ pub fn in_right<A: Prop, B: Prop, C: Prop, F, G>(
     eq::symmetry(in_left(eq::symmetry(eq_ab), f, g))
 }
 
-/// `(a = b) = (b = a)`.
+/// `(a == b) == (b == a)`.
 pub fn symmetry_eq<A: Prop, B: Prop>() -> Eq<Eq<A, B>, Eq<B, A>> {
     (Rc::new(move |x| eq::symmetry(x)),
      Rc::new(move |x| eq::symmetry(x)))
 }
 
-/// `((a = b) = c)  =  (a = (b = c))`.
+/// `((a == b) == c)  ==  (a == (b == c))`.
 pub fn assoc_eq<A: DProp, B: DProp, C: DProp>() -> Eq<Eq<Eq<A, B>, C>, Eq<A, Eq<B, C>>> {
     (Rc::new(move |x| eq::assoc(x)), Rc::new(move |x| {
         let x2 = eq::symmetry(x);
@@ -234,7 +234,7 @@ pub fn assoc_eq<A: DProp, B: DProp, C: DProp>() -> Eq<Eq<Eq<A, B>, C>, Eq<A, Eq<
     }))
 }
 
-/// `(a = b) = (c = d)  =>  (a = c) = (b = d)`.
+/// `(a == b) == (c == d)  =>  (a == c) == (b == d)`.
 pub fn transpose<A: DProp, B: DProp, C: DProp, D: DProp>(
     f: Eq<Eq<A, B>, Eq<C, D>>
 ) -> Eq<Eq<A, C>, Eq<B, D>> {
@@ -250,13 +250,13 @@ pub fn transpose<A: DProp, B: DProp, C: DProp, D: DProp>(
     eq::in_left_arg(f, eq::symmetry_eq())
 }
 
-/// `(a = b) = (c = b)  =>  (a = c)`.
+/// `(a == b) = (c == b)  =>  (a == c)`.
 pub fn triangle<A: DProp, B: DProp, C: DProp>(f: Eq<Eq<A, B>, Eq<C, B>>) -> Eq<A, C> {
     let f = eq::transpose(f);
     f.1(eq::refl())
 }
 
-/// `¬(a = b) = ¬(c = b)  =>  (a = c)`.
+/// `¬(a == b) = ¬(c == b)  =>  (a == c)`.
 pub fn inv_triangle<A: DProp, B: DProp, C: DProp>(
     f: Eq<Not<Eq<A, B>>, Not<Eq<C, B>>>
 ) -> Eq<A, C> {
@@ -265,7 +265,7 @@ pub fn inv_triangle<A: DProp, B: DProp, C: DProp>(
     eq::triangle(f)
 }
 
-/// `false = false`.
+/// `false == false`.
 pub fn absurd() -> Eq<False, False> {
     (imply::absurd(), imply::absurd())
 }
