@@ -35,6 +35,11 @@ pub fn imply_to_or_da<A: DProp, B: Prop>() -> Eq<Imply<A, B>, Or<Not<A>, B>> {
     (Rc::new(move |x| imply::to_or_da(x)), Rc::new(move |x| imply::from_or(x)))
 }
 
+/// `(a => b) = (¬a ∨ b)`.
+pub fn imply_to_or_db<A: Prop, B: DProp>() -> Eq<Imply<A, B>, Or<Not<A>, B>> {
+    (Rc::new(move |x| imply::to_or_db(x)), Rc::new(move |x| imply::from_or(x)))
+}
+
 /// `a == a`.
 pub fn refl<A: Prop>() -> Eq<A, A> {
     (Rc::new(move |x| x), Rc::new(move |x| x))
