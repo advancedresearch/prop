@@ -26,11 +26,6 @@ pub fn neq_symmetry<A: Prop, B: Prop>(neq: Not<Eq<A, B>>) -> Not<Eq<B, A>> {
 }
 
 /// `(a => b) = (¬a ∨ b)`.
-pub fn imply_to_or<A: DProp, B: DProp>() -> Eq<Imply<A, B>, Or<Not<A>, B>> {
-    (Rc::new(move |x| imply::to_or_da(x)), Rc::new(move |x| imply::from_or(x)))
-}
-
-/// `(a => b) = (¬a ∨ b)`.
 pub fn imply_to_or_da<A: DProp, B: Prop>() -> Eq<Imply<A, B>, Or<Not<A>, B>> {
     (Rc::new(move |x| imply::to_or_da(x)), Rc::new(move |x| imply::from_or(x)))
 }
