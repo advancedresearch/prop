@@ -285,3 +285,8 @@ pub fn neq_right<A: Prop, B: Prop, C: Prop>(
 ) -> Not<Eq<A, C>> {
     Rc::new(move |eq_ac| neq_bc(transitivity(symmetry(eq_ab.clone()), eq_ac)))
 }
+
+/// `¬(a == b)  =>  ¬(a ⋀ b)`.
+pub fn neq_to_nand<A: Prop, B: Prop>(neq: Not<Eq<A, B>>) -> Not<And<A, B>> {
+    Rc::new(move |(a, b)| neq((b.map_any(), a.map_any())))
+}
