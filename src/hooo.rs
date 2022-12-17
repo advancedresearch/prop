@@ -966,11 +966,19 @@ pub fn tauto_from_para_transitivity<A: DProp, B: DProp, C: DProp>(
     para_eq_ab: Para<Eq<A, B>>,
     para_eq_bc: Para<Eq<B, C>>,
 ) -> Tauto<Eq<A, C>> {
-    let x: Not<Eq<Para<A>, Para<B>>> = hooo_dual_eq(para_eq_ab);
-    let y: Not<Eq<Para<B>, Para<C>>> = hooo_dual_eq(para_eq_bc);
     match (para_decide::<A>(), para_decide::<B>(), para_decide::<C>()) {
-        (Left(para_a), Left(para_b), _) => imply::absurd()(x((para_b.map_any(), para_a.map_any()))),
-        (_, Left(para_b), Left(para_c)) => imply::absurd()(y((para_c.map_any(), para_b.map_any()))),
+        (Left(para_a), Left(para_b), _) => {
+            imply::absurd()(para_eq_ab((
+                Rc::new(move |a| imply::absurd()(para_a(a))),
+                Rc::new(move |b| imply::absurd()(para_b(b)))
+            )))
+        }
+        (_, Left(para_b), Left(para_c)) => {
+            imply::absurd()(para_eq_bc((
+                Rc::new(move |b| imply::absurd()(para_b(b))),
+                Rc::new(move |c| imply::absurd()(para_c(c)))
+            )))
+        }
         (Left(para_a), _, Left(para_c)) => {
             let z: Eq<Tauto<A>, Tauto<C>> = (
                 Rc::new(move |tauto_a| imply::absurd()(para_a(tauto_a(True)))),
@@ -979,10 +987,14 @@ pub fn tauto_from_para_transitivity<A: DProp, B: DProp, C: DProp>(
             hooo_rev_eq(z)
         }
         (_, Right(npara_b), Right(npara_c)) => {
-            imply::absurd()(y(eq_not_para_to_eq_para((npara_c.map_any(), npara_b.map_any()))))
+            let b: B = not::rev_double(not_para_to_not_not(npara_b));
+            let c: C = not::rev_double(not_para_to_not_not(npara_c));
+            imply::absurd()(para_eq_bc((c.map_any(), b.map_any())))
         }
         (Right(npara_a), Right(npara_b), _) => {
-            imply::absurd()(x(eq_not_para_to_eq_para((npara_b.map_any(), npara_a.map_any()))))
+            let a: A = not::rev_double(not_para_to_not_not(npara_a));
+            let b: B = not::rev_double(not_para_to_not_not(npara_b));
+            imply::absurd()(para_eq_ab((b.map_any(), a.map_any())))
         }
         (Right(npara_a), _, Right(npara_c)) => {
             let y: Eq<Para<A>, Para<C>> = eq_not_para_to_eq_para((npara_c.map_any(), npara_a.map_any()));
