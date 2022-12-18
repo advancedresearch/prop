@@ -375,6 +375,13 @@ pub fn hooo_dual_rev_neq<A: DProp, B: DProp, C: Prop>(
     pow_transitivity(eq::neq_symmetry, pow_transitivity(or::from_de_morgan, y))
 }
 
+/// `(a => b)^c => (a^c => b^c)^true`.
+pub fn tauto_hooo_imply<A: Prop, B: Prop, C: Prop>(
+    x: Pow<Imply<A, B>, C>
+) -> Tauto<Imply<Pow<A, C>, Pow<B, C>>> {
+    unimplemented!()
+}
+
 /// `(a => b)^c => (a^c => b^c)`.
 pub fn hooo_imply<A: Prop, B: Prop, C: Prop>(
     x: Pow<Imply<A, B>, C>
