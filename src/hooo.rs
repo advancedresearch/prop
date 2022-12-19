@@ -441,7 +441,7 @@ pub fn hooo_rev_eq<A: Prop, B: Prop, C: Prop>(x: Eq<Pow<A, C>, Pow<B, C>>) -> Po
 pub fn tauto_hooo_dual_rev_eq<A: Prop, B: Prop, C: Prop>(
     x: Tauto<Not<Eq<Pow<C, A>, Pow<C, B>>>>
 ) -> Pow<C, Eq<A, B>> {
-    unimplemented!()
+    hooo_dual_rev_eq(x(True))
 }
 
 /// `¬(c^a == c^b) => c^(a == b)`.
