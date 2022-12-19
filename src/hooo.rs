@@ -301,6 +301,15 @@ pub fn hooo_rev_and<A: Prop, B: Prop, C: Prop>(
     f(x.0)(x.1)
 }
 
+/// `c^(a ⋀ b) => (c^a ⋁ c^b)^true`.
+///
+/// This is only valid for decidable propositions.
+pub fn tauto_hooo_dual_and<A: DProp, B: DProp, C: DProp>(
+    x: Pow<C, And<A, B>>
+) -> Tauto<Or<Pow<C, A>, Pow<C, B>>> {
+    unimplemented!()
+}
+
 /// `c^(a ⋀ b) => (c^a ⋁ c^b)`.
 ///
 /// This is only valid for decidable propositions.
