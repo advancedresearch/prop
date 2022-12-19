@@ -270,6 +270,13 @@ pub fn hooo_rev_not<A: Prop, B: Prop>(x: Not<Pow<A, B>>) -> Pow<Not<A>, B> {
     hooo_rev_imply(imply::transitivity(x, imply::absurd()))
 }
 
+/// `(a ⋀ b)^c => (a^c ⋀ b^c)^true`.
+pub fn tauto_hooo_and<A: Prop, B: Prop, C: Prop>(
+    x: Pow<And<A, B>, C>
+) -> Tauto<And<Pow<A, C>, Pow<B, C>>> {
+    pow_transitivity(pow_lift(x), hooo_and)
+}
+
 /// `(a ⋀ b)^c => (a^c ⋀ b^c)`.
 pub fn hooo_and<A: Prop, B: Prop, C: Prop>(x: Pow<And<A, B>, C>) -> And<Pow<A, C>, Pow<B, C>> {
     fn f<A: Prop, B: Prop>((a, _): And<A, B>) -> A {a}
