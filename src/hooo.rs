@@ -471,6 +471,13 @@ pub fn tauto_hooo_dual_neq<A: Prop, B: Prop, C: Prop>(
     unimplemented!()
 }
 
+/// `(c^a == c^b) => c^(¬(a == b))`.
+pub fn tauto_hooo_dual_rev_neq<A: DProp, B: DProp, C: Prop>(
+    x: Tauto<Eq<Pow<C, A>, Pow<C, B>>>
+) -> Pow<C, NEq<A, B>> {
+    hooo_imply(pow_to_imply_lift(hooo_dual_rev_neq))(x)(True)
+}
+
 /// `c^(¬(a == b)) => (c^a == c^b)`.
 pub fn hooo_dual_neq<A: Prop, B: Prop, C: Prop>(
     x: Pow<C, NEq<A, B>>
