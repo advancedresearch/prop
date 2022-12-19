@@ -541,7 +541,9 @@ pub fn tauto_hooo_dual_nrimply<A: Prop, B: Prop, C: Prop>(
 /// `c^(¬(b => a)) => (c^a => c^b)`.
 pub fn hooo_dual_nrimply<A: Prop, B: Prop, C: Prop>(
     x: Pow<C, Not<Imply<B, A>>>
-) -> Imply<Pow<C, A>, Pow<C, B>> {pow()(x)}
+) -> Imply<Pow<C, A>, Pow<C, B>> {
+    tauto_hooo_dual_nrimply(x)(True)
+}
 
 /// `(c^a => c^b) => c^(¬(b => a))`.
 pub fn hooo_dual_rev_nrimply<A: Prop, B: Prop, C: Prop>(
