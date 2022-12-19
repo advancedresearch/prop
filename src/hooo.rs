@@ -538,6 +538,13 @@ pub fn tauto_hooo_dual_nrimply<A: Prop, B: Prop, C: Prop>(
     unimplemented!()
 }
 
+/// `(c^a => c^b)^true => c^(¬(b => a))`.
+pub fn tauto_hooo_dual_rev_nrimply<A: Prop, B: Prop, C: Prop>(
+    x: Tauto<Imply<Pow<C, A>, Pow<C, B>>>
+) -> Pow<C, Not<Imply<B, A>>> {
+    hooo_imply(pow_to_imply_lift(hooo_dual_rev_nrimply))(x)(True)
+}
+
 /// `c^(¬(b => a)) => (c^a => c^b)`.
 pub fn hooo_dual_nrimply<A: Prop, B: Prop, C: Prop>(
     x: Pow<C, Not<Imply<B, A>>>
