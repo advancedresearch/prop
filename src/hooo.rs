@@ -272,7 +272,7 @@ pub fn tauto_hooo_rev_not<A: Prop, B: Prop>(x: Tauto<Not<Pow<A, B>>>) -> Pow<Not
     //     imply::transitivity(x, imply::absurd())
     // }
     // tauto_hooo_rev_imply(pow_transitivity(x, f))
-    unimplemented!()
+    hooo_imply(pow_to_imply_lift(hooo_rev_not))(x)(True)
 }
 
 /// `¬(a^b) => (¬a)^b`.
