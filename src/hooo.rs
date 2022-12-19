@@ -409,9 +409,7 @@ pub fn hooo_eq<A: Prop, B: Prop, C: Prop>(x: Pow<Eq<A, B>, C>) -> Eq<Pow<A, C>, 
 
 /// `(a^c == b^c) => (a == b)^c`.
 pub fn hooo_rev_eq<A: Prop, B: Prop, C: Prop>(x: Eq<Pow<A, C>, Pow<B, C>>) -> Pow<Eq<A, B>, C> {
-    let x1 = hooo_rev_imply(x.0);
-    let x2 = hooo_rev_imply(x.1);
-    hooo_rev_and((x1, x2))
+    unimplemented!()
 }
 
 /// `¬(c^a == c^b) => c^(a == b)`.
