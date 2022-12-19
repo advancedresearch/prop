@@ -127,8 +127,9 @@ pub fn pow_refl<A: Prop>(x: A) -> A {x}
 
 /// `a^b => (¬b)^(¬a)`.
 pub fn pow_modus_tollens<A: Prop, B: Prop>(x: Pow<A, B>) -> Pow<Not<B>, Not<A>> {
-    pow_transitivity(pow_transitivity(hooo::pow_to_imply, imply::modus_tollens),
-        tauto_imply_to_pow(hooo_rev_imply(pow_to_imply(tauto_pow_imply))))(x)
+    // pow_transitivity(pow_transitivity(hooo::pow_to_imply, imply::modus_tollens),
+    //     tauto_imply_to_pow(hooo_rev_imply(pow_to_imply(tauto_pow_imply))))(x)
+    unimplemented!()
 }
 
 /// `a^b ⋀ (a == c)^true => c^b`.
@@ -267,7 +268,8 @@ fn pow<A: Prop, B: Prop>() -> Pow<A, B>
 
 /// `¬(a^b) => (¬a)^b`.
 pub fn hooo_rev_not<A: Prop, B: Prop>(x: Not<Pow<A, B>>) -> Pow<Not<A>, B> {
-    hooo_rev_imply(imply::transitivity(x, imply::absurd()))
+    // hooo_rev_imply(imply::transitivity(x, imply::absurd()))
+    unimplemented!()
 }
 
 /// `(a ⋀ b)^c => (a^c ⋀ b^c)^true`.
@@ -452,11 +454,6 @@ pub fn tauto_hooo_rev_imply<A: Prop, B: Prop, C: Prop>(
 /// `(a => b)^c => (a^c => b^c)`.
 pub fn hooo_imply<A: Prop, B: Prop, C: Prop>(
     x: Pow<Imply<A, B>, C>
-
-/// `(a^c => b^c) => (a => b)^c`.
-pub fn hooo_rev_imply<A: Prop, B: Prop, C: Prop>(
-    x: Imply<Pow<A, C>, Pow<B, C>>
-) -> Pow<Imply<A, B>, C> {pow()(x)}
 ) -> Imply<Pow<A, C>, Pow<B, C>> {
     tauto_hooo_imply(x)(True)
 }
@@ -1258,9 +1255,10 @@ pub fn tauto_imply_to_pow_tauto<A: Prop, B: Prop>(
 pub fn pow_tauto_to_tauto_imply<A: Prop, B: Prop>(
     x: Pow<B, Tauto<A>>
 ) -> Tauto<Imply<A, B>> {
-    let y: Imply<Tauto<A>, Tauto<Tauto<A>>> = Rc::new(move |x| pow_lift(x));
-    let x = hooo_imply(tauto_imply_pow(pow_lift(x)));
-    hooo_rev_imply(imply::transitivity(y, x))
+    // let y: Imply<Tauto<A>, Tauto<Tauto<A>>> = Rc::new(move |x| pow_lift(x));
+    // let x = hooo_imply(tauto_imply_pow(pow_lift(x)));
+    // hooo_rev_imply(imply::transitivity(y, x))
+    unimplemented!()
 }
 
 /// `b^(a^true) => b^a`.
@@ -1281,44 +1279,48 @@ pub fn pow_to_pow_tauto<A: Prop, B: Prop>(
 pub fn tauto_imply_right_tauto<A: Prop, B: Prop>(
     x: Tauto<Imply<A, B>>
 ) -> Tauto<Imply<A, Tauto<B>>> {
-    let y: Eq<Tauto<B>, Tauto<Tauto<B>>> = (
-        Rc::new(move |x| pow_lift(x)),
-        Rc::new(move |x| x(True))
-    );
-    hooo_rev_imply(imply::in_right_arg(hooo_imply(x), y))
+    // let y: Eq<Tauto<B>, Tauto<Tauto<B>>> = (
+    //     Rc::new(move |x| pow_lift(x)),
+    //     Rc::new(move |x| x(True))
+    // );
+    // hooo_rev_imply(imply::in_right_arg(hooo_imply(x), y))
+    unimplemented!()
 }
 
 /// `(a => b^true)^true => (a => b)^true`.
 pub fn tauto_imply_right_rev_tauto<A: Prop, B: Prop>(
     x: Tauto<Imply<A, Tauto<B>>>
 ) -> Tauto<Imply<A, B>> {
-    let y: Eq<Tauto<Tauto<B>>, Tauto<B>> = (
-        Rc::new(move |x| x(True)),
-        Rc::new(move |x| pow_lift(x))
-    );
-    hooo_rev_imply(imply::in_right_arg(hooo_imply(x), y))
+    // let y: Eq<Tauto<Tauto<B>>, Tauto<B>> = (
+    //     Rc::new(move |x| x(True)),
+    //     Rc::new(move |x| pow_lift(x))
+    // );
+    // hooo_rev_imply(imply::in_right_arg(hooo_imply(x), y))
+    unimplemented!()
 }
 
 /// `(a => b)^true => (a^true => b)^true`.
 pub fn tauto_imply_left_tauto<A: Prop, B: Prop>(
     x: Tauto<Imply<A, B>>
 ) -> Tauto<Imply<Tauto<A>, B>> {
-    let y: Eq<Tauto<A>, Tauto<Tauto<A>>> = (
-        Rc::new(move |x| pow_lift(x)),
-        Rc::new(move |x| x(True))
-    );
-    hooo_rev_imply(imply::in_left_arg(hooo_imply(x), y))
+    // let y: Eq<Tauto<A>, Tauto<Tauto<A>>> = (
+    //     Rc::new(move |x| pow_lift(x)),
+    //     Rc::new(move |x| x(True))
+    // );
+    // hooo_rev_imply(imply::in_left_arg(hooo_imply(x), y))
+    unimplemented!()
 }
 
 /// `(a^true => b)^true => (a => b)^true`.
 pub fn tauto_imply_left_rev_tauto<A: Prop, B: Prop>(
     x: Tauto<Imply<Tauto<A>, B>>
 ) -> Tauto<Imply<A, B>> {
-    let y: Eq<Tauto<Tauto<A>>, Tauto<A>> = (
-        Rc::new(move |x| x(True)),
-        Rc::new(move |x| pow_lift(x))
-    );
-    hooo_rev_imply(imply::in_left_arg(hooo_imply(x), y))
+    // let y: Eq<Tauto<Tauto<A>>, Tauto<A>> = (
+    //     Rc::new(move |x| x(True)),
+    //     Rc::new(move |x| pow_lift(x))
+    // );
+    // hooo_rev_imply(imply::in_left_arg(hooo_imply(x), y))
+    unimplemented!()
 }
 
 #[cfg(test)]
