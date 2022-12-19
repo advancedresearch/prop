@@ -127,8 +127,9 @@ pub fn pow_refl<A: Prop>(x: A) -> A {x}
 
 /// `a^b => (¬b)^(¬a)`.
 pub fn pow_modus_tollens<A: Prop, B: Prop>(x: Pow<A, B>) -> Pow<Not<B>, Not<A>> {
-    pow_transitivity(pow_transitivity(pow_to_imply, imply::modus_tollens),
-        tauto_imply_to_pow(tauto_hooo_rev_imply(pow_to_imply_lift(tauto_pow_imply))))(x)
+    // pow_transitivity(pow_transitivity(pow_to_imply, imply::modus_tollens),
+    //     tauto_imply_to_pow(tauto_hooo_rev_imply(pow_to_imply_lift(tauto_pow_imply))))(x)
+    unimplemented!()
 }
 
 /// `a^b ⋀ (a == c)^true => c^b`.
@@ -267,10 +268,11 @@ fn pow<A: Prop, B: Prop>() -> Pow<A, B>
 
 /// `(¬(a^b))^true => (¬a)^b`.
 pub fn tauto_hooo_rev_not<A: Prop, B: Prop>(x: Tauto<Not<Pow<A, B>>>) -> Pow<Not<A>, B> {
-    fn f<A: Prop, B: Prop>(x: Not<Pow<A, B>>) -> Imply<Pow<A, B>, Para<B>> {
-        imply::transitivity(x, imply::absurd())
-    }
-    tauto_hooo_rev_imply(pow_transitivity(x, f))
+    // fn f<A: Prop, B: Prop>(x: Not<Pow<A, B>>) -> Imply<Pow<A, B>, Para<B>> {
+    //     imply::transitivity(x, imply::absurd())
+    // }
+    // tauto_hooo_rev_imply(pow_transitivity(x, f))
+    unimplemented!()
 }
 
 /// `¬(a^b) => (¬a)^b`.
@@ -479,13 +481,6 @@ pub fn hooo_dual_rev_neq<A: DProp, B: DProp, C: Prop>(
 pub fn tauto_hooo_imply<A: Prop, B: Prop, C: Prop>(
     x: Pow<Imply<A, B>, C>
 ) -> Tauto<Imply<Pow<A, C>, Pow<B, C>>> {
-    unimplemented!()
-}
-
-/// `(a^c => b^c)^true => (a => b)^c`.
-pub fn tauto_hooo_rev_imply<A: Prop, B: Prop, C: Prop>(
-    x: Tauto<Imply<Pow<A, C>, Pow<B, C>>>
-) -> Pow<Imply<A, B>, C> {
     unimplemented!()
 }
 
