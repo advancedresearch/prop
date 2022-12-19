@@ -127,7 +127,7 @@ pub fn pow_refl<A: Prop>(x: A) -> A {x}
 
 /// `a^b => (¬b)^(¬a)`.
 pub fn pow_modus_tollens<A: Prop, B: Prop>(x: Pow<A, B>) -> Pow<Not<B>, Not<A>> {
-    pow_transitivity(pow_transitivity(hooo::pow_to_imply, imply::modus_tollens),
+    pow_transitivity(pow_transitivity(pow_to_imply, imply::modus_tollens),
         tauto_imply_to_pow(tauto_hooo_rev_imply(pow_to_imply_lift(tauto_pow_imply))))(x)
 }
 
