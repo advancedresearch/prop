@@ -265,6 +265,14 @@ fn pow<A: Prop, B: Prop>() -> Pow<A, B>
     where Pow<A, B>: PowImply<B, A>
 {unimplemented!()}
 
+/// `(¬(a^b))^true => (¬a)^b`.
+pub fn tauto_hooo_rev_not<A: Prop, B: Prop>(x: Tauto<Not<Pow<A, B>>>) -> Pow<Not<A>, B> {
+    fn f<A: Prop, B: Prop>(x: Not<Pow<A, B>>) -> Imply<Pow<A, B>, Para<B>> {
+        imply::transitivity(x, imply::absurd())
+    }
+    tauto_hooo_rev_imply(pow_transitivity(x, f))
+}
+
 /// `¬(a^b) => (¬a)^b`.
 pub fn hooo_rev_not<A: Prop, B: Prop>(x: Not<Pow<A, B>>) -> Pow<Not<A>, B> {
     // hooo_rev_imply(imply::transitivity(x, imply::absurd()))
