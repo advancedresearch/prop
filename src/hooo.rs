@@ -374,6 +374,13 @@ pub fn tauto_hooo_dual_or<A: Prop, B: Prop, C: Prop>(
     hooo_imply(pow_to_imply_lift(hooo_dual_or))(pow_lift(x))
 }
 
+/// `(c^a ⋀ c^b)^true => c^(a ⋁ b)`.
+pub fn tauto_hooo_dual_rev_or<A: Prop, B: Prop, C: Prop>(
+    x: Tauto<And<Pow<C, A>, Pow<C, B>>>
+) -> Pow<C, Or<A, B>> {
+    pow_transitivity(x, hooo_dual_rev_or)(True)
+}
+
 /// `c^(a ⋁ b) => (c^a ⋀ c^b)`.
 pub fn hooo_dual_or<A: Prop, B: Prop, C: Prop>(
     x: Pow<C, Or<A, B>>
