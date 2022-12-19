@@ -420,7 +420,7 @@ pub fn tauto_hooo_eq<A: Prop, B: Prop, C: Prop>(
 pub fn tauto_hooo_rev_eq<A: Prop, B: Prop, C: Prop>(
     x: Tauto<Eq<Pow<A, C>, Pow<B, C>>>
 ) -> Pow<Eq<A, B>, C> {
-    unimplemented!()
+    hooo_imply(pow_to_imply_lift(hooo_rev_eq))(x)(True)
 }
 
 /// `(a == b)^c => (a^c == b^c)`.
