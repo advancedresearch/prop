@@ -346,7 +346,9 @@ pub fn tauto_hooo_or<A: Prop, B: Prop, C: Prop>(
 /// `(a ⋁ b)^c => (a^c ⋁ b^c)`.
 pub fn hooo_or<A: Prop, B: Prop, C: Prop>(
     x: Pow<Or<A, B>, C>
-) -> Or<Pow<A, C>, Pow<B, C>> {pow()(x)}
+) -> Or<Pow<A, C>, Pow<B, C>> {
+    tauto_hooo_or(x)(True)
+}
 
 /// `(a^c ⋁ b^c) => (a ⋁ b)^c`.
 pub fn hooo_rev_or<A: Prop, B: Prop, C: Prop>(
