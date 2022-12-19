@@ -392,12 +392,14 @@ pub fn tauto_hooo_rev_imply<A: Prop, B: Prop, C: Prop>(
 /// `(a => b)^c => (a^c => b^c)`.
 pub fn hooo_imply<A: Prop, B: Prop, C: Prop>(
     x: Pow<Imply<A, B>, C>
-) -> Imply<Pow<A, C>, Pow<B, C>> {pow()(x)}
 
 /// `(a^c => b^c) => (a => b)^c`.
 pub fn hooo_rev_imply<A: Prop, B: Prop, C: Prop>(
     x: Imply<Pow<A, C>, Pow<B, C>>
 ) -> Pow<Imply<A, B>, C> {pow()(x)}
+) -> Imply<Pow<A, C>, Pow<B, C>> {
+    tauto_hooo_imply(x)(True)
+}
 
 /// `¬(c^b => c^a) => c^(a => b)`.
 pub fn hooo_dual_rev_imply<A: Prop, B: Prop, C: Prop>(
