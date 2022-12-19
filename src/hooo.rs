@@ -343,6 +343,13 @@ pub fn tauto_hooo_or<A: Prop, B: Prop, C: Prop>(
     unimplemented!()
 }
 
+/// `(a^c ⋁ b^c)^true => (a ⋁ b)^c`.
+pub fn tauto_hooo_rev_or<A: Prop, B: Prop, C: Prop>(
+    x: Tauto<Or<Pow<A, C>, Pow<B, C>>>
+) -> Pow<Or<A, B>, C> {
+    pow_transitivity(x, hooo_rev_or)(True)
+}
+
 /// `(a ⋁ b)^c => (a^c ⋁ b^c)`.
 pub fn hooo_or<A: Prop, B: Prop, C: Prop>(
     x: Pow<Or<A, B>, C>
