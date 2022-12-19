@@ -480,6 +480,18 @@ pub fn hooo_dual_rev_imply<A: Prop, B: Prop, C: Prop>(
     x: Not<Imply<Pow<C, B>, Pow<C, A>>>
 ) -> Pow<C, Imply<A, B>> {pow()(x)}
 
+/// `(¬(b^c => a^c))^true => (¬(b => a))^c`.
+pub fn tauto_hooo_rev_nrimply<A: Prop, B: Prop, C: Prop>(
+    x: Tauto<Not<Imply<Pow<B, C>, Pow<A, C>>>>
+) -> Pow<Not<Imply<B, A>>, C> {
+    fn f<A: Prop, B: Prop, C: Prop>(
+        x: Not<Imply<Pow<B, C>, Pow<A, C>>>
+    ) -> Not<Pow<Imply<B, A>, C>> {
+        imply::in_left(x, |x| hooo_imply(x))
+    }
+    tauto_hooo_rev_not(pow_transitivity(x, f))
+}
+
 /// `¬(b^c => a^c) => (¬(b => a))^c`.
 pub fn hooo_rev_nrimply<A: Prop, B: Prop, C: Prop>(
     x: Not<Imply<Pow<B, C>, Pow<A, C>>>
