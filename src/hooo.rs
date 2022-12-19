@@ -464,6 +464,13 @@ pub fn hooo_rev_neq<A: Prop, B: Prop, C: Prop>(x: NEq<Pow<A, C>, Pow<B, C>>) -> 
     hooo_rev_not(imply::in_left(x, |y| hooo_eq(y)))
 }
 
+/// `c^(¬(a == b)) => (c^a == c^b)^true`.
+pub fn tauto_hooo_dual_neq<A: Prop, B: Prop, C: Prop>(
+    x: Pow<C, NEq<A, B>>
+) -> Tauto<Eq<Pow<C, A>, Pow<C, B>>> {
+    unimplemented!()
+}
+
 /// `c^(¬(a == b)) => (c^a == c^b)`.
 pub fn hooo_dual_neq<A: Prop, B: Prop, C: Prop>(
     x: Pow<C, NEq<A, B>>
