@@ -1179,14 +1179,9 @@ pub fn uniform_dual_rev_or<A: Prop, B: Prop>(
 pub fn uniform_to_excm<A: Prop>(
     uni: Uniform<A>
 ) -> Tauto<ExcM<A>> {
-    fn f<A: Prop>(para_a: Para<A>) -> Tauto<Not<A>> {
-        hooo_rev_not(Rc::new(move |tauto_a: Tauto<A>| {
-            para_a(tauto_a(True))
-        }))
-    }
     match uni {
         Left(t) => tauto_or_left(t),
-        Right(p) => tauto_or_right(f(p)),
+        Right(p) => tauto_or_right(para_to_tauto_not(p)),
     }
 }
 
