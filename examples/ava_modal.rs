@@ -18,7 +18,7 @@ pub fn proof2<A: DProp>(npos_a: Not<Pos<A>>) -> Not<Nec<A>> {
 }
 
 /// `¬□a => ¬◇a`.
-pub unsafe fn proof3<A: Prop>(nnec_a: Not<Nec<A>>) -> Not<Pos<A>> {
+pub unsafe fn proof3<A: DProp>(nnec_a: Not<Nec<A>>) -> Not<Pos<A>> {
     let x = not::rev_triple(imply::in_left(nnec_a, |x: Not<Not<Pos<A>>>| {
         let x: Not<Para<A>> = imply::in_left(x, |y| para_to_npos(y));
         let x = pow_not(x);

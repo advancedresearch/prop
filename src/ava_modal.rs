@@ -104,24 +104,24 @@ pub unsafe fn para_to_npos<A: Prop>(para_a: Para<A>) -> Not<Pos<A>> {
 }
 
 /// `¬¬a => ◇a`.
-pub fn not_not_to_pos<A: Prop>(nna: Not<Not<A>>) -> Pos<A> {
+pub fn not_not_to_pos<A: DProp>(nna: Not<Not<A>>) -> Pos<A> {
     Pos::new(hooo::not_not_to_para_para(nna))
 }
 
 /// `◇a => ¬¬a`.
-pub unsafe fn pos_to_not_not<A: Prop>(pos: Pos<A>) -> Not<Not<A>> {
+pub unsafe fn pos_to_not_not<A: DProp>(pos: Pos<A>) -> Not<Not<A>> {
     hooo::para_para_to_not_not(pos_to_para_para(pos))
 }
 
 /// `¬□¬a <=> ◇a`.
 pub fn eq_nnecn_pos<A: DProp>() -> Eq<Not<Nec<Not<A>>>, Pos<A>> {
-    fn f<A: Prop>(_: True) -> Eq<Not<Para<A>>, Not<Para<Not<Not<A>>>>> {
+    fn f<A: DProp>(_: True) -> Eq<Not<Para<A>>, Not<Para<Not<Not<A>>>>> {
         (
             Rc::new(move |x| para_rev_not(para_not_triple(pow_not(x)))),
             Rc::new(move |x| para_rev_not(para_not_rev_triple(pow_not(x))))
         )
     }
-    fn g<A: Prop>(_: True) -> Eq<Not<Para<A>>, Not<Para<Not<Not<A>>>>> {
+    fn g<A: DProp>(_: True) -> Eq<Not<Para<A>>, Not<Para<Not<Not<A>>>>> {
         (
             Rc::new(move |x| para_rev_not(para_not_triple(pow_not(x)))),
             Rc::new(move |x| para_rev_not(para_not_rev_double(pow_not(x))))
@@ -157,9 +157,9 @@ pub fn eq_nposn_nec<A: Prop>() -> Eq<Not<Pos<Not<A>>>, Nec<A>> {
 }
 
 /// `¬□a == ◇¬a`.
-pub fn eq_nnec_posn<A: Prop>() -> Eq<Not<Nec<A>>, Pos<Not<A>>> {
-    fn g<A: Prop>(_: True) -> Eq<Not<Not<Para<Not<A>>>>, Para<Not<A>>> {
-        fn f<A: Prop>(_: True) -> Eq<Not<Not<Not<A>>>, Not<A>> {
+pub fn eq_nnec_posn<A: DProp>() -> Eq<Not<Nec<A>>, Pos<Not<A>>> {
+    fn g<A: DProp>(_: True) -> Eq<Not<Not<Para<Not<A>>>>, Para<Not<A>>> {
+        fn f<A: DProp>(_: True) -> Eq<Not<Not<Not<A>>>, Not<A>> {
             (Rc::new(move |x| not::rev_triple(x)), Rc::new(move |x| not::double(x)))
         }
         (
@@ -192,8 +192,8 @@ pub fn eq_nnec_posn<A: Prop>() -> Eq<Not<Nec<A>>, Pos<Not<A>>> {
 }
 
 /// `¬◇a == □¬a`.
-pub fn eq_posn_nnec<A: Prop>() -> Eq<Not<Pos<A>>, Nec<Not<A>>> {
-    fn f<A: Prop>(_: True) -> Eq<Not<Para<A>>, Not<Para<Not<Not<A>>>>> {
+pub fn eq_posn_nnec<A: DProp>() -> Eq<Not<Pos<A>>, Nec<Not<A>>> {
+    fn f<A: DProp>(_: True) -> Eq<Not<Para<A>>, Not<Para<Not<Not<A>>>>> {
         fn g<A: Prop>(_: True) -> Eq<Not<Not<Not<A>>>, Not<A>> {
             (Rc::new(move |x| not::rev_triple(x)), Rc::new(move |x| not::double(x)))
         }
@@ -245,6 +245,6 @@ pub fn to_pos_tauto_eq<A: Prop>(
 }
 
 /// `¬◇a => false^(¬(false^a))`.
-pub fn pos_not<A: Prop>(x: Not<Pos<A>>) -> Para<Not<Para<A>>> {
+pub fn pos_not<A: DProp>(x: Not<Pos<A>>) -> Para<Not<Para<A>>> {
     pow_not(imply::in_left(x, |y| Pos::new(y)))
 }

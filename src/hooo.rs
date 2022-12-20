@@ -91,6 +91,8 @@ pub type Pow<A, B> = fn(B) -> A;
 /// Power equivalence `=^=`.
 pub type PowEq<A, B> = And<Pow<B, A>, Pow<A, B>>;
 
+type NEq<A, B> = Not<Eq<A, B>>;
+
 /// `a^b => (a^b)^c`.
 pub fn pow_lift<A: Prop, B: Prop, C: Prop>(_: Pow<A, B>) -> Pow<Pow<A, B>, C> {
     unimplemented!()
@@ -165,9 +167,12 @@ pub fn pow_right_and_symmetry<A: Prop, B: Prop, C: Prop>(
 }
 
 /// `¬(a^b) => a^(¬b)`.
-pub fn pow_not<A: Prop, B: Prop>(x: Not<Pow<A, B>>) -> Pow<A, Not<B>> {
-    hooo_dual_rev_imply(Rc::new(move |y: Imply<Pow<A, False>, Pow<A, B>>|
-        imply::absurd()(x(y(fa())))))
+pub fn pow_not<A: DProp, B: DProp>(x: Not<Pow<A, B>>) -> Pow<A, Not<B>> {
+    fn f<A: Prop, B: Prop>((b, nb): And<B, Not<B>>) -> A {not::absurd(nb, b)}
+    match hooo_dual_and(f) {
+        Left(pow_ab) => not::absurd(x, pow_ab),
+        Right(pow_a_nb) => pow_a_nb,
+    }
 }
 
 /// `a^(¬¬b) => (¬¬a)^b`.
@@ -231,50 +236,6 @@ pub fn tauto_to_tauto_excm<A: Prop>(x: Tauto<A>) -> Tauto<ExcM<A>> {
 pub fn para_to_tauto_excm<A: Prop>(x: Para<A>) -> Tauto<ExcM<A>> {
     hooo_rev_or(Right(para_to_tauto_not(x)))
 }
-
-#[marker]
-/// Implemented by axiomatic exponential propositions.
-///
-/// This is used internally to instantiate an exponential proposition axiomatically.
-trait PowImply<A, B>: Fn(A) -> B {}
-
-impl<A, B> PowImply<Not<Pow<A, B>>, Pow<Not<A>, B>>
-    for Pow<Pow<Not<A>, B>, Not<Pow<A, B>>> {}
-
-macro_rules! hooo_impl {
-    (dir $x:tt, $y:tt) => {
-        impl<A, B, C> PowImply<Pow<$x<A, B>, C>, $x<Pow<A, C>, Pow<B, C>>>
-            for Pow<$x<Pow<A, C>, Pow<B, C>>, Pow<$x<A, B>, C>> {}
-        impl<A, B, C> PowImply<$x<Pow<A, C>, Pow<B, C>>, Pow<$x<A, B>, C>>
-            for Pow<Pow<$x<A, B>, C>, $x<Pow<A, C>, Pow<B, C>>> {}
-        impl<A, B, C> PowImply<Pow<C, $x<A, B>>, $y<Pow<C, A>, Pow<C, B>>>
-            for Pow<$y<Pow<C, A>, Pow<C, B>>, Pow<C, $x<A, B>>> {}
-        impl<A, B, C> PowImply<$y<Pow<C, A>, Pow<C, B>>, Pow<C, $x<A, B>>>
-            for Pow<Pow<C, $x<A, B>>, $y<Pow<C, A>, Pow<C, B>>> {}
-    };
-    ($x:tt, $y:tt) => {
-        hooo_impl!{dir $x, $y}
-        hooo_impl!{dir $y, $x}
-    };
-}
-
-hooo_impl!{And, Or}
-
-type NEq<A, B> = Not<Eq<A, B>>;
-hooo_impl!{Eq, NEq}
-
-type NRImply<A, B> = Not<Imply<B, A>>;
-hooo_impl!{Imply, NRImply}
-
-/// Get instance of exponential proposition.
-///
-/// This is made private since it does not distinguish
-/// classical propositions from constructive propositions.
-/// This property must be guarded by wrapper axioms,
-/// or use proofs instead whenever possible.
-fn pow<A: Prop, B: Prop>() -> Pow<A, B>
-    where Pow<A, B>: PowImply<B, A>
-{unimplemented!()}
 
 /// `(¬(a^b))^true => (¬a)^b`.
 pub fn tauto_hooo_rev_not<A: DProp, B: Prop>(x: Tauto<Not<Pow<A, B>>>) -> Pow<Not<A>, B> {
@@ -558,16 +519,24 @@ pub fn hooo_imply<A: Prop, B: Prop, C: Prop>(
 }
 
 /// `(¬(c^b => c^a))^true => c^(a => b)`.
-pub fn tauto_hooo_dual_rev_imply<A: Prop, B: Prop, C: Prop>(
+pub fn tauto_hooo_dual_rev_imply<A: DProp, B: DProp, C: DProp>(
     x: Tauto<Not<Imply<Pow<C, B>, Pow<C, A>>>>
 ) -> Pow<C, Imply<A, B>> {
     hooo_imply(pow_to_imply_lift(hooo_dual_rev_imply))(x)(True)
 }
 
 /// `¬(c^b => c^a) => c^(a => b)`.
-pub fn hooo_dual_rev_imply<A: Prop, B: Prop, C: Prop>(
+pub fn hooo_dual_rev_imply<A: DProp, B: DProp, C: DProp>(
     x: Not<Imply<Pow<C, B>, Pow<C, A>>>
-) -> Pow<C, Imply<A, B>> {pow()(x)}
+) -> Pow<C, Imply<A, B>> {
+    match Pow::<C, Imply<A, B>>::decide() {
+        Left(y) => y,
+        Right(ny) => {
+            let y: Imply<Pow<C, B>, Pow<C, A>> = hooo_dual_nrimply(pow_not(ny));
+            not::absurd(x, y)
+        }
+    }
+}
 
 /// `(¬(b^c => a^c))^true => (¬(b => a))^c`.
 pub fn tauto_hooo_rev_nrimply<A: DProp, B: DProp, C: Prop>(
@@ -782,7 +751,7 @@ pub fn para_to_tauto_not<A: Prop>(x: Para<A>) -> Tauto<Not<A>> {
 }
 
 /// `a^true => false^(¬a)`.
-pub fn tauto_to_para_not<A: Prop>(x: Tauto<A>) -> Para<Not<A>> {
+pub fn tauto_to_para_not<A: DProp>(x: Tauto<A>) -> Para<Not<A>> {
     let y: Not<Para<A>> = Rc::new(move |para_a| para_a(x(True)));
     pow_not(y)
 }
@@ -807,7 +776,7 @@ pub fn para_rev_not<A: Prop>(para_na: Para<Not<A>>) -> Not<Para<A>> {
 }
 
 /// `false^a => false^(¬¬a)`.
-pub fn para_not_double<A: Prop>(x: Para<A>) -> Para<Not<Not<A>>> {
+pub fn para_not_double<A: DProp>(x: Para<A>) -> Para<Not<Not<A>>> {
     pow_not(imply::in_left(not::double(x), |x: Para<Not<A>>| para_rev_not(x)))
 }
 
@@ -830,7 +799,7 @@ pub fn para_not_rev_triple<A: Prop>(x: Para<Not<Not<Not<A>>>>) -> Para<Not<A>> {
 pub fn para_to_not<A: Prop>(para_a: Para<A>) -> Not<A> {Rc::new(move |a| para_a(a))}
 
 /// `¬(false^a) => false^(false^a)`.
-pub fn not_para_to_para_para<A: Prop>(npara_a: Not<Para<A>>) -> Para<Para<A>> {
+pub fn not_para_to_para_para<A: DProp>(npara_a: Not<Para<A>>) -> Para<Para<A>> {
     pow_transitivity(para_to_not, pow_not(npara_a))
 }
 
@@ -845,30 +814,30 @@ pub fn not_not_to_not_para<A: Prop>(nna: Not<Not<A>>) -> Not<Para<A>> {
 }
 
 /// `¬(false^a) => ¬¬a`.
-pub fn not_para_to_not_not<A: Prop>(npara_a: Not<Para<A>>) -> Not<Not<A>> {
+pub fn not_para_to_not_not<A: DProp>(npara_a: Not<Para<A>>) -> Not<Not<A>> {
     Rc::new(move |na| pow_not(npara_a.clone())(na))
 }
 
 /// `¬¬a => false^(false^a)`.
-pub fn not_not_to_para_para<A: Prop>(nna: Not<Not<A>>) -> Para<Para<A>> {
+pub fn not_not_to_para_para<A: DProp>(nna: Not<Not<A>>) -> Para<Para<A>> {
     not_para_to_para_para(not_not_to_not_para(nna))
 }
 
 /// `false^(false^a) => ¬¬a`.
-pub fn para_para_to_not_not<A: Prop>(para_para_a: Para<Para<A>>) -> Not<Not<A>> {
+pub fn para_para_to_not_not<A: DProp>(para_para_a: Para<Para<A>>) -> Not<Not<A>> {
     Rc::new(move |na| pow_not(para_para_to_not_para(para_para_a))(na))
 }
 
 /// `a => false^(false^a)`.
-pub fn para_para<A: Prop>(a: A) -> Para<Para<A>> {
+pub fn para_para<A: DProp>(a: A) -> Para<Para<A>> {
     not_not_to_para_para(not::double(a))
 }
 
 /// `(¬(false^a) == ¬(false^b)) => (false^a == false^b)`.
-pub fn eq_not_para_to_eq_para<A: Prop, B: Prop>(
+pub fn eq_not_para_to_eq_para<A: DProp, B: DProp>(
     eq_npara_a_npara_b: Eq<Not<Para<A>>, Not<Para<B>>>
 ) -> Eq<Para<A>, Para<B>> {
-    fn f<A: Prop>() -> Eq<Not<Not<Para<A>>>, Para<A>> {
+    fn f<A: DProp>() -> Eq<Not<Not<Para<A>>>, Para<A>> {
         (
             Rc::new(move |nnpara_a| {
                 let x: Not<Para<Not<A>>> = imply::in_left(nnpara_a,
@@ -1532,33 +1501,4 @@ pub fn tauto_imply_left_rev_tauto<A: Prop, B: Prop>(
     // );
     // hooo_rev_imply(imply::in_left_arg(hooo_imply(x), y))
     unimplemented!()
-}
-
-#[cfg(test)]
-#[allow(dead_code)]
-mod tests {
-    use super::*;
-
-    fn pow_eq<A: Prop, B: Prop>()
-        where Pow<A, B>: PowImply<B, A>,
-              Pow<B, A>: PowImply<A, B>
-    {
-        let _: Pow<A, B> = pow();
-        let _: Pow<B, A> = pow();
-    }
-
-    fn pow_eq_symmetry<A: Prop, B: Prop>()
-        where Pow<A, B>: PowImply<B, A>,
-              Pow<B, A>: PowImply<A, B>
-    {
-        pow_eq::<B, A>()
-    }
-
-    fn check2<A: Prop, B: Prop, C: Prop>() {pow_eq::<And<Pow<A, C>, Pow<B, C>>, Pow<And<A, B>, C>>()}
-    fn check3<A: Prop, B: Prop, C: Prop>() {pow_eq::<Or<Pow<A, C>, Pow<B, C>>, Pow<Or<A, B>, C>>()}
-    fn check5<A: Prop, B: Prop, C: Prop>() {pow_eq::<Imply<Pow<A, C>, Pow<B, C>>, Pow<Imply<A, B>, C>>()}
-    fn check6<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, And<A, B>>, Or<Pow<C, A>, Pow<C, B>>>()}
-    fn check7<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, Or<A, B>>, And<Pow<C, A>, Pow<C, B>>>()}
-    fn check8<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, Eq<A, B>>, Not<Eq<Pow<C, A>, Pow<C, B>>>>()}
-    fn check9<A: Prop, B: Prop, C: Prop>() {pow_eq::<Pow<C, Imply<A, B>>, Not<Imply<Pow<C, B>, Pow<C, A>>>>()}
 }
