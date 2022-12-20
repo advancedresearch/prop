@@ -1318,6 +1318,16 @@ pub fn theory_and<A: DProp, B: DProp>(
     })
 }
 
+/// `a ⋀ ¬(a^true) => theory(a)`.
+pub fn not_tauto_to_theory<A: Prop>(a: A, ntauto_a: Not<Tauto<A>>) -> Theory<A> {
+    Rc::new(move |uni_a| {
+        match uni_a {
+            Left(tauto_a) => ntauto_a(tauto_a),
+            Right(para_a) => para_a(a.clone())
+        }
+    })
+}
+
 /// `(false^a)^(a^true) ⋀ (a^true)^(false^a) => false`.
 ///
 /// This is also known as [Liar's paradox](https://en.wikipedia.org/wiki/Liar_paradox).
