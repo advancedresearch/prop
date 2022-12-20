@@ -127,13 +127,6 @@ pub fn pow_lower<A: Prop, B: Prop, C: Prop>(x: Pow<Pow<A, B>, C>) -> Pow<A, And<
 /// `a => a`.
 pub fn pow_refl<A: Prop>(x: A) -> A {x}
 
-/// `a^b => (¬b)^(¬a)`.
-pub fn pow_modus_tollens<A: Prop, B: Prop>(x: Pow<A, B>) -> Pow<Not<B>, Not<A>> {
-    // pow_transitivity(pow_transitivity(pow_to_imply, imply::modus_tollens),
-    //     tauto_imply_to_pow(tauto_hooo_rev_imply(pow_to_imply_lift(tauto_pow_imply))))(x)
-    unimplemented!()
-}
-
 /// `a^b ⋀ (a == c)^true => c^b`.
 pub fn pow_in_left_arg<A: Prop, B: Prop, C: Prop>(
     x: Pow<A, B>,
