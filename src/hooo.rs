@@ -1431,23 +1431,6 @@ pub fn tauto_imply_to_pow_tauto<A: Prop, B: Prop>(
     pow_transitivity(f, tauto_imply_to_pow(x))
 }
 
-/// `b^(a^true) => (a => b)^true`.
-pub fn pow_tauto_to_tauto_imply<A: Prop, B: Prop>(
-    x: Pow<B, Tauto<A>>
-) -> Tauto<Imply<A, B>> {
-    // let y: Imply<Tauto<A>, Tauto<Tauto<A>>> = Rc::new(move |x| pow_lift(x));
-    // let x = hooo_imply(tauto_imply_pow(pow_lift(x)));
-    // hooo_rev_imply(imply::transitivity(y, x))
-    unimplemented!()
-}
-
-/// `b^(a^true) => b^a`.
-pub fn pow_tauto_to_pow<A: Prop, B: Prop>(
-    x: Pow<B, Tauto<A>>
-) -> Pow<B, A> {
-    tauto_imply_to_pow(pow_tauto_to_tauto_imply(x))
-}
-
 /// `b^a => b^(a^true)`.
 pub fn pow_to_pow_tauto<A: Prop, B: Prop>(
     x: Pow<B, A>
