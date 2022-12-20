@@ -277,22 +277,12 @@ fn pow<A: Prop, B: Prop>() -> Pow<A, B>
 {unimplemented!()}
 
 /// `(¬(a^b))^true => (¬a)^b`.
-pub fn tauto_hooo_rev_not<A: Prop, B: Prop>(x: Tauto<Not<Pow<A, B>>>) -> Pow<Not<A>, B> {
-    // fn f<A: Prop, B: Prop>(x: Not<Pow<A, B>>) -> Imply<Pow<A, B>, Para<B>> {
-    //     imply::transitivity(x, imply::absurd())
-    // }
-    // tauto_hooo_rev_imply(pow_transitivity(x, f))
+pub fn tauto_hooo_rev_not<A: DProp, B: Prop>(x: Tauto<Not<Pow<A, B>>>) -> Pow<Not<A>, B> {
     hooo_imply(pow_to_imply_lift(hooo_rev_not))(x)(True)
 }
 
 /// `¬(a^b) => (¬a)^b`.
-pub fn hooo_rev_not<A: Prop, B: Prop>(x: Not<Pow<A, B>>) -> Pow<Not<A>, B> {
-    // hooo_rev_imply(imply::transitivity(x, imply::absurd()))
-    unimplemented!()
-}
-
-/// `¬(a^b) => (¬a)^b`.
-pub fn hooo_rev_not_da<A: DProp, B: Prop>(x: Not<Pow<A, B>>) -> Pow<Not<A>, B> {
+pub fn hooo_rev_not<A: DProp, B: Prop>(x: Not<Pow<A, B>>) -> Pow<Not<A>, B> {
     fn f<A: DProp, B: Prop>(_: B) -> ExcM<A> {A::decide()}
     match hooo_or(f) {
         Left(pow_ab) => not::absurd(x, pow_ab),
@@ -490,7 +480,7 @@ pub fn tauto_hooo_rev_neq<A: DProp, B: DProp, C: Prop>(
 pub fn hooo_rev_neq<A: DProp, B: DProp, C: Prop>(
     x: NEq<Pow<A, C>, Pow<B, C>>
 ) -> Pow<NEq<A, B>, C> {
-    hooo_rev_not_da(imply::in_left(x, |y| hooo_eq(y)))
+    hooo_rev_not(imply::in_left(x, |y| hooo_eq(y)))
 }
 
 /// `c^(¬(a == b)) => (c^a == c^b)^true`.
@@ -559,7 +549,7 @@ pub fn tauto_hooo_rev_nrimply<A: DProp, B: DProp, C: Prop>(
 pub fn hooo_rev_nrimply<A: DProp, B: DProp, C: Prop>(
     x: Not<Imply<Pow<B, C>, Pow<A, C>>>
 ) -> Pow<Not<Imply<B, A>>, C> {
-    hooo_rev_not_da(imply::in_left(x, |x| hooo_imply(x)))
+    hooo_rev_not(imply::in_left(x, |x| hooo_imply(x)))
 }
 
 /// `c^(¬(b => a)) => (c^a => c^b)^true`.
@@ -694,7 +684,7 @@ pub fn para_to_eq_false<A: DProp>(
 
 /// `¬(x^true) => (¬x)^true`.
 pub fn tauto_not<A: DProp>(x: Not<Tauto<A>>) -> Tauto<Not<A>> {
-    hooo_rev_not_da(x)
+    hooo_rev_not(x)
 }
 
 /// `¬(x^true) ⋀ (a ⋁ ¬a)^true => (¬x)^true`.
@@ -732,7 +722,7 @@ pub fn tauto_to_para_not<A: Prop>(x: Tauto<A>) -> Para<Not<A>> {
 
 /// `false^(¬a) => ¬¬(a^true)`.
 pub fn para_not_to_not_not_tauto<A: DProp>(x: Para<Not<A>>) -> Not<Not<Tauto<A>>> {
-    Rc::new(move |ntauto_a| x(hooo_rev_not_da(ntauto_a)(True)))
+    Rc::new(move |ntauto_a| x(hooo_rev_not(ntauto_a)(True)))
 }
 
 /// `x^true => (¬¬x)^true`.
@@ -933,7 +923,7 @@ pub fn eq_tauto_para_to_para_uniform<A: DProp>(eq: Eq<Tauto<A>, Para<A>>) -> Par
             Left(para_a) => para_a(eq.1(para_a)(True)),
             Right(npara_a) => {
                 let x = eq::modus_tollens(eq).0(npara_a.clone());
-                npara_a(tauto_not_to_para(hooo_rev_not_da(x)))
+                npara_a(tauto_not_to_para(hooo_rev_not(x)))
             }
         }
     }))
@@ -1229,7 +1219,7 @@ pub fn tauto_from_para_transitivity<A: DProp, B: DProp, C: DProp>(
                 Right(para_uni_eq_ac) => {
                     let nuni_eq_ac = Rc::new(move |x| para_uni_eq_ac(x));
                     let (x, _): And<Not<Tauto<Eq<A, C>>>, Not<Para<Eq<A, C>>>> = and::from_de_morgan(nuni_eq_ac);
-                    let x: Tauto<Not<Eq<A, C>>> = hooo_rev_not_da(x);
+                    let x: Tauto<Not<Eq<A, C>>> = hooo_rev_not(x);
                     imply::absurd()(y(x(True)))
                 }
             }
@@ -1331,7 +1321,7 @@ pub fn para_liar<A: DProp>(
             Left(para_a) => para_a(f(True).1(para_a)(True)),
             Right(npara_a) => {
                 let ntauto_a = eq::modus_tollens(f(True)).0(npara_a.clone());
-                let tauto_na = hooo_rev_not_da(ntauto_a);
+                let tauto_na = hooo_rev_not(ntauto_a);
                 let para_a = tauto_not_to_para(tauto_na);
                 npara_a(para_a)
             }
