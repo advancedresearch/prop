@@ -222,6 +222,11 @@ pub fn tauto_eq_to_pow_eq<A: Prop, B: Prop>(x: Tauto<Eq<A, B>>) -> PowEq<A, B> {
     (pow_ba, pow_ab)
 }
 
+/// `a^true => (a ⋁ ¬a)^true`.
+pub fn tauto_to_tauto_excm<A: Prop>(x: Tauto<A>) -> Tauto<ExcM<A>> {
+    hooo_rev_or(Left(x))
+}
+
 #[marker]
 /// Implemented by axiomatic exponential propositions.
 ///
