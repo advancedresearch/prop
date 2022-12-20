@@ -290,7 +290,7 @@ pub fn hooo_rev_and<A: Prop, B: Prop, C: Prop>(
 ///
 /// This is only valid for decidable propositions.
 pub fn tauto_hooo_dual_and<A: DProp, B: DProp, C: DProp>(
-    x: Pow<C, And<A, B>>
+    _: Pow<C, And<A, B>>
 ) -> Tauto<Or<Pow<C, A>, Pow<C, B>>> {
     unimplemented!()
 }
@@ -323,7 +323,7 @@ pub fn hooo_dual_rev_and<A: Prop, B: Prop, C: Prop>(
 
 /// `(a ⋁ b)^c => (a^c ⋁ b^c)^true`.
 pub fn tauto_hooo_or<A: Prop, B: Prop, C: Prop>(
-    x: Pow<Or<A, B>, C>
+    _: Pow<Or<A, B>, C>
 ) -> Tauto<Or<Pow<A, C>, Pow<B, C>>> {
     unimplemented!()
 }
@@ -411,7 +411,7 @@ pub fn hooo_eq<A: Prop, B: Prop, C: Prop>(x: Pow<Eq<A, B>, C>) -> Eq<Pow<A, C>, 
 /// `(a^c == b^c) => (a == b)^c`.
 ///
 /// This is only valid for decidable propositions.
-pub fn hooo_rev_eq<A: DProp, B: DProp, C: DProp>(x: Eq<Pow<A, C>, Pow<B, C>>) -> Pow<Eq<A, B>, C> {
+pub fn hooo_rev_eq<A: DProp, B: DProp, C: DProp>(_: Eq<Pow<A, C>, Pow<B, C>>) -> Pow<Eq<A, B>, C> {
     unimplemented!()
 }
 
@@ -499,7 +499,7 @@ pub fn hooo_dual_rev_neq<A: DProp, B: DProp, C: DProp>(
 
 /// `(a => b)^c => (a^c => b^c)^true`.
 pub fn tauto_hooo_imply<A: Prop, B: Prop, C: Prop>(
-    x: Pow<Imply<A, B>, C>
+    _: Pow<Imply<A, B>, C>
 ) -> Tauto<Imply<Pow<A, C>, Pow<B, C>>> {
     unimplemented!()
 }
