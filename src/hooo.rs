@@ -935,6 +935,17 @@ pub fn eq_tauto_to_eq_para<A: Prop, B: Prop>(
     (y1, y0)
 }
 
+/// `(a^true == b^true) => (false^a == false^b)`.
+pub fn eq_tauto_to_eq_para_excm<A: Prop, B: Prop>(
+    x: Eq<Tauto<A>, Tauto<B>>,
+    excm_a: Tauto<ExcM<A>>,
+    excm_b: Tauto<ExcM<B>>,
+) -> Eq<Para<A>, Para<B>> {
+    let y0 = imply_tauto_to_imply_para_excm(x.0, excm_a);
+    let y1 = imply_tauto_to_imply_para_excm(x.1, excm_b);
+    (y1, y0)
+}
+
 /// `(a^true == false^a) => false^uniform(a)`.
 pub fn eq_tauto_para_to_para_uniform<A: DProp>(eq: Eq<Tauto<A>, Para<A>>) -> Para<Uniform<A>> {
     not::absurd(Para::<A>::nnexcm(), Rc::new(move |excm| {
