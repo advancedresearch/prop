@@ -493,10 +493,27 @@ pub fn hooo_rev_neq<A: DProp, B: DProp, C: Prop>(
 }
 
 /// `c^(¬(a == b)) => (c^a == c^b)^true`.
-pub fn tauto_hooo_dual_neq<A: Prop, B: Prop, C: Prop>(
+pub fn tauto_hooo_dual_neq<A: DProp, B: DProp, C: DProp>(
     x: Pow<C, NEq<A, B>>
 ) -> Tauto<Eq<Pow<C, A>, Pow<C, B>>> {
-    unimplemented!()
+    fn f<A: Prop, B: Prop, C: Prop>(x: Tauto<Eq<A, B>>) -> Eq<Pow<C, A>, Pow<C, B>> {
+        (Rc::new(move |pow_ca| pow_in_right_arg(pow_ca, x)),
+         Rc::new(move |pow_cb| pow_in_right_arg(pow_cb, tauto_eq_symmetry(x))))
+    }
+    fn g<A: Prop, B: Prop, C: Prop>(tauto_c: Tauto<C>) -> Eq<Pow<C, A>, Pow<C, B>> {
+        (pow_transitivity(tr(), tauto_c).map_any(), pow_transitivity(tr(), tauto_c).map_any())
+    }
+    match Tauto::<Eq<Pow<C, A>, Pow<C, B>>>::decide() {
+        Left(y) => y,
+        Right(ny) => {
+            let f: Imply<Tauto<Eq<A, B>>, Tauto<Eq<Pow<C, A>, Pow<C, B>>>> =
+                Rc::new(move |x| hooo_imply(pow_to_imply_lift(f))(pow_lift(x)));
+            let y: Not<Tauto<Eq<A, B>>> = imply::modus_tollens(f)(ny);
+            let y: Tauto<Not<Eq<A, B>>> = hooo_rev_not(y);
+            let y: Tauto<C> = pow_transitivity(y, x);
+            hooo_imply(pow_to_imply_lift(g))(pow_lift(y))
+        }
+    }
 }
 
 /// `(c^a == c^b)^true => c^(¬(a == b))`.
@@ -512,7 +529,7 @@ pub fn tauto_hooo_dual_rev_neq<A: DProp, B: DProp, C: Prop>(
 }
 
 /// `c^(¬(a == b)) => (c^a == c^b)`.
-pub fn hooo_dual_neq<A: Prop, B: Prop, C: Prop>(
+pub fn hooo_dual_neq<A: DProp, B: DProp, C: DProp>(
     x: Pow<C, NEq<A, B>>
 ) -> Eq<Pow<C, A>, Pow<C, B>> {
     tauto_hooo_dual_neq(x)(True)
