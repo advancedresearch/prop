@@ -927,11 +927,11 @@ pub fn imply_tauto_to_imply_para_excm<A: Prop, B: Prop>(
 }
 
 /// `(a^true == b^true) => (false^a == false^b)`.
-pub fn eq_tauto_to_eq_para<A: Prop, B: Prop>(
+pub fn eq_tauto_to_eq_para<A: DProp, B: DProp>(
     x: Eq<Tauto<A>, Tauto<B>>
 ) -> Eq<Para<A>, Para<B>> {
-    let y0 = imply_tauto_to_imply_para(x.0);
-    let y1 = imply_tauto_to_imply_para(x.1);
+    let y0 = imply_tauto_to_imply_para_da(x.0);
+    let y1 = imply_tauto_to_imply_para_da(x.1);
     (y1, y0)
 }
 
