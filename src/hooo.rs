@@ -1438,18 +1438,6 @@ pub fn pow_to_pow_tauto<A: Prop, B: Prop>(
     tauto_imply_to_pow_tauto(pow_to_tauto_imply(x))
 }
 
-/// `(a => b^true)^true => (a => b)^true`.
-pub fn tauto_imply_right_rev_tauto<A: Prop, B: Prop>(
-    x: Tauto<Imply<A, Tauto<B>>>
-) -> Tauto<Imply<A, B>> {
-    // let y: Eq<Tauto<Tauto<B>>, Tauto<B>> = (
-    //     Rc::new(move |x| x(True)),
-    //     Rc::new(move |x| pow_lift(x))
-    // );
-    // hooo_rev_imply(imply::in_right_arg(hooo_imply(x), y))
-    unimplemented!()
-}
-
 /// `(a => b)^true => (a^true => b)^true`.
 pub fn tauto_imply_left_tauto<A: Prop, B: Prop>(
     x: Tauto<Imply<A, B>>
