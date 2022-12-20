@@ -564,10 +564,10 @@ pub fn tauto_hooo_rev_nrimply<A: Prop, B: Prop, C: Prop>(
 }
 
 /// `¬(b^c => a^c) => (¬(b => a))^c`.
-pub fn hooo_rev_nrimply<A: Prop, B: Prop, C: Prop>(
+pub fn hooo_rev_nrimply<A: DProp, B: DProp, C: Prop>(
     x: Not<Imply<Pow<B, C>, Pow<A, C>>>
 ) -> Pow<Not<Imply<B, A>>, C> {
-    hooo_rev_not(imply::in_left(x, |x| hooo_imply(x)))
+    hooo_rev_not_da(imply::in_left(x, |x| hooo_imply(x)))
 }
 
 /// `c^(¬(b => a)) => (c^a => c^b)^true`.
