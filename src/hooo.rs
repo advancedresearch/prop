@@ -915,6 +915,17 @@ pub fn imply_tauto_to_imply_para_da<A: DProp, B: Prop>(
     })
 }
 
+/// `(a^true => b^true) => (false^b => false^a)`.
+pub fn imply_tauto_to_imply_para_excm<A: Prop, B: Prop>(
+    x: Imply<Tauto<A>, Tauto<B>>,
+    y: Tauto<ExcM<A>>
+) -> Imply<Para<B>, Para<A>> {
+    Rc::new(move |para_b| {
+        let x = imply::modus_tollens(x.clone());
+        tauto_not_to_para(tauto_not_excm(x(tauto_rev_not(para_to_tauto_not(para_b))), y))
+    })
+}
+
 /// `(a^true == b^true) => (false^a == false^b)`.
 pub fn eq_tauto_to_eq_para<A: Prop, B: Prop>(
     x: Eq<Tauto<A>, Tauto<B>>
