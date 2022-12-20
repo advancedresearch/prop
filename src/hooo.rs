@@ -703,11 +703,6 @@ pub fn tauto_not<A: DProp>(x: Not<Tauto<A>>) -> Tauto<Not<A>> {
     hooo_rev_not_da(x)
 }
 
-/// `¬(x^true) => (¬x)^true`.
-pub fn tauto_not_da<A: DProp>(x: Not<Tauto<A>>) -> Tauto<Not<A>> {
-    hooo_rev_not_da(x)
-}
-
 /// `¬(x^true) ⋀ (a ⋁ ¬a)^true => (¬x)^true`.
 pub fn tauto_not_excm<A: Prop>(x: Not<Tauto<A>>, y: Tauto<ExcM<A>>) -> Tauto<Not<A>> {
     hooo_rev_not_excm(x, y)
