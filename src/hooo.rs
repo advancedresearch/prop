@@ -458,16 +458,21 @@ pub fn hooo_rev_eq<A: Prop, B: Prop, C: Prop>(x: Eq<Pow<A, C>, Pow<B, C>>) -> Po
 }
 
 /// `(¬(c^a == c^b))^true => c^(a == b)`.
-pub fn tauto_hooo_dual_rev_eq<A: Prop, B: Prop, C: Prop>(
+pub fn tauto_hooo_dual_rev_eq<A: DProp, B: DProp, C: DProp>(
     x: Tauto<Not<Eq<Pow<C, A>, Pow<C, B>>>>
 ) -> Pow<C, Eq<A, B>> {
     hooo_dual_rev_eq(x(True))
 }
 
 /// `¬(c^a == c^b) => c^(a == b)`.
-pub fn hooo_dual_rev_eq<A: Prop, B: Prop, C: Prop>(
+pub fn hooo_dual_rev_eq<A: DProp, B: DProp, C: DProp>(
     x: Not<Eq<Pow<C, A>, Pow<C, B>>>
-) -> Pow<C, Eq<A, B>> {pow()(x)}
+) -> Pow<C, Eq<A, B>> {
+    match Pow::<C, Eq<A, B>>::decide() {
+        Left(y) => y,
+        Right(ny) => imply::absurd()(imply::in_left(x, |y| hooo_dual_neq(y))(pow_not(ny)))
+    }
+}
 
 /// `(¬(a^c == b^c))^true => (¬(a == b))^c`.
 pub fn tauto_hooo_rev_neq<A: DProp, B: DProp, C: Prop>(
