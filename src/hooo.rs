@@ -291,6 +291,15 @@ pub fn hooo_rev_not<A: Prop, B: Prop>(x: Not<Pow<A, B>>) -> Pow<Not<A>, B> {
     unimplemented!()
 }
 
+/// `¬(a^b) => (¬a)^b`.
+pub fn hooo_rev_not_da<A: DProp, B: Prop>(x: Not<Pow<A, B>>) -> Pow<Not<A>, B> {
+    fn f<A: DProp, B: Prop>(_: B) -> ExcM<A> {A::decide()}
+    match hooo_or(f) {
+        Left(pow_ab) => not::absurd(x, pow_ab),
+        Right(pow_na_b) => pow_na_b,
+    }
+}
+
 /// `(a ⋀ b)^c => (a^c ⋀ b^c)^true`.
 pub fn tauto_hooo_and<A: Prop, B: Prop, C: Prop>(
     x: Pow<And<A, B>, C>
