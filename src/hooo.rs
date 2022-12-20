@@ -300,6 +300,17 @@ pub fn hooo_rev_not_da<A: DProp, B: Prop>(x: Not<Pow<A, B>>) -> Pow<Not<A>, B> {
     }
 }
 
+/// `¬(a^b) ⋀ (a ⋁ ¬a)^true => (¬a)^b`.
+pub fn hooo_rev_not_excm<A: Prop, B: Prop>(
+    x: Not<Pow<A, B>>,
+    y: Tauto<ExcM<A>>,
+) -> Pow<Not<A>, B> {
+    match hooo_or(pow_transitivity(tr(), y)) {
+        Left(pow_ab) => not::absurd(x, pow_ab),
+        Right(pow_na_b) => pow_na_b,
+    }
+}
+
 /// `(a ⋀ b)^c => (a^c ⋀ b^c)^true`.
 pub fn tauto_hooo_and<A: Prop, B: Prop, C: Prop>(
     x: Pow<And<A, B>, C>
