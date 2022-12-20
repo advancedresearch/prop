@@ -227,6 +227,11 @@ pub fn tauto_to_tauto_excm<A: Prop>(x: Tauto<A>) -> Tauto<ExcM<A>> {
     hooo_rev_or(Left(x))
 }
 
+/// `false^a => (a ⋁ ¬a)^true`.
+pub fn para_to_tauto_excm<A: Prop>(x: Para<A>) -> Tauto<ExcM<A>> {
+    hooo_rev_or(Right(para_to_tauto_not(x)))
+}
+
 #[marker]
 /// Implemented by axiomatic exponential propositions.
 ///
