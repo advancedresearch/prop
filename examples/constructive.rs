@@ -63,7 +63,7 @@ pub fn or_is_safe<A: Prop, B: Prop>(
     }
 }
 
-pub fn not_is_safe<A: Prop>(
+pub fn not_is_safe<A: DProp>(
     safe_a: Safe<A>
 ) -> Safe<Not<A>> {
     match safe_a {
