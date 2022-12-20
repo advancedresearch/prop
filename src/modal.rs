@@ -42,7 +42,7 @@ pub fn para_para_to_pos<A: DProp>(para_para_a: Para<Para<A>>) -> Pos<A> {
 }
 
 /// `◇a => false^(false^a)`.
-pub fn pos_to_para_para<A: Prop>(pos: Pos<A>) -> Para<Para<A>> {
+pub fn pos_to_para_para<A: DProp>(pos: Pos<A>) -> Para<Para<A>> {
     hooo::not_para_to_para_para(pos_to_npara(pos))
 }
 
