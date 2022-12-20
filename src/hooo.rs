@@ -742,8 +742,8 @@ pub fn tauto_to_para_not<A: Prop>(x: Tauto<A>) -> Para<Not<A>> {
 }
 
 /// `false^(¬a) => ¬¬(a^true)`.
-pub fn para_not_to_not_not_tauto<A: Prop>(x: Para<Not<A>>) -> Not<Not<Tauto<A>>> {
-    Rc::new(move |ntauto_a| x(hooo_rev_not(ntauto_a)(True)))
+pub fn para_not_to_not_not_tauto<A: DProp>(x: Para<Not<A>>) -> Not<Not<Tauto<A>>> {
+    Rc::new(move |ntauto_a| x(hooo_rev_not_da(ntauto_a)(True)))
 }
 
 /// `x^true => (¬¬x)^true`.
