@@ -584,10 +584,26 @@ pub fn hooo_rev_nrimply<A: DProp, B: DProp, C: Prop>(
 }
 
 /// `c^(¬(b => a)) => (c^a => c^b)^true`.
-pub fn tauto_hooo_dual_nrimply<A: Prop, B: Prop, C: Prop>(
+pub fn tauto_hooo_dual_nrimply<A: DProp, B: DProp, C: DProp>(
     x: Pow<C, Not<Imply<B, A>>>
 ) -> Tauto<Imply<Pow<C, A>, Pow<C, B>>> {
-    unimplemented!()
+    fn f<A: Prop, B: Prop, C: Prop>(x: Tauto<Imply<B, A>>) -> Imply<Pow<C, A>, Pow<C, B>> {
+        Rc::new(move |pow_ca| pow_transitivity(tauto_imply_to_pow(x), pow_ca))
+    }
+    fn g<A: Prop, B: Prop, C: Prop>(tauto_c: Tauto<C>) -> Imply<Pow<C, A>, Pow<C, B>> {
+        pow_transitivity(tr(), tauto_c).map_any()
+    }
+    match Tauto::<Imply<Pow<C, A>, Pow<C, B>>>::decide() {
+        Left(y) => y,
+        Right(ny) => {
+            let f: Imply<Tauto<Imply<B, A>>, Tauto<Imply<Pow<C, A>, Pow<C, B>>>> =
+                Rc::new(move |x| hooo_imply(pow_to_imply_lift(f))(pow_lift(x)));
+            let y: Not<Tauto<Imply<B, A>>> = imply::modus_tollens(f)(ny);
+            let y: Tauto<Not<Imply<B, A>>> = hooo_rev_not(y);
+            let y: Tauto<C> = pow_transitivity(y, x);
+            hooo_imply(pow_to_imply_lift(g))(pow_lift(y))
+        }
+    }
 }
 
 /// `(c^a => c^b)^true => c^(¬(b => a))`.
@@ -613,7 +629,7 @@ pub fn tauto_hooo_dual_rev_nrimply<A: DProp, B: DProp, C: Prop>(
 }
 
 /// `c^(¬(b => a)) => (c^a => c^b)`.
-pub fn hooo_dual_nrimply<A: Prop, B: Prop, C: Prop>(
+pub fn hooo_dual_nrimply<A: DProp, B: DProp, C: DProp>(
     x: Pow<C, Not<Imply<B, A>>>
 ) -> Imply<Pow<C, A>, Pow<C, B>> {
     tauto_hooo_dual_nrimply(x)(True)
