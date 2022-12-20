@@ -975,8 +975,10 @@ pub fn para_in_arg<A: Prop, B: Prop>(
     para_a: Para<A>,
     tauto_eq_a_b: Tauto<Eq<A, B>>
 ) -> Para<B> {
+    let y0 = para_to_tauto_excm(para_a);
+    let y1 = para_to_tauto_excm_transitivity(para_a.clone(), tauto_eq_a_b.clone());
     let eq = hooo_eq(tauto_eq_a_b);
-    let eq2 = eq_tauto_to_eq_para(eq);
+    let eq2 = eq_tauto_to_eq_para_excm(eq, y0, y1);
     eq2.0(para_a)
 }
 
