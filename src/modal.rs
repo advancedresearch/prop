@@ -69,7 +69,7 @@ pub fn npos_to_posn<A: DProp>(npos_a: Not<Pos<A>>) -> Pos<Not<A>> {
 }
 
 /// `◇¬a => ¬◇a`.
-pub fn posn_to_npos<A: Prop>(pos_na: Pos<Not<A>>) -> Not<Pos<A>> {
+pub fn posn_to_npos<A: DProp>(pos_na: Pos<Not<A>>) -> Not<Pos<A>> {
     Rc::new(move |pos_a| {
         match (pos_a, pos_na.clone()) {
             (Left(tauto_a), Left(tauto_na)) => tauto_not_to_para(tauto_na)(tauto_a(True)),
@@ -84,7 +84,7 @@ pub fn posn_to_npos<A: Prop>(pos_na: Pos<Not<A>>) -> Not<Pos<A>> {
 }
 
 /// `□a => ¬◇¬a`.
-pub fn nec_to_nposn<A: Prop>(tauto_a: Nec<A>) -> Not<Pos<Not<A>>> {
+pub fn nec_to_nposn<A: DProp>(tauto_a: Nec<A>) -> Not<Pos<Not<A>>> {
     Rc::new(move |pos_na| posn_to_npos(pos_na)(Left(tauto_a)))
 }
 
