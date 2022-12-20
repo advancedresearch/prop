@@ -891,12 +891,12 @@ pub fn program<A: DProp>() -> Or<Uniform<A>, Para<Uniform<A>>> {
 }
 
 /// `(a^true => b^true) => (false^b => false^a)`.
-pub fn imply_tauto_to_imply_para_da<A: DProp, B: Prop>(
+pub fn imply_tauto_to_imply_para<A: DProp, B: Prop>(
     x: Imply<Tauto<A>, Tauto<B>>
 ) -> Imply<Para<B>, Para<A>> {
     Rc::new(move |para_b| {
         let x = imply::modus_tollens(x.clone());
-        tauto_not_to_para(tauto_not_da(x(tauto_rev_not(para_to_tauto_not(para_b)))))
+        tauto_not_to_para(tauto_not(x(tauto_rev_not(para_to_tauto_not(para_b)))))
     })
 }
 
@@ -915,8 +915,8 @@ pub fn imply_tauto_to_imply_para_excm<A: Prop, B: Prop>(
 pub fn eq_tauto_to_eq_para<A: DProp, B: DProp>(
     x: Eq<Tauto<A>, Tauto<B>>
 ) -> Eq<Para<A>, Para<B>> {
-    let y0 = imply_tauto_to_imply_para_da(x.0);
-    let y1 = imply_tauto_to_imply_para_da(x.1);
+    let y0 = imply_tauto_to_imply_para(x.0);
+    let y1 = imply_tauto_to_imply_para(x.1);
     (y1, y0)
 }
 
