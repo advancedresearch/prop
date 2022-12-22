@@ -1100,7 +1100,12 @@ pub fn para_from_or<A: Prop, B: Prop>(
 pub fn para_and_to_or<A: DProp, B: DProp>(
     x: Para<And<A, B>>
 ) -> Or<Para<A>, Para<B>> {
-    hooo_dual_and(x)
+    fn f<A: DProp>(_: True) -> ExcM<A> {A::decide()}
+    match (hooo_or(f), hooo_or(f)) {
+        (Left(tauto_a), Left(tauto_b)) => imply::absurd()(x((tauto_a(True), tauto_b(True)))),
+        (Right(tauto_na), _) => Left(tauto_not_to_para(tauto_na)),
+        (_, Right(tauto_nb)) => Right(tauto_not_to_para(tauto_nb)),
+    }
 }
 
 /// `a^true ∧ b^true => (a ∧ b)^true`.
