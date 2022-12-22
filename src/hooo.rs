@@ -1297,7 +1297,7 @@ pub fn uniform_dual_and<A: DProp, B: DProp>(
 ) -> Or<Uniform<A>, Uniform<B>> {
     match uni_and {
         Left(x) => Left(Left(hooo_and(x).0)),
-        Right(para_and) => match hooo_dual_and(para_and) {
+        Right(para_and) => match para_and_to_or(para_and) {
             Left(para_a) => Left(Right(para_a)),
             Right(para_b) => Right(Right(para_b)),
         }
