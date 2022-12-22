@@ -77,9 +77,7 @@ pub fn tauto_decide<A: DProp>() -> ExcM<Tauto<A>> {
 
 /// `false^a ⋁ ¬(false^a)`.
 pub fn para_decide<A: DProp>() -> ExcM<Para<A>> {
-    fn f<A: Prop>((a, na): And<A, Not<A>>) -> False {na(a)}
-    let f = hooo_dual_and(f);
-    match f {
+    match hooo_dual_and(and::paradox) {
         Left(para_a) => Left(para_a),
         Right(para_na) => Right(para_rev_not(para_na)),
     }
