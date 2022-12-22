@@ -170,13 +170,7 @@ pub fn pow_not_tauto_excm<A: Prop, B: Prop>(
     x: Not<Pow<A, B>>,
     tauto_excm_b: Tauto<ExcM<B>>,
 ) -> Pow<A, Not<B>> {
-    fn f<A: Prop>(_: True) -> Imply<ExcM<A>, ExcM<Not<A>>> {
-        Rc::new(move |x| match x {
-            Left(a) => Right(not::double(a)),
-            Right(na) => Left(na),
-        })
-    }
-    let tauto_excm_nb: Tauto<ExcM<Not<B>>> = hooo_imply(f)(tauto_excm_b.clone());
+    let tauto_excm_nb = tauto_excm_to_tauto_excm_not(tauto_excm_b.clone());
     match para_and_to_or_excm(and::paradox, tauto_excm_b, tauto_excm_nb) {
         Left(para_b) => not::absurd(x, pow_transitivity(para_b, fa())),
         Right(para_nb) => pow_transitivity(para_nb, fa()),
