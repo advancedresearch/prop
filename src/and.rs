@@ -151,3 +151,5 @@ pub fn to_eq_neg<A: Prop, B: Prop>((f0, f1): And<Not<A>, Not<B>>) -> Eq<A, B> {
 /// `(a ∧ b) => (a ∨ b)`.
 pub fn to_or<A: Prop, B: Prop>((x, _): And<A, B>) -> Or<A, B> {Left(x)}
 
+/// `(a ∧ ¬a) => false`.
+pub fn paradox<A: Prop>((a, na): And<A, Not<A>>) -> False {na(a)}
