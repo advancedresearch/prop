@@ -1108,6 +1108,19 @@ pub fn para_and_to_or<A: DProp, B: DProp>(
     }
 }
 
+/// `false^(a ∧ b) => false^a ⋁ false^b`.
+pub fn para_and_to_or_excm<A: Prop, B: Prop>(
+    x: Para<And<A, B>>,
+    excm_a: Tauto<ExcM<A>>,
+    excm_b: Tauto<ExcM<B>>,
+) -> Or<Para<A>, Para<B>> {
+    match (hooo_or(excm_a), hooo_or(excm_b)) {
+        (Left(tauto_a), Left(tauto_b)) => imply::absurd()(x((tauto_a(True), tauto_b(True)))),
+        (Right(tauto_na), _) => Left(tauto_not_to_para(tauto_na)),
+        (_, Right(tauto_nb)) => Right(tauto_not_to_para(tauto_nb)),
+    }
+}
+
 /// `a^true ∧ b^true => (a ∧ b)^true`.
 pub fn tauto_and<A: Prop, B: Prop>(
     tauto_a: Tauto<A>,
