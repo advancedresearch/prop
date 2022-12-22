@@ -159,8 +159,7 @@ pub fn pow_right_and_symmetry<A: Prop, B: Prop, C: Prop>(
 
 /// `¬(a^b) => a^(¬b)`.
 pub fn pow_not<A: DProp, B: DProp>(x: Not<Pow<A, B>>) -> Pow<A, Not<B>> {
-    fn f<A: Prop, B: Prop>((b, nb): And<B, Not<B>>) -> A {not::absurd(nb, b)}
-    match hooo_dual_and(f) {
+    match hooo_dual_and(pow_transitivity(and::paradox, fa())) {
         Left(pow_ab) => not::absurd(x, pow_ab),
         Right(pow_a_nb) => pow_a_nb,
     }
