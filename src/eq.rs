@@ -295,3 +295,16 @@ pub fn neq_right<A: Prop, B: Prop, C: Prop>(
 pub fn neq_to_nand<A: Prop, B: Prop>(neq: Not<Eq<A, B>>) -> Not<And<A, B>> {
     Rc::new(move |(a, b)| neq((b.map_any(), a.map_any())))
 }
+
+/// `¬(a == b)  =>  (a == ¬b)`.
+pub fn neq_to_eq_not<A: DProp, B: DProp>(x: Not<Eq<A, B>>) -> Eq<A, Not<B>> {
+    let x2 = x.clone();
+    (Rc::new(move |a| {
+        let x = x2.clone();
+        Rc::new(move |b| x.clone()((b.map_any(), a.clone().map_any())))
+     }),
+     Rc::new(move |nb| match A::decide() {
+         Left(a) => a,
+         Right(na) => not::absurd(x.clone(), eq::rev_modus_tollens((na.map_any(), nb.map_any()))),
+     }))
+}
