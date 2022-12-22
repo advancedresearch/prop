@@ -759,9 +759,10 @@ pub fn para_to_tauto_not<A: Prop>(x: Para<A>) -> Tauto<Not<A>> {
 }
 
 /// `a^true => false^(¬a)`.
-pub fn tauto_to_para_not<A: DProp>(x: Tauto<A>) -> Para<Not<A>> {
+pub fn tauto_to_para_not<A: Prop>(x: Tauto<A>) -> Para<Not<A>> {
     let y: Not<Para<A>> = Rc::new(move |para_a| para_a(x(True)));
-    pow_not(y)
+    let tauto_excm_a: Tauto<ExcM<A>> = pow_transitivity(x, Left);
+    pow_not_tauto_excm(y, tauto_excm_a)
 }
 
 /// `false^(¬a) => ¬¬(a^true)`.
