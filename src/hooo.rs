@@ -790,8 +790,9 @@ pub fn para_rev_not<A: Prop>(para_na: Para<Not<A>>) -> Not<Para<A>> {
 }
 
 /// `false^a => false^(¬¬a)`.
-pub fn para_not_double<A: DProp>(x: Para<A>) -> Para<Not<Not<A>>> {
-    pow_not(imply::in_left(not::double(x), |x: Para<Not<A>>| para_rev_not(x)))
+pub fn para_not_double<A: Prop>(x: Para<A>) -> Para<Not<Not<A>>> {
+    let y: Tauto<ExcM<Not<A>>> = tauto_excm_to_tauto_excm_not(para_to_tauto_excm(x.clone()));
+    pow_not_tauto_excm(imply::in_left(not::double(x), |x: Para<Not<A>>| para_rev_not(x)), y)
 }
 
 /// `false^(¬¬a) => false^a`.
