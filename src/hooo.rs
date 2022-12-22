@@ -454,8 +454,28 @@ pub fn hooo_eq<A: Prop, B: Prop, C: Prop>(x: Pow<Eq<A, B>, C>) -> Eq<Pow<A, C>, 
 /// `(a^c == b^c) => (a == b)^c`.
 ///
 /// This is only valid for decidable propositions.
-pub fn hooo_rev_eq<A: DProp, B: DProp, C: DProp>(_: Eq<Pow<A, C>, Pow<B, C>>) -> Pow<Eq<A, B>, C> {
-    unimplemented!()
+pub fn hooo_rev_eq<A: DProp, B: DProp, C: DProp>(x: Eq<Pow<A, C>, Pow<B, C>>) -> Pow<Eq<A, B>, C> {
+    match Pow::<Eq<A, B>, C>::decide() {
+        Left(y) => y,
+        Right(ny) => {
+            let y = hooo_rev_not(ny);
+            let y = pow_transitivity(y, eq::neq_to_eq_not);
+            let y = hooo_eq(y);
+            let y = eq::transitivity(eq::symmetry(x), y);
+            let y = match decide::<B, C>() {
+                Left(pow_bc) => {
+                    let pow_nb_c = y.0(pow_bc);
+                    hooo_rev_and((pow_bc, pow_nb_c))
+                }
+                Right(npow_bc) => {
+                    let pow_nb_c = hooo_rev_not(npow_bc);
+                    let pow_bc = y.1(pow_nb_c);
+                    hooo_rev_and((pow_bc, pow_nb_c))
+                }
+            };
+            pow_transitivity(pow_transitivity(y, and::paradox), fa())
+        }
+    }
 }
 
 /// `(¬(c^a == c^b))^true => c^(a == b)`.
