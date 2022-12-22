@@ -1315,12 +1315,20 @@ pub fn uniform_dual_rev_or<A: Prop, B: Prop>(
 }
 
 /// `uniform(a) => (a ⋁ ¬a)^true`.
-pub fn uniform_to_excm<A: Prop>(
+pub fn uniform_to_tauto_excm<A: Prop>(
     uni: Uniform<A>
 ) -> Tauto<ExcM<A>> {
     match uni {
         Left(t) => tauto_or_left(t),
         Right(p) => tauto_or_right(para_to_tauto_not(p)),
+    }
+}
+
+/// `(a ⋁ ¬a)^true => uniform(a)`.
+pub fn tauto_excm_to_uniform<A: Prop>(x: Tauto<ExcM<A>>) -> Uniform<A> {
+    match hooo_or(x) {
+        Left(tauto_a) => Left(tauto_a),
+        Right(tauto_na) => Right(tauto_not_to_para(tauto_na)),
     }
 }
 
