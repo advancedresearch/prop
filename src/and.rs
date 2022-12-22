@@ -147,3 +147,7 @@ pub fn to_eq_pos<A: Prop, B: Prop>((f0, f1): And<A, B>) -> Eq<A, B> {
 pub fn to_eq_neg<A: Prop, B: Prop>((f0, f1): And<Not<A>, Not<B>>) -> Eq<A, B> {
     (Rc::new(move |x| match f0.clone()(x) {}), Rc::new(move |x| match f1.clone()(x) {}))
 }
+
+/// `(a ∧ b) => (a ∨ b)`.
+pub fn to_or<A: Prop, B: Prop>((x, _): And<A, B>) -> Or<A, B> {Left(x)}
+
