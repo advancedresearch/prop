@@ -17,6 +17,12 @@ pub type Pos<A> = Or<Tauto<A>, Theory<A>>;
 /// A proposition is necessarily true if it is a tautology.
 pub type Nec<A> = Tauto<A>;
 
+/// `□¬□⊥`.
+pub fn nec_consistency() -> Nec<Not<Nec<False>>> {
+    fn f(_: True) -> Not<Nec<False>> {hooo::consistency()}
+    f
+}
+
 /// `¬(false^a) => ◇a`.
 pub fn npara_to_pos<A: DProp>(npara: Not<Para<A>>) -> Pos<A> {
     match program::<A>() {
