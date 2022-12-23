@@ -23,6 +23,16 @@ pub fn nec_consistency() -> Nec<Not<Nec<False>>> {
     f
 }
 
+/// `⊥^(¬□⊥ => ¬□¬□⊥)`.
+pub fn para_godel(x: Imply<Not<Nec<False>>, Not<Nec<Not<Nec<False>>>>>) -> False {
+    x(nec_consistency()(True))(nec_consistency())
+}
+
+/// `□¬(¬□⊥ => ¬□¬□⊥)`.
+pub fn nec_not_godel() -> Nec<Not<Imply<Not<Nec<False>>, Not<Nec<Not<Nec<False>>>>>>> {
+    hooo::para_to_tauto_not(para_godel)
+}
+
 /// `¬(false^a) => ◇a`.
 pub fn npara_to_pos<A: DProp>(npara: Not<Para<A>>) -> Pos<A> {
     match program::<A>() {
