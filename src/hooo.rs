@@ -1527,3 +1527,8 @@ pub fn pow_to_pow_tauto<A: Prop, B: Prop>(
 ) -> Pow<B, Tauto<A>> {
     tauto_imply_to_pow_tauto(pow_to_tauto_imply(x))
 }
+
+/// `(¬a)^a => (¬a)^(¬¬a)`.
+pub fn pow_contra_to_pow_contra_nn<A: Prop>(x: Pow<Not<A>, A>) -> Pow<Not<A>, Not<Not<A>>> {
+    tauto_imply_to_pow(pow_transitivity(pow_to_imply_lift(x), imply::modus_tollens))
+}
