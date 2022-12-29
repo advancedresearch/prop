@@ -1537,3 +1537,8 @@ pub fn pow_contra_to_pow_contra_nn<A: Prop>(x: Pow<Not<A>, A>) -> Pow<Not<A>, No
 pub fn para_pow_contra<A: Prop>(pow_na_a: Pow<Not<A>, A>) -> Para<A> {
     pow_transitivity(hooo_rev_and((pow_na_a, not::double)), and::paradox)
 }
+
+/// `(¬a)^(¬¬a) => false^(¬¬a)`.
+pub fn para_pow_contra_nn<A: Prop>(pow_na_nna: Pow<Not<A>, Not<Not<A>>>) -> Para<Not<Not<A>>> {
+    pow_transitivity(hooo_rev_and((pow_na_nna, pow_refl)), and::paradox)
+}
