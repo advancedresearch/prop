@@ -16,6 +16,30 @@ pub trait ConstructiveHoooRevNot {
     }
 }
 
+/// Shows that a constructive `pow_not` would make theories collapse to `¬¬a ⋀ ¬(a^true)`.
+///
+/// This makes it impossible to talk about Middle Exponential Propositions (see the `mid` module).
+pub trait ConstructivePowNot: Clone + 'static {
+    /// `¬(a^b) => a^(¬b)`.
+    fn pow_not<A: Prop, B: Prop>(&self) -> Pow<Pow<A, Not<B>>, Not<Pow<A, B>>>;
+
+    /// `theory(a) => (¬¬a ⋀ ¬(a^true))`.
+    fn theory_to_and_nn_ntauto<A: Prop>(&self, th_a: Theory<A>) -> And<Not<Not<A>>, Not<Tauto<A>>> {
+        let pow_not = self.pow_not();
+        let (ntauto_a, npara_a) = and::from_de_morgan(th_a);
+        (Rc::new(move |na| {
+            pow_not(npara_a.clone())(na)
+        }), ntauto_a)
+    }
+
+    /// `(theory(a) == (¬¬a ⋀ ¬(a^true)))^self`.
+    fn eq_theory_and_nn_ntauto<A: Prop>(&self) -> Eq<Theory<A>, And<Not<Not<A>>, Not<Tauto<A>>>> {
+        let s = self.clone();
+        (Rc::new(move |th_a| s.theory_to_and_nn_ntauto(th_a)),
+         Rc::new(move |(nna, ntauto_a)| nn_not_tauto_to_theory(nna, ntauto_a)))
+    }
+}
+
 /// Shows that `tauto_hooo_not` axiom would be absurd.
 pub trait TautoHoooNot {
     /// `(¬a)^b => (¬(a^b))^true`.
