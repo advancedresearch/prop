@@ -1576,3 +1576,11 @@ pub fn tauto_eq_excm_to_tauto_excm_eq<A: Prop, B: Prop>(
         }
     }
 }
+
+/// `(a ⋁ ¬a)^(¬¬a) => a^(¬¬a)`.
+pub fn pow_excm_nn_to_rev_double<A: Prop>(x: Pow<ExcM<A>, Not<Not<A>>>) -> Pow<A, Not<Not<A>>> {
+    match hooo_or(x) {
+        Left(x) => x,
+        Right(nx) => pow_transitivity(para_pow_contra_nn(nx), fa()),
+    }
+}
