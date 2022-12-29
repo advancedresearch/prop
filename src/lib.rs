@@ -127,6 +127,7 @@ pub mod hooo;
 pub mod hooo_traits;
 pub mod modal;
 pub mod ava_modal;
+pub mod mid;
 
 /// Logical true.
 #[derive(Copy, Clone)]
