@@ -1,4 +1,4 @@
-//! # Middle Exponential Propositions
+//! # Middle Exponential Logic
 //!
 //! By building on Existential Logic and Exponential Propositions (HOOO),
 //! it is possible to talk about nuances of middle propositions.

@@ -1,4 +1,3 @@
-
 # Prop
 Propositional logic with types in Rust.
 
@@ -19,6 +18,7 @@ Abbreviations:
 - PSL: Path Semantical Classical Propositional Logic
 - PSQ: Path Semantical Quantum Propositional Logic
 - HOOO EP: Higher Order Operator Overloading Exponential Propositions
+- MEL: Middle Exponential Logic
 
 ### Motivation
 
@@ -57,6 +57,7 @@ This library contains:
 - Exponential Propositions (HOOO) for tautological/paradoxical theorem proving
 - A model of S5 Modal Logic derived from HOOO EP
 - A model of Avatar Modal Logic derived from HOOO EP and Theory of Avatar Extensions
+- A model of Middle Exponential Logic using EL and HOOO EP
 - Tactics organized in modules by constructs (e.g. `and` or `imply`)
 
 ### Examples
