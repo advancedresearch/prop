@@ -1445,6 +1445,11 @@ pub fn not_tauto_to_theory<A: Prop>(a: A, ntauto_a: Not<Tauto<A>>) -> Theory<A> 
     })
 }
 
+/// `¬¬a ⋀ ¬(a^true) => theory(a)`.
+pub fn nn_not_tauto_to_theory<A: Prop>(nna: Not<Not<A>>, ntauto_a: Not<Tauto<A>>) -> Theory<A> {
+    and::to_de_morgan((ntauto_a, not_not_to_not_para(nna)))
+}
+
 /// `(false^a)^(a^true) ⋀ (a^true)^(false^a) => false`.
 ///
 /// This is also known as [Liar's paradox](https://en.wikipedia.org/wiki/Liar_paradox).
