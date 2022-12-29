@@ -52,3 +52,9 @@ pub fn mid_to_theory<A: Prop>(ma: Mid<A>) -> Theory<A> {
         Right((na, npara_a)) => n_not_para_to_theory(na, npara_a),
     }
 }
+
+/// `up(a) => ¬down(a)`.
+pub fn up_to_not_down<A: Prop>(up: Up<A>) -> Not<Down<A>> {
+    Rc::new(move |down| up.clone().0(down.0))
+}
+
