@@ -62,3 +62,40 @@ pub fn up_to_not_down<A: Prop>(up: Up<A>) -> Not<Down<A>> {
 pub fn down_to_not_up<A: Prop>(down: Down<A>) -> Not<Up<A>> {
     Rc::new(move |up| up.0(down.clone().0))
 }
+
+/// `up(a) => (¬¬a ⋁ ¬a)`.
+pub fn up_to_e<A: Prop>(up: Up<A>) -> E<A> {
+    Left(up.0)
+}
+
+/// `down(a) => (a ⋁ ¬a)`.
+pub fn down_to_excm<A: Prop>(down: Down<A>) -> ExcM<A> {
+    Right(down.0)
+}
+
+/// `down(a) => (¬¬a ⋁ ¬a)`.
+pub fn down_to_e<A: Prop>(down: Down<A>) -> E<A> {
+    excm_to_e(down_to_excm(down))
+}
+
+/// `mid(a) => (¬¬a ⋁ ¬a)`.
+pub fn mid_to_e<A: Prop>(mid: Mid<A>) -> E<A> {
+    match mid {
+        Left(up) => up_to_e(up),
+        Right(down) => down_to_e(down),
+    }
+}
+
+/// `mid(a) => ((¬¬a ⋁ ¬a) ⋀ theory(a))`.
+pub fn mid_to_and_e_theory<A: Prop>(mid: Mid<A>) -> And<E<A>, Theory<A>> {
+    (mid_to_e(mid.clone()), mid_to_theory(mid))
+}
+
+/// `((¬¬a ⋁ ¬a) ⋀ theory(a)) => mid(a)`.
+pub fn and_e_theory_to_mid<A: Prop>((ea, th_a): And<E<A>, Theory<A>>) -> Mid<A> {
+    let (ntauto_a, npara_a) = and::from_de_morgan(th_a);
+    match ea {
+        Left(nna) => Left((nna, ntauto_a)),
+        Right(na) => Right((na, npara_a)),
+    }
+}
