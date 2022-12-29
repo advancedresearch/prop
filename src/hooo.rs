@@ -1542,3 +1542,37 @@ pub fn para_pow_contra<A: Prop>(pow_na_a: Pow<Not<A>, A>) -> Para<A> {
 pub fn para_pow_contra_nn<A: Prop>(pow_na_nna: Pow<Not<A>, Not<Not<A>>>) -> Para<Not<Not<A>>> {
     pow_transitivity(hooo_rev_and((pow_na_nna, pow_refl)), and::paradox)
 }
+
+/// `((a ⋁ ¬a) == (b ⋁ ¬b))^true => ((a == b) ⋁ ¬(a == b))^true`.
+pub fn tauto_eq_excm_to_tauto_excm_eq<A: Prop, B: Prop>(
+    x: Tauto<Eq<ExcM<A>, ExcM<B>>>
+) -> Tauto<ExcM<Eq<A, B>>> {
+    let (excm_a, excm_b) = tauto_eq_to_pow_eq(x);
+    let y2 = match hooo_or(excm_a) {
+        Left(pow_b_excm_a) => Left(hooo_dual_or(pow_b_excm_a)),
+        Right(pow_nb_excm_a) => Right(hooo_dual_or(pow_nb_excm_a)),
+    };
+    let y3 = match hooo_or(excm_b) {
+        Left(pow_a_excm_b) => Left(hooo_dual_or(pow_a_excm_b)),
+        Right(pow_na_excm_b) => Right(hooo_dual_or(pow_na_excm_b)),
+    };
+    match (y2, y3) {
+        (Left((pow_ba, _)), Left((pow_ab, _))) =>
+            tauto_or_left(pow_eq_to_tauto_eq((pow_ba, pow_ab))),
+        (Left((_, pow_b_na)), Right((pow_na_b, _))) => {
+            let y = pow_eq_to_tauto_eq((pow_b_na, pow_na_b));
+            let y = pow_transitivity(tauto_eq_symmetry(y), eq::eq_not_to_neq);
+            tauto_or_right(pow_transitivity(y, eq::neq_symmetry))
+        }
+        (Right((pow_nb_a, _)), Left((_, pow_a_nb))) => {
+            let y = pow_eq_to_tauto_eq((pow_nb_a, pow_a_nb));
+            tauto_or_right(pow_transitivity(y, eq::eq_not_to_neq))
+        }
+        (Right((pow_nb_a, pow_nb_na)), Right((pow_na_b, pow_na_nb))) => {
+            let para_a = para_pow_contra(pow_transitivity(pow_nb_a, pow_na_nb));
+            let para_b = para_pow_contra(pow_transitivity(pow_na_b, pow_nb_na));
+            tauto_or_left(pow_eq_to_tauto_eq((pow_transitivity(para_a, fa()),
+                                              pow_transitivity(para_b, fa()))))
+        }
+    }
+}
