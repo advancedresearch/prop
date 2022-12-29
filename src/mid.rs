@@ -29,12 +29,15 @@ use crate::*;
 use existence::*;
 use hooo::*;
 
-/// `(¬¬a ⋀ ¬(a^true))`.
+/// An up proposition `¬¬a ⋀ ¬(a^true)`.
 pub type Up<A> = And<Not<Not<A>>, Not<Tauto<A>>>;
-/// `(¬a ⋀ ¬(false^a))`.
+/// A down proposition `¬a ⋀ ¬(false^a)`.
 pub type Down<A> = And<Not<A>, Not<Para<A>>>;
 /// A middle proposition `(¬¬a ⋀ ¬(a^true)) ⋁ (¬a ⋀ ¬(false^a))`.
 pub type Mid<A> = Or<Up<A>, Down<A>>;
+
+/// A middle Catuṣkoṭi proposition `(a^true ⋁ false^a) ⋁ (up(a) ⋁ down(a))`.
+pub type MidCatuskoti<A> = Or<Uniform<A>, Mid<A>>;
 
 /// `theory(a) => mid(a)`.
 pub fn theory_to_mid<A: EProp>(th_a: Theory<A>) -> Mid<A> {
@@ -97,5 +100,14 @@ pub fn and_e_theory_to_mid<A: Prop>((ea, th_a): And<E<A>, Theory<A>>) -> Mid<A> 
     match ea {
         Left(nna) => Left((nna, ntauto_a)),
         Right(na) => Right((na, npara_a)),
+    }
+}
+
+/// `mica(a) => (¬¬a ⋁ ¬a)`.
+pub fn mica_to_e<A: Prop>(c: MidCatuskoti<A>) -> E<A> {
+    match c {
+        Left(Left(tauto_a)) => Left(not::double(tauto_a(True))),
+        Left(Right(para_a)) => Right(para_to_not(para_a)),
+        Right(mid_a) => mid_to_e(mid_a),
     }
 }
