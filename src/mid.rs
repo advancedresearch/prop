@@ -58,3 +58,7 @@ pub fn up_to_not_down<A: Prop>(up: Up<A>) -> Not<Down<A>> {
     Rc::new(move |down| up.clone().0(down.0))
 }
 
+/// `down(a) => ¬up(a)`.
+pub fn down_to_not_up<A: Prop>(down: Down<A>) -> Not<Up<A>> {
+    Rc::new(move |up| up.0(down.clone().0))
+}
