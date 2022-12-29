@@ -308,3 +308,24 @@ pub fn neq_to_eq_not<A: DProp, B: DProp>(x: Not<Eq<A, B>>) -> Eq<A, Not<B>> {
 pub fn eq_not_to_neq<A: Prop, B: Prop>(f: Eq<A, Not<B>>) -> Not<Eq<A, B>> {
     Rc::new(move |eq_ab| anti(in_left_arg(f.clone(), eq_ab)))
 }
+
+/// `(a == b) => ((a ⋁ ¬a) == (b ⋁ ¬b))`.
+pub fn eq_to_eq_excm<A: Prop, B: Prop>(x: Eq<A, B>) -> Eq<ExcM<A>, ExcM<B>> {
+    let x2 = x.clone();
+    (
+        Rc::new(move |excm_a| {
+            let x = x2.clone();
+            match excm_a {
+                Left(a) => Left(x.0(a)),
+                Right(na) => Right(eq::modus_tollens(x).1(na)),
+            }
+        }),
+        Rc::new(move |excm_b| {
+            let x = x.clone();
+            match excm_b {
+                Left(b) => Left(x.1(b)),
+                Right(nb) => Right(eq::modus_tollens(x).0(nb)),
+            }
+        })
+    )
+}
