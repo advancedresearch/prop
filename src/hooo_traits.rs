@@ -3,6 +3,19 @@
 use crate::*;
 use crate::hooo::*;
 
+/// Shows that a constructive `hooo_rev_not` would not allow theories.
+pub trait ConstructiveHoooRevNot {
+    /// `¬(a^b) => (¬a)^b`.
+    fn hooo_rev_not<A: Prop, B: Prop>(&self) -> Pow<Pow<Not<A>, B>, Not<Pow<A, B>>>;
+
+    /// `false^theory(a)`.
+    fn para_theory<A: Prop>(&self, th_a: Theory<A>) -> False {
+        let x: Not<Tauto<ExcM<A>>> = imply::in_left(th_a, |x| tauto_excm_to_uniform(x));
+        let x: Not<ExcM<A>> = self.hooo_rev_not()(x)(True);
+        A::nnexcm()(x)
+    }
+}
+
 /// Shows that `tauto_hooo_not` axiom would be absurd.
 pub trait TautoHoooNot {
     /// `(¬a)^b => (¬(a^b))^true`.
