@@ -317,6 +317,11 @@ impl<T, U> POrdProof<T, U> {
     pub fn imply<T2, U2>(self, _: POrdProof<T2, U2>) -> POrdProof<Imply<T, T2>, Imply<U, U2>> {
         POrdProof(std::marker::PhantomData)
     }
+
+    /// Combine two proofs into one using EQ.
+    pub fn eq<T2, U2>(self, x: POrdProof<T2, U2>) -> POrdProof<Eq<T, T2>, Eq<U, U2>> {
+        self.clone().imply(x.clone()).and(x.imply(self))
+    }
 }
 
 impl<A, B, C> POrdProof<A, Or<B, C>> {
