@@ -159,6 +159,9 @@ pub fn comp_in_right_arg<F: Prop, G: Prop, H: Prop>(x: Comp<G, F>, y: Eq<F, H>) 
 #[derive(Clone, Copy)]
 pub struct FId(());
 
+/// Type of Id.
+pub fn id_ty<A: Prop>() -> Ty<FId, Pow<A, A>> {unimplemented!()}
+
 /// Definition of identity function.
 pub fn id_def<A: Prop>() -> Eq<App<FId, A>, A> {
     unimplemented!()
