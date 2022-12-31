@@ -209,7 +209,7 @@ pub struct Tup<A, B>(A, B);
 pub struct Fst(());
 
 /// Type of Fst.
-pub fn fst_ty<A: Prop, B: Prop>() -> Eq<Fst, Pow<A, Tup<A, B>>> {unimplemented!()}
+pub fn fst_ty<A: Prop, B: Prop>() -> Ty<Fst, Pow<A, Tup<A, B>>> {unimplemented!()}
 /// `fst((a, b)) = a`.
 pub fn fst_def<A: Prop, B: Prop>() -> Eq<App<Fst, Tup<A, B>>, A> {unimplemented!()}
 
@@ -218,6 +218,6 @@ pub fn fst_def<A: Prop, B: Prop>() -> Eq<App<Fst, Tup<A, B>>, A> {unimplemented!
 pub struct Snd(());
 
 /// Type of Snd.
-pub fn snd_ty<A: Prop, B: Prop>() -> Eq<Snd, Pow<B, Tup<A, B>>> {unimplemented!()}
+pub fn snd_ty<A: Prop, B: Prop>() -> Ty<Snd, Pow<B, Tup<A, B>>> {unimplemented!()}
 /// `snd((a, b)) = b`.
 pub fn snd_def<A: Prop, B: Prop>() -> Eq<App<Snd, Tup<A, B>>, B> {unimplemented!()}
