@@ -220,6 +220,14 @@ pub fn ty_q_formation<A: Prop, B: Prop, T: Prop, U: Prop>(
     })
 }
 
+/// `(a : b) ⋀ (b : c) => (a : c)`.
+pub fn ty_transitivity<A: Prop, B: Prop, C: Prop>(
+    (ab, pord_ab): Ty<A, B>,
+    (bc, _): Ty<B, C>
+) -> Ty<A, C> {
+    (imply::transitivity(ab, bc.clone()), pord_ab.by_imply_right(bc))
+}
+
 /// Core axiom of Path Semantics.
 pub type PSem<F1, F2, X1, X2> = Imply<
     And<And<Q<F1, F2>, And<POrdProof<F1, X1>, POrdProof<F2, X2>>>,
