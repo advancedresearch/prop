@@ -179,3 +179,10 @@ pub fn comp_right_inv_to_id<F: Prop>(_: Comp<F, Inv<F>>) -> FId {
 pub fn comp_left_inv_to_id<F: Prop>(_: Comp<Inv<F>, F>) -> FId {
     unimplemented!()
 }
+
+/// `(f : A -> B) => ((f ~~ inv(f)) : ((A -> B) ~~ (B -> A)))`.
+pub fn self_inv_ty<F: Prop, A: Prop, B: Prop>(
+    ty_f: Ty<F, Pow<B, A>>
+) -> Ty<Q<F, Inv<F>>, Q<Pow<B, A>, Pow<A, B>>> {
+    path_semantics::ty_q_formation(ty_f.clone(), inv_ty(ty_f))
+}
