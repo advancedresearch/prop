@@ -17,6 +17,7 @@ pub use quality::EqQ;
 pub use quality::left as refl_left;
 pub use quality::right as refl_right;
 
+use qubit::Qu;
 use existence::EProp;
 use univalence::Hom;
 use nat::*;
@@ -322,6 +323,11 @@ impl<T, U> POrdProof<T, U> {
     pub fn eq<T2, U2>(self, x: POrdProof<T2, U2>) -> POrdProof<Eq<T, T2>, Eq<U, U2>> {
         self.clone().imply(x.clone()).and(x.imply(self))
     }
+
+    /// Lift to qubit.
+    pub fn qu(self) -> POrdProof<Qu<T>, Qu<U>> {
+        POrdProof(std::marker::PhantomData)
+    }
 }
 
 impl<A, B, C> POrdProof<A, Or<B, C>> {
@@ -351,6 +357,8 @@ impl<A, B, T> POrd<T> for Or<A, B>
     where A: POrd<T>, B: POrd<T> {}
 impl<A, B, T> POrd<T> for Imply<A, B>
     where A: POrd<T>, B: POrd<T> {}
+impl<A, B> POrd<Qu<B>> for Qu<A>
+    where A: POrd<B> {}
 
 /// Path semantical proposition level.
 pub trait LProp: Prop {
