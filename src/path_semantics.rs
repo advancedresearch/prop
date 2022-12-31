@@ -205,6 +205,21 @@ pub fn ty_or_split_dc<A: Prop, B: Prop, C: DProp>(
     }
 }
 
+/// `(a : T) ⋀ (b : U)  =>  ((a ~~ b) : (T ~~ U))`.
+pub fn ty_q_formation<A: Prop, B: Prop, T: Prop, U: Prop>(
+    (a_t, pord_a_t): Ty<A, T>,
+    (b_u, pord_b_u): Ty<B, U>,
+) -> Ty<Q<A, B>, Q<T, U>> {
+    let pord_a_t_2 = pord_a_t.clone();
+    let pord_b_u_2 = pord_b_u.clone();
+    (Rc::new(move |q_ab| {
+        let p = assume();
+        p(((q_ab, (pord_a_t_2.clone(), pord_b_u_2.clone())), (a_t.clone(), b_u.clone())))
+    }), {
+        pord_a_t.q(pord_b_u)
+    })
+}
+
 /// Core axiom of Path Semantics.
 pub type PSem<F1, F2, X1, X2> = Imply<
     And<And<Q<F1, F2>, And<POrdProof<F1, X1>, POrdProof<F2, X2>>>,
