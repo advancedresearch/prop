@@ -199,3 +199,25 @@ pub fn q_inv_ty<F: Prop, G: Prop, A: Prop, B: Prop>(
     );
     path_semantics::ty_in_left_arg(y, x)
 }
+
+/// Tuple.
+#[derive(Clone)]
+pub struct Tup<A, B>(A, B);
+
+/// Fst.
+#[derive(Copy, Clone)]
+pub struct Fst(());
+
+/// Type of Fst.
+pub fn fst_ty<A: Prop, B: Prop>() -> Eq<Fst, Pow<A, Tup<A, B>>> {unimplemented!()}
+/// `fst((a, b)) = a`.
+pub fn fst_def<A: Prop, B: Prop>() -> Eq<App<Fst, Tup<A, B>>, A> {unimplemented!()}
+
+/// Snd.
+#[derive(Copy, Clone)]
+pub struct Snd(());
+
+/// Type of Snd.
+pub fn snd_ty<A: Prop, B: Prop>() -> Eq<Snd, Pow<B, Tup<A, B>>> {unimplemented!()}
+/// `snd((a, b)) = b`.
+pub fn snd_def<A: Prop, B: Prop>() -> Eq<App<Snd, Tup<A, B>>, B> {unimplemented!()}
