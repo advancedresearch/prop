@@ -204,6 +204,12 @@ pub fn q_inv_ty<F: Prop, G: Prop, A: Prop, B: Prop>(
 #[derive(Clone)]
 pub struct Tup<A, B>(A, B);
 
+/// `(a : x) ⋀ (b : y)  =>  (a, b) : (x, y)`.
+pub fn tup_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
+    _ty_a: Ty<A, X>,
+    _ty_b: Ty<B, Y>
+) -> Ty<Tup<A, B>, Tup<X, Y>> {unimplemented!()}
+
 /// Fst.
 #[derive(Copy, Clone)]
 pub struct Fst(());
