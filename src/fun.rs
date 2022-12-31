@@ -186,3 +186,19 @@ pub fn self_inv_ty<F: Prop, A: Prop, B: Prop>(
 ) -> Ty<Q<F, Inv<F>>, Q<Pow<B, A>, Pow<A, B>>> {
     path_semantics::ty_q_formation(ty_f.clone(), inv_ty(ty_f))
 }
+
+/// `(f : A -> B) ⋀ (inv(f) ~~ g) => ((f ~~ g) : ((A -> B) ~~ (B -> A)))`.
+pub fn q_inv_ty<F: Prop, G: Prop, A: Prop, B: Prop>(
+    ty_f: Ty<F, Pow<B, A>>,
+    q: Q<Inv<F>, G>,
+) -> Ty<Q<F, G>, Q<Pow<B, A>, Pow<A, B>>> {
+    use quality::transitivity as trans;
+
+    let y = self_inv_ty(ty_f);
+    let q2 = q.clone();
+    let x: Eq<Q<F, Inv<F>>, Q<F, G>> = (
+        Rc::new(move |x| trans(x, q2.clone())),
+        Rc::new(move |x| trans(x, quality::symmetry(q.clone())))
+    );
+    path_semantics::ty_in_left_arg(y, x)
+}
