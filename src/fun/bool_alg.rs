@@ -34,7 +34,7 @@ pub struct FFalse1(());
 
 /// Type of False1.
 pub fn false1_ty() -> Ty<FFalse1, Pow<Bool, Bool>> {unimplemented!()}
-/// True1 definition.
+/// False1 definition.
 pub fn false1_def<A: Prop>(_: Ty<A, Bool>) -> Eq<App<FFalse1, A>, Tr> {unimplemented!()}
 
 /// `(inv(false1) ~~ f) => false`.
