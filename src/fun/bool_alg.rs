@@ -12,6 +12,8 @@ pub struct Tr(());
 #[derive(Clone, Copy)]
 pub struct Fa(());
 
+/// `bool : type(0)`.
+pub fn bool_ty() -> Ty<Bool, Type<Z>> {unimplemented!()}
 /// True type.
 pub fn tr_ty() -> Ty<Tr, Bool> {unimplemented!()}
 /// False type.
