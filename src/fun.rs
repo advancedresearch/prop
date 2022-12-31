@@ -175,6 +175,7 @@ pub fn self_inv_ty<F: Prop, A: Prop, B: Prop>(
 }
 
 /// Cumulative type hierarchy.
+#[derive(Copy, Clone)]
 pub struct Type<N: Nat>(N);
 
 /// `type(n) : type(n+1)`.
