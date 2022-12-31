@@ -79,10 +79,8 @@ pub struct FAnd(());
 
 /// Type of And.
 pub fn and_ty() -> Ty<FAnd, Pow<Bool, And<Bool, Bool>>> {unimplemented!()}
-
 /// `and(true, a) = a`.
 pub fn and_tr<A: Prop>(_ty_a: Ty<A, Bool>) -> Eq<App<FAnd, And<Tr, A>>, A> {unimplemented!()}
-
 /// `and(false, a) = false`.
 pub fn and_fa<A: Prop>(_ty_a: Ty<A, Bool>) -> Eq<App<FAnd, And<Fa, A>>, Fa> {unimplemented!()}
 
@@ -100,10 +98,8 @@ pub struct FOr(());
 
 /// Type of Or.
 pub fn or_ty() -> Ty<FOr, Pow<Bool, And<Bool, Bool>>> {unimplemented!()}
-
 /// `or(true, a) = true`.
 pub fn or_tr<A: Prop>(_ty_a: Ty<A, Bool>) -> Eq<App<FOr, And<Tr, A>>, Tr> {unimplemented!()}
-
 /// `or(false, a) = a`.
 pub fn or_fa<A: Prop>(_ty_a: Ty<A, Bool>) -> Eq<App<FOr, And<Fa, A>>, A> {unimplemented!()}
 
