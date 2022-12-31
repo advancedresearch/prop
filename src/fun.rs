@@ -45,6 +45,7 @@ use path_semantics::Ty;
 use quality::Q;
 use qubit::Qu;
 use hooo::Pow;
+use nat::{Nat, S, Z};
 
 pub mod bool_alg;
 
@@ -202,3 +203,12 @@ pub fn q_inv_ty<F: Prop, G: Prop, A: Prop, B: Prop>(
     );
     path_semantics::ty_in_left_arg(y, x)
 }
+
+/// Cumulative type hierarchy.
+pub struct Type<N: Nat>(N);
+
+/// `type(n) : type(n+1)`.
+pub fn type_ty<N: Nat>() -> Ty<Type<N>, Type<S<N>>> {unimplemented!()}
+
+/// `(a -> b) : type(0)`.
+pub fn pow_ty<A: Prop, B: Prop>() -> Ty<Pow<B, A>, Type<Z>> {unimplemented!()}
