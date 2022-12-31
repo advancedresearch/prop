@@ -8,6 +8,8 @@
 //!
 //! A function type `f : X -> Y` uses `Ty<F, Pow<Y, X>>` from the `hooo` module (HOOO EP).
 //!
+//! A lambda/closure type `f : X => Y` uses `Imply<X, Y>`.
+//!
 //! ### Imaginary Inverse
 //!
 //! The syntax `~x` uses `Qu<X>` from the `qubit` module,
@@ -71,6 +73,13 @@ pub fn app_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
 ) -> Ty<App<F, A>, Y> {
     unimplemented!()
 }
+/// Get type of applied lambda.
+pub fn app_lam_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
+    _ty_f: Ty<F, Imply<X, Y>>,
+    _ty_a: Ty<A, X>
+) -> Ty<App<F, A>, Y> {
+    unimplemented!()
+}
 
 /// Get type of applied binary operator.
 pub fn app2_fun_ty<F: Prop, X: Prop, Y: Prop, Z: Prop, A: Prop, B: Prop>(
@@ -79,6 +88,14 @@ pub fn app2_fun_ty<F: Prop, X: Prop, Y: Prop, Z: Prop, A: Prop, B: Prop>(
     ty_b: Ty<B, Y>
 ) -> Ty<App2<F, A, B>, Z> {
     app_fun_ty(app_fun_ty(ty_f, ty_a), ty_b)
+}
+/// Get type of applied binary operator.
+pub fn app2_lam_ty<F: Prop, X: Prop, Y: Prop, Z: Prop, A: Prop, B: Prop>(
+    ty_f: Ty<F, Imply<X, Imply<Y, Z>>>,
+    ty_a: Ty<A, X>,
+    ty_b: Ty<B, Y>
+) -> Ty<App2<F, A, B>, Z> {
+    app_lam_ty(app_lam_ty(ty_f, ty_a), ty_b)
 }
 
 /// Imaginary inverse.
@@ -227,3 +244,12 @@ pub struct Snd(());
 pub fn snd_ty<A: Prop, B: Prop>() -> Ty<Snd, Pow<B, Tup<A, B>>> {unimplemented!()}
 /// `snd((a, b)) = b`.
 pub fn snd_def<A: Prop, B: Prop>() -> Eq<App<Snd, Tup<A, B>>, B> {unimplemented!()}
+
+/// Lambda.
+#[derive(Copy, Clone)]
+pub struct Lam<X, Y>(X, Y);
+
+/// `(b : y)^(a : x) => (\(a : x) = b) : (x => y)`.
+pub fn lam_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
+    _pow_ty_b_ty_a: Pow<Ty<B, Y>, Ty<A, X>>
+) -> Ty<Lam<Ty<A, X>, B>, Imply<X, Y>> {unimplemented!()}
