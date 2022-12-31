@@ -93,3 +93,23 @@ pub fn para_inv_and<F: Prop>(x: Q<Inv<FAnd>, F>) -> False {
     let y2: Eq<And<Fa, Fa>, And<Fa, Tr>> = eq::transitivity(eq::symmetry(y1), y0);
     para_eq_and_tr_and_fa(fa_ty(), eq::symmetry(y2))
 }
+
+/// Or function.
+#[derive(Copy, Clone)]
+pub struct FOr(());
+
+/// Type of Or.
+pub fn or_ty() -> Ty<FOr, Pow<Bool, And<Bool, Bool>>> {unimplemented!()}
+
+/// `or(true, a) = true`.
+pub fn or_tr<A: Prop>(_ty_a: Ty<A, Bool>) -> Eq<App<FOr, And<Tr, A>>, Tr> {unimplemented!()}
+
+/// `or(false, a) = a`.
+pub fn or_fa<A: Prop>(_ty_a: Ty<A, Bool>) -> Eq<App<FOr, And<Fa, A>>, A> {unimplemented!()}
+
+/// `(inv(or) ~~ f) => false`.
+pub fn para_inv_or<F: Prop>(x: Q<Inv<FOr>, F>) -> False {
+    let y0: Eq<App<Inv<FOr>, Tr>, And<Tr, Tr>> = inv_val(x.clone(), or_tr(tr_ty()));
+    let y1: Eq<App<Inv<FOr>, Tr>, And<Tr, Fa>> = inv_val(x.clone(), or_tr(fa_ty()));
+    para_eq_and_tr_and_fa(tr_ty(), eq::transitivity(eq::symmetry(y0), y1))
+}
