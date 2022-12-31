@@ -258,3 +258,7 @@ pub fn lam_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
 pub fn lam_id_ty<A: Prop, X: Prop>() -> Ty<Lam<Ty<A, X>, A>, Imply<X, X>> {
     lam_ty(hooo::pow_refl)
 }
+/// `(b : x) => ((\(a : x) = a)(b) : x)`.
+pub fn app_lam_id_ty<A: Prop, B: Prop, X: Prop>(ty_b: Ty<B, X>) -> Ty<App<Lam<Ty<A, X>, A>, B>, X> {
+    app_lam_ty(lam_id_ty(), ty_b)
+}
