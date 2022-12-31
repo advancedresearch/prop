@@ -60,12 +60,10 @@ pub struct App<F: Prop, X: Prop>(F, X);
 pub fn app_eq<F: Prop, X: Prop, Y: Prop>(
     _eq_xy: Eq<X, Y>
 ) -> Eq<App<F, X>, App<F, Y>> {unimplemented!()}
-
 /// Lift equality of maps to application.
 pub fn app_map_eq<F: Prop, G: Prop, X: Prop>(
     _eq_fg: Eq<F, G>
 ) -> Eq<App<F, X>, App<G, X>> {unimplemented!()}
-
 /// Get type of applied function.
 pub fn app_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
     _ty_f: Ty<F, Pow<Y, X>>,
@@ -91,7 +89,6 @@ pub struct Inv<F: Prop>(F);
 pub fn inv_ty<F: Prop, X: Prop, Y: Prop>(
     _ty_f: Ty<F, Pow<Y, X>>
 ) -> Ty<Inv<F>, Pow<X, Y>> {unimplemented!()}
-
 /// Get inverse map of `f` if there exists a proof `~inv(f)`.
 pub fn inv_val_qu<F: Prop, A: Prop, B: Prop>(
     _: Qu<Inv<F>>,
@@ -107,7 +104,6 @@ pub fn inv_val<F: Prop, G: Prop, A: Prop, B: Prop>(
     x: Q<Inv<F>, G>,
     y: Eq<App<F, A>, B>
 ) -> Eq<App<Inv<F>, B>, A> {inv_val_qu(Qu::<Inv<F>>::from_q(quality::left(x)), y)}
-
 /// Get inverse map of `f` by `g`.
 pub fn inv_val_other<F: Prop, G: Prop, A: Prop, B: Prop>(
     x: Q<Inv<F>, G>,
@@ -125,22 +121,18 @@ pub fn comp_ty<F: Prop, G: Prop, X: Prop, Y: Prop, Z: Prop>(
     _ty_f: Ty<F, Pow<Y, X>>,
     _ty_g: Ty<G, Pow<Z, Y>>
 ) -> Ty<Comp<G, F>, Pow<Z, X>> {unimplemented!()}
-
 /// `inv(g . f) => (inv(f) . inv(g))`.
 pub fn inv_comp_to_comp_inv<F: Prop, G: Prop>(_: Inv<Comp<G, F>>) -> Comp<Inv<F>, Inv<G>> {
     unimplemented!()
 }
-
 /// `(inv(f) . inv(g)) => inv(g . f)`.
 pub fn comp_inv_to_inv_comp<F: Prop, G: Prop>(_: Comp<Inv<F>, Inv<G>>) -> Inv<Comp<G, F>> {
     unimplemented!()
 }
-
 /// `g(f(x)) => (g . f)(x)`.
 pub fn app_to_comp<F: Prop, G: Prop, X: Prop>(_: App<G, App<F, X>>) -> App<Comp<G, F>, X> {
     unimplemented!()
 }
-
 /// `(g . f)(x) => g(f(x))`.
 pub fn comp_to_app<F: Prop, G: Prop, X: Prop>(_: App<Comp<G, F>, X>) -> App<G, App<F, X>> {
     unimplemented!()
@@ -150,7 +142,6 @@ pub fn comp_to_app<F: Prop, G: Prop, X: Prop>(_: App<Comp<G, F>, X>) -> App<G, A
 pub fn comp_in_left_arg<F: Prop, G: Prop, H: Prop>(x: Comp<G, F>, y: Eq<G, H>) -> Comp<H, F> {
     Comp(y.0(x.0), x.1)
 }
-
 /// `(g . f) ⋀ (f == h) => (g . h)`.
 pub fn comp_in_right_arg<F: Prop, G: Prop, H: Prop>(x: Comp<G, F>, y: Eq<F, H>) -> Comp<G, H> {
     Comp(x.0, y.0(x.1))
@@ -164,22 +155,13 @@ pub struct FId(());
 pub fn id_ty<A: Prop>() -> Ty<FId, Pow<A, A>> {unimplemented!()}
 
 /// Definition of identity function.
-pub fn id_def<A: Prop>() -> Eq<App<FId, A>, A> {
-    unimplemented!()
-}
-
+pub fn id_def<A: Prop>() -> Eq<App<FId, A>, A> {unimplemented!()}
 /// `inv(id) ~~ id`.
 pub fn id_q() -> Q<Inv<FId>, FId> {unimplemented!()}
-
 /// `(f . inv(f)) => id`.
-pub fn comp_right_inv_to_id<F: Prop>(_: Comp<F, Inv<F>>) -> FId {
-    unimplemented!()
-}
-
+pub fn comp_right_inv_to_id<F: Prop>(_: Comp<F, Inv<F>>) -> FId {unimplemented!()}
 /// `(inv(f) . f) => id`.
-pub fn comp_left_inv_to_id<F: Prop>(_: Comp<Inv<F>, F>) -> FId {
-    unimplemented!()
-}
+pub fn comp_left_inv_to_id<F: Prop>(_: Comp<Inv<F>, F>) -> FId {unimplemented!()}
 
 /// `(f : A -> B) => ((f ~~ inv(f)) : ((A -> B) ~~ (B -> A)))`.
 pub fn self_inv_ty<F: Prop, A: Prop, B: Prop>(
@@ -187,6 +169,15 @@ pub fn self_inv_ty<F: Prop, A: Prop, B: Prop>(
 ) -> Ty<Q<F, Inv<F>>, Q<Pow<B, A>, Pow<A, B>>> {
     path_semantics::ty_q_formation(ty_f.clone(), inv_ty(ty_f))
 }
+
+/// Cumulative type hierarchy.
+pub struct Type<N: Nat>(N);
+
+/// `type(n) : type(n+1)`.
+pub fn type_ty<N: Nat>() -> Ty<Type<N>, Type<S<N>>> {unimplemented!()}
+/// `(a -> b) : type(0)`.
+pub fn pow_ty<A: Prop, B: Prop>() -> Ty<Pow<B, A>, Type<Z>> {unimplemented!()}
+
 
 /// `(f : A -> B) ⋀ (inv(f) ~~ g) => ((f ~~ g) : ((A -> B) ~~ (B -> A)))`.
 pub fn q_inv_ty<F: Prop, G: Prop, A: Prop, B: Prop>(
@@ -203,12 +194,3 @@ pub fn q_inv_ty<F: Prop, G: Prop, A: Prop, B: Prop>(
     );
     path_semantics::ty_in_left_arg(y, x)
 }
-
-/// Cumulative type hierarchy.
-pub struct Type<N: Nat>(N);
-
-/// `type(n) : type(n+1)`.
-pub fn type_ty<N: Nat>() -> Ty<Type<N>, Type<S<N>>> {unimplemented!()}
-
-/// `(a -> b) : type(0)`.
-pub fn pow_ty<A: Prop, B: Prop>() -> Ty<Pow<B, A>, Type<Z>> {unimplemented!()}
