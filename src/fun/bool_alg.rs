@@ -109,3 +109,17 @@ pub fn para_inv_or<F: Prop>(x: Q<Inv<FOr>, F>) -> False {
     let y1: Eq<App<Inv<FOr>, Tr>, And<Tr, Fa>> = inv_val(x.clone(), or_tr(fa_ty()));
     para_eq_and_tr_and_fa(tr_ty(), eq::transitivity(eq::symmetry(y0), y1))
 }
+
+/// Nand function.
+pub type FNand = Comp<FNot, FAnd>;
+
+/// Type of Nand.
+pub fn nand_ty() -> Ty<FNand, Pow<Bool, And<Bool, Bool>>> {comp_ty(and_ty(), not_ty())}
+/// `nand(true, a) = not(a)`.
+pub fn nand_tr<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FNand, And<Tr, A>>, App<FNot, A>> {
+    eq::in_left_arg(app_eq(and_tr(ty_a)), eq_app_comp())
+}
+/// `nand(false, a) = true`.
+pub fn nand_fa<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FNand, And<Fa, A>>, Tr> {
+    eq::transitivity(eq::in_left_arg(app_eq(and_fa(ty_a)), eq_app_comp()), not_fa())
+}
