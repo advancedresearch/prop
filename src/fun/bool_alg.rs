@@ -22,10 +22,10 @@ pub fn fa_ty() -> Ty<Fa, Bool> {unimplemented!()}
 pub fn bool_values<A: Prop>(_ty_a: Ty<A, Bool>) -> Or<Eq<A, Tr>, Eq<A, Fa>> {unimplemented!()}
 /// True and false are exclusive.
 pub fn para_eq_tr_fa(_: Eq<Tr, Fa>) -> False {unimplemented!()}
-/// True and false are exclusive in products.
-pub fn para_eq_and_tr_and_fa<A: Prop>(
+/// True and false are exclusive in tuples.
+pub fn para_eq_tup_tr_tup_fa<A: Prop>(
     _ty_a: Ty<A, Bool>,
-    _: Eq<And<A, Tr>, And<A, Fa>>
+    _: Eq<Tup<A, Tr>, Tup<A, Fa>>
 ) -> False {unimplemented!()}
 
 /// False1 function.
@@ -78,18 +78,18 @@ pub fn para_inv_true1<F: Prop>(x: Q<Inv<FTrue1>, F>) -> False {
 pub struct FAnd(());
 
 /// Type of And.
-pub fn and_ty() -> Ty<FAnd, Pow<Bool, And<Bool, Bool>>> {unimplemented!()}
+pub fn and_ty() -> Ty<FAnd, Pow<Bool, Tup<Bool, Bool>>> {unimplemented!()}
 /// `and(true, a) = a`.
-pub fn and_tr<A: Prop>(_ty_a: Ty<A, Bool>) -> Eq<App<FAnd, And<Tr, A>>, A> {unimplemented!()}
+pub fn and_tr<A: Prop>(_ty_a: Ty<A, Bool>) -> Eq<App<FAnd, Tup<Tr, A>>, A> {unimplemented!()}
 /// `and(false, a) = false`.
-pub fn and_fa<A: Prop>(_ty_a: Ty<A, Bool>) -> Eq<App<FAnd, And<Fa, A>>, Fa> {unimplemented!()}
+pub fn and_fa<A: Prop>(_ty_a: Ty<A, Bool>) -> Eq<App<FAnd, Tup<Fa, A>>, Fa> {unimplemented!()}
 
 /// `(inv(and) ~~ f) => false`.
 pub fn para_inv_and<F: Prop>(x: Q<Inv<FAnd>, F>) -> False {
     let y0 = inv_val(x.clone(), and_fa(tr_ty()));
     let y1 = inv_val(x.clone(), and_fa(fa_ty()));
-    let y2: Eq<And<Fa, Fa>, And<Fa, Tr>> = eq::transitivity(eq::symmetry(y1), y0);
-    para_eq_and_tr_and_fa(fa_ty(), eq::symmetry(y2))
+    let y2: Eq<Tup<Fa, Fa>, Tup<Fa, Tr>> = eq::transitivity(eq::symmetry(y1), y0);
+    para_eq_tup_tr_tup_fa(fa_ty(), eq::symmetry(y2))
 }
 
 /// Or function.
@@ -97,29 +97,29 @@ pub fn para_inv_and<F: Prop>(x: Q<Inv<FAnd>, F>) -> False {
 pub struct FOr(());
 
 /// Type of Or.
-pub fn or_ty() -> Ty<FOr, Pow<Bool, And<Bool, Bool>>> {unimplemented!()}
+pub fn or_ty() -> Ty<FOr, Pow<Bool, Tup<Bool, Bool>>> {unimplemented!()}
 /// `or(true, a) = true`.
-pub fn or_tr<A: Prop>(_ty_a: Ty<A, Bool>) -> Eq<App<FOr, And<Tr, A>>, Tr> {unimplemented!()}
+pub fn or_tr<A: Prop>(_ty_a: Ty<A, Bool>) -> Eq<App<FOr, Tup<Tr, A>>, Tr> {unimplemented!()}
 /// `or(false, a) = a`.
-pub fn or_fa<A: Prop>(_ty_a: Ty<A, Bool>) -> Eq<App<FOr, And<Fa, A>>, A> {unimplemented!()}
+pub fn or_fa<A: Prop>(_ty_a: Ty<A, Bool>) -> Eq<App<FOr, Tup<Fa, A>>, A> {unimplemented!()}
 
 /// `(inv(or) ~~ f) => false`.
 pub fn para_inv_or<F: Prop>(x: Q<Inv<FOr>, F>) -> False {
-    let y0: Eq<App<Inv<FOr>, Tr>, And<Tr, Tr>> = inv_val(x.clone(), or_tr(tr_ty()));
-    let y1: Eq<App<Inv<FOr>, Tr>, And<Tr, Fa>> = inv_val(x.clone(), or_tr(fa_ty()));
-    para_eq_and_tr_and_fa(tr_ty(), eq::transitivity(eq::symmetry(y0), y1))
+    let y0 = inv_val(x.clone(), or_tr(tr_ty()));
+    let y1 = inv_val(x.clone(), or_tr(fa_ty()));
+    para_eq_tup_tr_tup_fa(tr_ty(), eq::transitivity(eq::symmetry(y0), y1))
 }
 
 /// Nand function.
 pub type FNand = Comp<FNot, FAnd>;
 
 /// Type of Nand.
-pub fn nand_ty() -> Ty<FNand, Pow<Bool, And<Bool, Bool>>> {comp_ty(and_ty(), not_ty())}
+pub fn nand_ty() -> Ty<FNand, Pow<Bool, Tup<Bool, Bool>>> {comp_ty(and_ty(), not_ty())}
 /// `nand(true, a) = not(a)`.
-pub fn nand_tr<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FNand, And<Tr, A>>, App<FNot, A>> {
+pub fn nand_tr<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FNand, Tup<Tr, A>>, App<FNot, A>> {
     eq::in_left_arg(app_eq(and_tr(ty_a)), eq_app_comp())
 }
 /// `nand(false, a) = true`.
-pub fn nand_fa<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FNand, And<Fa, A>>, Tr> {
+pub fn nand_fa<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FNand, Tup<Fa, A>>, Tr> {
     eq::transitivity(eq::in_left_arg(app_eq(and_fa(ty_a)), eq_app_comp()), not_fa())
 }
