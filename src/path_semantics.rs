@@ -328,6 +328,11 @@ impl<T, U> POrdProof<T, U> {
     pub fn qu(self) -> POrdProof<Qu<T>, Qu<U>> {
         POrdProof(std::marker::PhantomData)
     }
+
+    /// Combine two proofs into one using path semantical quality.
+    pub fn q<T2, U2>(self, x: POrdProof<T2, U2>) -> POrdProof<Q<T, T2>, Q<U, U2>> {
+        self.clone().eq(x.clone()).and(self.qu().and(x.qu()))
+    }
 }
 
 impl<A, B, C> POrdProof<A, Or<B, C>> {
