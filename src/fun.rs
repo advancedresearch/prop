@@ -304,3 +304,10 @@ pub fn lam_fst_ty<A: Prop, X: Prop, B: Prop, Y: Prop>() ->
 {
     lam_ty(Rc::new(|x| lam_ty(x.map_any())))
 }
+/// `(c : x)  =>  (\(a : x) = \(b : y) = a)(c) => (\(b : y[a := c]) = c)`.
+pub fn lam_fst<A: Prop, X: Prop, B: Prop, Y: Prop, C: Prop>(
+    _ty_c: Ty<C, X>
+) -> Eq<App<LamFst<A, X, B, Y>, C>, Lam<Ty<B, Subst<Y, A, C>>, C>>
+{
+    unimplemented!()
+}
