@@ -249,9 +249,9 @@ pub fn snd_def<A: Prop, B: Prop>() -> Eq<App<Snd, Tup<A, B>>, B> {unimplemented!
 #[derive(Copy, Clone)]
 pub struct Lam<X, Y>(X, Y);
 
-/// `(b : y)^(a : x) => (\(a : x) = b) : (x => y)`.
+/// `((a : x) => (b : y)) => (\(a : x) = b) : (x => y)`.
 pub fn lam_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
-    _pow_ty_b_ty_a: Pow<Ty<B, Y>, Ty<A, X>>
+    _pow_ty_b_ty_a: Imply<Ty<A, X>, Ty<B, Y>>
 ) -> Ty<Lam<Ty<A, X>, B>, Imply<X, Y>> {unimplemented!()}
 /// `(a : x) ⋀ b  =>  (\(a : x) = b)`.
 pub fn lam_lift<A: Prop, B: Prop, X: Prop>(ty_a: Ty<A, X>, b: B) -> Lam<Ty<A, X>, B> {Lam(ty_a, b)}
@@ -263,14 +263,14 @@ pub type LamId<A, X> = Lam<Ty<A, X>, A>;
 pub fn lam_id_q<A: Prop, X: Prop>() -> Q<LamId<A, X>, FId> {unimplemented!()}
 /// `(\(a : x) = a) : (x => x)`.
 pub fn lam_id_ty<A: Prop, X: Prop>() -> Ty<LamId<A, X>, Imply<X, X>> {
-    lam_ty(hooo::pow_refl)
+    lam_ty(imply::id())
 }
 /// `(b : x) => ((\(a : x) = a)(b) : x)`.
 pub fn lam_id_app_ty<A: Prop, B: Prop, X: Prop>(ty_b: Ty<B, X>) -> Ty<App<LamId<A, X>, B>, X> {
     app_lam_ty(lam_id_ty(), ty_b)
 }
 /// `(\(a : x) = a)(b) = b`.
-pub fn lam_id_app<A: Prop, B: Prop, X: Prop>(ty_b: Ty<B, X>) -> Eq<App<LamId<A, X>, B>, B> {
+pub fn lam_id<A: Prop, B: Prop, X: Prop>() -> Eq<App<LamId<A, X>, B>, B> {
     eq::transitivity(app_map_eq(quality::to_eq(lam_id_q())), id_def())
 }
 
