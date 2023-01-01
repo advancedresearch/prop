@@ -267,6 +267,10 @@ pub struct IsConst<A>(A);
 pub fn const_tup<A: Prop, B: Prop>(_a: IsConst<A>, _b: IsConst<B>) -> IsConst<Tup<A, B>> {
     unimplemented!()
 }
+/// `is_const((a, b))  =>  is_const(a) ⋀ is_const(b)`.
+pub fn tup_const<A: Prop, B: Prop>(_x: IsConst<Tup<A, B>>) -> And<IsConst<A>, IsConst<B>> {
+    unimplemented!()
+}
 
 /// Lambda.
 #[derive(Copy, Clone)]
