@@ -245,6 +245,13 @@ pub fn snd_ty<A: Prop, B: Prop>() -> Ty<Snd, Pow<B, Tup<A, B>>> {unimplemented!(
 /// `snd((a, b)) = b`.
 pub fn snd_def<A: Prop, B: Prop>() -> Eq<App<Snd, Tup<A, B>>, B> {unimplemented!()}
 
+/// Substitute in expression.
+#[derive(Clone, Copy)]
+pub struct Subst<E: Prop, A: Prop, B: Prop>(E, A, B);
+
+/// `a[a := b] == b`
+pub fn subst_trivial<A: Prop, B: Prop>() -> Eq<Subst<A, A, B>, B> {unimplemented!()}
+
 /// Lambda.
 #[derive(Copy, Clone)]
 pub struct Lam<X, Y>(X, Y);
