@@ -347,3 +347,6 @@ pub fn lam_fst<A: Prop, X: Prop, B: Prop, Y: Prop, C: Prop>(
 {
     unimplemented!()
 }
+
+/// `\(a : x) = \(b : y) = b`.
+pub type LamSnd<A, X, B, Y> = Lam<Ty<A, X>, LamId<B, Y>>;
