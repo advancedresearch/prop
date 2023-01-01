@@ -259,6 +259,12 @@ pub fn lam_lift<A: Prop, B: Prop, X: Prop>(ty_a: Ty<A, X>, b: B) -> Lam<Ty<A, X>
 pub fn lam<A: Prop, B: Prop, X: Prop, C: Prop>(
     _ty_c: Ty<C, X>
 ) -> Eq<App<Lam<Ty<A, X>, B>, C>, Subst<B, A, C>> {unimplemented!()}
+/// `(b : y) ⋀ (c : x) => ((\(a : x) = b)(c) : y[a := c])`.
+pub fn lam_app_ty<A: Prop, B: Prop, X: Prop, Y: Prop, C: Prop>(
+    _ty_b: Ty<B, Y>, _ty_c: Ty<C, X>
+) -> Ty<App<Lam<Ty<A, X>, B>, C>, Subst<Y, A, C>> {
+    unimplemented!()
+}
 
 /// `\(a : x) = a`.
 pub type LamId<A, X> = Lam<Ty<A, X>, A>;
