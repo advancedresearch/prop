@@ -295,3 +295,12 @@ pub fn lam_id<A: Prop, B: Prop, X: Prop>() -> Eq<App<LamId<A, X>, B>, B> {
     eq::transitivity(app_map_eq(quality::to_eq(lam_id_q())), id_def())
 }
 
+/// `\(a : x) = \(b : y) = a`.
+pub type LamFst<A, X, B, Y> = Lam<Ty<A, X>, Lam<Ty<B, Y>, A>>;
+
+/// `(\(a : x) = \(b : y) = a) : x`
+pub fn lam_fst_ty<A: Prop, X: Prop, B: Prop, Y: Prop>() ->
+    Ty<LamFst<A, X, B, Y>, Imply<X, Imply<Y, X>>>
+{
+    lam_ty(Rc::new(|x| lam_ty(x.map_any())))
+}
