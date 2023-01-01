@@ -255,6 +255,8 @@ pub fn lam_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
 ) -> Ty<Lam<Ty<A, X>, B>, Imply<X, Y>> {unimplemented!()}
 /// `(\(a : x) = a) ~~ id`.
 pub fn lam_id_q<A: Prop, X: Prop>() -> Q<Lam<Ty<A, X>, A>, FId> {unimplemented!()}
+/// `(a : x) ⋀ b  =>  (\(a : x) = b)`.
+pub fn lam_lift<A: Prop, B: Prop, X: Prop>(ty_a: Ty<A, X>, b: B) -> Lam<Ty<A, X>, B> {Lam(ty_a, b)}
 
 /// `(\(a : x) = a) : (x => x)`.
 pub fn lam_id_ty<A: Prop, X: Prop>() -> Ty<Lam<Ty<A, X>, A>, Imply<X, X>> {
