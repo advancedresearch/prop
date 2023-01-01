@@ -356,3 +356,7 @@ pub type LamSnd<A, X, B, Y> = Lam<Ty<A, X>, LamId<B, Y>>;
 pub type DepFunTy<A, X, PredP> = Pow<App<PredP, A>, Ty<A, X>>;
 /// Dependent function `f : ((a : x) -> p(a))`.
 pub type DepFun<F, A, X, PredP> = Ty<F, DepFunTy<A, X, PredP>>;
+/// Dependent lambda type `(a : x) => p(a)`.
+pub type DepLamTy<A, X, PredP> = Imply<Ty<A, X>, App<PredP, X>>;
+/// Dependent lambda `f : ((a : x) => p(a))`.
+pub type DepLam<F, A, X, PredP> = Ty<F, DepLamTy<A, X, PredP>>;
