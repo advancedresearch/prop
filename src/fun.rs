@@ -251,6 +251,9 @@ pub struct Subst<E: Prop, A: Prop, B: Prop>(E, A, B);
 
 /// `a[a := b] == b`
 pub fn subst_trivial<A: Prop, B: Prop>() -> Eq<Subst<A, A, B>, B> {unimplemented!()}
+/// `(a, b)[c := d] == (a[c := d], b[c := d])`.
+pub fn subst_tup<A: Prop, B: Prop, C: Prop, D: Prop>() ->
+    Eq<Subst<Tup<A, B>, C, D>, Tup<Subst<A, C, D>, Subst<B, C, D>>> {unimplemented!()}
 
 /// Whether some symbol is a constant.
 #[derive(Clone)]
