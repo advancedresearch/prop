@@ -351,3 +351,6 @@ pub fn lam_fst<A: Prop, X: Prop, B: Prop, Y: Prop, C: Prop>(
 
 /// `\(a : x) = \(b : y) = b`.
 pub type LamSnd<A, X, B, Y> = Lam<Ty<A, X>, LamId<B, Y>>;
+
+/// Dependent function `(a : x) -> p(a)`.
+pub type DepFunTy<A, X, PredP> = Pow<App<PredP, A>, Ty<A, X>>;
