@@ -306,6 +306,12 @@ pub fn lam_app_ty_trivial<A: Prop, B: Prop, X: Prop>(
     let y = lam_app_ty(ty_b.clone(), ty_b.clone());
     path_semantics::ty_in_right_arg(y, subst_ty(ty_b))
 }
+/// `(b : x) => ((\(a : x) = b)(b) == b`.
+pub fn lam_app_trivial<A: Prop, B: Prop, X: Prop>(
+    ty_b: Ty<B, X>
+) -> Eq<App<Lam<Ty<A, X>, B>, B>, B> {
+    eq::transitivity(lam(ty_b), subst_id())
+}
 
 /// `\(a : x) = a`.
 pub type LamId<A, X> = Lam<Ty<A, X>, A>;
