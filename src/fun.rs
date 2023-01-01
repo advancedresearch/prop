@@ -263,6 +263,11 @@ pub fn subst_tup<A: Prop, B: Prop, C: Prop, D: Prop>() ->
 #[derive(Clone)]
 pub struct IsConst<A>(A);
 
+/// `is_const(a) ⋀ is_const(b)  =>  is_const((a, b))`.
+pub fn const_tup<A: Prop, B: Prop>(_a: IsConst<A>, _b: IsConst<B>) -> IsConst<Tup<A, B>> {
+    unimplemented!()
+}
+
 /// Lambda.
 #[derive(Copy, Clone)]
 pub struct Lam<X, Y>(X, Y);
