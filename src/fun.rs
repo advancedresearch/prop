@@ -297,6 +297,14 @@ pub fn lam_app_ty<A: Prop, B: Prop, X: Prop, Y: Prop, C: Prop>(
     unimplemented!()
 }
 
+/// `(b : x) => ((\(a : x) = b)(b) : x)`.
+pub fn lam_app_ty_trivial<A: Prop, B: Prop, X: Prop>(
+    ty_b: Ty<B, X>
+) -> Ty<App<Lam<Ty<A, X>, B>, B>, X> {
+    let y = lam_app_ty(ty_b.clone(), ty_b.clone());
+    path_semantics::ty_in_right_arg(y, subst_ty(ty_b))
+}
+
 /// `\(a : x) = a`.
 pub type LamId<A, X> = Lam<Ty<A, X>, A>;
 
