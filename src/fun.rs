@@ -253,6 +253,8 @@ pub struct Lam<X, Y>(X, Y);
 pub fn lam_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
     _pow_ty_b_ty_a: Pow<Ty<B, Y>, Ty<A, X>>
 ) -> Ty<Lam<Ty<A, X>, B>, Imply<X, Y>> {unimplemented!()}
+/// `(\(a : x) = a) ~~ id`.
+pub fn lam_id_q<A: Prop, X: Prop>() -> Q<Lam<Ty<A, X>, A>, FId> {unimplemented!()}
 
 /// `(\(a : x) = a) : (x => x)`.
 pub fn lam_id_ty<A: Prop, X: Prop>() -> Ty<Lam<Ty<A, X>, A>, Imply<X, X>> {
