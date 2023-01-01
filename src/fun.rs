@@ -251,7 +251,7 @@ pub struct Lam<X, Y>(X, Y);
 
 /// `((a : x) => (b : y)) => (\(a : x) = b) : (x => y)`.
 pub fn lam_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
-    _pow_ty_b_ty_a: Imply<Ty<A, X>, Ty<B, Y>>
+    _ty_b_ty_a: Imply<Ty<A, X>, Ty<B, Y>>
 ) -> Ty<Lam<Ty<A, X>, B>, Imply<X, Y>> {unimplemented!()}
 /// `(a : x) ⋀ b  =>  (\(a : x) = b)`.
 pub fn lam_lift<A: Prop, B: Prop, X: Prop>(ty_a: Ty<A, X>, b: B) -> Lam<Ty<A, X>, B> {Lam(ty_a, b)}
