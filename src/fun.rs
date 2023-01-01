@@ -50,6 +50,7 @@ use hooo::Pow;
 use nat::{Nat, S, Z};
 
 pub mod bool_alg;
+pub mod hott;
 
 /// Apply 2 function arguments.
 pub type App2<F, X, Y> = App<App<F, X>, Y>;
