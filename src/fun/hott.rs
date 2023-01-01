@@ -8,11 +8,11 @@ pub struct IsHType<N: Nat, A: Prop>(N, A);
 
 /// Identity type.
 #[derive(Copy, Clone)]
-pub struct Id<T, PathP, PathQ>(T, PathP, PathQ);
+pub struct Id<T: Prop, PathP: Prop, PathQ: Prop>(T, PathP, PathQ);
 
 /// Reflexivity proof of identity type.
 #[derive(Copy, Clone)]
-pub struct Refl<X, A>(X, A);
+pub struct Refl<X: Prop, A: Prop>(X, A);
 
 /// Whether some type is a homotopy proposition of level 0.
 pub type IsContr<A> = IsHType<Z, A>;
