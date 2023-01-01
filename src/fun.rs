@@ -251,6 +251,10 @@ pub struct Subst<E: Prop, A: Prop, B: Prop>(E, A, B);
 
 /// `a[a := b] == b`
 pub fn subst_trivial<A: Prop, B: Prop>() -> Eq<Subst<A, A, B>, B> {unimplemented!()}
+/// `(a : b) => (b[c := a] == b)`.
+pub fn subst_ty<A: Prop, B: Prop, C: Prop>(_ty_a: Ty<A, B>) -> Eq<Subst<B, C, A>, B> {
+    unimplemented!()
+}
 /// `is_const(a) => (a[b := c] == d)`.
 pub fn subst_const<A: Prop, B: Prop, C: Prop>(_a_is_const: IsConst<A>) -> Eq<Subst<A, B, C>, A> {
     unimplemented!()
