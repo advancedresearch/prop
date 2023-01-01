@@ -175,6 +175,17 @@ pub fn qlim<X: LProp>() -> Q<Q<X, X>, X> where X::N: Nat {
     univalence::h0_qlim(ty_true())
 }
 
+/// `(a : (b ⋁ c)) ⋀ a  =>  (a : b) ⋁ (a : c)`.
+pub fn ty_or_split<A: Prop, B: Prop, C: Prop>(
+    (ty_a, pord): Ty<A, Or<B, C>>,
+    a: A
+) -> Or<Ty<A, B>, Ty<A, C>> {
+    match ty_a(a) {
+        Left(b) => Left((b.map_any(), pord.or_left())),
+        Right(c) => Right((c.map_any(), pord.or_right()))
+    }
+}
+
 /// `(a : (b ⋁ c))  =>  (a : b) ⋁ (a : c)`.
 pub fn ty_or_split_da<A: DProp, B: Prop, C: Prop>(
     (ty_a_or_b_c, pord): Ty<A, Or<B, C>>
