@@ -252,6 +252,10 @@ pub struct Subst<E: Prop, A: Prop, B: Prop>(E, A, B);
 /// `a[a := b] == b`
 pub fn subst_trivial<A: Prop, B: Prop>() -> Eq<Subst<A, A, B>, B> {unimplemented!()}
 
+/// Whether some symbol is a constant.
+#[derive(Clone)]
+pub struct IsConst<A>(A);
+
 /// Lambda.
 #[derive(Copy, Clone)]
 pub struct Lam<X, Y>(X, Y);
