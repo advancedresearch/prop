@@ -1,5 +1,7 @@
 //! # Exponential Propositions
 //!
+//! Paper: [HOOO Exponential Propositions](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip2/hooo-exponential-propositions.pdf)
+//!
 //! By using function pointers,
 //! one can force construction of propositions
 //! without capturing any variables,
