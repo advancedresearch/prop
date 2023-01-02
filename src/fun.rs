@@ -182,14 +182,27 @@ pub fn id_def<A: Prop>() -> Eq<App<FId, A>, A> {unimplemented!()}
 pub fn id_q() -> Q<Inv<FId>, FId> {unimplemented!()}
 /// `(f . inv(f)) => id`.
 pub fn comp_right_inv_to_id<F: Prop>(_: Comp<F, Inv<F>>) -> FId {unimplemented!()}
+/// `id => (f . inv(f))`.
+pub fn id_to_comp_right_inv<F: Prop>(_: FId) -> Comp<F, Inv<F>> {unimplemented!()}
 /// `(inv(f) . f) => id`.
 pub fn comp_left_inv_to_id<F: Prop>(_: Comp<Inv<F>, F>) -> FId {unimplemented!()}
+/// `id => (inv(f). f)`.
+pub fn id_to_comp_left_inv<F: Prop>(_: FId) -> Comp<Inv<F>, F> {unimplemented!()}
 
 /// `(f : A -> B) => ((f ~~ inv(f)) : ((A -> B) ~~ (B -> A)))`.
 pub fn self_inv_ty<F: Prop, A: Prop, B: Prop>(
     ty_f: Ty<F, Pow<B, A>>
 ) -> Ty<Q<F, Inv<F>>, Q<Pow<B, A>, Pow<A, B>>> {
     path_semantics::ty_q_formation(ty_f.clone(), inv_ty(ty_f))
+}
+/// `(inv(f) == f) => ((f . f) == id)`.
+pub fn self_inv_to_eq_id<F: Prop>(eq_f: Eq<Inv<F>, F>) -> Eq<Comp<F, F>, FId> {
+    let eq_f_2 = eq_f.clone();
+    (
+        Rc::new(move |x| comp_right_inv_to_id(
+            comp_in_right_arg(x, eq::symmetry(eq_f_2.clone())))),
+        Rc::new(move |x| comp_in_right_arg(id_to_comp_right_inv(x), eq_f.clone())),
+    )
 }
 
 /// Cumulative type hierarchy.
