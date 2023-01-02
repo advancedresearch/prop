@@ -135,3 +135,12 @@ pub fn down_excm<A: Prop>(down: Down<A>, excm: ExcM<A>) -> Not<A> {
         Right(na) => na,
     }
 }
+
+/// `up(a) => virtual(a)`.
+pub fn up_to_virtual<A: DProp>(up: Up<A>) -> Virtual<A> {up_to_virtual_excm(up, A::decide())}
+
+/// `up(a) ⋀ (a ⋁ ¬a)  =>  virtual(a)`.
+pub fn up_to_virtual_excm<A: Prop>(up: Up<A>, excm: ExcM<A>) -> Virtual<A> {
+    (up_excm(up.clone(), excm), up.1)
+}
+
