@@ -88,3 +88,10 @@ pub fn eq_to_eq_inv<A: Prop, B: Prop>(eq_q: Eq<Qu<A>, Qu<B>>) -> Eq<Qu<Not<A>>, 
     ));
     eq_q
 }
+
+/// `~a ∧ (a == b)^true  =>  ~b`.
+///
+/// This requires `(a == b)^true` to make reasoning about randomness properly.
+pub fn in_arg<A: Prop, B: Prop, N>(x: Qubit<N, A>, y: hooo::Tauto<Eq<A, B>>) -> Qubit<N, B> {
+    Qubit(x.0, y(True).0(x.1))
+}
