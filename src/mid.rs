@@ -125,3 +125,13 @@ pub fn up_excm<A: Prop>(up: Up<A>, excm: ExcM<A>) -> A {
     }
 }
 
+/// `down(a) => ¬a`.
+pub fn down<A: DProp>(down: Down<A>) -> Not<A> {down_excm(down, A::decide())}
+
+/// `down(a) ⋀ (a ⋁ ¬a)  =>  ¬a`.
+pub fn down_excm<A: Prop>(down: Down<A>, excm: ExcM<A>) -> Not<A> {
+    match excm {
+        Left(a) => not::absurd(down.0, a),
+        Right(na) => na,
+    }
+}
