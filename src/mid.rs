@@ -113,3 +113,15 @@ pub fn mica_to_e<A: Prop>(c: MidCatuskoti<A>) -> E<A> {
         Right(mid_a) => mid_to_e(mid_a),
     }
 }
+
+/// `up(a) => a`.
+pub fn up<A: DProp>(up: Up<A>) -> A {up_excm(up, A::decide())}
+
+/// `up(a) ⋀ (a ⋁ ¬a)  =>  a`.
+pub fn up_excm<A: Prop>(up: Up<A>, excm: ExcM<A>) -> A {
+    match excm {
+        Left(a) => a,
+        Right(na) => not::absurd(up.0, na),
+    }
+}
+
