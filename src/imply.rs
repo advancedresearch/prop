@@ -306,3 +306,17 @@ pub fn or_split_dc<A: Prop, B: Prop, C: DProp>(
 pub fn and_map<A: Prop, B: Prop>(a: A) -> Imply<B, And<A, B>> {
     Rc::new(move |b| (a.clone(), b))
 }
+
+/// `(a => b) ∨ (b => a)`.
+pub fn total<A: DProp, B: Prop>() -> Or<Imply<A, B>, Imply<B, A>> {
+    total_excm(A::decide())
+}
+
+/// `(a ∨ ¬a)  =>  (a => b) ∨ (b => a)`.
+pub fn total_excm<A: Prop, B: Prop>(excm_a: ExcM<A>) -> Or<Imply<A, B>, Imply<B, A>> {
+    match excm_a {
+        Left(a) => Right(a.map_any()),
+        Right(na) => Left(rev_modus_tollens_imply_excm(na.clone().map_any(),
+            Rc::new(move |a| not::absurd(na.clone(), a)))),
+    }
+}
