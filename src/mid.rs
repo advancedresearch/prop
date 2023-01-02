@@ -35,6 +35,8 @@ pub type Up<A> = And<Not<Not<A>>, Not<Tauto<A>>>;
 pub type Down<A> = And<Not<A>, Not<Para<A>>>;
 /// A middle proposition `(¬¬a ⋀ ¬(a^true)) ⋁ (¬a ⋀ ¬(false^a))`.
 pub type Mid<A> = Or<Up<A>, Down<A>>;
+/// A virtual middle proposition `a ⋀ ¬(a^true)`.
+pub type Virtual<A> = And<A, Not<Tauto<A>>>;
 
 /// A middle Catuṣkoṭi proposition `(a^true ⋁ false^a) ⋁ (up(a) ⋁ down(a))`.
 pub type MidCatuskoti<A> = Or<Uniform<A>, Mid<A>>;
