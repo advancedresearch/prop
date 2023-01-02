@@ -144,3 +144,12 @@ pub fn up_to_virtual_excm<A: Prop>(up: Up<A>, excm: ExcM<A>) -> Virtual<A> {
     (up_excm(up.clone(), excm), up.1)
 }
 
+/// `down(a) => virtual(¬a)`.
+pub fn down_to_virtual_not<A: DProp>(down: Down<A>) -> Virtual<Not<A>> {
+    down_to_virtual_not_excm(down, A::decide())
+}
+
+/// `down(a) ⋀ (a ⋁ ¬a)  =>  virtual(¬a)`.
+pub fn down_to_virtual_not_excm<A: Prop>(down: Down<A>, excm: ExcM<A>) -> Virtual<Not<A>> {
+    (down_excm(down.clone(), excm), imply::in_left(down.1, |x| tauto_not_to_para(x)))
+}
