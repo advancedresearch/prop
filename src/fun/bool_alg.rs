@@ -57,6 +57,11 @@ pub fn not_tr() -> Eq<App<FNot, Tr>, Fa> {unimplemented!()}
 /// `inv(not) ~~ not`.
 pub fn not_q() -> Q<Inv<FNot>, FNot> {unimplemented!()}
 
+/// `(not . not) == id`.
+pub fn eq_not_not_id() -> Eq<Comp<FNot, FNot>, FId> {
+    self_inv_to_eq_id(quality::to_eq(not_q()))
+}
+
 /// True1 function.
 #[derive(Clone, Copy)]
 pub struct FTrue1(());
