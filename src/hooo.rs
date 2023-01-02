@@ -689,8 +689,8 @@ pub fn lift_q<A: Prop, B: Prop>(
 ) -> Q<A, B> {unimplemented!()}
 
 /// `~a ∧ (a == b)^true  =>  ~b`.
-pub fn qu_in_arg<A: Prop, B: Prop>(_: Qu<A>, _: Tauto<Eq<A, B>>) -> Qu<B> {
-    unimplemented!()
+pub fn qu_in_arg<A: Prop, B: Prop>(x: Qu<A>, y: Tauto<Eq<A, B>>) -> Qu<B> {
+    qubit::in_arg(x, y)
 }
 
 /// `(a ~~ b) ∧ (a == c)^true  =>  (c ~~ b)`.
