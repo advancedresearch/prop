@@ -1423,6 +1423,11 @@ pub fn not_theory<A: DProp>() -> Not<Theory<A>> {
     Rc::new(move |theory_a| imply::in_left(theory_a, |x| tauto_excm_to_uniform(x))(f))
 }
 
+/// `(a ⋁ ¬a)^true => ¬theory(a)`.
+pub fn tauto_excm_to_not_theory<A: Prop>(x: Tauto<ExcM<A>>) -> Not<Theory<A>> {
+    not::double(tauto_excm_to_uniform(x))
+}
+
 /// `theory(a) ⋀ theory(b) => theory(a ⋀ b)`.
 pub fn theory_and<A: DProp, B: DProp>(
     f: Theory<A>,
