@@ -156,3 +156,5 @@ pub fn paradox<A: Prop>((a, na): And<A, Not<A>>) -> False {na(a)}
 /// `(a ∧ b) => a`.
 pub fn fst<A: Prop, B: Prop>((a, _): And<A, B>) -> A {a}
 
+/// `(a ∧ b) => b`.
+pub fn snd<A: Prop, B: Prop>((_, b): And<A, B>) -> B {b}
