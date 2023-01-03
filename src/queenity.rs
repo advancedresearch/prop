@@ -71,7 +71,7 @@ pub fn nsq_left<A: Prop, B: Prop>(
 pub fn nsq_left_theory<A: Prop, B: Prop>(
     sq: Sq<A, B>,
     theory: hooo::Theory<Eq<A, B>>
-) -> Not<Sq<A, A>> {nsq_left(sq, Rc::new(move |eq_ab| hooo::lift_q(eq_ab, theory.clone())))}
+) -> Not<Sq<A, A>> {nsq_left(sq, quality::theory_eq_to_eqq(theory))}
 
 /// Gets self-queenity of right side `(a ¬> b) => (b ¬> b)`.
 pub fn sq_right<A: Prop, B: Prop>(_sq: Sq<A, B>) -> Sq<B, B> {

@@ -588,3 +588,9 @@ pub fn aq_inv_to_sesh<A: Prop>((_, (nqu, _)): Aq<Not<A>, Not<A>>) -> Not<Aq<A, A
         qubit::inv_to_sesh(nqu.clone())(Qu::from_aq(q))
     })
 }
+
+/// `theory(a == b) => eqq(a, b)`.
+pub fn theory_eq_to_eqq<A: Prop, B: Prop>(theory: hooo::Theory<Eq<A, B>>) -> EqQ<A, B> {
+    Rc::new(move |eq| hooo::lift_q(eq, theory.clone()))
+}
+
