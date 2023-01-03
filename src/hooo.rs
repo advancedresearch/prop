@@ -913,6 +913,14 @@ pub fn not_not_to_para_para<A: DProp>(nna: Not<Not<A>>) -> Para<Para<A>> {
     not_para_to_para_para(not_not_to_not_para(nna))
 }
 
+/// `¬¬a ⋀ (a ⋁ ¬a)^true  =>  false^(false^a)`.
+pub fn not_not_to_para_para_with_tauto_excm<A: Prop>(
+    nna: Not<Not<A>>,
+    tauto_excm: Tauto<ExcM<A>>
+) -> Para<Para<A>> {
+    not_para_to_para_para_with_tauto_excm(not_not_to_not_para(nna), tauto_excm)
+}
+
 /// `false^(false^a) => ¬¬a`.
 pub fn para_para_to_not_not<A: DProp>(para_para_a: Para<Para<A>>) -> Not<Not<A>> {
     Rc::new(move |na| pow_not(para_para_to_not_para(para_para_a))(na))
