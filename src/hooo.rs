@@ -180,6 +180,15 @@ pub fn pow_not<A: Prop, B: DProp>(x: Not<Pow<A, B>>) -> Pow<A, Not<B>> {
 }
 
 /// `¬(a^b) => a^(¬b)`.
+pub fn pow_not_e<A: Prop, B: EProp>(x: Not<Pow<A, B>>) -> Pow<A, Not<B>> {
+    match para_not_and_to_or_e(and::paradox_e::<B>) {
+        Left(para_nnb) =>
+            not::absurd(x, pow_transitivity(not::double, pow_transitivity(para_nnb, fa()))),
+        Right(para_nb) => pow_transitivity(para_nb, fa()),
+    }
+}
+
+/// `¬(a^b) => a^(¬b)`.
 pub fn pow_not_tauto_excm<A: Prop, B: Prop>(
     x: Not<Pow<A, B>>,
     tauto_excm_b: Tauto<ExcM<B>>,
