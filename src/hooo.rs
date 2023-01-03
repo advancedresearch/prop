@@ -34,6 +34,7 @@
 use crate::*;
 use quality::Q;
 use qubit::Qu;
+use existence::{E, EProp};
 
 impl<A: DProp, B: DProp> Decidable for Pow<A, B> {
     fn decide() -> ExcM<Self> {decide()}
@@ -75,6 +76,17 @@ pub fn decide<A: DProp, B: DProp>() -> ExcM<Pow<A, B>> {
 /// `a^true ⋁ ¬(a^true)`.
 pub fn tauto_decide<A: DProp>() -> ExcM<Tauto<A>> {
     decide()
+}
+
+/// `¬¬(false^a) ⋁ ¬(false^a)`.
+pub fn para_decide_e<A: EProp>() -> E<Para<A>> {
+    fn g<A: EProp>(_: True) -> E<A> {A::e()}
+    match hooo_or(pow_refl) {
+        Left(pow_nna_ea) =>
+            Right(para_rev_not(tauto_not_to_para(pow_transitivity(g, pow_nna_ea)))),
+        Right(pow_na_ea) =>
+            Left(not::double(tauto_not_to_para(pow_transitivity(g, pow_na_ea)))),
+    }
 }
 
 /// `false^a ⋁ ¬(false^a)`.
