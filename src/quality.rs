@@ -595,3 +595,19 @@ pub fn theory_eq_to_eqq<A: Prop, B: Prop>(theory: Theory<Eq<A, B>>) -> EqQ<A, B>
     Rc::new(move |eq| hooo::lift_q(eq, theory.clone()))
 }
 
+/// `eqq(a, b) => ((a ~~ b) ⋁ ¬(a ~~ b))`.
+pub fn eqq_to_excm_q<A: DProp, B: DProp>(eqq: EqQ<A, B>) -> ExcM<Q<A, B>> {
+    eqq_to_excm_q_excm_eq(eqq, Eq::<A, B>::decide())
+}
+
+/// `eqq(a, b) ⋀ ((a == b) ⋁ ¬(a == b))  =>  ((a ~~ b) ⋁ ¬(a ~~ b))`.
+pub fn eqq_to_excm_q_excm_eq<A: Prop, B: Prop>(
+    eqq: EqQ<A, B>,
+    excm_eq: ExcM<Eq<A, B>>
+) -> ExcM<Q<A, B>> {
+    match excm_eq {
+        Left(eq) => Left(eqq(eq)),
+        Right(neq) => Right(imply::in_left(neq, |x| to_eq(x))),
+    }
+}
+
