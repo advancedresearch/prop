@@ -611,3 +611,13 @@ pub fn eqq_to_excm_q_with_excm_eq<A: Prop, B: Prop>(
     }
 }
 
+/// `theory(a == b) ⋀ ((a == b) ⋁ ¬(a == b))  =>  ((a ~~ b) ⋁ ¬(a ~~ b))`.
+///
+/// There is no analogue `theory_eq_to_excm_q` for decidable propositions,
+/// because `theory(a == b) ⋀ ((a == b) ⋁ ¬(a == b))^true` is absurd.
+pub fn theory_eq_to_excm_q_with_excm_eq<A: Prop, B: Prop>(
+    theory_eq: Theory<Eq<A, B>>,
+    excm_eq: ExcM<Eq<A, B>>
+) -> ExcM<Q<A, B>> {
+    eqq_to_excm_q_with_excm_eq(theory_eq_to_eqq(theory_eq), excm_eq)
+}
