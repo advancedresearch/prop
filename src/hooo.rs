@@ -1216,6 +1216,19 @@ pub fn para_and_to_or<A: DProp, B: DProp>(
     }
 }
 
+/// `false^(¬a ∧ ¬b) => false^a ⋁ false^b`.
+pub fn para_not_and_to_or_e<A: EProp, B: EProp>(
+    x: Para<And<Not<A>, Not<B>>>
+) -> Or<Para<Not<A>>, Para<Not<B>>> {
+    fn f<A: EProp>(_: True) -> E<A> {A::e()}
+    match (hooo_or(f), hooo_or(f)) {
+        (Left(tauto_nnna), Left(tauto_nnnb)) =>
+            imply::absurd()(x((not::rev_triple(tauto_nnna(True)), not::rev_triple(tauto_nnnb(True))))),
+        (Right(tauto_nna), _) => Left(tauto_not_to_para(tauto_nna)),
+        (_, Right(tauto_nnb)) => Right(tauto_not_to_para(tauto_nnb)),
+    }
+}
+
 /// `false^(a ∧ b) => false^a ⋁ false^b`.
 pub fn para_and_to_or_excm<A: Prop, B: Prop>(
     x: Para<And<A, B>>,
