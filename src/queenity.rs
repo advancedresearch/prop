@@ -65,6 +65,14 @@ pub fn nsq_left<A: Prop, B: Prop>(
     _eq_q: EqQ<A, B>
 ) -> Not<Sq<A, A>> {unimplemented!()}
 
+/// `(a ¬> b) ⋀ theory(a == b)  =>  ¬(a ¬> a)`
+///
+/// Gets self-queenity of the left side when `a == b` is a theory.
+pub fn nsq_left_theory<A: Prop, B: Prop>(
+    sq: Sq<A, B>,
+    theory: hooo::Theory<Eq<A, B>>
+) -> Not<Sq<A, A>> {nsq_left(sq, Rc::new(move |eq_ab| hooo::lift_q(eq_ab, theory.clone())))}
+
 /// Gets self-queenity of right side `(a ¬> b) => (b ¬> b)`.
 pub fn sq_right<A: Prop, B: Prop>(_sq: Sq<A, B>) -> Sq<B, B> {
     Sq(Rc::new(move |b| b))
