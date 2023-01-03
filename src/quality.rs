@@ -97,6 +97,7 @@ use crate::*;
 
 use univalence::HomEq2;
 use qubit::Qu;
+use hooo::Theory;
 
 /// Lifts equality into quality.
 pub type EqQ<A, B> = Imply<Eq<A, B>, Q<A, B>>;
@@ -590,7 +591,7 @@ pub fn aq_inv_to_sesh<A: Prop>((_, (nqu, _)): Aq<Not<A>, Not<A>>) -> Not<Aq<A, A
 }
 
 /// `theory(a == b) => eqq(a, b)`.
-pub fn theory_eq_to_eqq<A: Prop, B: Prop>(theory: hooo::Theory<Eq<A, B>>) -> EqQ<A, B> {
+pub fn theory_eq_to_eqq<A: Prop, B: Prop>(theory: Theory<Eq<A, B>>) -> EqQ<A, B> {
     Rc::new(move |eq| hooo::lift_q(eq, theory.clone()))
 }
 
