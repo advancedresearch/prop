@@ -1458,31 +1458,6 @@ pub fn theory_and<A: DProp, B: DProp>(
     })
 }
 
-/// `a ⋀ ¬(a^true) => theory(a)`.
-pub fn not_tauto_to_theory<A: Prop>(a: A, ntauto_a: Not<Tauto<A>>) -> Theory<A> {
-    Rc::new(move |uni_a| {
-        match uni_a {
-            Left(tauto_a) => ntauto_a(tauto_a),
-            Right(para_a) => para_a(a.clone())
-        }
-    })
-}
-
-/// `¬¬a ⋀ ¬(a^true) => theory(a)`.
-pub fn nn_not_tauto_to_theory<A: Prop>(nna: Not<Not<A>>, ntauto_a: Not<Tauto<A>>) -> Theory<A> {
-    and::to_de_morgan((ntauto_a, not_not_to_not_para(nna)))
-}
-
-/// `¬a ⋀ ¬(false^a) => theory(a)`.
-pub fn n_not_para_to_theory<A: Prop>(na: Not<A>, npara_a: Not<Para<A>>) -> Theory<A> {
-    Rc::new(move |uni_a| {
-        match uni_a {
-            Left(tauto_a) => na(tauto_a(True)),
-            Right(para_a) => npara_a(para_a)
-        }
-    })
-}
-
 /// `(false^a)^(a^true) ⋀ (a^true)^(false^a) => false`.
 ///
 /// This is also known as [Liar's paradox](https://en.wikipedia.org/wiki/Liar_paradox).

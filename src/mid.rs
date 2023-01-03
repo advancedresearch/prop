@@ -53,9 +53,34 @@ pub fn theory_to_mid<A: EProp>(th_a: Theory<A>) -> Mid<A> {
 /// `mid(a) => theory(a)`.
 pub fn mid_to_theory<A: Prop>(ma: Mid<A>) -> Theory<A> {
     match ma {
-        Left((nna, ntauto_a)) => nn_not_tauto_to_theory(nna, ntauto_a),
-        Right((na, npara_a)) => n_not_para_to_theory(na, npara_a),
+        Left(up) => up_to_theory(up),
+        Right(down) => down_to_theory(down),
     }
+}
+
+/// `virtual(a) => theory(a)`.
+pub fn virtual_to_theory<A: Prop>((a, ntauto_a): Virtual<A>) -> Theory<A> {
+    Rc::new(move |uni_a| {
+        match uni_a {
+            Left(tauto_a) => ntauto_a(tauto_a),
+            Right(para_a) => para_a(a.clone())
+        }
+    })
+}
+
+/// `up(a) => theory(a)`.
+pub fn up_to_theory<A: Prop>((nna, ntauto_a): Up<A>) -> Theory<A> {
+    and::to_de_morgan((ntauto_a, not_not_to_not_para(nna)))
+}
+
+/// `down(theory) => theory(a)`.
+pub fn down_to_theory<A: Prop>((na, npara_a): Down<A>) -> Theory<A> {
+    Rc::new(move |uni_a| {
+        match uni_a {
+            Left(tauto_a) => na(tauto_a(True)),
+            Right(para_a) => npara_a(para_a)
+        }
+    })
 }
 
 /// `up(a) => ¬down(a)`.
