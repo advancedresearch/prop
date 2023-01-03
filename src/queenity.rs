@@ -31,7 +31,7 @@
 //! which is precisely what Seshatic Queenity forbids.
 //!
 //! However, without proofs of symbolic distinction,
-//! there is no way to explicitly forbit the middle-queen.
+//! there is no way to explicitly forbid the middle-queen.
 //! This means that Seshatic Queenity can be transitive without problems.
 
 use crate::*;
