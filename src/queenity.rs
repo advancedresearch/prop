@@ -91,12 +91,12 @@ pub fn transitivity<A: Prop, B: Prop, C: Prop>(
     Sq(Rc::new(move |a| bc(ab(a))))
 }
 
-/// `(a ¬> b) ∧ (a = c)  =>  (c ¬> b)`.
+/// `(a ¬> b) ∧ (a == c)  =>  (c ¬> b)`.
 pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(Sq(f): Sq<A, B>, (_, g1): Eq<A, C>) -> Sq<C, B> {
     Sq(imply::transitivity(g1, f))
 }
 
-/// `(a ¬> b) ∧ (b = c)  =>  (a ¬> c)`.
+/// `(a ¬> b) ∧ (b == c)  =>  (a ¬> c)`.
 pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(Sq(f): Sq<A, B>, (g0, _): Eq<B, C>) -> Sq<A, C> {
     Sq(imply::transitivity(f, g0))
 }
