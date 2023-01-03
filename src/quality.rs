@@ -597,11 +597,11 @@ pub fn theory_eq_to_eqq<A: Prop, B: Prop>(theory: Theory<Eq<A, B>>) -> EqQ<A, B>
 
 /// `eqq(a, b) => ((a ~~ b) ⋁ ¬(a ~~ b))`.
 pub fn eqq_to_excm_q<A: DProp, B: DProp>(eqq: EqQ<A, B>) -> ExcM<Q<A, B>> {
-    eqq_to_excm_q_excm_eq(eqq, Eq::<A, B>::decide())
+    eqq_to_excm_q_with_excm_eq(eqq, Eq::<A, B>::decide())
 }
 
 /// `eqq(a, b) ⋀ ((a == b) ⋁ ¬(a == b))  =>  ((a ~~ b) ⋁ ¬(a ~~ b))`.
-pub fn eqq_to_excm_q_excm_eq<A: Prop, B: Prop>(
+pub fn eqq_to_excm_q_with_excm_eq<A: Prop, B: Prop>(
     eqq: EqQ<A, B>,
     excm_eq: ExcM<Eq<A, B>>
 ) -> ExcM<Q<A, B>> {
