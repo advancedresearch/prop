@@ -931,6 +931,11 @@ pub fn not_para_to_not_not<A: DProp>(npara_a: Not<Para<A>>) -> Not<Not<A>> {
     Rc::new(move |na| pow_not(npara_a.clone())(na))
 }
 
+/// `¬(false^a) => ¬¬a`.
+pub fn not_para_to_not_not_e<A: EProp>(npara_a: Not<Para<A>>) -> Not<Not<A>> {
+    Rc::new(move |na| pow_not_e(npara_a.clone())(na))
+}
+
 /// `¬¬a => false^(false^a)`.
 pub fn not_not_to_para_para<A: DProp>(nna: Not<Not<A>>) -> Para<Para<A>> {
     not_para_to_para_para(not_not_to_not_para(nna))
