@@ -1523,20 +1523,6 @@ pub fn not_tauto_not_para_to_theory<A: Prop>(
     npara_a: Not<Para<A>>
 ) -> Theory<A> {and::to_de_morgan((ntauto_a, npara_a))}
 
-/// `theory(a) ⋀ theory(b) => theory(a ⋀ b)`.
-pub fn theory_and<A: DProp, B: DProp>(
-    f: Theory<A>,
-    g: Theory<B>
-) -> Theory<And<A, B>> {
-    Rc::new(move |uni| match uni {
-        Left(t_ab) => f(Left(tauto_rev_and(t_ab).0)),
-        Right(p_ab) => match para_and_to_or(p_ab) {
-            Left(p_a) => f(Right(p_a)),
-            Right(p_b) => g(Right(p_b)),
-        }
-    })
-}
-
 /// `(false^a)^(a^true) ⋀ (a^true)^(false^a) => false`.
 ///
 /// This is also known as [Liar's paradox](https://en.wikipedia.org/wiki/Liar_paradox).
