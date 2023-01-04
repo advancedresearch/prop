@@ -911,6 +911,11 @@ pub fn not_para_to_para_para_with_tauto_excm<A: Prop>(
     pow_transitivity(para_to_not, pow_not_tauto_excm(npara_a, tauto_excm))
 }
 
+/// `¬(false^a) => false^(false^a)`.
+pub fn not_para_to_para_para_e<A: EProp>(npara_a: Not<Para<A>>) -> Para<Para<A>> {
+    pow_transitivity(para_to_not, pow_not_e(npara_a))
+}
+
 /// `false^(false^a) => ¬(false^a)`.
 pub fn para_para_to_not_para<A: Prop>(para_para_a: Para<Para<A>>) -> Not<Para<A>> {
     Rc::new(move |para_a| para_para_a(para_a))
