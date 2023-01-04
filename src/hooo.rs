@@ -287,6 +287,15 @@ pub fn hooo_rev_not<A: DProp, B: Prop>(x: Not<Pow<A, B>>) -> Pow<Not<A>, B> {
     }
 }
 
+/// `¬(¬¬(a)^b) => (¬a)^b`.
+pub fn hooo_e_rev_not<A: EProp, B: Prop>(x: Not<Pow<Not<Not<A>>, B>>) -> Pow<Not<A>, B> {
+    fn f<A: EProp, B: Prop>(_: B) -> E<A> {A::e()}
+    match hooo_or(f) {
+        Left(pow_nna_b) => not::absurd(x, pow_nna_b),
+        Right(pow_na_b) => pow_na_b,
+    }
+}
+
 /// `¬(a^b) ⋀ (a ⋁ ¬a)^true => (¬a)^b`.
 pub fn hooo_rev_not_excm<A: Prop, B: Prop>(
     x: Not<Pow<A, B>>,
