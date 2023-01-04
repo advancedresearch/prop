@@ -53,18 +53,48 @@ pub trait Existential: Prop {
     fn e() -> E<Self>;
 }
 
-impl<T: Decidable> Existential for T {
-    fn e() -> E<Self> {
-        match Self::decide() {
-            Left(a) => Left(not::double(a)),
-            Right(na) => Right(na),
-        }
-    }
-}
-
 /// Shorthand for existential proposition.
 pub trait EProp: Existential {}
 impl<T: Existential> EProp for T {}
+
+impl<A: EProp, B: EProp> Existential for Or<A, B> {fn e() -> E<Self> {or()}}
+impl<A: EProp, B: EProp> Existential for Imply<A, B> {fn e() -> E<Self> {imply()}}
+impl<A: DProp, B: DProp> Existential for And<A, B> {fn e() -> E<Self> {and()}}
+impl Existential for False {fn e() -> E<Self> {excm_to_e(Self::decide())}}
+impl Existential for True {fn e() -> E<Self> {excm_to_e(Self::decide())}}
+
+/// `(¬¬(a ⋁ b) ⋁ ¬(a ⋁ b))`.
+pub fn or<A: EProp, B: EProp>() -> E<Or<A, B>> {or_e(A::e(), B::e())}
+
+/// `(¬¬a ⋁ ¬a) ⋀ (¬¬b ⋁ ¬b)  =>  (¬¬(a ⋁ b) ⋁ ¬(a ⋁ b))`.
+pub fn or_e<A: Prop, B: Prop>(ea: E<A>, eb: E<B>) -> E<Or<A, B>> {
+    match (ea, eb) {
+        (Left(nna), _) => Left(Rc::new(move |nor_ab| nna(and::from_de_morgan(nor_ab).0))),
+        (_, Left(nnb)) => Left(Rc::new(move |nor_ab| nnb(and::from_de_morgan(nor_ab).1))),
+        (Right(na), Right(nb)) => Right(and::to_de_morgan((na, nb))),
+    }
+}
+
+/// `(¬¬(a => b) ⋁ ¬(a => b))`.
+pub fn imply<A: EProp, B: EProp>() -> E<Imply<A, B>> {imply_e(A::e(), B::e())}
+
+/// `(¬¬a ⋁ ¬a) ⋀ (¬¬b ⋁ ¬b)  =>  (¬¬(a => b) ⋁ ¬(a => b))`.
+pub fn imply_e<A: Prop, B: Prop>(ea: E<A>, eb: E<B>) -> E<Imply<A, B>> {
+    match (ea, eb) {
+        (_, Left(nnb)) => Left(Rc::new(move |nab|
+            nnb(Rc::new(move |b: B| nab(b.map_any())))
+        )),
+        (Left(nna), Right(nb)) => Right(Rc::new(move |ab|
+            nna(imply::modus_tollens(ab)(nb.clone()))
+        )),
+        (Right(na), _) => Left(Rc::new(move |nab|
+            imply::in_left(nab, |y| imply::from_or(y))(Left(na.clone()))
+        ))
+    }
+}
+
+/// `(¬¬(a ⋀ b) ⋁ ¬(a ⋀ b))`.
+pub fn and<A: DProp, B: DProp>() -> E<And<A, B>> {excm_to_e(And::<A, B>::decide())}
 
 /// `¬¬(¬¬x ⋁ ¬x)`.
 pub fn double_neg_e<A: Prop>() -> NN<E<A>> {
