@@ -8,7 +8,7 @@
 //!
 //! A function type `f : X -> Y` uses `Ty<F, Pow<Y, X>>` from the `hooo` module (HOOO EP).
 //!
-//! A lambda/closure type `f : X => Y` uses `Imply<X, Y>`.
+//! A lambda/closure type `f : X => Y` uses `Ty<F, Imply<X, Y>>`.
 //!
 //! ### Imaginary Inverse
 //!
