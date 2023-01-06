@@ -81,6 +81,12 @@ pub fn theory_to_up<A: EProp>(theory_a: Theory<A>) -> Up<A> {
     }), ntauto_a)
 }
 
+/// `theory(a) ⋀ (¬¬a ⋁ ¬a)^true  =>  up(a)`.
+pub fn theory_to_up_with_tauto_e<A: Prop>(theory_a: Theory<A>, x: Tauto<E<A>>) -> Up<A> {
+    let (ntauto_a, npara_a) = and::from_de_morgan(theory_a);
+    (Rc::new(move |na| pow_not_tauto_e(npara_a.clone(), x)(na)), ntauto_a)
+}
+
 /// `down(a) => theory(a)`.
 pub fn down_to_theory<A: Prop>((na, npara_a): Down<A>) -> Theory<A> {
     Rc::new(move |uni_a| {
