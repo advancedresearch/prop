@@ -42,8 +42,7 @@ impl<A: DProp, B: DProp> Decidable for Pow<A, B> {
 
 /// `a^b ⋁ ¬(a^b)`.
 pub fn decide<A: DProp, B: DProp>() -> ExcM<Pow<A, B>> {
-    fn f<A: DProp, B: Prop>(_: B) -> ExcM<A> {A::decide()}
-    match hooo_or(f) {
+    match tauto_to_or_pow() {
         Left(pow_ab) => Left(pow_ab),
         Right(pow_na_b) => {
             match para_decide::<B>() {
@@ -280,8 +279,7 @@ pub fn tauto_hooo_rev_not<A: DProp, B: Prop>(x: Tauto<Not<Pow<A, B>>>) -> Pow<No
 
 /// `¬(a^b) => (¬a)^b`.
 pub fn hooo_rev_not<A: DProp, B: Prop>(x: Not<Pow<A, B>>) -> Pow<Not<A>, B> {
-    fn f<A: DProp, B: Prop>(_: B) -> ExcM<A> {A::decide()}
-    match hooo_or(f) {
+    match tauto_to_or_pow() {
         Left(pow_ab) => not::absurd(x, pow_ab),
         Right(pow_na_b) => pow_na_b,
     }
@@ -301,7 +299,7 @@ pub fn hooo_rev_not_excm<A: Prop, B: Prop>(
     x: Not<Pow<A, B>>,
     y: Tauto<ExcM<A>>,
 ) -> Pow<Not<A>, B> {
-    match hooo_or(pow_transitivity(tr(), y)) {
+    match tauto_excm_to_or_pow(y) {
         Left(pow_ab) => not::absurd(x, pow_ab),
         Right(pow_na_b) => pow_na_b,
     }
@@ -1236,6 +1234,22 @@ pub fn tauto_excm_to_or<A: Prop>(x: Tauto<ExcM<A>>) -> Or<Tauto<A>, Tauto<Not<A>
     hooo_or(x)
 }
 
+/// `a^b ⋁ (¬a)^b`.
+pub fn tauto_to_or_pow<A: DProp, B: Prop>() -> Or<Pow<A, B>, Pow<Not<A>, B>> {
+    match tauto_to_or() {
+        Left(tauto_a) => Left(pow_transitivity(tr(), tauto_a)),
+        Right(tauto_na) => Right(pow_transitivity(tr(), tauto_na)),
+    }
+}
+
+/// `(a ⋁ ¬a)^true => (a^b ⋁ (¬a)^b)`.
+pub fn tauto_excm_to_or_pow<A: Prop, B: Prop>(x: Tauto<ExcM<A>>) -> Or<Pow<A, B>, Pow<Not<A>, B>> {
+    match tauto_excm_to_or(x) {
+        Left(tauto_a) => Left(pow_transitivity(tr(), tauto_a)),
+        Right(tauto_na) => Right(pow_transitivity(tr(), tauto_na)),
+    }
+}
+
 /// `(false^a ∧ false^b) => false^(a ⋁ b)`.
 pub fn para_to_or<A: Prop, B: Prop>(
     para_a: Para<A>,
@@ -1255,8 +1269,7 @@ pub fn para_from_or<A: Prop, B: Prop>(
 pub fn para_and_to_or<A: DProp, B: DProp>(
     x: Para<And<A, B>>
 ) -> Or<Para<A>, Para<B>> {
-    fn f<A: DProp>(_: True) -> ExcM<A> {A::decide()}
-    match (hooo_or(f), hooo_or(f)) {
+    match (tauto_to_or(), tauto_to_or()) {
         (Left(tauto_a), Left(tauto_b)) => imply::absurd()(x((tauto_a(True), tauto_b(True)))),
         (Right(tauto_na), _) => Left(tauto_not_to_para(tauto_na)),
         (_, Right(tauto_nb)) => Right(tauto_not_to_para(tauto_nb)),
@@ -1282,7 +1295,7 @@ pub fn para_and_to_or_excm<A: Prop, B: Prop>(
     excm_a: Tauto<ExcM<A>>,
     excm_b: Tauto<ExcM<B>>,
 ) -> Or<Para<A>, Para<B>> {
-    match (hooo_or(excm_a), hooo_or(excm_b)) {
+    match (tauto_excm_to_or(excm_a), tauto_excm_to_or(excm_b)) {
         (Left(tauto_a), Left(tauto_b)) => imply::absurd()(x((tauto_a(True), tauto_b(True)))),
         (Right(tauto_na), _) => Left(tauto_not_to_para(tauto_na)),
         (_, Right(tauto_nb)) => Right(tauto_not_to_para(tauto_nb)),
@@ -1509,7 +1522,7 @@ pub fn uniform_to_tauto_excm<A: Prop>(
 
 /// `(a ⋁ ¬a)^true => uniform(a)`.
 pub fn tauto_excm_to_uniform<A: Prop>(x: Tauto<ExcM<A>>) -> Uniform<A> {
-    match hooo_or(x) {
+    match tauto_excm_to_or(x) {
         Left(tauto_a) => Left(tauto_a),
         Right(tauto_na) => Right(tauto_not_to_para(tauto_na)),
     }
