@@ -204,6 +204,28 @@ pub fn pow_not_tauto_excm<A: Prop, B: Prop>(
     }
 }
 
+/// `¬(a^b) ⋀ (¬¬a ⋁ ¬a)^true  =>  a^(¬b)`.
+pub fn pow_not_tauto_e<A: Prop, B: Prop>(
+    x: Not<Pow<A, B>>,
+    tauto_e_b: Tauto<E<B>>,
+) -> Pow<A, Not<B>> {
+    fn f<A: Prop>(x: E<A>) -> E<Not<A>> {
+        match x {
+            Left(nna) => Right(nna),
+            Right(na) => Left(not::double(na))
+        }
+    }
+    match para_not_and_to_or_tauto_e(
+        and::paradox_e::<B>,
+        pow_transitivity(tauto_e_b, f),
+        tauto_e_b,
+    ) {
+        Left(para_nnb) =>
+            not::absurd(x, pow_transitivity(not::double, pow_transitivity(para_nnb, fa()))),
+        Right(para_nb) => pow_transitivity(para_nb, fa()),
+    }
+}
+
 /// `a^(¬¬b) => (¬¬a)^b`.
 pub fn pow_not_double_down<A: Prop, B: Prop>(x: Pow<A, Not<Not<B>>>) -> Pow<Not<Not<A>>, B> {
     pow_transitivity(not::double, pow_transitivity(x, not::double))
