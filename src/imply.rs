@@ -267,7 +267,15 @@ pub fn id<A: Prop>() -> Imply<A, A> {
 pub fn or_split_da<A: DProp, B: Prop, C: Prop>(
     f: Imply<A, Or<B, C>>
 ) -> Or<Imply<A, B>, Imply<A, C>> {
-    match A::decide() {
+    or_split_excm_a(f, A::decide())
+}
+
+/// `(a => (b ∨ c))  =>  (a => b) ∨ (a => c)`.
+pub fn or_split_excm_a<A: DProp, B: Prop, C: Prop>(
+    f: Imply<A, Or<B, C>>,
+    excm_a: ExcM<A>
+) -> Or<Imply<A, B>, Imply<A, C>> {
+    match excm_a {
         Left(a) => match f(a) {
             Left(b) => Left(b.map_any()),
             Right(c) => Right(c.map_any())
