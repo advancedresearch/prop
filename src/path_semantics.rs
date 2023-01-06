@@ -156,7 +156,7 @@ pub fn ty_core_to_naive<A: Prop, B: Prop, C: Prop, D: Prop>(
 pub fn assume_naive<A: Prop, B: Prop, C: Prop, D: Prop>() -> PSemNaive<A, B, C, D>
     where A: POrd<C>, B: POrd<D>
 {
-    to_naive(assume())
+    ty_core_to_naive(ty_core())
 }
 
 /// Generates naive core axiom at increased path semantical proposition level.
