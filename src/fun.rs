@@ -52,6 +52,11 @@ use nat::{Nat, S, Z};
 pub mod bool_alg;
 pub mod hott;
 
+/// `is_const(a) ⋀ is_const(b)  =>  is_const(a ⋀ b)`.
+pub fn and_is_const<A: Prop, B: Prop>(_a: IsConst<A>, _b: IsConst<B>) -> IsConst<And<A, B>> {
+    unimplemented!()
+}
+
 /// Apply 2 function arguments.
 pub type App2<F, X, Y> = App<App<F, X>, Y>;
 
