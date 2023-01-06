@@ -139,6 +139,19 @@ pub fn to_naive<A: Prop, B: Prop, C: Prop, D: Prop>(
     Rc::new(move |(f, (g, h))| p.clone()(((f, (POrdProof::new(), POrdProof::new())), (g, h))))
 }
 
+/// Converts to naive core axiom from type representation.
+pub fn ty_core_to_naive<A: Prop, B: Prop, C: Prop, D: Prop>(
+    p: PSemTy<A, B, C, D>
+) -> PSemNaive<A, B, C, D>
+    where A: POrd<C>, B: POrd<D>
+{
+    Rc::new(move |(f, (g, h))| {
+        let ty_a = (g, POrdProof::new());
+        let ty_b = (h, POrdProof::new());
+        p((ty_a, ty_b)).0(f)
+    })
+}
+
 /// Assume naive core axiom safely.
 pub fn assume_naive<A: Prop, B: Prop, C: Prop, D: Prop>() -> PSemNaive<A, B, C, D>
     where A: POrd<C>, B: POrd<D>
