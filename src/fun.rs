@@ -175,6 +175,8 @@ pub struct FId(());
 
 /// Type of Id.
 pub fn id_ty<A: Prop>() -> Ty<FId, Pow<A, A>> {unimplemented!()}
+/// `is_const(id)`.
+pub fn id_is_const() -> IsConst<FId> {unimplemented!()}
 
 /// Definition of identity function.
 pub fn id_def<A: Prop>() -> Eq<App<FId, A>, A> {unimplemented!()}
@@ -211,9 +213,10 @@ pub struct Type<N: Nat>(N);
 
 /// `type(n) : type(n+1)`.
 pub fn type_ty<N: Nat>() -> Ty<Type<N>, Type<S<N>>> {unimplemented!()}
+/// `is_const(type(n))`.
+pub fn type_is_const<N: Nat>() -> IsConst<Type<N>> {unimplemented!()}
 /// `(a -> b) : type(0)`.
 pub fn pow_ty<A: Prop, B: Prop>() -> Ty<Pow<B, A>, Type<Z>> {unimplemented!()}
-
 
 /// `(f : A -> B) ⋀ (inv(f) ~~ g) => ((f ~~ g) : ((A -> B) ~~ (B -> A)))`.
 pub fn q_inv_ty<F: Prop, G: Prop, A: Prop, B: Prop>(
@@ -240,6 +243,10 @@ pub fn tup_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
     _ty_a: Ty<A, X>,
     _ty_b: Ty<B, Y>
 ) -> Ty<Tup<A, B>, Tup<X, Y>> {unimplemented!()}
+/// `is_const(a) ⋀ is_const(b)  =>  is_const((a, b))`.
+pub fn tup_is_const<A: Prop, B: Prop>(_a: IsConst<A>, _b: IsConst<B>) -> IsConst<Tup<A, B>> {
+    unimplemented!()
+}
 
 /// Fst.
 #[derive(Copy, Clone)]
@@ -247,6 +254,8 @@ pub struct Fst(());
 
 /// Type of Fst.
 pub fn fst_ty<A: Prop, B: Prop>() -> Ty<Fst, Pow<A, Tup<A, B>>> {unimplemented!()}
+/// `is_const(fst)`.
+pub fn fst_is_const() -> IsConst<Fst> {unimplemented!()}
 /// `fst((a, b)) = a`.
 pub fn fst_def<A: Prop, B: Prop>() -> Eq<App<Fst, Tup<A, B>>, A> {unimplemented!()}
 
@@ -256,6 +265,8 @@ pub struct Snd(());
 
 /// Type of Snd.
 pub fn snd_ty<A: Prop, B: Prop>() -> Ty<Snd, Pow<B, Tup<A, B>>> {unimplemented!()}
+/// `is_const(snd)`.
+pub fn snd_is_const() -> IsConst<Snd> {unimplemented!()}
 /// `snd((a, b)) = b`.
 pub fn snd_def<A: Prop, B: Prop>() -> Eq<App<Snd, Tup<A, B>>, B> {unimplemented!()}
 
@@ -284,8 +295,8 @@ pub fn subst_tup<A: Prop, B: Prop, C: Prop, D: Prop>() ->
 pub struct IsConst<A>(A);
 
 /// `is_const(a) ⋀ is_const(b)  =>  is_const((a, b))`.
-pub fn const_tup<A: Prop, B: Prop>(_a: IsConst<A>, _b: IsConst<B>) -> IsConst<Tup<A, B>> {
-    unimplemented!()
+pub fn const_tup<A: Prop, B: Prop>(a: IsConst<A>, b: IsConst<B>) -> IsConst<Tup<A, B>> {
+    tup_is_const(a, b)
 }
 /// `is_const((a, b))  =>  is_const(a) ⋀ is_const(b)`.
 pub fn tup_const<A: Prop, B: Prop>(_x: IsConst<Tup<A, B>>) -> And<IsConst<A>, IsConst<B>> {
