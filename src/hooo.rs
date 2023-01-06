@@ -209,15 +209,9 @@ pub fn pow_not_tauto_e<A: Prop, B: Prop>(
     x: Not<Pow<A, B>>,
     tauto_e_b: Tauto<E<B>>,
 ) -> Pow<A, Not<B>> {
-    fn f<A: Prop>(x: E<A>) -> E<Not<A>> {
-        match x {
-            Left(nna) => Right(nna),
-            Right(na) => Left(not::double(na))
-        }
-    }
     match para_not_and_to_or_tauto_e(
         and::paradox_e::<B>,
-        pow_transitivity(tauto_e_b, f),
+        pow_transitivity(tauto_e_b, existence::en),
         tauto_e_b,
     ) {
         Left(para_nnb) =>
@@ -1362,12 +1356,8 @@ pub fn para_not_and_to_or_tauto_e<A: Prop, B: Prop>(
     tauto_ea: Tauto<E<A>>,
     tauto_eb: Tauto<E<B>>,
 ) -> Or<Para<Not<A>>, Para<Not<B>>> {
-    fn f<A: Prop>(x: E<A>) -> E<Not<A>> {
-        match x {
-            Left(nna) => Right(nna),
-            Right(na) => Left(not::double(na))
-        }
-    }
+    use existence::en as f;
+
     match (tauto_e_to_or(pow_transitivity(tauto_ea, f)), tauto_e_to_or(pow_transitivity(tauto_eb, f))) {
         (Left(tauto_nnna), Left(tauto_nnnb)) =>
             imply::absurd()(x((not::rev_triple(tauto_nnna(True)), not::rev_triple(tauto_nnnb(True))))),
