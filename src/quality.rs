@@ -462,16 +462,12 @@ pub fn aq_sesh_to_q_inv<A: Prop>(f: Not<Aq<A, A>>) -> Aq<Not<A>, Not<A>> {
 
 /// `(¬a ~~ ¬a) => ¬(a ~~ a)`.
 pub fn q_inv_to_sesh<A: Prop>((_, (nqu, _)): Q<Not<A>, Not<A>>) -> Not<Q<A, A>> {
-    Rc::new(move |q| {
-        qubit::inv_to_sesh(nqu.clone())(Qu::from_q(q))
-    })
+    Rc::new(move |q| qubit::inv_to_sesh(nqu.clone())(Qu::from_q(q)))
 }
 
 /// `(¬a ~¬~ ¬a) => ¬(a ~¬~ a)`.
 pub fn aq_inv_to_sesh<A: Prop>((_, (nqu, _)): Aq<Not<A>, Not<A>>) -> Not<Aq<A, A>> {
-    Rc::new(move |q| {
-        qubit::inv_to_sesh(nqu.clone())(Qu::from_aq(q))
-    })
+    Rc::new(move |q| qubit::inv_to_sesh(nqu.clone())(Qu::from_aq(q)))
 }
 
 /// `theory(a == b) => eqq(a, b)`.
