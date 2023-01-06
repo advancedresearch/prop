@@ -198,6 +198,11 @@ pub fn absurd_down<A: EProp>(x: Down<A>) -> False {
     up_to_not_down(down_to_up(x.clone()))(x)
 }
 
+/// `down(a) ⋀ (¬¬a ⋁ ¬a)^true  =>  false`.
+pub fn absurd_down_with_tauto_e<A: Prop>(x: Down<A>, y: Tauto<E<A>>) -> False {
+    up_to_not_down(down_to_up_with_tauto_e(x.clone(), y))(x)
+}
+
 /// `theory(a) => false`.
 pub fn absurd_theory<A: DProp>(x: Theory<A>) -> False {
     not_theory()(x)
