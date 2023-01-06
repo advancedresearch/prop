@@ -167,7 +167,7 @@ pub trait PurePlatonism {
     }
 
     /// Excluded middle with pure Platonism implies reflexivity.
-    fn excm_plato_refl<A: Prop>(&self, exc: ExcM<Q<A, A>>) -> Q<A, A> {
+    fn excm_refl<A: Prop>(&self, exc: ExcM<Q<A, A>>) -> Q<A, A> {
         match exc {
             Left(q) => q,
             Right(n_q) => not::absurd(self.mirror(), n_q),
@@ -175,7 +175,7 @@ pub trait PurePlatonism {
     }
 
     /// `¬(a ~~ a) ⋀ ((a == a) => ( (a ~~ a) ⋁ ¬¬(a ~~ a) ))  =>  false`.
-    fn sesh_plato_absurd<A: Prop>(
+    fn sesh_absurd<A: Prop>(
         &self,
         f: Not<Q<A, A>>,
     ) -> False {
