@@ -1249,7 +1249,7 @@ pub fn para_and_to_or<A: DProp, B: DProp>(
     }
 }
 
-/// `false^(¬a ∧ ¬b) => false^a ⋁ false^b`.
+/// `false^(¬a ∧ ¬b) => false^(¬a) ⋁ false^(¬b)`.
 pub fn para_not_and_to_or_e<A: EProp, B: EProp>(
     x: Para<And<Not<A>, Not<B>>>
 ) -> Or<Para<Not<A>>, Para<Not<B>>> {
