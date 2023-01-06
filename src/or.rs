@@ -97,3 +97,14 @@ pub fn bound_pos<A: Prop, B: Prop>(f: Or<And<A, B>, Not<A>>) -> Or<B, Not<A>> {
         Right(not_a) => Right(not_a)
     }
 }
+
+/// `¬¬a == (a ∨ ¬¬a)`.
+pub fn eq_nn<A: Prop, B: Prop>() -> Eq<Not<Not<A>>, Or<A, Not<Not<A>>>> {
+    (
+        Rc::new(move |x| Right(x)),
+        Rc::new(|x| match x {
+            Left(a) => not::double(a),
+            Right(nna) => nna,
+        }),
+    )
+}
