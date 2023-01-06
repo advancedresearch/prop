@@ -39,28 +39,17 @@ pub trait QId: 'static + Clone {
 
 /// Pure Platonism assumption.
 pub trait PurePlatonism {
-    /// `(a == b) => ((a ~~ b) | ¬¬(a ~~ b))`.
-    fn pure_platonism<A: Prop, B: Prop>(&self) -> Imply<Eq<A, B>, Or<Q<A, B>, Not<Not<Q<A, B>>>>>;
+    /// `(a == b) => ¬¬(a ~~ b)`.
+    fn pure_platonism<A: Prop, B: Prop>(&self) -> Imply<Eq<A, B>, Not<Not<Q<A, B>>>>;
 
+    /// `((a == a) => ¬¬(a ~~ a)) => ¬¬(a ~~ a)`.
+    ///
     /// Mirror with pure Platonism
-    /// `((a == a) => ( (a ~~ a) ⋁ ¬¬(a ~~ a) )) => ¬¬(a ~~ a)`.
-    fn mirror<A: Prop>(&self) -> Not<Not<Q<A, A>>> {
-        match self.pure_platonism()(eq::refl()) {
-            Left(q_aa) => not::double(q_aa),
-            Right(nn_q_aa) => nn_q_aa,
-        }
-    }
+    fn mirror<A: Prop>(&self) -> Not<Not<Q<A, A>>> {self.pure_platonism()(eq::refl())}
 
-    /// `¬(a ~~ b) ⋀ (a == b) ⋀ ((a == b) => ( (a ~~ b) ⋁ ¬¬(a ~~ b) ))  =>  false`.
-    fn absurd<A: Prop, B: Prop>(
-        &self,
-        n_q: Not<Q<A, B>>,
-        eq: Eq<A, B>,
-    ) -> False {
-        match self.pure_platonism()(eq) {
-            Left(q) => n_q(q),
-            Right(nn_q) => nn_q(n_q),
-        }
+    /// `((a == b) => ¬¬(a ~~ b)) ⋀ ¬(a ~~ b) ⋀ (a == b)  =>  false`.
+    fn absurd<A: Prop, B: Prop>(&self, n_q: Not<Q<A, B>>, eq: Eq<A, B>) -> False {
+        self.pure_platonism()(eq)(n_q)
     }
 
     /// Excluded middle with pure Platonism implies reflexivity.
@@ -71,11 +60,6 @@ pub trait PurePlatonism {
         }
     }
 
-    /// `¬(a ~~ a) ⋀ ((a == a) => ( (a ~~ a) ⋁ ¬¬(a ~~ a) ))  =>  false`.
-    fn sesh_absurd<A: Prop>(
-        &self,
-        f: Not<Q<A, A>>,
-    ) -> False {
-        self.mirror()(f)
-    }
+    /// `((a == a) => ¬¬(a ~~ a)) ⋀ ¬(a ~~ a)  =>  false`.
+    fn sesh_absurd<A: Prop>(&self, f: Not<Q<A, A>>) -> False {self.mirror()(f)}
 }
