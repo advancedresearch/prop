@@ -79,12 +79,9 @@ pub fn tauto_decide<A: DProp>() -> ExcM<Tauto<A>> {
 
 /// `¬¬(false^a) ⋁ ¬(false^a)`.
 pub fn para_decide_e<A: EProp>() -> E<Para<A>> {
-    fn g<A: EProp>(_: True) -> E<A> {A::e()}
-    match hooo_or(pow_refl) {
-        Left(pow_nna_ea) =>
-            Right(para_rev_not(tauto_not_to_para(pow_transitivity(g, pow_nna_ea)))),
-        Right(pow_na_ea) =>
-            Left(not::double(tauto_not_to_para(pow_transitivity(g, pow_na_ea)))),
+    match tauto_to_or_e() {
+        Left(tauto_nna) => Right(para_rev_not(tauto_not_to_para(tauto_nna))),
+        Right(tauto_na) => Left(not::double(tauto_not_to_para(tauto_na))),
     }
 }
 
@@ -93,6 +90,14 @@ pub fn para_decide<A: DProp>() -> ExcM<Para<A>> {
     match para_and_to_or(and::paradox) {
         Left(para_a) => Left(para_a),
         Right(para_na) => Right(para_rev_not(para_na)),
+    }
+}
+
+/// `false^a ⋁ false^(¬a)`.
+pub fn para_or_e<A: EProp>() -> Or<Para<A>, Para<Not<A>>> {
+    match tauto_to_or_e() {
+        Left(tauto_nna) => Right(tauto_not_to_para(tauto_nna)),
+        Right(tauto_na) => Left(tauto_not_to_para(tauto_na)),
     }
 }
 
@@ -287,8 +292,7 @@ pub fn hooo_rev_not<A: DProp, B: Prop>(x: Not<Pow<A, B>>) -> Pow<Not<A>, B> {
 
 /// `¬(¬¬(a)^b) => (¬a)^b`.
 pub fn hooo_e_rev_not<A: EProp, B: Prop>(x: Not<Pow<Not<Not<A>>, B>>) -> Pow<Not<A>, B> {
-    fn f<A: EProp, B: Prop>(_: B) -> E<A> {A::e()}
-    match hooo_or(f) {
+    match tauto_to_or_pow_e() {
         Left(pow_nna_b) => not::absurd(x, pow_nna_b),
         Right(pow_na_b) => pow_na_b,
     }
@@ -1234,6 +1238,17 @@ pub fn tauto_excm_to_or<A: Prop>(x: Tauto<ExcM<A>>) -> Or<Tauto<A>, Tauto<Not<A>
     hooo_or(x)
 }
 
+/// `(¬¬a)^true ⋁ (¬a)^true`.
+pub fn tauto_to_or_e<A: EProp>() -> Or<Tauto<Not<Not<A>>>, Tauto<Not<A>>> {
+    fn f<A: EProp>(_: True) -> E<A> {A::e()}
+    tauto_e_to_or(f)
+}
+
+/// `(¬¬a ⋁ ¬a)^true => ((¬¬a)^true ⋁ (¬a)^true)`.
+pub fn tauto_e_to_or<A: Prop>(x: Tauto<E<A>>) -> Or<Tauto<Not<Not<A>>>, Tauto<Not<A>>> {
+    or::symmetry(tauto_excm_to_or(pow_transitivity(x, or::symmetry)))
+}
+
 /// `a^b ⋁ (¬a)^b`.
 pub fn tauto_to_or_pow<A: DProp, B: Prop>() -> Or<Pow<A, B>, Pow<Not<A>, B>> {
     match tauto_to_or() {
@@ -1242,10 +1257,28 @@ pub fn tauto_to_or_pow<A: DProp, B: Prop>() -> Or<Pow<A, B>, Pow<Not<A>, B>> {
     }
 }
 
+/// `((¬¬a)^b ⋁ (¬a)^b)`.
+pub fn tauto_to_or_pow_e<A: EProp, B: Prop>() -> Or<Pow<Not<Not<A>>, B>, Pow<Not<A>, B>> {
+    match tauto_to_or_e() {
+        Left(tauto_nna) => Left(pow_transitivity(tr(), tauto_nna)),
+        Right(tauto_na) => Right(pow_transitivity(tr(), tauto_na)),
+    }
+}
+
 /// `(a ⋁ ¬a)^true => (a^b ⋁ (¬a)^b)`.
 pub fn tauto_excm_to_or_pow<A: Prop, B: Prop>(x: Tauto<ExcM<A>>) -> Or<Pow<A, B>, Pow<Not<A>, B>> {
     match tauto_excm_to_or(x) {
         Left(tauto_a) => Left(pow_transitivity(tr(), tauto_a)),
+        Right(tauto_na) => Right(pow_transitivity(tr(), tauto_na)),
+    }
+}
+
+/// `(¬¬a ⋁ ¬a)^true => ((¬¬a)^b ⋁ (¬a)^b)`.
+pub fn tauto_e_to_or_pow<A: Prop, B: Prop>(
+    x: Tauto<E<A>>
+) -> Or<Pow<Not<Not<A>>, B>, Pow<Not<A>, B>> {
+    match tauto_e_to_or(x) {
+        Left(tauto_nna) => Left(pow_transitivity(tr(), tauto_nna)),
         Right(tauto_na) => Right(pow_transitivity(tr(), tauto_na)),
     }
 }
@@ -1280,8 +1313,7 @@ pub fn para_and_to_or<A: DProp, B: DProp>(
 pub fn para_not_and_to_or_e<A: EProp, B: EProp>(
     x: Para<And<Not<A>, Not<B>>>
 ) -> Or<Para<Not<A>>, Para<Not<B>>> {
-    fn f<A: EProp>(_: True) -> E<A> {A::e()}
-    match (hooo_or(f), hooo_or(f)) {
+    match (tauto_to_or_e(), tauto_to_or_e()) {
         (Left(tauto_nnna), Left(tauto_nnnb)) =>
             imply::absurd()(x((not::rev_triple(tauto_nnna(True)), not::rev_triple(tauto_nnnb(True))))),
         (Right(tauto_nna), _) => Left(tauto_not_to_para(tauto_nna)),
