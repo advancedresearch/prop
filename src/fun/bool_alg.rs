@@ -14,10 +14,16 @@ pub struct Fa(());
 
 /// `bool : type(0)`.
 pub fn bool_ty() -> Ty<Bool, Type<Z>> {unimplemented!()}
+/// `is_const(bool)`.
+pub fn bool_is_const() -> IsConst<Bool> {unimplemented!()}
 /// True type.
 pub fn tr_ty() -> Ty<Tr, Bool> {unimplemented!()}
+/// `is_const(true)`.
+pub fn tr_is_const() -> IsConst<Tr> {unimplemented!()}
 /// False type.
 pub fn fa_ty() -> Ty<Fa, Bool> {unimplemented!()}
+/// `is_const(false)`.
+pub fn fa_is_const() -> IsConst<Fa> {unimplemented!()}
 /// Boolean values.
 pub fn bool_values<A: Prop>(_ty_a: Ty<A, Bool>) -> Or<Eq<A, Tr>, Eq<A, Fa>> {unimplemented!()}
 /// True and false are exclusive.
@@ -34,6 +40,8 @@ pub struct FFalse1(());
 
 /// Type of False1.
 pub fn false1_ty() -> Ty<FFalse1, Pow<Bool, Bool>> {unimplemented!()}
+/// `is_const(false1)`.
+pub fn false1_is_const() -> IsConst<FFalse1> {unimplemented!()}
 /// False1 definition.
 pub fn false1_def<A: Prop>(_: Ty<A, Bool>) -> Eq<App<FFalse1, A>, Tr> {unimplemented!()}
 
@@ -50,6 +58,8 @@ pub struct FNot(());
 
 /// Type of Not.
 pub fn not_ty() -> Ty<FNot, Pow<Bool, Bool>> {unimplemented!()}
+/// `is_const(not)`.
+pub fn not_is_const() -> IsConst<FNot> {unimplemented!()}
 /// `not(false) = true`.
 pub fn not_fa() -> Eq<App<FNot, Fa>, Tr> {unimplemented!()}
 /// `not(true) = false`.
@@ -68,6 +78,8 @@ pub struct FTrue1(());
 
 /// Type of True1.
 pub fn true1_ty() -> Ty<FTrue1, Pow<Bool, Bool>> {unimplemented!()}
+/// `is_const(true1)`.
+pub fn true1_is_const() -> IsConst<FTrue1> {unimplemented!()}
 /// True1 definition.
 pub fn true1_def<A: Prop>(_: Ty<A, Bool>) -> Eq<App<FTrue1, A>, Tr> {unimplemented!()}
 
@@ -84,6 +96,8 @@ pub struct FAnd(());
 
 /// Type of And.
 pub fn and_ty() -> Ty<FAnd, Pow<Bool, Tup<Bool, Bool>>> {unimplemented!()}
+/// `is_const(and)`.
+pub fn and_is_const() -> IsConst<FAnd> {unimplemented!()}
 /// `and(true, a) = a`.
 pub fn and_tr<A: Prop>(_ty_a: Ty<A, Bool>) -> Eq<App<FAnd, Tup<Tr, A>>, A> {unimplemented!()}
 /// `and(false, a) = false`.
@@ -103,6 +117,8 @@ pub struct FOr(());
 
 /// Type of Or.
 pub fn or_ty() -> Ty<FOr, Pow<Bool, Tup<Bool, Bool>>> {unimplemented!()}
+/// `is_const(or)`.
+pub fn or_is_const() -> IsConst<FOr> {unimplemented!()}
 /// `or(true, a) = true`.
 pub fn or_tr<A: Prop>(_ty_a: Ty<A, Bool>) -> Eq<App<FOr, Tup<Tr, A>>, Tr> {unimplemented!()}
 /// `or(false, a) = a`.
