@@ -20,7 +20,5 @@ name = "prop"
 [features]
 default = []
 pure_platonism = []
-subst_equality = []
-old_homotopy_levels = ["subst_equality"]
 avatar_extensions = []
 quantify = []

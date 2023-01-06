@@ -35,37 +35,6 @@ pub fn eq_true_ltrue<N: Nat>() -> Eq<True, LTrue<N>> {
     (LTrue(Default::default()).map_any(), True.map_any())
 }
 
-/// `true ~~ x`.
-#[cfg(feature = "old_homotopy_levels")]
-pub fn q_true<X: LProp>() -> Q<True, X> where X::N: Nat {
-    univalence::h0_q_true(ty_true())
-}
-
-/// `x ~~ x`.
-#[cfg(feature = "old_homotopy_levels")]
-pub fn true_q<X: LProp>() -> Q<X, X> where X::N: Nat {
-    univalence::h0_true_q(ty_true())
-}
-
-/// `x`.
-#[cfg(feature = "old_homotopy_levels")]
-pub fn lproof<X: LProp>() -> X where X::N: Nat {
-    let q_true_x = q_true();
-    quality::to_eq(q_true_x).0(True)
-}
-
-/// `(x ~~ x) == x`.
-#[cfg(feature = "old_homotopy_levels")]
-pub fn lim<X: LProp>() -> Eq<Q<X, X>, X> where X::N: Nat {
-    univalence::h0_lim(ty_true())
-}
-
-/// `(x ~~ x) ~~ x`.
-#[cfg(feature = "old_homotopy_levels")]
-pub fn qlim<X: LProp>() -> Q<Q<X, X>, X> where X::N: Nat {
-    univalence::h0_qlim(ty_true())
-}
-
 /// Core axiom of Path Semantics.
 pub type PSem<F1, F2, X1, X2> = Imply<
     And<And<Q<F1, F2>, And<POrdProof<F1, X1>, POrdProof<F2, X2>>>,
