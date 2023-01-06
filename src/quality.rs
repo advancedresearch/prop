@@ -144,6 +144,43 @@ pub trait QId: 'static + Clone {
 pub trait PurePlatonism {
     /// `(a == b) => ((a ~~ b) | ¬¬(a ~~ b))`.
     fn pure_platonism<A: Prop, B: Prop>(&self) -> Imply<Eq<A, B>, Or<Q<A, B>, Not<Not<Q<A, B>>>>>;
+
+    /// Mirror with pure Platonism
+    /// `((a == a) => ( (a ~~ a) ⋁ ¬¬(a ~~ a) )) => ¬¬(a ~~ a)`.
+    fn mirror<A: Prop>(&self) -> Not<Not<Q<A, A>>> {
+        match self.pure_platonism()(eq::refl()) {
+            Left(q_aa) => not::double(q_aa),
+            Right(nn_q_aa) => nn_q_aa,
+        }
+    }
+
+    /// `¬(a ~~ b) ⋀ (a == b) ⋀ ((a == b) => ( (a ~~ b) ⋁ ¬¬(a ~~ b) ))  =>  false`.
+    fn absurd<A: Prop, B: Prop>(
+        &self,
+        n_q: Not<Q<A, B>>,
+        eq: Eq<A, B>,
+    ) -> False {
+        match self.pure_platonism()(eq) {
+            Left(q) => n_q(q),
+            Right(nn_q) => nn_q(n_q),
+        }
+    }
+
+    /// Excluded middle with pure Platonism implies reflexivity.
+    fn excm_plato_refl<A: Prop>(&self, exc: ExcM<Q<A, A>>) -> Q<A, A> {
+        match exc {
+            Left(q) => q,
+            Right(n_q) => not::absurd(self.mirror(), n_q),
+        }
+    }
+
+    /// `¬(a ~~ a) ⋀ ((a == a) => ( (a ~~ a) ⋁ ¬¬(a ~~ a) ))  =>  false`.
+    fn sesh_plato_absurd<A: Prop>(
+        &self,
+        f: Not<Q<A, A>>,
+    ) -> False {
+        self.mirror()(f)
+    }
 }
 
 /// Quality definition `(a ~~ b) == ((a == b) ⋀ ~a ⋀ ~b)`.
@@ -323,43 +360,6 @@ pub fn aq_sesh_eq_neq<A: Prop, B: Prop>(eqq_ab: EqAq<A, B>) -> Eq<Not<Aq<A, B>>,
         Rc::new(move |nq_ab| aq_sesh_to_neq(nq_ab, eqq_ab.clone())),
         Rc::new(move |neq_ab| neq_to_aq_sesh(neq_ab)),
     )
-}
-
-/// Mirror with pure Platonism
-/// `((a == a) => ( (a ~~ a) ⋁ ¬¬(a ~~ a) )) => ¬¬(a ~~ a)`.
-pub fn mirror_plato<A: Prop, P: PurePlatonism>(plato_a: P) -> Not<Not<Q<A, A>>> {
-    match plato_a.pure_platonism()(eq::refl()) {
-        Left(q_aa) => not::double(q_aa),
-        Right(nn_q_aa) => nn_q_aa,
-    }
-}
-
-/// Excluded middle with pure Platonism implies reflexivity.
-pub fn excm_plato_refl<A: Prop, P: PurePlatonism>(exc: ExcM<Q<A, A>>, plato_a: P) -> Q<A, A> {
-    match exc {
-        Left(q) => q,
-        Right(n_q) => imply::absurd()(mirror_plato(plato_a)(n_q)),
-    }
-}
-
-/// `¬(a ~~ b) ⋀ (a == b) ⋀ ((a == b) => ( (a ~~ b) ⋁ ¬¬(a ~~ b) )) => c`.
-pub fn absurd_plato<A: Prop, B: Prop, C: Prop, P: PurePlatonism>(
-    n_q: Not<Q<A, B>>,
-    eq: Eq<A, B>,
-    plato_ab: P,
-) -> C {
-    match plato_ab.pure_platonism()(eq) {
-        Left(q) => not::absurd(n_q, q),
-        Right(nn_q) => not::absurd(nn_q, n_q),
-    }
-}
-
-/// `¬(a ~~ a) ⋀ ((a == a) => ( (a ~~ a) ⋁ ¬¬(a ~~ a) )) => b`.
-pub fn sesh_plato_absurd<A: Prop, B: Prop, P: PurePlatonism>(
-    f: Not<Q<A, A>>,
-    plato_a: P,
-) -> B {
-    not::absurd(mirror_plato(plato_a), f)
 }
 
 /// `(a ~~ b) ∧ hom_eq(2, a, c)  =>  (c ~~ b)`.
