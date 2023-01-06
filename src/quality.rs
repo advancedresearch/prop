@@ -406,30 +406,6 @@ pub fn sesh_absurd<A: Prop, B: Prop>(f: Not<Q<A, A>>) -> B {
     not::absurd(mirror(), f)
 }
 
-/// `(a ~~ b) ∧ (a == c)  =>  (c ~~ b)`.
-#[cfg(feature = "subst_equality")]
-pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(_: Q<A, B>, _: Eq<A, C>) -> Q<C, B> {
-    unimplemented!()
-}
-
-/// `(a ~¬~ b) ∧ (a == c)  =>  (c ~¬~ b)`.
-#[cfg(feature = "subst_equality")]
-pub fn aq_in_left_arg<A: Prop, B: Prop, C: Prop>(_: Aq<A, B>, _: Eq<A, C>) -> Aq<C, B> {
-    unimplemented!()
-}
-
-/// `(a ~~ b) ∧ (b == c)  =>  (a ~~ c)`.
-#[cfg(feature = "subst_equality")]
-pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(_: Q<A, B>, _: Eq<B, C>) -> Q<A, C> {
-    unimplemented!()
-}
-
-/// `(a ~¬~ b) ∧ (b == c)  =>  (a ~¬~ c)`.
-#[cfg(feature = "subst_equality")]
-pub fn aq_in_right_arg<A: Prop, B: Prop, C: Prop>(_: Aq<A, B>, _: Eq<B, C>) -> Aq<A, C> {
-    unimplemented!()
-}
-
 /// `(a ~~ b) ∧ hom_eq(2, a, c)  =>  (c ~~ b)`.
 pub fn hom_in_left_arg<A: Prop, B: Prop, C: Prop>(
     (eq_ab, (qa, qb)): Q<A, B>,
@@ -468,54 +444,6 @@ pub fn aq_hom_in_right_arg<A: Prop, B: Prop, C: Prop>(
     let eq2: Eq<A, C> = eq::transitivity(eq_ab, qubit::to_eq(eq_bc));
     let qc: Qu<Not<C>> = qubit::eq_to_eq_inv(eq_q).0(qb);
     (eq2, (qa, qc))
-}
-
-/// `¬(a ~~ b) ⋀ (a == c)  =>  ¬(c ~~ b)`.
-#[cfg(feature = "subst_equality")]
-pub fn sesh_in_left_arg<A: Prop, B: Prop, C: Prop>(
-    sesh_ab: Not<Q<A, B>>,
-    eq_ac: Eq<A, C>,
-) -> Not<Q<C, B>> {
-    let eq_ca = eq::symmetry(eq_ac);
-    Rc::new(move |q_cb| {
-        sesh_ab(in_left_arg(q_cb, eq_ca.clone()))
-    })
-}
-
-/// `¬(a ~¬~ b) ⋀ (a == c)  =>  ¬(c ~¬~ b)`.
-#[cfg(feature = "subst_equality")]
-pub fn aq_sesh_in_left_arg<A: Prop, B: Prop, C: Prop>(
-    sesh_ab: Not<Aq<A, B>>,
-    eq_ac: Eq<A, C>,
-) -> Not<Aq<C, B>> {
-    let eq_ca = eq::symmetry(eq_ac);
-    Rc::new(move |q_cb| {
-        sesh_ab(aq_in_left_arg(q_cb, eq_ca.clone()))
-    })
-}
-
-/// `¬(a ~~ b) ⋀ (b == c)  =>  ¬(a ~~ c)`.
-#[cfg(feature = "subst_equality")]
-pub fn sesh_in_right_arg<A: Prop, B: Prop, C: Prop>(
-    sesh_ab: Not<Q<A, B>>,
-    eq_bc: Eq<B, C>,
-) -> Not<Q<A, C>> {
-    let eq_cb = eq::symmetry(eq_bc);
-    Rc::new(move |q_ac| {
-        sesh_ab(in_right_arg(q_ac, eq_cb.clone()))
-    })
-}
-
-/// `¬(a ~¬~ b) ⋀ (b == c)  =>  ¬(a ~¬~ c)`.
-#[cfg(feature = "subst_equality")]
-pub fn aq_sesh_in_right_arg<A: Prop, B: Prop, C: Prop>(
-    sesh_ab: Not<Aq<A, B>>,
-    eq_bc: Eq<B, C>,
-) -> Not<Aq<A, C>> {
-    let eq_cb = eq::symmetry(eq_bc);
-    Rc::new(move |q_ac| {
-        sesh_ab(aq_in_right_arg(q_ac, eq_cb.clone()))
-    })
 }
 
 /// `¬(a ~~ b) ⋀ hom_eq(2, a, c)  =>  ¬(c ~~ b)`.
