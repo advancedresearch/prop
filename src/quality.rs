@@ -103,8 +103,6 @@ use hooo::Theory;
 pub type EqQ<A, B> = Imply<Eq<A, B>, Q<A, B>>;
 /// Lifts equality into aquality.
 pub type EqAq<A, B> = Imply<Eq<A, B>, Aq<A, B>>;
-/// Pure Platonism assumption.
-pub type PurePlatonism<A, B> = Imply<Eq<A, B>, Or<Q<A, B>, Not<Not<Q<A, B>>>>>;
 /// A Seshatic relation `¬(a ~~ a) ⋁ ¬(b ~~ b)`.
 pub type Seshatic<A, B> = Or<Not<Q<A, A>>, Not<Q<B, B>>>;
 
@@ -140,6 +138,12 @@ pub trait QId: 'static + Clone {
         let copy = self.clone();
         imply::modus_tollens(Rc::new(move |q_aa| copy.qid(q_aa)))(na)
     }
+}
+
+/// Pure Platonism assumption.
+pub trait PurePlatonism {
+    /// `(a == b) => ((a ~~ b) | ¬¬(a ~~ b))`.
+    fn pure_platonism<A: Prop, B: Prop>(&self) -> Imply<Eq<A, B>, Or<Q<A, B>, Not<Not<Q<A, B>>>>>;
 }
 
 /// Quality definition `(a ~~ b) == ((a == b) ⋀ ~a ⋀ ~b)`.
@@ -219,18 +223,6 @@ pub fn naq_right<A: Prop, B: Prop, C: Prop>(
 /// Equality maybe lift `(a == b) => ( (a ~~ b) ⋁ true )`.
 pub fn eq_maybe_lift<A: Prop, B: Prop>(_: Eq<A, B>) -> Or<Q<A, B>, True> {
     Right(True)
-}
-
-/// Equality lift `(a == b) => ( (a ~~ b) ⋁ ¬¬(a ~~ b) )`.
-#[cfg(feature = "pure_platonism")]
-pub fn assume_pure_platonism<A: Prop, B: Prop>() -> PurePlatonism<A, B> {
-    Rc::new(move |eq| eq_lift(eq))
-}
-
-/// Equality lift `(a == b) => ( (a ~~ b) ⋁ ¬¬(a ~~ b) )`.
-#[cfg(feature = "pure_platonism")]
-pub fn eq_lift<A: Prop, B: Prop>(_: Eq<A, B>) -> Or<Q<A, B>, Not<Not<Q<A, B>>>> {
-    unimplemented!()
 }
 
 /// Converts to equality `(a ~~ b) => (a == b)`.
@@ -335,75 +327,39 @@ pub fn aq_sesh_eq_neq<A: Prop, B: Prop>(eqq_ab: EqAq<A, B>) -> Eq<Not<Aq<A, B>>,
 
 /// Mirror with pure Platonism
 /// `((a == a) => ( (a ~~ a) ⋁ ¬¬(a ~~ a) )) => ¬¬(a ~~ a)`.
-pub fn mirror_plato<A: Prop>(plato_a: PurePlatonism<A, A>) -> Not<Not<Q<A, A>>> {
-    match plato_a(eq::refl()) {
-        Left(q_aa) => not::double(q_aa),
-        Right(nn_q_aa) => nn_q_aa,
-    }
-}
-
-/// Mirror `¬¬(a ~~ a)`.
-#[cfg(feature = "pure_platonism")]
-pub fn mirror<A: Prop>() -> Not<Not<Q<A, A>>> {
-    match eq_lift(eq::refl()) {
+pub fn mirror_plato<A: Prop, P: PurePlatonism>(plato_a: P) -> Not<Not<Q<A, A>>> {
+    match plato_a.pure_platonism()(eq::refl()) {
         Left(q_aa) => not::double(q_aa),
         Right(nn_q_aa) => nn_q_aa,
     }
 }
 
 /// Excluded middle with pure Platonism implies reflexivity.
-pub fn excm_plato_refl<A: Prop>(exc: ExcM<Q<A, A>>, plato_a: PurePlatonism<A, A>) -> Q<A, A> {
+pub fn excm_plato_refl<A: Prop, P: PurePlatonism>(exc: ExcM<Q<A, A>>, plato_a: P) -> Q<A, A> {
     match exc {
         Left(q) => q,
         Right(n_q) => imply::absurd()(mirror_plato(plato_a)(n_q)),
     }
 }
 
-/// Excluded middle implies reflexivity.
-#[cfg(feature = "pure_platonism")]
-pub fn excm_refl<A: Prop>(exc: ExcM<Q<A, A>>) -> Q<A, A> {
-    match exc {
-        Left(q) => q,
-        Right(n_q) => imply::absurd()(mirror()(n_q)),
-    }
-}
-
 /// `¬(a ~~ b) ⋀ (a == b) ⋀ ((a == b) => ( (a ~~ b) ⋁ ¬¬(a ~~ b) )) => c`.
-pub fn absurd_plato<A: Prop, B: Prop, C: Prop>(
+pub fn absurd_plato<A: Prop, B: Prop, C: Prop, P: PurePlatonism>(
     n_q: Not<Q<A, B>>,
     eq: Eq<A, B>,
-    plato_ab: PurePlatonism<A, B>,
+    plato_ab: P,
 ) -> C {
-    match plato_ab(eq) {
-        Left(q) => not::absurd(n_q, q),
-        Right(nn_q) => not::absurd(nn_q, n_q),
-    }
-}
-
-/// `¬(a ~~ b) ⋀ (a == b) => c`.
-#[cfg(feature = "pure_platonism")]
-pub fn absurd<A: Prop, B: Prop, C: Prop>(
-    n_q: Not<Q<A, B>>,
-    eq: Eq<A, B>,
-) -> C {
-    match eq_lift(eq) {
+    match plato_ab.pure_platonism()(eq) {
         Left(q) => not::absurd(n_q, q),
         Right(nn_q) => not::absurd(nn_q, n_q),
     }
 }
 
 /// `¬(a ~~ a) ⋀ ((a == a) => ( (a ~~ a) ⋁ ¬¬(a ~~ a) )) => b`.
-pub fn sesh_plato_absurd<A: Prop, B: Prop>(
+pub fn sesh_plato_absurd<A: Prop, B: Prop, P: PurePlatonism>(
     f: Not<Q<A, A>>,
-    plato_a: PurePlatonism<A, A>,
+    plato_a: P,
 ) -> B {
     not::absurd(mirror_plato(plato_a), f)
-}
-
-/// `¬(a ~~ a) => b`.
-#[cfg(feature = "pure_platonism")]
-pub fn sesh_absurd<A: Prop, B: Prop>(f: Not<Q<A, A>>) -> B {
-    not::absurd(mirror(), f)
 }
 
 /// `(a ~~ b) ∧ hom_eq(2, a, c)  =>  (c ~~ b)`.

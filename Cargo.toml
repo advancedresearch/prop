@@ -19,6 +19,5 @@ name = "prop"
 
 [features]
 default = []
-pure_platonism = []
 avatar_extensions = []
 quantify = []
