@@ -49,7 +49,7 @@ _seps: "|!:.,;<>(){}[]"
 17 fn_decl = ["fn" .w! .._seps!:"name" ?["<" .w? gen_args .w? ">"]
   "(" .w? fn_decl_args .w? ")" .w? ?["->" .w? struct_call] .w?
   ?["where " .w? .s!.(, where_expr) .w?]
-  "{" .w? exprs .w? "}"]
+  "{" .w? ?["use " ...";"? ";"] .w? exprs .w? "}"]
 
 16 impl_method = ["fn" .w! .._seps! "(" .w? .w? ")" .w? "->" .w? struct_call .w?
   "{" .w? exprs .w? "}"]
