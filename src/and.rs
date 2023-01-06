@@ -71,14 +71,6 @@ pub fn exc_both<A: Prop, B: Prop>(
     }
 }
 
-/// `(¬a ∧ ¬b)  =>  ¬(a ∨ b)`.
-pub fn to_de_morgan<A: Prop, B: Prop>((f0, f1): And<Not<A>, Not<B>>) -> Not<Or<A, B>> {
-    Rc::new(move |or_ab| match or_ab {
-        Left(a) => match f0(a) {},
-        Right(b) => match f1(b) {},
-    })
-}
-
 /// `¬(a ∨ b)  =>  (¬a ∧ ¬b)`.
 pub fn from_de_morgan<A: Prop, B: Prop>(f: Not<Or<A, B>>) -> And<Not<A>, Not<B>> {
     let f2 = f.clone();
@@ -86,6 +78,14 @@ pub fn from_de_morgan<A: Prop, B: Prop>(f: Not<Or<A, B>>) -> And<Not<A>, Not<B>>
         Rc::new(move |a| f(Left(a))),
         Rc::new(move |b| f2(Right(b))),
     )
+}
+
+/// `(¬a ∧ ¬b)  =>  ¬(a ∨ b)`.
+pub fn to_de_morgan<A: Prop, B: Prop>((f0, f1): And<Not<A>, Not<B>>) -> Not<Or<A, B>> {
+    Rc::new(move |or_ab| match or_ab {
+        Left(a) => match f0(a) {},
+        Right(b) => match f1(b) {},
+    })
 }
 
 /// `(false ∧ a)  =>  false`.
