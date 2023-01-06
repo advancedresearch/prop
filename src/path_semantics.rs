@@ -123,6 +123,13 @@ pub fn assume<A: Prop, B: Prop, C: Prop, D: Prop>() -> PSem<A, B, C, D> {
     unimplemented!()
 }
 
+/// `(f1 : x1) ⋀ (f2 : x2)  =>  (f1 ~~ f2) : (x1 ~~ x2)`.
+///
+/// Assumes the core axiom in type representation.
+pub fn ty_core<A: Prop, B: Prop, C: Prop, D: Prop>() -> PSemTy<A, B, C, D> {
+    Rc::new(move |(ty_a, ty_b)| ty_q_formation(ty_a, ty_b))
+}
+
 /// Converts to naive core axiom.
 pub fn to_naive<A: Prop, B: Prop, C: Prop, D: Prop>(
     p: PSem<A, B, C, D>
