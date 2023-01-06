@@ -201,3 +201,8 @@ pub fn absurd_down<A: EProp>(x: Down<A>) -> False {
 pub fn absurd_theory<A: DProp>(x: Theory<A>) -> False {
     not_theory()(x)
 }
+
+/// `theory(a) ⋀ (a ⋁ ¬a)^true  =>  false`.
+pub fn absurd_theory_tauto_excm<A: Prop>(x: Theory<A>, y: Tauto<ExcM<A>>) -> False {
+    tauto_excm_to_not_theory(y)(x)
+}
