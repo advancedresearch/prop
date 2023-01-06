@@ -136,6 +136,8 @@ pub type FNand = Comp<FNot, FAnd>;
 
 /// Type of Nand.
 pub fn nand_ty() -> Ty<FNand, Pow<Bool, Tup<Bool, Bool>>> {comp_ty(and_ty(), not_ty())}
+/// `is_const(nand)`.
+pub fn nand_is_const() -> IsConst<FNand> {comp_is_const(and_is_const(), not_is_const())}
 /// `nand(true, a) = not(a)`.
 pub fn nand_tr<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FNand, Tup<Tr, A>>, App<FNot, A>> {
     eq::in_left_arg(app_eq(and_tr(ty_a)), eq_app_comp())
