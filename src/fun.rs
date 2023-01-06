@@ -139,6 +139,10 @@ pub fn comp_ty<F: Prop, G: Prop, X: Prop, Y: Prop, Z: Prop>(
     _ty_f: Ty<F, Pow<Y, X>>,
     _ty_g: Ty<G, Pow<Z, Y>>
 ) -> Ty<Comp<G, F>, Pow<Z, X>> {unimplemented!()}
+/// `is_const(f) ⋀ is_const(g)  =>  is_const(g . f)`.
+pub fn comp_is_const<F: Prop, G: Prop>(_a: IsConst<F>, _b: IsConst<G>) -> IsConst<Comp<G, F>> {
+    unimplemented!()
+}
 /// `inv(g . f) => (inv(f) . inv(g))`.
 pub fn inv_comp_to_comp_inv<F: Prop, G: Prop>(_: Inv<Comp<G, F>>) -> Comp<Inv<F>, Inv<G>> {
     unimplemented!()
