@@ -123,3 +123,5 @@ impl<A, B, T> POrd<T> for Imply<A, B>
     where A: POrd<T>, B: POrd<T> {}
 impl<A, B> POrd<Qu<B>> for Qu<A>
     where A: POrd<B> {}
+
+impl<T, U> POrd<U> for T where T: LProp, U: LProp, T::N: Lt<U::N> {}

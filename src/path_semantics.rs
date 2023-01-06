@@ -135,8 +135,6 @@ impl<N: Default> Default for LTrue<N> {
     fn default() -> Self {LTrue(N::default())}
 }
 
-impl<T, U> POrd<U> for T where T: LProp, U: LProp, T::N: Lt<U::N> {}
-
 /// Shorthand for decidable proposition with path semantical level.
 pub trait DLProp: LProp + DProp {}
 impl<T: LProp + DProp> DLProp for T {}
