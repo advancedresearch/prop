@@ -271,7 +271,7 @@ pub fn or_split_da<A: DProp, B: Prop, C: Prop>(
 }
 
 /// `(a => (b ∨ c))  =>  (a => b) ∨ (a => c)`.
-pub fn or_split_excm_a<A: DProp, B: Prop, C: Prop>(
+pub fn or_split_excm_a<A: Prop, B: Prop, C: Prop>(
     f: Imply<A, Or<B, C>>,
     excm_a: ExcM<A>
 ) -> Or<Imply<A, B>, Imply<A, C>> {
