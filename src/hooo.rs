@@ -1334,6 +1334,26 @@ pub fn para_and_to_or_excm<A: Prop, B: Prop>(
     }
 }
 
+/// `false^(¬a ∧ ¬b) ⋀ (¬¬a ⋁ ¬a)^true ⋀ (¬¬b ⋁ ¬b)^true  =>  false^(¬a) ⋁ false^(¬b)`.
+pub fn para_not_and_to_or_tauto_e<A: Prop, B: Prop>(
+    x: Para<And<Not<A>, Not<B>>>,
+    tauto_ea: Tauto<E<A>>,
+    tauto_eb: Tauto<E<B>>,
+) -> Or<Para<Not<A>>, Para<Not<B>>> {
+    fn f<A: Prop>(x: E<A>) -> E<Not<A>> {
+        match x {
+            Left(nna) => Right(nna),
+            Right(na) => Left(not::double(na))
+        }
+    }
+    match (tauto_e_to_or(pow_transitivity(tauto_ea, f)), tauto_e_to_or(pow_transitivity(tauto_eb, f))) {
+        (Left(tauto_nnna), Left(tauto_nnnb)) =>
+            imply::absurd()(x((not::rev_triple(tauto_nnna(True)), not::rev_triple(tauto_nnnb(True))))),
+        (Right(tauto_nna), _) => Left(tauto_not_to_para(tauto_nna)),
+        (_, Right(tauto_nnb)) => Right(tauto_not_to_para(tauto_nnb)),
+    }
+}
+
 /// `a^true ∧ b^true => (a ∧ b)^true`.
 pub fn tauto_and<A: Prop, B: Prop>(
     tauto_a: Tauto<A>,
