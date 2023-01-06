@@ -290,7 +290,7 @@ pub fn hooo_rev_not<A: DProp, B: Prop>(x: Not<Pow<A, B>>) -> Pow<Not<A>, B> {
     }
 }
 
-/// `¬(¬¬(a)^b) => (¬a)^b`.
+/// `¬((¬¬a)^b) => (¬a)^b`.
 pub fn hooo_e_rev_not<A: EProp, B: Prop>(x: Not<Pow<Not<Not<A>>, B>>) -> Pow<Not<A>, B> {
     match tauto_to_or_pow_e() {
         Left(pow_nna_b) => not::absurd(x, pow_nna_b),
