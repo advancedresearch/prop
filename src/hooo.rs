@@ -869,6 +869,9 @@ pub fn para_not_to_para_para<A: Prop>(x: Para<Not<A>>) -> Para<Para<A>> {
     pow_transitivity(para_to_not, x)
 }
 
+/// `¬(false^a) => false^(¬a)`.
+pub fn para_not<A: EProp>(npara_a: Not<Para<A>>) -> Para<Not<A>> {pow_not_e(npara_a)}
+
 /// `false^(¬x) => ¬false^x`.
 pub fn para_rev_not<A: Prop>(para_na: Para<Not<A>>) -> Not<Para<A>> {
     Rc::new(move |para_a| para_na(Rc::new(move |a| para_a(a))))
