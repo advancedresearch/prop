@@ -96,6 +96,11 @@ pub fn down_to_up<A: EProp>(x: Down<A>) -> Up<A> {
     theory_to_up(down_to_theory(x))
 }
 
+/// `down(a) => false`.
+pub fn absurd_down<A: EProp>(x: Down<A>) -> False {
+    up_to_not_down(down_to_up(x.clone()))(x)
+}
+
 /// `up(a) => ¬down(a)`.
 pub fn up_to_not_down<A: Prop>(up: Up<A>) -> Not<Down<A>> {
     Rc::new(move |down| up.clone().0(down.0))
