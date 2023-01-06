@@ -73,6 +73,14 @@ pub type PSem<F1, F2, X1, X2> = Imply<
     Q<X1, X2>,
 >;
 
+/// `(f1 : x1) ⋀ (f2 : x2)  =>  (f1 ~~ f2) : (x1 ~~ x2)`.
+///
+/// Core axiom of Path Semantics using type representation.
+pub type PSemTy<F1, F2, X1, X2> = Imply<
+    And<Ty<F1, X1>, Ty<F2, X2>>,
+    Ty<Q<F1, F2>, Q<X1, X2>>,
+>;
+
 /// Naive axiom of Path Semantics (without order assumption).
 pub type PSemNaive<F1, F2, X1, X2> = Imply<
     And<Q<F1, F2>, And<Imply<F1, X1>, Imply<F2, X2>>>,
