@@ -163,16 +163,8 @@ pub fn up_excm<A: Prop>(up: Up<A>, excm: ExcM<A>) -> A {
     }
 }
 
-/// `down(a) => ¬a`.
-pub fn down<A: DProp>(down: Down<A>) -> Not<A> {down_excm(down, A::decide())}
-
-/// `down(a) ⋀ (a ⋁ ¬a)  =>  ¬a`.
-pub fn down_excm<A: Prop>(down: Down<A>, excm: ExcM<A>) -> Not<A> {
-    match excm {
-        Left(a) => not::absurd(down.0, a),
-        Right(na) => na,
-    }
-}
+/// `down(a)  =>  ¬a`.
+pub fn down<A: Prop>((na, _): Down<A>) -> Not<A> {na}
 
 /// `up(a) => virtual(a)`.
 pub fn up_to_virtual<A: DProp>(up: Up<A>) -> Virtual<A> {up_to_virtual_excm(up, A::decide())}
@@ -182,14 +174,9 @@ pub fn up_to_virtual_excm<A: Prop>(up: Up<A>, excm: ExcM<A>) -> Virtual<A> {
     (up_excm(up.clone(), excm), up.1)
 }
 
-/// `down(a) => virtual(¬a)`.
-pub fn down_to_virtual_not<A: DProp>(down: Down<A>) -> Virtual<Not<A>> {
-    down_to_virtual_not_excm(down, A::decide())
-}
-
-/// `down(a) ⋀ (a ⋁ ¬a)  =>  virtual(¬a)`.
-pub fn down_to_virtual_not_excm<A: Prop>(down: Down<A>, excm: ExcM<A>) -> Virtual<Not<A>> {
-    (down_excm(down.clone(), excm), imply::in_left(down.1, |x| tauto_not_to_para(x)))
+/// `down(a)  =>  virtual(¬a)`.
+pub fn down_to_virtual_not<A: Prop>(down_a: Down<A>) -> Virtual<Not<A>> {
+    (down(down_a.clone()), imply::in_left(down_a.1, |x| tauto_not_to_para(x)))
 }
 
 /// `down(a) => false`.
