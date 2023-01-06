@@ -179,6 +179,18 @@ pub fn comp_in_right_arg<F: Prop, G: Prop, H: Prop>(x: Comp<G, F>, y: Eq<F, H>) 
     Comp(x.0, y.0(x.1))
 }
 
+/// Duplicate function.
+#[derive(Clone, Copy)]
+pub struct Dup(());
+
+/// Type of Dup.
+pub fn dup_ty<A: Prop>() -> Ty<Dup, Pow<Tup<A, A>, A>> {unimplemented!()}
+/// is_const(dup).
+pub fn dup_is_const() -> IsConst<Dup> {unimplemented!()}
+
+/// Definition of Dup function.
+pub fn dup_def<A: Prop>() -> Eq<App<Dup, A>, Tup<A, A>> {unimplemented!()}
+
 /// Identity function.
 #[derive(Clone, Copy)]
 pub struct FId(());
