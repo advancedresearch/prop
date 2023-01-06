@@ -81,7 +81,7 @@ pub fn theory_to_up<A: EProp>(theory_a: Theory<A>) -> Up<A> {
     }), ntauto_a)
 }
 
-/// `down(theory) => theory(a)`.
+/// `down(a) => theory(a)`.
 pub fn down_to_theory<A: Prop>((na, npara_a): Down<A>) -> Theory<A> {
     Rc::new(move |uni_a| {
         match uni_a {
