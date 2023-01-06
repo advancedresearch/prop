@@ -96,11 +96,6 @@ pub fn down_to_up<A: EProp>(x: Down<A>) -> Up<A> {
     theory_to_up(down_to_theory(x))
 }
 
-/// `down(a) => false`.
-pub fn absurd_down<A: EProp>(x: Down<A>) -> False {
-    up_to_not_down(down_to_up(x.clone()))(x)
-}
-
 /// `up(a) => ¬down(a)`.
 pub fn up_to_not_down<A: Prop>(up: Up<A>) -> Not<Down<A>> {
     Rc::new(move |down| up.clone().0(down.0))
@@ -195,4 +190,14 @@ pub fn down_to_virtual_not<A: DProp>(down: Down<A>) -> Virtual<Not<A>> {
 /// `down(a) ⋀ (a ⋁ ¬a)  =>  virtual(¬a)`.
 pub fn down_to_virtual_not_excm<A: Prop>(down: Down<A>, excm: ExcM<A>) -> Virtual<Not<A>> {
     (down_excm(down.clone(), excm), imply::in_left(down.1, |x| tauto_not_to_para(x)))
+}
+
+/// `down(a) => false`.
+pub fn absurd_down<A: EProp>(x: Down<A>) -> False {
+    up_to_not_down(down_to_up(x.clone()))(x)
+}
+
+/// `theory(a) => false`.
+pub fn absurd_theory<A: DProp>(x: Theory<A>) -> False {
+    not_theory()(x)
 }
