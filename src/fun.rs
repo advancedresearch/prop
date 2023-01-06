@@ -338,7 +338,7 @@ pub fn subst_tup<A: Prop, B: Prop, C: Prop, D: Prop>() ->
     Eq<Subst<Tup<A, B>, C, D>, Tup<Subst<A, C, D>, Subst<B, C, D>>> {unimplemented!()}
 
 /// Whether some symbol is a constant.
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub struct IsConst<A>(A);
 
 /// `is_const(a) ⋀ is_const(b)  =>  is_const((a, b))`.
