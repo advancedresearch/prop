@@ -76,9 +76,7 @@ pub fn up_to_theory<A: Prop>((nna, ntauto_a): Up<A>) -> Theory<A> {
 /// `theory(a) => up(a)`.
 pub fn theory_to_up<A: EProp>(theory_a: Theory<A>) -> Up<A> {
     let (ntauto_a, npara_a) = and::from_de_morgan(theory_a);
-    (Rc::new(move |na| {
-        pow_not_e(npara_a.clone())(na)
-    }), ntauto_a)
+    (Rc::new(move |na| pow_not_e(npara_a.clone())(na)), ntauto_a)
 }
 
 /// `theory(a) ⋀ (¬¬a ⋁ ¬a)^true  =>  up(a)`.
