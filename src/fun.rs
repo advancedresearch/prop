@@ -43,7 +43,7 @@
 //! If a function `f` has no inverse, it is useful to prove `false^(inv(f) ~~ g)`.
 
 use crate::*;
-use path_semantics::Ty;
+use path_semantics::{POrdProof, Ty};
 use quality::Q;
 use qubit::Qu;
 use hooo::Pow;
@@ -62,6 +62,13 @@ pub fn or_is_const<A: Prop, B: Prop>(_a: IsConst<A>, _b: IsConst<B>) -> IsConst<
 }
 /// `is_const(a) ⋀ is_const(b)  =>  is_const(a => b)`.
 pub fn imply_is_const<A: Prop, B: Prop>(_a: IsConst<A>, _b: IsConst<B>) -> IsConst<Imply<A, B>> {
+    unimplemented!()
+}
+/// `is_const(a) ⋀ is_const(b)  =>  is_const(pord(a, b))`.
+pub fn pord_is_const<A: Prop, B: Prop>(
+    _a: IsConst<A>,
+    _b: IsConst<B>
+) -> IsConst<POrdProof<A, B>> {
     unimplemented!()
 }
 
