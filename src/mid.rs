@@ -152,6 +152,11 @@ pub fn mica_to_e<A: Prop>(c: MidCatuskoti<A>) -> E<A> {
     }
 }
 
+/// `(up(a) ⋀ down(a)) => false`.
+pub fn paradox<A: Prop>((up_a, down_a): And<Up<A>, Down<A>>) -> False {
+    down_to_not_up(down_a)(up_a)
+}
+
 /// `up(a) => a`.
 pub fn up<A: DProp>(up: Up<A>) -> A {up_excm(up, A::decide())}
 
