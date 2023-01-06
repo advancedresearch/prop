@@ -72,6 +72,11 @@ pub fn pord_is_const<A: Prop, B: Prop>(
     unimplemented!()
 }
 
+/// `is_const(a) ⋀ is_const(b)  =>  is_const(a : b)`.
+pub fn ty_is_const<A: Prop, B: Prop>(a: IsConst<A>, b: IsConst<B>) -> IsConst<Ty<A, B>> {
+    and_is_const(imply_is_const(a.clone(), b.clone()), pord_is_const(a, b))
+}
+
 /// Apply 2 function arguments.
 pub type App2<F, X, Y> = App<App<F, X>, Y>;
 
