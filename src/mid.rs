@@ -100,6 +100,11 @@ pub fn down_to_up<A: EProp>(x: Down<A>) -> Up<A> {
     theory_to_up(down_to_theory(x))
 }
 
+/// `down(a) ⋀ (¬¬a ⋁ ¬a)^true  =>  up(a)`.
+pub fn down_to_up_with_tauto_e<A: Prop>(x: Down<A>, y: Tauto<E<A>>) -> Up<A> {
+    theory_to_up_with_tauto_e(down_to_theory(x), y)
+}
+
 /// `up(a) => ¬down(a)`.
 pub fn up_to_not_down<A: Prop>(up: Up<A>) -> Not<Down<A>> {
     Rc::new(move |down| up.clone().0(down.0))
