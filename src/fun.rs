@@ -476,10 +476,11 @@ pub fn lam_fst_ty<A: Prop, X: Prop, B: Prop, Y: Prop>(
 }
 /// `(c : x)  =>  (\(a : x) = \(b : y) = a)(c) == (\(b : y[a := c]) = c)`.
 pub fn lam_fst<A: Prop, X: Prop, B: Prop, Y: Prop, C: Prop>(
-    _ty_c: Ty<C, X>
+    ty_c: Ty<C, X>
 ) -> Eq<App<LamFst<A, X, B, Y>, C>, Lam<Ty<B, Subst<Y, A, C>>, C>>
 {
-    unimplemented!()
+    eq::transitivity(eq::transitivity(lam(ty_c.clone()), subst_lam()),
+        subst_eq_lam_body(eq::transitivity(subst_eq(subst_trivial()), subst_id())))
 }
 
 /// `\(a : x) = \(b : y) = b`.
