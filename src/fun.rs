@@ -371,6 +371,10 @@ pub fn subst_lam<A: Prop, B: Prop, C: Prop, D: Prop, X: Prop>() ->
 /// `a[c := d] == b  =>  a[c := d][e := f] == b[e := f]`.
 pub fn subst_eq<A: Prop, B: Prop, C: Prop, D: Prop, E: Prop, F: Prop>(_x: Eq<Subst<A, C, D>, B>) ->
     Eq<Subst<Subst<A, C, D>, E, F>, Subst<B, C, D>> {unimplemented!()}
+/// `a[c := d] == b  =>  (\(e) = a[c := d]) == (\(e) = b)`.
+pub fn subst_eq_lam_body<A: Prop, B: Prop, C: Prop, D: Prop, E: Prop>(
+    _x: Eq<Subst<A, C, D>, B>
+) -> Eq<Lam<E, Subst<A, C, D>>, Lam<E, B>> {unimplemented!()}
 
 /// Whether some symbol is a constant.
 #[derive(Copy, Clone)]
