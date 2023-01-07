@@ -368,6 +368,9 @@ pub fn subst_tup<A: Prop, B: Prop, C: Prop, D: Prop>() ->
 pub fn subst_lam<A: Prop, B: Prop, C: Prop, D: Prop, X: Prop>() ->
     Eq<Subst<Lam<Ty<A, X>, B>, C, D>, Lam<Ty<A, Subst<X, C, D>>, Subst<Subst<B, C, D>, A, C>>>
 {unimplemented!()}
+/// `a[c := d] == b  =>  a[c := d][e := f] == b[e := f]`.
+pub fn subst_eq<A: Prop, B: Prop, C: Prop, D: Prop, E: Prop, F: Prop>(_x: Eq<Subst<A, C, D>, B>) ->
+    Eq<Subst<Subst<A, C, D>, E, F>, Subst<B, C, D>> {unimplemented!()}
 
 /// Whether some symbol is a constant.
 #[derive(Copy, Clone)]
