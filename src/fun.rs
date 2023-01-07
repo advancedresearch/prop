@@ -586,3 +586,11 @@ pub type SymNorm1<F, G> = Norm1<F, G, G>;
 pub type Norm2<F, G1, G2, G3> = Comp<Comp<G3, F>, App<ParTup, Tup<Inv<G1>, Inv<G2>>>>;
 /// `f[g]` of 2 arguments.
 pub type SymNorm2<F, G> = Norm2<F, G, G, G>;
+
+/// `f[g1 -> g2][g3 -> g4]  ==  f[(g3 . g1) -> (g4 . g2)]`.
+pub fn norm1_comp<F: Prop, G1: Prop, G2: Prop, G3: Prop, G4: Prop>() ->
+    Eq<Norm1<Norm1<F, G1, G2>, G3, G4>, Norm1<F, Comp<G3, G1>, Comp<G4, G2>>>
+{
+    let y = eq::transitivity(comp_eq_left(comp_assoc()), eq::symmetry(comp_assoc()));
+    eq::transitivity(eq::transitivity(y, comp_eq_right(comp_inv())), comp_eq_left(comp_assoc()))
+}
