@@ -84,6 +84,10 @@ pub type App2<F, X, Y> = App<App<F, X>, Y>;
 #[derive(Clone)]
 pub struct App<F: Prop, X: Prop>(F, X);
 
+/// `is_const(f) ⋀ is_const(x)  =>  is_const(f(x))`.
+pub fn app_is_const<F: Prop, X: Prop>(_f: IsConst<F>, _x: IsConst<X>) -> IsConst<App<F, X>> {
+    unimplemented!()
+}
 /// Indiscernibility of identicals (Leibniz's law).
 pub fn app_eq<F: Prop, X: Prop, Y: Prop>(
     _eq_xy: Eq<X, Y>
