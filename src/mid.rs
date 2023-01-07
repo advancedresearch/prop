@@ -19,11 +19,14 @@
 //! - The `down(a)` proposition is close to `false^a`
 //! - The `mid(a)` proposition is close to `theory(a)`
 //!
-//! ### Lifting existential propositions to middle exponential propositions
+//! ### Collapsing Theory to Up
 //!
-//! `theory(a) => mid(a)`
+//! ```text
+//! theory(a) == up(a)
+//! false == down(a)
+//! ```
 //!
-//! This theorem is provable when `¬¬a ⋁ ¬a` (Excluded Middle of Non-Existence).
+//! These theorems are provable when `¬¬a ⋁ ¬a` (Excluded Middle of Non-Existence).
 
 use crate::*;
 use existence::*;
