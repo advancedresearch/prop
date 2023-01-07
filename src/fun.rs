@@ -519,3 +519,32 @@ pub type DepFun<F, A, X, PredP> = Ty<F, DepFunTy<A, X, PredP>>;
 pub type DepLamTy<A, X, PredP> = Imply<Ty<A, X>, App<PredP, X>>;
 /// Dependent lambda `f : ((a : x) => p(a))`.
 pub type DepLam<F, A, X, PredP> = Ty<F, DepLamTy<A, X, PredP>>;
+
+/// Parallel tuple.
+#[derive(Copy, Clone)]
+pub struct ParTup(());
+
+/// `(f : (x1 -> y1)) ⋀ (g : (x2 -> y2))  =>  (f x g) : ((x1, x2) -> (y1, y2))`.
+pub fn par_tup_fun_ty<F: Prop, G: Prop, X1: Prop, X2: Prop, Y1: Prop, Y2: Prop>(
+    _ty_f: Ty<F, Pow<Y1, X1>>,
+    _ty_g: Ty<G, Pow<Y2, X2>>,
+) -> Ty<App<ParTup, Tup<F, G>>, Pow<Tup<Y1, Y2>, Tup<X1, X2>>> {
+    unimplemented!()
+}
+/// `is_const(par_tup)`.
+pub fn par_tup_is_const() -> IsConst<ParTup> {unimplemented!()}
+/// `is_const(f) ⋀ is_const(g)  =>  is_const(f x g)`.
+pub fn par_tup_app_is_const<F: Prop, G: Prop>(
+    f: IsConst<F>,
+    g: IsConst<G>
+) -> IsConst<App<ParTup, Tup<F, G>>> {
+    app_is_const(par_tup_is_const(), tup_is_const(f, g))
+}
+
+/// `(f : (x1 => y1)) ⋀ (g : (x2 => y2))  =>  (f x g) : ((x1, x2) => (y1, y2))`.
+pub fn par_tup_lam_ty<F: Prop, G: Prop, X1: Prop, X2: Prop, Y1: Prop, Y2: Prop>(
+    _ty_f: Ty<F, Imply<X1, Y1>>,
+    _ty_g: Ty<G, Imply<X2, Y2>>,
+) -> Ty<App<ParTup, Tup<F, G>>, Imply<Tup<X1, X2>, Tup<Y1, Y2>>> {
+    unimplemented!()
+}
