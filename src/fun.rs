@@ -553,3 +553,16 @@ pub fn par_tup_def<F: Prop, G: Prop, I0: Prop, I1: Prop, O0: Prop, O1: Prop>(
     _eq0: Eq<App<F, I0>, O0>,
     _eq1: Eq<App<G, I1>, O1>,
 ) -> Eq<App<App<ParTup, Tup<F, G>>, Tup<I0, I1>>, Tup<O0, O1>> {unimplemented!()}
+
+/// `f[g1 -> g2]`.
+///
+/// Normal path of 1 argument.
+pub type Norm1<F, G1, G2> = Comp<Comp<G2, F>, Inv<G1>>;
+/// `f[g]` of 1 argument.
+pub type SymNorm1<F, G> = Norm1<F, G, G>;
+/// `f[g1 x g2 -> g3]`.
+///
+/// Normal path of 2 arguments.
+pub type Norm2<F, G1, G2, G3> = Comp<Comp<G3, F>, App<ParTup, Tup<Inv<G1>, Inv<G2>>>>;
+/// `f[g]` of 2 arguments.
+pub type SymNorm2<F, G> = Norm2<F, G, G, G>;
