@@ -146,3 +146,26 @@ pub fn nand_tr<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FNand, Tup<Tr, A>>, App<FNo
 pub fn nand_fa<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FNand, Tup<Fa, A>>, Tr> {
     eq::transitivity(eq::in_left_arg(app_eq(and_fa(ty_a)), eq_app_comp()), not_fa())
 }
+
+/// Imply function.
+pub type FImply = Comp<FOr, App<ParTup, Tup<FNot, FId>>>;
+
+/// Type of Imply.
+pub fn imply_ty() -> Ty<FImply, Pow<Bool, Tup<Bool, Bool>>> {
+    comp_ty(par_tup_fun_ty(not_ty(), id_ty()), or_ty())
+}
+/// `is_const(imply)`.
+pub fn imply_is_const() -> IsConst<FImply> {
+    comp_is_const(par_tup_app_is_const(not_is_const(), id_is_const()), or_is_const())
+}
+
+/// `imply(true, a) = a`.
+pub fn imply_tr<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FImply, Tup<Tr, A>>, A> {
+    eq::symmetry(eq::in_left_arg(eq::in_left_arg(eq_app_comp(),
+        app_eq(par_tup_def(not_tr(), id_def()))), or_fa(ty_a)))
+}
+/// `imply(false, a) = true`.
+pub fn imply_fa<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FImply, Tup<Fa, A>>, Tr> {
+    eq::symmetry(eq::in_left_arg(eq::in_left_arg(eq_app_comp(),
+        app_eq(par_tup_def(not_fa(), id_def()))), or_tr(ty_a)))
+}
