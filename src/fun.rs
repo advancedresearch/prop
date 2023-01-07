@@ -227,11 +227,11 @@ pub fn comp_to_app<F: Prop, G: Prop, X: Prop>(_: App<Comp<G, F>, X>) -> App<G, A
 pub fn eq_app_comp<F: Prop, G: Prop, X: Prop>() -> Eq<App<G, App<F, X>>, App<Comp<G, F>, X>> {
     (Rc::new(move |x| app_to_comp(x)), Rc::new(move |x| comp_to_app(x)))
 }
-/// `(g . f) ⋀ (g == h) => (h . f)`.
+/// `(g . f) ⋀ (g == h)  =>  (h . f)`.
 pub fn comp_in_left_arg<F: Prop, G: Prop, H: Prop>(x: Comp<G, F>, y: Eq<G, H>) -> Comp<H, F> {
     Comp(y.0(x.0), x.1)
 }
-/// `(g . f) ⋀ (f == h) => (g . h)`.
+/// `(g . f) ⋀ (f == h)  =>  (g . h)`.
 pub fn comp_in_right_arg<F: Prop, G: Prop, H: Prop>(x: Comp<G, F>, y: Eq<F, H>) -> Comp<G, H> {
     Comp(x.0, y.0(x.1))
 }
