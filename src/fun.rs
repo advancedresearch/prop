@@ -634,5 +634,14 @@ pub fn eq_norm2_norm1_comp<F: Prop, G1: Prop, G2: Prop, G3: Prop, G4: Prop, G5: 
     -> Eq<Norm2<Norm2<F, G1, G2, G3>, G4, G5, G6>,
           Norm1<Norm1<F, App<ParTup, Tup<G1, G2>>, G3>, App<ParTup, Tup<G4, G5>>, G6>>
 {eq::transitivity(norm2_eq(eq_norm2_norm1()), eq_norm2_norm1())}
-
-
+/// `f[g1 x g2 -> g3][g4 x g5 -> g6]  ==  f[(g4 . g1) x (g5 . g2) -> (g6 . g3)]`.
+pub fn norm2_comp<F: Prop, G1: Prop, G2: Prop, G3: Prop, G4: Prop, G5: Prop, G6: Prop>() ->
+    Eq<Norm2<Norm2<F, G1, G2, G3>, G4, G5, G6>, Norm2<F, Comp<G4, G1>, Comp<G5, G2>, Comp<G6, G3>>>
+{
+    let (y0, y1) = eq_norm2_norm1_comp();
+    let (y2, y3) = norm1_comp();
+    let (y4, y5) = eq_norm2_norm1();
+    let (x0, x1) = norm1_eq_in(par_tup_comp());
+    (imply::transitivity(imply::transitivity(imply::transitivity(y0, y2), x0), y5),
+     imply::transitivity(imply::transitivity(imply::transitivity(y4, x1), y3), y1))
+}
