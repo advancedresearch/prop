@@ -227,6 +227,10 @@ pub fn comp_assoc<F: Prop, G: Prop, H: Prop>() -> Eq<Comp<H, Comp<G, F>>, Comp<C
     unimplemented!()
 }
 
+/// `(inv(f) . inv(g)) == inv(g . f)`.
+pub fn comp_inv<F: Prop, G: Prop>() -> Eq<Comp<Inv<F>, Inv<G>>, Inv<Comp<G, F>>> {
+    (hooo::pow_to_imply(comp_inv_to_inv_comp), hooo::pow_to_imply(inv_comp_to_comp_inv))
+}
 /// `(g . f)(x) == g(f(x))`.
 pub fn eq_app_comp<F: Prop, G: Prop, X: Prop>() -> Eq<App<G, App<F, X>>, App<Comp<G, F>, X>> {
     (Rc::new(move |x| app_to_comp(x)), Rc::new(move |x| comp_to_app(x)))
