@@ -531,6 +531,13 @@ pub fn par_tup_fun_ty<F: Prop, G: Prop, X1: Prop, X2: Prop, Y1: Prop, Y2: Prop>(
 ) -> Ty<App<ParTup, Tup<F, G>>, Pow<Tup<Y1, Y2>, Tup<X1, X2>>> {
     unimplemented!()
 }
+/// `(f : (x1 => y1)) ⋀ (g : (x2 => y2))  =>  (f x g) : ((x1, x2) => (y1, y2))`.
+pub fn par_tup_lam_ty<F: Prop, G: Prop, X1: Prop, X2: Prop, Y1: Prop, Y2: Prop>(
+    _ty_f: Ty<F, Imply<X1, Y1>>,
+    _ty_g: Ty<G, Imply<X2, Y2>>,
+) -> Ty<App<ParTup, Tup<F, G>>, Imply<Tup<X1, X2>, Tup<Y1, Y2>>> {
+    unimplemented!()
+}
 /// `is_const(par_tup)`.
 pub fn par_tup_is_const() -> IsConst<ParTup> {unimplemented!()}
 /// `is_const(f) ⋀ is_const(g)  =>  is_const(f x g)`.
@@ -546,11 +553,3 @@ pub fn par_tup_def<F: Prop, G: Prop, I0: Prop, I1: Prop, O0: Prop, O1: Prop>(
     _eq0: Eq<App<F, I0>, O0>,
     _eq1: Eq<App<G, I1>, O1>,
 ) -> Eq<App<App<ParTup, Tup<F, G>>, Tup<I0, I1>>, Tup<O0, O1>> {unimplemented!()}
-
-/// `(f : (x1 => y1)) ⋀ (g : (x2 => y2))  =>  (f x g) : ((x1, x2) => (y1, y2))`.
-pub fn par_tup_lam_ty<F: Prop, G: Prop, X1: Prop, X2: Prop, Y1: Prop, Y2: Prop>(
-    _ty_f: Ty<F, Imply<X1, Y1>>,
-    _ty_g: Ty<G, Imply<X2, Y2>>,
-) -> Ty<App<ParTup, Tup<F, G>>, Imply<Tup<X1, X2>, Tup<Y1, Y2>>> {
-    unimplemented!()
-}
