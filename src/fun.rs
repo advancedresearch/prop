@@ -611,6 +611,10 @@ pub fn sym_norm1_comp<F: Prop, G1: Prop, G2: Prop>() ->
 pub fn norm1_eq<F: Prop, G1: Prop, G2: Prop, H: Prop>(x: Eq<F, H>) ->
     Eq<Norm1<F, G1, G2>, Norm1<H, G1, G2>>
 {comp_eq_left(comp_eq_right(x))}
+/// `(f == h)  =>  f[g1 x g2 -> g3] == h[g1 x g2 -> g3]`.
+pub fn norm2_eq<F: Prop, G1: Prop, G2: Prop, G3: Prop, H: Prop>(x: Eq<F, H>) ->
+    Eq<Norm2<F, G1, G2, G3>, Norm2<H, G1, G2, G3>>
+{comp_eq_left(comp_eq_right(x))}
 /// `f[g1 x g2 -> g3]  ==  f[(g1 x g2) -> g3]`.
 pub fn eq_norm2_norm1<F: Prop, G1: Prop, G2: Prop, G3: Prop>() ->
     Eq<Norm2<F, G1, G2, G3>, Norm1<F, App<ParTup, Tup<G1, G2>>, G3>>
