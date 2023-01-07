@@ -496,6 +496,16 @@ pub fn lam_snd_ty<A: Prop, X: Prop, B: Prop, Y: Prop>(
 ) -> Ty<LamSnd<A, X, B, Y>, Imply<X, Imply<Y, Y>>> {
     lam_ty(ty_a, lam_ty(ty_b.clone(), ty_b))
 }
+/// `(c : x)  =>  (\(a : x) = \(b : y) = b)(c) == (\(b : y[a := c]) = b)`.
+pub fn lam_snd<A: Prop, B: Prop, C: Prop, X: Prop, Y: Prop>(
+    ty_c: Ty<C, X>
+) -> Eq<App<LamSnd<A, X, B, Y>, C>, Lam<Ty<B, Subst<Y, A, C>>, B>> {
+    let x2 = subst_lam();
+    let b_is_const = subst_lam_const(x2.clone());
+    eq::transitivity(lam(ty_c), eq::transitivity(x2,
+        subst_eq_lam_body(eq::transitivity(subst_eq(subst_const(b_is_const.clone())),
+            subst_const(b_is_const)))))
+}
 
 /// Dependent function type `(a : x) -> p(a)`.
 pub type DepFunTy<A, X, PredP> = Pow<App<PredP, A>, Ty<A, X>>;
