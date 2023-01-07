@@ -571,7 +571,7 @@ pub fn par_tup_app_is_const<F: Prop, G: Prop>(
 }
 /// `(g1 x g2) . (f1 x f2)  ==  ((g1 . f1) x (g2 . f2))`.
 pub fn par_tup_comp<F1: Prop, F2: Prop, G1: Prop, G2: Prop>() ->
-    Eq<Comp<App<ParTup, Tup<G1, G1>>, App<ParTup, Tup<F1, F2>>>,
+    Eq<Comp<App<ParTup, Tup<G1, G2>>, App<ParTup, Tup<F1, F2>>>,
        App<ParTup, Tup<Comp<G1, F1>, Comp<G2, F2>>>>
 {unimplemented!()}
 /// `inv(f x g)  ==  inv(f) x inv(g)`.
