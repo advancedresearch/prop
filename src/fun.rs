@@ -222,6 +222,10 @@ pub fn app_to_comp<F: Prop, G: Prop, X: Prop>(_: App<G, App<F, X>>) -> App<Comp<
 pub fn comp_to_app<F: Prop, G: Prop, X: Prop>(_: App<Comp<G, F>, X>) -> App<G, App<F, X>> {
     unimplemented!()
 }
+/// `h . (g . f)  ==  (h . g) . f`.
+pub fn comp_assoc<F: Prop, G: Prop, H: Prop>() -> Eq<Comp<H, Comp<G, F>>, Comp<Comp<H, G>, F>> {
+    unimplemented!()
+}
 
 /// `(g . f)(x) == g(f(x))`.
 pub fn eq_app_comp<F: Prop, G: Prop, X: Prop>() -> Eq<App<G, App<F, X>>, App<Comp<G, F>, X>> {
