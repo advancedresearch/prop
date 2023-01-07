@@ -619,4 +619,10 @@ pub fn norm2_eq<F: Prop, G1: Prop, G2: Prop, G3: Prop, H: Prop>(x: Eq<F, H>) ->
 pub fn eq_norm2_norm1<F: Prop, G1: Prop, G2: Prop, G3: Prop>() ->
     Eq<Norm2<F, G1, G2, G3>, Norm1<F, App<ParTup, Tup<G1, G2>>, G3>>
 {comp_eq_right(eq::symmetry(par_tup_inv()))}
+/// `f[g1 x g2 -> g3][g4 x g5 -> g6]  ==  f[(g1 x g2) -> g3][(g4 x g5) -> g6]`.
+pub fn eq_norm2_norm1_comp<F: Prop, G1: Prop, G2: Prop, G3: Prop, G4: Prop, G5: Prop, G6: Prop>()
+    -> Eq<Norm2<Norm2<F, G1, G2, G3>, G4, G5, G6>,
+          Norm1<Norm1<F, App<ParTup, Tup<G1, G2>>, G3>, App<ParTup, Tup<G4, G5>>, G6>>
+{eq::transitivity(norm2_eq(eq_norm2_norm1()), eq_norm2_norm1())}
+
 
