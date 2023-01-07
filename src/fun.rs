@@ -249,6 +249,12 @@ pub fn comp_eq_left<F: Prop, G: Prop, H: Prop>(x: Eq<F, H>) -> Eq<Comp<F, G>, Co
     (Rc::new(move |fg| comp_in_left_arg(fg, x.clone())),
      Rc::new(move |hg| comp_in_left_arg(hg, x2.clone())))
 }
+/// `(g == h)  =>  (f . g) == (f . h)`.
+pub fn comp_eq_right<F: Prop, G: Prop, H: Prop>(x: Eq<G, H>) -> Eq<Comp<F, G>, Comp<F, H>> {
+    let x2 = eq::symmetry(x.clone());
+    (Rc::new(move |fg| comp_in_right_arg(fg, x.clone())),
+     Rc::new(move |fh| comp_in_right_arg(fh, x2.clone())))
+}
 
 /// Duplicate function.
 #[derive(Clone, Copy)]
