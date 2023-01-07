@@ -572,6 +572,10 @@ pub fn par_tup_comp<F1: Prop, F2: Prop, G1: Prop, G2: Prop>() ->
     Eq<Comp<App<ParTup, Tup<G1, G1>>, App<ParTup, Tup<F1, F2>>>,
        App<ParTup, Tup<Comp<G1, F1>, Comp<G2, F2>>>>
 {unimplemented!()}
+/// `inv(f x g)  ==  inv(f) x inv(g)`.
+pub fn par_tup_inv<F: Prop, G: Prop>() ->
+    Eq<Inv<App<ParTup, Tup<F, G>>>, App<ParTup, Tup<Inv<F>, Inv<G>>>>
+{unimplemented!()}
 
 /// `(f(i0) == o0) ⋀ (g(i1) == o1)  =>  (f x g)(i0, i1) == (o0, o1)`.
 pub fn par_tup_def<F: Prop, G: Prop, I0: Prop, I1: Prop, O0: Prop, O1: Prop>(
