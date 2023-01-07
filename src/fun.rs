@@ -463,7 +463,7 @@ pub fn lam_fst_ty<A: Prop, X: Prop, B: Prop, Y: Prop>(
 ) -> Ty<LamFst<A, X, B, Y>, Imply<X, Imply<Y, X>>> {
     lam_ty(ty_a.clone(), lam_ty(ty_b, ty_a))
 }
-/// `(c : x)  =>  (\(a : x) = \(b : y) = a)(c) => (\(b : y[a := c]) = c)`.
+/// `(c : x)  =>  (\(a : x) = \(b : y) = a)(c) == (\(b : y[a := c]) = c)`.
 pub fn lam_fst<A: Prop, X: Prop, B: Prop, Y: Prop, C: Prop>(
     _ty_c: Ty<C, X>
 ) -> Eq<App<LamFst<A, X, B, Y>, C>, Lam<Ty<B, Subst<Y, A, C>>, C>>
