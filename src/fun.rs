@@ -364,6 +364,10 @@ pub fn subst_const<A: Prop, B: Prop, C: Prop>(_a_is_const: IsConst<A>) -> Eq<Sub
 /// `(a, b)[c := d] == (a[c := d], b[c := d])`.
 pub fn subst_tup<A: Prop, B: Prop, C: Prop, D: Prop>() ->
     Eq<Subst<Tup<A, B>, C, D>, Tup<Subst<A, C, D>, Subst<B, C, D>>> {unimplemented!()}
+/// `(\(a : x) = b)[a := c] == b[a := c]`.
+pub fn subst_lam<A: Prop, B: Prop, C: Prop, D: Prop, X: Prop>() ->
+    Eq<Subst<Lam<Ty<A, X>, B>, C, D>, Lam<Ty<A, Subst<X, C, D>>, Subst<Subst<B, C, D>, A, C>>>
+{unimplemented!()}
 
 /// Whether some symbol is a constant.
 #[derive(Copy, Clone)]
