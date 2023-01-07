@@ -96,14 +96,29 @@ pub fn app_map_eq<F: Prop, G: Prop, X: Prop>(
 pub fn app_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
     _ty_f: Ty<F, Pow<Y, X>>,
     _ty_a: Ty<A, X>,
+    _x_is_const: IsConst<X>,
 ) -> Ty<App<F, A>, Y> {
     unimplemented!()
 }
+/// `(f : (x => y)) ⋀ (a : x)  =>  (f(a) : y)`.
+///
 /// Get type of applied lambda.
 pub fn app_lam_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
     _ty_f: Ty<F, Imply<X, Y>>,
-    _ty_a: Ty<A, X>
+    _ty_a: Ty<A, X>,
+    _x_is_const: IsConst<X>,
 ) -> Ty<App<F, A>, Y> {
+    unimplemented!()
+}
+/// `((\(a : x) = b) : (x => y)) ⋀ (a : x) ⋀ (b : y) ⋀ (c : x)  =>  (f(a) : y[a := c])`.
+///
+/// Get type of applied lambda.
+pub fn app_dep_lam_ty<F: Prop, X: Prop, Y: Prop, A: Prop, B: Prop, C: Prop>(
+    _ty_f: Ty<Lam<Ty<A, X>, B>, Imply<X, Y>>,
+    _ty_a: Ty<A, X>,
+    _ty_b: Ty<B, Y>,
+    _ty_c: Ty<C, X>,
+) -> Ty<App<F, C>, Subst<Y, A, C>> {
     unimplemented!()
 }
 
@@ -111,17 +126,30 @@ pub fn app_lam_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
 pub fn app2_fun_ty<F: Prop, X: Prop, Y: Prop, Z: Prop, A: Prop, B: Prop>(
     ty_f: Ty<F, Pow<Pow<Z, Y>, X>>,
     ty_a: Ty<A, X>,
-    ty_b: Ty<B, Y>
+    ty_b: Ty<B, Y>,
+    x_is_const: IsConst<X>,
+    y_is_const: IsConst<Y>,
 ) -> Ty<App2<F, A, B>, Z> {
-    app_fun_ty(app_fun_ty(ty_f, ty_a), ty_b)
+    app_fun_ty(app_fun_ty(ty_f, ty_a, x_is_const), ty_b, y_is_const)
 }
 /// Get type of applied binary operator.
 pub fn app2_lam_ty<F: Prop, X: Prop, Y: Prop, Z: Prop, A: Prop, B: Prop>(
     ty_f: Ty<F, Imply<X, Imply<Y, Z>>>,
     ty_a: Ty<A, X>,
-    ty_b: Ty<B, Y>
+    ty_b: Ty<B, Y>,
+    x_is_const: IsConst<X>,
+    y_is_const: IsConst<Y>,
 ) -> Ty<App2<F, A, B>, Z> {
-    app_lam_ty(app_lam_ty(ty_f, ty_a), ty_b)
+    app_lam_ty(app_lam_ty(ty_f, ty_a, x_is_const), ty_b, y_is_const)
+}
+
+/// `(f(a) == b) ⋀ (a : x) ⋀ (b : y)  =>  (\(a : x) = f(a)) : (x => y)`.
+pub fn app_lift_ty_lam<F: Prop, A: Prop, B: Prop, X: Prop, Y: Prop>(
+    x: Eq<App<F, A>, B>,
+    ty_a: Ty<A, X>,
+    ty_b: Ty<B, Y>,
+) -> Ty<Lam<Ty<A, X>, App<F, A>>, Imply<X, Y>> {
+    lam_ty(ty_a, path_semantics::ty_in_left_arg(ty_b, eq::symmetry(x)))
 }
 
 /// Imaginary inverse.
@@ -354,9 +382,10 @@ pub fn tup_const<A: Prop, B: Prop>(_x: IsConst<Tup<A, B>>) -> And<IsConst<A>, Is
 #[derive(Copy, Clone)]
 pub struct Lam<X, Y>(X, Y);
 
-/// `((a : x) => (b : y)) => (\(a : x) = b) : (x => y)`.
+/// `(a : x) ⋀ (b : y)  =>  (\(a : x) = b) : (x => y)`.
 pub fn lam_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
-    _ty_b_ty_a: Imply<Ty<A, X>, Ty<B, Y>>
+    _ty_a: Ty<A, X>,
+    _ty_b: Ty<B, Y>,
 ) -> Ty<Lam<Ty<A, X>, B>, Imply<X, Y>> {unimplemented!()}
 /// `(a : x) ⋀ b  =>  (\(a : x) = b)`.
 pub fn lam_lift<A: Prop, B: Prop, X: Prop>(ty_a: Ty<A, X>, b: B) -> Lam<Ty<A, X>, B> {Lam(ty_a, b)}
@@ -364,18 +393,34 @@ pub fn lam_lift<A: Prop, B: Prop, X: Prop>(ty_a: Ty<A, X>, b: B) -> Lam<Ty<A, X>
 pub fn lam<A: Prop, B: Prop, X: Prop, C: Prop>(
     _ty_c: Ty<C, X>
 ) -> Eq<App<Lam<Ty<A, X>, B>, C>, Subst<B, A, C>> {unimplemented!()}
-/// `(b : y) ⋀ (c : x) => ((\(a : x) = b)(c) : y[a := c])`.
-pub fn lam_app_ty<A: Prop, B: Prop, X: Prop, Y: Prop, C: Prop>(
-    _ty_b: Ty<B, Y>, _ty_c: Ty<C, X>
-) -> Ty<App<Lam<Ty<A, X>, B>, C>, Subst<Y, A, C>> {
-    unimplemented!()
-}
 
-/// `(b : x) => ((\(a : x) = b)(b) : x)`.
+/// `(a : x) ⋀ (b : y) ⋀ (c : x) ⋀ is_const(x)  =>  ((\(a : x) = b)(c) : y)`.
+pub fn lam_app_ty<A: Prop, B: Prop, X: Prop, Y: Prop, C: Prop>(
+    ty_a: Ty<A, X>,
+    ty_b: Ty<B, Y>,
+    ty_c: Ty<C, X>,
+    x_is_const: IsConst<X>
+) -> Ty<App<Lam<Ty<A, X>, B>, C>, Y> {
+    let ty_lam: Ty<Lam<Ty<A, X>, B>, Imply<X, Y>> = lam_ty(ty_a, ty_b);
+    let app_lam_ty: Ty<App<_, _>, Y> = app_lam_ty(ty_lam, ty_c, x_is_const);
+    app_lam_ty
+}
+/// `(a : x) ⋀ (b : y) ⋀ (c : x)  =>  ((\(a : x) = b)(c) : y[a := c])`.
+pub fn lam_dep_app_ty<A: Prop, B: Prop, X: Prop, Y: Prop, C: Prop>(
+    ty_a: Ty<A, X>,
+    ty_b: Ty<B, Y>,
+    ty_c: Ty<C, X>,
+) -> Ty<App<Lam<Ty<A, X>, B>, C>, Subst<Y, A, C>> {
+    let ty_lam: Ty<Lam<Ty<A, X>, B>, Imply<X, Y>> = lam_ty(ty_a.clone(), ty_b.clone());
+    let app_lam_ty: Ty<App<_, _>, Subst<Y, A, C>> = app_dep_lam_ty(ty_lam, ty_a, ty_b, ty_c);
+    app_lam_ty
+}
+/// `(a : x) ⋀ (b : x)  =>  (\(a : x) = b)(b) : x`.
 pub fn lam_app_ty_trivial<A: Prop, B: Prop, X: Prop>(
-    ty_b: Ty<B, X>
+    ty_a: Ty<A, X>,
+    ty_b: Ty<B, X>,
 ) -> Ty<App<Lam<Ty<A, X>, B>, B>, X> {
-    let y = lam_app_ty(ty_b.clone(), ty_b.clone());
+    let y = lam_dep_app_ty(ty_a, ty_b.clone(), ty_b.clone());
     path_semantics::ty_in_right_arg(y, subst_ty(ty_b))
 }
 /// `(b : x) => ((\(a : x) = b)(b) == b`.
@@ -390,13 +435,18 @@ pub type LamId<A, X> = Lam<Ty<A, X>, A>;
 
 /// `(\(a : x) = a) ~~ id`.
 pub fn lam_id_q<A: Prop, X: Prop>() -> Q<LamId<A, X>, FId> {unimplemented!()}
-/// `(\(a : x) = a) : (x => x)`.
-pub fn lam_id_ty<A: Prop, X: Prop>() -> Ty<LamId<A, X>, Imply<X, X>> {
-    lam_ty(imply::id())
+
+/// `(a : x)  =>  (\(a : x) = a) : (x => x)`.
+pub fn lam_id_ty<A: Prop, X: Prop>(ty_a: Ty<A, X>) -> Ty<LamId<A, X>, Imply<X, X>> {
+    lam_ty(ty_a.clone(), ty_a)
 }
-/// `(b : x) => ((\(a : x) = a)(b) : x)`.
-pub fn lam_id_app_ty<A: Prop, B: Prop, X: Prop>(ty_b: Ty<B, X>) -> Ty<App<LamId<A, X>, B>, X> {
-    app_lam_ty(lam_id_ty(), ty_b)
+/// `(a : x) ⋀ (b : x)  =>  (\(a : x) = a)(b) : x`.
+pub fn lam_id_app_ty<A: Prop, B: Prop, X: Prop>(
+    ty_a: Ty<A, X>,
+    ty_b: Ty<B, X>,
+    x_is_const: IsConst<X>
+) -> Ty<App<LamId<A, X>, B>, X> {
+    app_lam_ty(lam_id_ty(ty_a), ty_b, x_is_const)
 }
 /// `(\(a : x) = a)(b) = b`.
 pub fn lam_id<A: Prop, B: Prop, X: Prop>() -> Eq<App<LamId<A, X>, B>, B> {
@@ -407,10 +457,11 @@ pub fn lam_id<A: Prop, B: Prop, X: Prop>() -> Eq<App<LamId<A, X>, B>, B> {
 pub type LamFst<A, X, B, Y> = Lam<Ty<A, X>, Lam<Ty<B, Y>, A>>;
 
 /// `(\(a : x) = \(b : y) = a) : x`
-pub fn lam_fst_ty<A: Prop, X: Prop, B: Prop, Y: Prop>() ->
-    Ty<LamFst<A, X, B, Y>, Imply<X, Imply<Y, X>>>
-{
-    lam_ty(Rc::new(|x| lam_ty(x.map_any())))
+pub fn lam_fst_ty<A: Prop, X: Prop, B: Prop, Y: Prop>(
+    ty_a: Ty<A, X>,
+    ty_b: Ty<B, Y>,
+) -> Ty<LamFst<A, X, B, Y>, Imply<X, Imply<Y, X>>> {
+    lam_ty(ty_a.clone(), lam_ty(ty_b, ty_a))
 }
 /// `(c : x)  =>  (\(a : x) = \(b : y) = a)(c) => (\(b : y[a := c]) = c)`.
 pub fn lam_fst<A: Prop, X: Prop, B: Prop, Y: Prop, C: Prop>(
