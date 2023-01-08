@@ -98,6 +98,10 @@ pub fn qu_inv_tauto_eq_to_qu_inv<F: Prop, G: Prop>(
 pub fn inv_double_val<F: Prop, X: Prop>() -> Eq<App<Inv<Inv<F>>, X>, App<F, X>> {
     app_map_eq(hooo::pow_eq_to_tauto_eq((inv_involve, involve_inv))(True))
 }
+/// `f ~~ g  =>  inv(f) ~~ inv(g)`.
+pub fn q_inv<F: Prop, G: Prop>((eq_fg, (qu_f, qu_g)): Q<F, G>) -> Q<Inv<F>, Inv<G>> {
+    (inv_eq(eq_fg), (inv_qu(qu_f), inv_qu(qu_g)))
+}
 
 /// Apply 2 function arguments.
 pub type App2<F, X, Y> = App<App<F, X>, Y>;
