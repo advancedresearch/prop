@@ -580,15 +580,10 @@ pub fn tauto_hooo_dual_rev_nrimply<A: DProp, B: DProp, C: Prop>(
         nba: Not<Imply<B, A>>
     ) -> Imply<Imply<Pow<C, A>, Pow<C, B>>, C> {
         Rc::new(move |x| {
-            let y: Not<Or<Not<B>, A>> = imply::in_left(nba.clone(), |y| imply::from_or(y));
-            let (nnb, na): And<Not<Not<B>>, Not<A>> = and::from_de_morgan(y);
-            let npara_na: Not<Para<Not<A>>> = not_not_to_not_para(not::double(na));
-            let nnpara_a: Not<Not<Para<A>>> = imply::in_left(npara_na, |y| pow_not(y));
-            let para_a = not::rev_double(nnpara_a);
-            let pow_ca: Pow<C, A> = pow_transitivity(para_a, fa());
-            let pow_cb: Pow<C, B> = x(pow_ca);
-            let b = not::rev_double(nnb);
-            pow_cb(b)
+            let y = imply::in_left(nba.clone(), |y| imply::from_or(y));
+            let (nnb, na) = and::from_de_morgan(y);
+            let nnpara_a = imply::in_left(not_not_to_not_para(not::double(na)), |y| pow_not(y));
+            x(pow_transitivity(not::rev_double(nnpara_a), fa()))(not::rev_double(nnb))
         })
     }
     hooo_imply(f)(pow_to_imply_lift(tauto_imply_to_pow(x)))
