@@ -421,9 +421,7 @@ pub fn tauto_hooo_eq<A: Prop, B: Prop, C: Prop>(
 /// This is only valid for decidable propositions.
 pub fn tauto_hooo_rev_eq<A: DProp, B: DProp, C: DProp>(
     x: Tauto<Eq<Pow<A, C>, Pow<B, C>>>
-) -> Pow<Eq<A, B>, C> {
-    hooo_imply(pow_to_imply_lift(hooo_rev_eq))(x)(True)
-}
+) -> Pow<Eq<A, B>, C> {x.tapp(hooo_rev_eq)(True)}
 
 /// `(a == b)^c => (a^c == b^c)`.
 pub fn hooo_eq<A: Prop, B: Prop, C: Prop>(x: Pow<Eq<A, B>, C>) -> Eq<Pow<A, C>, Pow<B, C>> {
