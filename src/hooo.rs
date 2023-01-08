@@ -1005,9 +1005,7 @@ pub fn tauto_or<A: Prop, B: Prop>(or_ab: Or<Tauto<A>, Tauto<B>>) -> Tauto<Or<A, 
 }
 
 /// `(a ⋁ b)^true => (a^true ⋁ b^true)`.
-pub fn tauto_rev_or<A: Prop, B: Prop>(x: Tauto<Or<A, B>>) -> Or<Tauto<A>, Tauto<B>> {
-    hooo_or(x)
-}
+pub fn tauto_rev_or<A: Prop, B: Prop>(x: Tauto<Or<A, B>>) -> Or<Tauto<A>, Tauto<B>> {hooo_or(x)}
 
 /// `a^true ⋁ (¬a)^true`.
 pub fn tauto_to_or<A: DProp>() -> Or<Tauto<A>, Tauto<Not<A>>> {
