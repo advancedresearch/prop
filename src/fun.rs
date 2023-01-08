@@ -46,7 +46,7 @@ use crate::*;
 use path_semantics::{POrdProof, Ty};
 use quality::Q;
 use qubit::Qu;
-use hooo::Pow;
+use hooo::{Pow, Tauto};
 use nat::{Nat, S, Z};
 
 pub mod bool_alg;
@@ -75,6 +75,11 @@ pub fn pord_is_const<A: Prop, B: Prop>(
 /// `is_const(a) ⋀ is_const(b)  =>  is_const(a : b)`.
 pub fn ty_is_const<A: Prop, B: Prop>(a: IsConst<A>, b: IsConst<B>) -> IsConst<Ty<A, B>> {
     and_is_const(imply_is_const(a.clone(), b.clone()), pord_is_const(a, b))
+}
+
+/// `~f ⋀ (f == g)^true  =>  f ~~ g`.
+pub fn qu_tauto_eq_to_q<F: Prop, G: Prop>(x: Qu<F>, tauto_eq: Tauto<Eq<F, G>>) -> Q<F, G> {
+    (tauto_eq(True), (x.clone(), hooo::qu_in_arg(x, tauto_eq)))
 }
 
 /// Apply 2 function arguments.
