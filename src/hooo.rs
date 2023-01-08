@@ -938,15 +938,10 @@ pub fn para_uniform_to_eq_tauto_para<A: Prop>(x: Para<Uniform<A>>) -> Eq<Tauto<A
 }
 
 /// `(false^a ∧ (a == b)^true) => false^b`.
-pub fn para_in_arg<A: Prop, B: Prop>(
-    para_a: Para<A>,
-    tauto_eq_a_b: Tauto<Eq<A, B>>
-) -> Para<B> {
+pub fn para_in_arg<A: Prop, B: Prop>(para_a: Para<A>, tauto_eq_a_b: Tauto<Eq<A, B>>) -> Para<B> {
     let y0 = para_to_tauto_excm(para_a);
     let y1 = para_to_tauto_excm_transitivity(para_a.clone(), tauto_eq_a_b.clone());
-    let eq = hooo_eq(tauto_eq_a_b);
-    let eq2 = eq_tauto_to_eq_para_excm(eq, y0, y1);
-    eq2.0(para_a)
+    eq_tauto_to_eq_para_excm(hooo_eq(tauto_eq_a_b), y0, y1).0(para_a)
 }
 
 /// `false^a ∧ (a == b)^true => (b ⋁ ¬b)^true`.
