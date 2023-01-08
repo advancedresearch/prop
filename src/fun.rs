@@ -645,7 +645,7 @@ pub fn norm1_comp<F: Prop, G1: Prop, G2: Prop, G3: Prop, G4: Prop>() ->
     let y = eq::transitivity(comp_eq_left(comp_assoc()), eq::symmetry(comp_assoc()));
     eq::transitivity(eq::transitivity(y, comp_eq_right(comp_inv())), comp_eq_left(comp_assoc()))
 }
-/// `f[g1][g2]  ==  f[g2 . g1]`.
+/// `f[g1][g2]  ==  f[g2 . g1]` for 1 argument.
 pub fn sym_norm1_comp<F: Prop, G1: Prop, G2: Prop>() ->
     Eq<SymNorm1<SymNorm1<F, G1>, G2>, SymNorm1<F, Comp<G2, G1>>>
 {norm1_comp()}
@@ -685,3 +685,7 @@ pub fn norm2_comp<F: Prop, G1: Prop, G2: Prop, G3: Prop, G4: Prop, G5: Prop, G6:
     (imply::transitivity(imply::transitivity(imply::transitivity(y0, y2), x0), y5),
      imply::transitivity(imply::transitivity(imply::transitivity(y4, x1), y3), y1))
 }
+/// `f[g1][g2]  ==  f[g2 . g1]` for 2 arguments.
+pub fn sym_norm2_comp<F: Prop, G1: Prop, G2: Prop>() ->
+    Eq<SymNorm2<SymNorm2<F, G1>, G2>, SymNorm2<F, Comp<G2, G1>>>
+{norm2_comp()}
