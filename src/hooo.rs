@@ -435,15 +435,10 @@ pub fn hooo_rev_eq<A: DProp, B: DProp, C: DProp>(x: Eq<Pow<A, C>, Pow<B, C>>) ->
     match Pow::<Eq<A, B>, C>::decide() {
         Left(y) => y,
         Right(ny) => {
-            let y = hooo_rev_not(ny);
-            let y = pow_transitivity(y, eq::neq_to_eq_not);
-            let y = hooo_eq(y);
+            let y = hooo_eq(pow_transitivity(hooo_rev_not(ny), eq::neq_to_eq_not));
             let y = eq::transitivity(eq::symmetry(x), y);
             let y = match decide::<B, C>() {
-                Left(pow_bc) => {
-                    let pow_nb_c = y.0(pow_bc);
-                    hooo_rev_and((pow_bc, pow_nb_c))
-                }
+                Left(pow_bc) => hooo_rev_and((pow_bc, y.0(pow_bc))),
                 Right(npow_bc) => {
                     let pow_nb_c = hooo_rev_not(npow_bc);
                     let pow_bc = y.1(pow_nb_c);
