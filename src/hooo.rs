@@ -980,10 +980,7 @@ pub fn eq_not_para_to_eq_para<A: DProp, B: DProp>(
 }
 
 /// `(x == x)^true`.
-pub fn eq_refl<A: Prop>() -> Tauto<Eq<A, A>> {
-    fn f<A: Prop>(_: True) -> Eq<A, A> {eq::refl()}
-    f::<A>
-}
+pub fn eq_refl<A: Prop>() -> Tauto<Eq<A, A>> {tauto!(eq::refl())}
 
 /// `(x == y)^true => (y == x)^true`.
 pub fn tauto_eq_symmetry<A: Prop, B: Prop>(x: Tauto<Eq<A, B>>) -> Tauto<Eq<B, A>> {
