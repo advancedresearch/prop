@@ -268,6 +268,8 @@ pub fn comp_to_app<F: Prop, G: Prop, X: Prop>(_: App<Comp<G, F>, X>) -> App<G, A
 pub fn comp_assoc<F: Prop, G: Prop, H: Prop>() -> Eq<Comp<H, Comp<G, F>>, Comp<Comp<H, G>, F>> {
     unimplemented!()
 }
+/// `id . f  ==  f`.
+pub fn comp_id_left<F: Prop>() -> Eq<Comp<FId, F>, F> {unimplemented!()}
 
 /// `(inv(f) . inv(g)) == inv(g . f)`.
 pub fn comp_inv<F: Prop, G: Prop>() -> Eq<Comp<Inv<F>, Inv<G>>, Inv<Comp<G, F>>> {
