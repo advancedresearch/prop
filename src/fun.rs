@@ -706,3 +706,7 @@ pub fn sym_norm2_id<F: Prop>() -> Eq<SymNorm2<F, FId>, F> {
     eq::transitivity(eq::transitivity(eq_norm2_norm1(),
         comp_eq_right(inv_eq(par_tup_id()))), sym_norm1_id())
 }
+/// `id[f -> id] == inv(f)`.
+pub fn norm1_inv<F: Prop>() -> Eq<Norm1<FId, F, FId>, Inv<F>> {
+    eq::transitivity(comp_eq_left(comp_id_left()), comp_id_left())
+}
