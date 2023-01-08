@@ -1363,9 +1363,7 @@ pub fn tauto_modus_ponens<A: Prop, B: Prop>(ab: Tauto<Imply<A, B>>, a: Tauto<A>)
 }
 
 /// `uniform(a == a)`.
-pub fn uniform_refl<A: Prop>() -> Uniform<Eq<A, A>> {
-    Left(eq_refl())
-}
+pub fn uniform_refl<A: Prop>() -> Uniform<Eq<A, A>> {Left(eq_refl())}
 
 /// `uniform(a == b) => uniform(b == a)`.
 pub fn uniform_symmetry<A: Prop, B: Prop>(
