@@ -841,7 +841,7 @@ pub fn eq_refl<A: Prop>() -> Tauto<Eq<A, A>> {tauto!(eq::refl())}
 
 /// `(x == y)^true => (y == x)^true`.
 pub fn tauto_eq_symmetry<A: Prop, B: Prop>(x: Tauto<Eq<A, B>>) -> Tauto<Eq<B, A>> {
-    hooo_imply(pow_to_imply_lift(eq::symmetry))(x)
+    x.tapp(eq::symmetry)
 }
 
 /// `false^(x == y) => false^(y == x)`.
