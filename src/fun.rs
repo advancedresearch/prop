@@ -740,6 +740,12 @@ pub fn fun_ext_ty<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>() ->
 pub fn fun_ext_refl_ty<F: Prop, X: Prop, Y: Prop, A: Prop>() -> FunExtTy<F, F, X, Y, A> {
     fun_ext_ty().0(eq::refl())
 }
+/// `fun_ext_ty(f, g) => fun_ext_ty(g, f)`.
+pub fn fun_ext_symmetry_ty<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>(
+    x: FunExtTy<F, G, X, Y, A>
+) -> FunExtTy<G, F, X, Y, A> {
+    fun_ext_ty().0(eq::symmetry(fun_ext_ty().1(x)))
+}
 /// `p : (((f, f, a) : (x -> y, x -> y, x)) -> (\(a : x) = (f(a) == f(a)))(a))`.
 pub fn fun_ext_refl<F: Prop, X: Prop, Y: Prop, A: Prop, P: LProp>() -> FunExt<P, F, F, X, Y, A>
     where P::N: Nat
