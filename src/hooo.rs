@@ -489,12 +489,8 @@ pub fn tauto_hooo_dual_neq<A: DProp, B: DProp, C: DProp>(
     match Tauto::<Eq<Pow<C, A>, Pow<C, B>>>::decide() {
         Left(y) => y,
         Right(ny) => {
-            let f: Imply<Tauto<Eq<A, B>>, Tauto<Eq<Pow<C, A>, Pow<C, B>>>> =
-                Rc::new(move |x| hooo_imply(pow_to_imply_lift(f))(pow_lift(x)));
-            let y: Not<Tauto<Eq<A, B>>> = imply::modus_tollens(f)(ny);
-            let y: Tauto<Not<Eq<A, B>>> = hooo_rev_not(y);
-            let y: Tauto<C> = pow_transitivity(y, x);
-            hooo_imply(pow_to_imply_lift(g))(pow_lift(y))
+            let f = Rc::new(move |x| pow_lift(x).tapp(f));
+            pow_lift(pow_transitivity(hooo_rev_not(imply::modus_tollens(f)(ny)), x)).tapp(g)
         }
     }
 }
