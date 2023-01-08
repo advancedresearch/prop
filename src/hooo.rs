@@ -453,9 +453,7 @@ pub fn hooo_rev_eq<A: DProp, B: DProp, C: DProp>(x: Eq<Pow<A, C>, Pow<B, C>>) ->
 /// `(¬(c^a == c^b))^true => c^(a == b)`.
 pub fn tauto_hooo_dual_rev_eq<A: DProp, B: DProp, C: DProp>(
     x: Tauto<Not<Eq<Pow<C, A>, Pow<C, B>>>>
-) -> Pow<C, Eq<A, B>> {
-    hooo_dual_rev_eq(x(True))
-}
+) -> Pow<C, Eq<A, B>> {x.tapp(hooo_dual_rev_eq)(True)}
 
 /// `¬(c^a == c^b) => c^(a == b)`.
 pub fn hooo_dual_rev_eq<A: DProp, B: DProp, C: DProp>(
