@@ -282,13 +282,10 @@ pub fn para_to_tauto_excm<A: Prop>(x: Para<A>) -> Tauto<ExcM<A>> {
 
 /// `(a ⋁ ¬a)^true => (¬a ⋁ ¬¬a)^true`.
 pub fn tauto_excm_to_tauto_excm_not<A: Prop>(x: Tauto<ExcM<A>>) -> Tauto<ExcM<Not<A>>> {
-    fn f<A: Prop>(_: True) -> Imply<ExcM<A>, ExcM<Not<A>>> {
-        Rc::new(move |x| match x {
-            Left(a) => Right(not::double(a)),
-            Right(na) => Left(na),
-        })
-    }
-    hooo_imply(f)(x)
+    hooo_imply(tauto!(Rc::new(move |x| match x {
+        Left(a) => Right(not::double(a)),
+        Right(na) => Left(na),
+    })))(x)
 }
 
 /// `(¬(a^b))^true => (¬a)^b`.
