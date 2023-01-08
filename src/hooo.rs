@@ -126,8 +126,7 @@ pub fn pow_rev_lift_refl<A: Prop, B: Prop>(x: Pow<Pow<A, B>, B>) -> Pow<A, B> {
 /// `(a^b)^c => a^(b ⋀ c)`.
 pub fn pow_lower<A: Prop, B: Prop, C: Prop>(x: Pow<Pow<A, B>, C>) -> Pow<A, And<B, C>> {
     fn f<A: Prop, B: Prop, C: Prop>(pow_ab: Pow<A, B>) -> Pow<A, And<B, C>> {
-        fn g<A: Prop, B: Prop>((a, _): And<A, B>) -> A {a}
-        pow_transitivity(g, pow_ab)
+        pow_transitivity(and::fst, pow_ab)
     }
     fn g<A: Prop, B: Prop, C: Prop>(_: C) -> Imply<Pow<A, B>, Pow<A, And<B, C>>> {
         Rc::new(move |pow_ab| f(pow_ab))
