@@ -1175,8 +1175,8 @@ pub fn tauto_or_right<A: Prop, B: Prop>(x: Tauto<B>) -> Tauto<Or<A, B>> {x.tapp(
 /// `(a^true ⋁ b^true) => (a ⋁ b)^true`.
 pub fn tauto_or<A: Prop, B: Prop>(or_ab: Or<Tauto<A>, Tauto<B>>) -> Tauto<Or<A, B>> {
     match or_ab {
-        Left(tauto_a) => tauto_or_left(tauto_a),
-        Right(tauto_b) => tauto_or_right(tauto_b),
+        Left(tauto_a) => tauto_a.tapp(Left),
+        Right(tauto_b) => tauto_b.tapp(Right),
     }
 }
 
