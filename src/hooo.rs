@@ -1060,10 +1060,7 @@ pub fn tauto_e_to_or_pow<A: Prop, B: Prop>(
 }
 
 /// `(false^a ∧ false^b) => false^(a ⋁ b)`.
-pub fn para_to_or<A: Prop, B: Prop>(
-    para_a: Para<A>,
-    para_b: Para<B>
-) -> Para<Or<A, B>> {
+pub fn para_to_or<A: Prop, B: Prop>(para_a: Para<A>, para_b: Para<B>) -> Para<Or<A, B>> {
     hooo_dual_rev_or((para_a, para_b))
 }
 
