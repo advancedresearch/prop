@@ -94,6 +94,10 @@ pub fn qu_inv_tauto_eq_to_qu_inv<F: Prop, G: Prop>(
     x: Qu<Inv<F>>,
     tauto_eq: Tauto<Eq<F, G>>
 ) -> Qu<Inv<G>> {qu_tauto_eq_to_q(x, hooo::pow_transitivity(tauto_eq, inv_eq)).1.1}
+/// `inv(inv(f))(x) == f(x)`.
+pub fn inv_double_val<F: Prop, X: Prop>() -> Eq<App<Inv<Inv<F>>, X>, App<F, X>> {
+    app_map_eq(hooo::pow_eq_to_tauto_eq((inv_involve, involve_inv))(True))
+}
 
 /// Apply 2 function arguments.
 pub type App2<F, X, Y> = App<App<F, X>, Y>;
