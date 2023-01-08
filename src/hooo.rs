@@ -310,12 +310,9 @@ pub fn hooo_and<A: Prop, B: Prop, C: Prop>(x: Pow<And<A, B>, C>) -> And<Pow<A, C
 }
 
 /// `(a^c ⋀ b^c) => (a ⋀ b)^c`.
-pub fn hooo_rev_and<A: Prop, B: Prop, C: Prop>(
-    x: And<Pow<A, C>, Pow<B, C>>
-) -> Pow<And<A, B>, C> {
-    let g = pow_to_imply(hooo_imply);
+pub fn hooo_rev_and<A: Prop, B: Prop, C: Prop>(x: And<Pow<A, C>, Pow<B, C>>) -> Pow<And<A, B>, C> {
     let f = pow_to_imply_lift(imply::and_map);
-    let f = imply::transitivity(hooo_imply(f), g);
+    let f = imply::transitivity(hooo_imply(f), pow_to_imply(hooo_imply));
     f(x.0)(x.1)
 }
 
