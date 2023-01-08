@@ -670,19 +670,10 @@ pub fn tauto_from_eq_true<A: Prop>(x: Tauto<Eq<A, True>>) -> Tauto<A> {
 }
 
 /// `false^a => (a == false)^true`.
-pub fn para_to_eq_false<A: DProp>(
-    x: Para<A>
-) -> Tauto<Eq<A, False>> {
-    let y: Not<Tauto<A>> = Rc::new(move |tauto_a| {
-        x(tauto_a(True))
-    });
-    let eq: Eq<Not<Tauto<False>>, Not<Tauto<A>>> = (
-        y.map_any(),
-        consistency().map_any(),
-    );
-    let eq2: Eq<Tauto<A>, Tauto<False>> = eq::rev_modus_tollens_excm(
-        eq, tauto_decide(), tauto_decide());
-    hooo_rev_eq(eq2)
+pub fn para_to_eq_false<A: DProp>(x: Para<A>) -> Tauto<Eq<A, False>> {
+    let y: Not<Tauto<A>> = Rc::new(move |tauto_a| x(tauto_a(True)));
+    let eq = (y.map_any(), consistency().map_any());
+    hooo_rev_eq(eq::rev_modus_tollens_excm(eq, tauto_decide(), tauto_decide()))
 }
 
 /// `¬(x^true) => (¬x)^true`.
