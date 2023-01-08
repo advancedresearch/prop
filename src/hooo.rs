@@ -356,8 +356,8 @@ pub fn hooo_dual_rev_and<A: Prop, B: Prop, C: Prop>(
     x: Or<Pow<C, A>, Pow<C, B>>
 ) -> Pow<C, And<A, B>> {
     match x {
-        Left(pow_ca) => pow_lower(pow_lift(pow_ca)),
-        Right(pow_cb) => pow_transitivity(and::symmetry, pow_lower(pow_lift(pow_cb))),
+        Left(pow_ca) => pow_transitivity(and::fst, pow_ca),
+        Right(pow_cb) => pow_transitivity(and::snd, pow_cb),
     }
 }
 
