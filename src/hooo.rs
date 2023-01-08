@@ -219,10 +219,7 @@ pub fn pow_not_double_down<A: Prop, B: Prop>(x: Pow<A, Not<Not<B>>>) -> Pow<Not<
 }
 
 /// `b^a ⋀ c^b => c^a`.
-pub fn pow_transitivity<A: Prop, B: Prop, C: Prop>(
-    ab: Pow<B, A>,
-    bc: Pow<C, B>,
-) -> Pow<C, A> {
+pub fn pow_transitivity<A: Prop, B: Prop, C: Prop>(ab: Pow<B, A>, bc: Pow<C, B>) -> Pow<C, A> {
     fn f<A: Prop, B: Prop, C: Prop>(a: A) -> Imply<And<Pow<B, A>, Pow<C, B>>, C> {
         Rc::new(move |(ab, bc)| bc(ab(a.clone())))
     }
