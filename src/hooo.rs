@@ -974,11 +974,6 @@ pub fn para_eq_transitivity_right<A: Prop, B: Prop, C: Prop>(
     tauto_not_to_para(pow_transitivity(hooo_rev_and((para_to_tauto_not(bc), ab)), f))
 }
 
-/// `x => x`.
-pub fn imply_refl<A: Prop>() -> Imply<A, A> {
-    Rc::new(move |x| x)
-}
-
 /// `(a => b)^true ∧ (b => c)^true => (a => c)^true`.
 pub fn tauto_imply_transitivity<A: Prop, B: Prop, C: Prop>(
     ab: Tauto<Imply<A, B>>,
