@@ -831,18 +831,9 @@ pub fn eq_not_para_to_eq_para<A: DProp, B: DProp>(
     eq_npara_a_npara_b: Eq<Not<Para<A>>, Not<Para<B>>>
 ) -> Eq<Para<A>, Para<B>> {
     fn f<A: DProp>() -> Eq<Not<Not<Para<A>>>, Para<A>> {
-        (
-            Rc::new(move |nnpara_a| {
-                let x: Not<Para<Not<A>>> = imply::in_left(nnpara_a,
-                    |x: Para<Not<A>>| para_rev_not(x));
-                para_not_rev_double(pow_not(x))
-            }),
-            Rc::new(move |para_a| not::double(para_a))
-        )
+        (pow_to_imply(not_not_para_rev_double), pow_to_imply(not::double))
     }
-    let x = eq::modus_tollens(eq_npara_a_npara_b);
-    let x: Eq<Para<B>, Not<Not<Para<A>>>> = eq::in_left_arg(x, f());
-    eq::in_left_arg(eq::symmetry(x), f())
+    eq::in_left_arg(eq::symmetry(eq::in_left_arg(eq::modus_tollens(eq_npara_a_npara_b), f())), f())
 }
 
 /// `(x == x)^true`.
