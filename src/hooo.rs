@@ -1122,31 +1122,22 @@ pub fn para_not_and_to_or_tauto_e<A: Prop, B: Prop>(
 }
 
 /// `a^true ∧ b^true => (a ∧ b)^true`.
-pub fn tauto_and<A: Prop, B: Prop>(
-    tauto_a: Tauto<A>,
-    tauto_b: Tauto<B>,
-) -> Tauto<And<A, B>> {
+pub fn tauto_and<A: Prop, B: Prop>(tauto_a: Tauto<A>, tauto_b: Tauto<B>,) -> Tauto<And<A, B>> {
     hooo_rev_and((tauto_a, tauto_b))
 }
 
 /// `(a ∧ b)^true => a^true ∧ b^true`.
-pub fn tauto_rev_and<A: Prop, B: Prop>(
-    tauto_and_a_b: Tauto<And<A, B>>,
-) -> And<Tauto<A>, Tauto<B>> {
-    hooo_and(tauto_and_a_b)
+pub fn tauto_rev_and<A: Prop, B: Prop>(x: Tauto<And<A, B>>) -> And<Tauto<A>, Tauto<B>> {
+    hooo_and(x)
 }
 
 /// `false^a => false^(a ∧ b)`.
-pub fn para_left_and<A: Prop, B: Prop>(
-    para_a: Para<A>,
-) -> Para<And<A, B>> {
+pub fn para_left_and<A: Prop, B: Prop>(para_a: Para<A>) -> Para<And<A, B>> {
     pow_lower(pow_lift(para_a))
 }
 
 /// `false^b => false^(a ∧ b)`.
-pub fn para_right_and<A: Prop, B: Prop>(
-    para_b: Para<B>,
-) -> Para<And<A, B>> {
+pub fn para_right_and<A: Prop, B: Prop>(para_b: Para<B>) -> Para<And<A, B>> {
     pow_right_and_symmetry(pow_lower(pow_lift(para_b)))
 }
 
@@ -1207,25 +1198,18 @@ pub fn tauto_from_para_transitivity<A: DProp, B: DProp, C: DProp>(
     para_eq_bc: Para<Eq<B, C>>,
 ) -> Tauto<Eq<A, C>> {
     match (para_decide::<A>(), para_decide::<B>(), para_decide::<C>()) {
-        (Left(para_a), Left(para_b), _) => {
-            imply::absurd()(para_eq_ab((
-                Rc::new(move |a| imply::absurd()(para_a(a))),
-                Rc::new(move |b| imply::absurd()(para_b(b)))
-            )))
-        }
-        (_, Left(para_b), Left(para_c)) => {
-            imply::absurd()(para_eq_bc((
-                Rc::new(move |b| imply::absurd()(para_b(b))),
-                Rc::new(move |c| imply::absurd()(para_c(c)))
-            )))
-        }
-        (Left(para_a), _, Left(para_c)) => {
-            let z: Eq<Tauto<A>, Tauto<C>> = (
-                Rc::new(move |tauto_a| imply::absurd()(para_a(tauto_a(True)))),
-                Rc::new(move |tauto_c| imply::absurd()(para_c(tauto_c(True))))
-            );
-            hooo_rev_eq(z)
-        }
+        (Left(para_a), Left(para_b), _) => imply::absurd()(para_eq_ab((
+            Rc::new(move |a| imply::absurd()(para_a(a))),
+            Rc::new(move |b| imply::absurd()(para_b(b)))
+        ))),
+        (_, Left(para_b), Left(para_c)) => imply::absurd()(para_eq_bc((
+            Rc::new(move |b| imply::absurd()(para_b(b))),
+            Rc::new(move |c| imply::absurd()(para_c(c)))
+        ))),
+        (Left(para_a), _, Left(para_c)) => hooo_rev_eq((
+            Rc::new(move |tauto_a| imply::absurd()(para_a(tauto_a(True)))),
+            Rc::new(move |tauto_c| imply::absurd()(para_c(tauto_c(True))))
+        )),
         (_, Right(npara_b), Right(npara_c)) => {
             let b: B = not::rev_double(not_para_to_not_not(npara_b));
             let c: C = not::rev_double(not_para_to_not_not(npara_c));
@@ -1254,10 +1238,7 @@ pub fn tauto_from_para_transitivity<A: DProp, B: DProp, C: DProp>(
 }
 
 /// `uniform(a) ⋀ (a == b)^true => uniform(b)`.
-pub fn uniform_in_arg<A: Prop, B: Prop>(
-    uni: Uniform<A>,
-    eq: Tauto<Eq<A, B>>
-) -> Uniform<B> {
+pub fn uniform_in_arg<A: Prop, B: Prop>(uni: Uniform<A>, eq: Tauto<Eq<A, B>>) -> Uniform<B> {
     match uni {
         Left(tauto_a) => Left(hooo_eq(eq).0(tauto_a)),
         Right(para_a) => Right(para_in_arg(para_a, eq))
@@ -1265,10 +1246,7 @@ pub fn uniform_in_arg<A: Prop, B: Prop>(
 }
 
 /// `uniform(a) ∧ uniform(b) => uniform(a ∧ b)`.
-pub fn uniform_and<A: Prop, B: Prop>(
-    uni_a: Uniform<A>,
-    uni_b: Uniform<B>
-) -> Uniform<And<A, B>> {
+pub fn uniform_and<A: Prop, B: Prop>(uni_a: Uniform<A>, uni_b: Uniform<B>) -> Uniform<And<A, B>> {
     match (uni_a, uni_b) {
         (Left(tauto_a), Left(tauto_b)) => Left(hooo_rev_and((tauto_a, tauto_b))),
         (_, Right(para_b)) => Right(hooo_dual_rev_and(Right(para_b))),
@@ -1300,10 +1278,7 @@ pub fn uniform_dual_and<A: DProp, B: DProp>(
 }
 
 /// `uniform(a) ∧ uniform(b) => uniform(a ⋁ b)`.
-pub fn uniform_dual_rev_or<A: Prop, B: Prop>(
-    a: Uniform<A>,
-    b: Uniform<B>,
-) -> Uniform<Or<A, B>> {
+pub fn uniform_dual_rev_or<A: Prop, B: Prop>(a: Uniform<A>, b: Uniform<B>) -> Uniform<Or<A, B>> {
     match (a, b) {
         (Left(tauto_a), _) => Left(tauto_or_left(tauto_a)),
         (_, Left(tauto_b)) => Left(tauto_or_right(tauto_b)),
@@ -1312,9 +1287,7 @@ pub fn uniform_dual_rev_or<A: Prop, B: Prop>(
 }
 
 /// `uniform(a) => (a ⋁ ¬a)^true`.
-pub fn uniform_to_tauto_excm<A: Prop>(
-    uni: Uniform<A>
-) -> Tauto<ExcM<A>> {
+pub fn uniform_to_tauto_excm<A: Prop>(uni: Uniform<A>) -> Tauto<ExcM<A>> {
     match uni {
         Left(t) => tauto_or_left(t),
         Right(p) => tauto_or_right(para_to_tauto_not(p)),
@@ -1341,14 +1314,10 @@ pub fn tauto_excm_to_not_theory<A: Prop>(x: Tauto<ExcM<A>>) -> Not<Theory<A>> {
 }
 
 /// `theory(a) => ¬(a^true)`.
-pub fn theory_to_not_tauto<A: Prop>(x: Theory<A>) -> Not<Tauto<A>> {
-    imply::in_left(x, |y| Left(y))
-}
+pub fn theory_to_not_tauto<A: Prop>(x: Theory<A>) -> Not<Tauto<A>> {imply::in_left(x, |y| Left(y))}
 
 /// `theory(a) => ¬(false^a)`.
-pub fn theory_to_not_para<A: Prop>(x: Theory<A>) -> Not<Para<A>> {
-    imply::in_left(x, |y| Right(y))
-}
+pub fn theory_to_not_para<A: Prop>(x: Theory<A>) -> Not<Para<A>> {imply::in_left(x, |y| Right(y))}
 
 /// `¬(a^true) ⋀ ¬(false^a) => theory(a)`.
 pub fn not_tauto_not_para_to_theory<A: Prop>(
@@ -1405,31 +1374,23 @@ pub fn pow_to_tauto_imply<A: Prop, B: Prop>(x: Pow<B, A>) -> Tauto<Imply<A, B>> 
 }
 
 /// `(a => b)^true => (b^a)^true`.
-pub fn tauto_pow_imply<A: Prop, B: Prop>(
-    x: Tauto<Imply<A, B>>
-) -> Pow<Pow<B, A>, True> {
+pub fn tauto_pow_imply<A: Prop, B: Prop>(x: Tauto<Imply<A, B>>) -> Pow<Pow<B, A>, True> {
     pow_lift(tauto_imply_to_pow(x))
 }
 
 /// `(b^a)^true => (a => b)^true`.
-pub fn tauto_imply_pow<A: Prop, B: Prop>(
-    x: Pow<Pow<B, A>, True>
-) -> Tauto<Imply<A, B>> {
+pub fn tauto_imply_pow<A: Prop, B: Prop>(x: Pow<Pow<B, A>, True>) -> Tauto<Imply<A, B>> {
     pow_to_tauto_imply(x(True))
 }
 
 /// `(a => b)^true => b^(a^true)`.
-pub fn tauto_imply_to_pow_tauto<A: Prop, B: Prop>(
-    x: Tauto<Imply<A, B>>
-) -> Pow<B, Tauto<A>> {
+pub fn tauto_imply_to_pow_tauto<A: Prop, B: Prop>(x: Tauto<Imply<A, B>>) -> Pow<B, Tauto<A>> {
     fn f<A: Prop>(tauto_a: Tauto<A>) -> A {tauto_a(True)}
     pow_transitivity(f, tauto_imply_to_pow(x))
 }
 
 /// `b^a => b^(a^true)`.
-pub fn pow_to_pow_tauto<A: Prop, B: Prop>(
-    x: Pow<B, A>
-) -> Pow<B, Tauto<A>> {
+pub fn pow_to_pow_tauto<A: Prop, B: Prop>(x: Pow<B, A>) -> Pow<B, Tauto<A>> {
     tauto_imply_to_pow_tauto(pow_to_tauto_imply(x))
 }
 
