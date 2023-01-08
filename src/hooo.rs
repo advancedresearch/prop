@@ -399,9 +399,7 @@ pub fn tauto_hooo_dual_rev_or<A: Prop, B: Prop, C: Prop>(
 /// `c^(a ⋁ b) => (c^a ⋀ c^b)`.
 pub fn hooo_dual_or<A: Prop, B: Prop, C: Prop>(
     x: Pow<C, Or<A, B>>
-) -> And<Pow<C, A>, Pow<C, B>> {
-    (pow_transitivity(Left, x.clone()), pow_transitivity(Right, x))
-}
+) -> And<Pow<C, A>, Pow<C, B>> {(pow_transitivity(Left, x.clone()), pow_transitivity(Right, x))}
 
 /// `(c^a ⋀ c^b) => c^(a ⋁ b)`.
 pub fn hooo_dual_rev_or<A: Prop, B: Prop, C: Prop>(
