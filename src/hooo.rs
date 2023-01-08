@@ -325,24 +325,15 @@ pub fn tauto_hooo_dual_and<A: DProp, B: DProp, C: DProp>(
     match Tauto::<Or<Pow<C, A>, Pow<C, B>>>::decide() {
         Left(y) => y,
         Right(ny) => {
-            let y = hooo_rev_not(ny);
-            let y = pow_transitivity(y, and::from_de_morgan);
+            let y = pow_transitivity(hooo_rev_not(ny), and::from_de_morgan);
             let (tauto_npow_ca, tauto_npow_cb) = hooo_and(y);
             let pow_nc_a = hooo_rev_not(tauto_npow_ca(True));
             let pow_nc_b = hooo_rev_not(tauto_npow_cb(True));
-            let y = hooo_dual_rev_or((pow_nc_a, pow_nc_b));
-            let y = pow_transitivity(and::to_or, y);
-            let y = hooo_rev_and((x, y));
-            let y = pow_transitivity(y, and::paradox);
+            let y = pow_transitivity(and::to_or, hooo_dual_rev_or((pow_nc_a, pow_nc_b)));
+            let y = pow_transitivity(hooo_rev_and((x, y)), and::paradox);
             match para_and_to_or(y) {
-                Left(para_a) => {
-                    let pow_ca: Pow<C, A> = pow_transitivity(para_a, fa());
-                    pow_transitivity(pow_lift(pow_ca), Left)
-                }
-                Right(para_b) => {
-                    let pow_cb: Pow<C, B> = pow_transitivity(para_b, fa());
-                    pow_transitivity(pow_lift(pow_cb), Right)
-                }
+                Left(para_a) => pow_transitivity(pow_lift(pow_transitivity(para_a, fa())), Left),
+                Right(para_b) => pow_transitivity(pow_lift(pow_transitivity(para_b, fa())), Right),
             }
         }
     }
