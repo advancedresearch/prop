@@ -414,9 +414,7 @@ pub fn hooo_dual_rev_or<A: Prop, B: Prop, C: Prop>(
 /// `(a == b)^c => (a^c == b^c)^true`.
 pub fn tauto_hooo_eq<A: Prop, B: Prop, C: Prop>(
     x: Pow<Eq<A, B>, C>
-) -> Tauto<Eq<Pow<A, C>, Pow<B, C>>> {
-    pow_transitivity(pow_lift(x), hooo_eq)
-}
+) -> Tauto<Eq<Pow<A, C>, Pow<B, C>>> {pow_transitivity(pow_lift(x), hooo_eq)}
 
 /// `(a^c == b^c)^true => (a == b)^c`.
 ///
