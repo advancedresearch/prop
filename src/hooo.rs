@@ -677,9 +677,7 @@ pub fn para_to_eq_false<A: DProp>(x: Para<A>) -> Tauto<Eq<A, False>> {
 }
 
 /// `¬(x^true) => (¬x)^true`.
-pub fn tauto_not<A: DProp>(x: Not<Tauto<A>>) -> Tauto<Not<A>> {
-    hooo_rev_not(x)
-}
+pub fn tauto_not<A: DProp>(x: Not<Tauto<A>>) -> Tauto<Not<A>> {hooo_rev_not(x)}
 
 /// `¬(x^true) ⋀ (a ⋁ ¬a)^true => (¬x)^true`.
 pub fn tauto_not_excm<A: Prop>(x: Not<Tauto<A>>, y: Tauto<ExcM<A>>) -> Tauto<Not<A>> {
