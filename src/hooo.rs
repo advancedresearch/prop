@@ -1178,12 +1178,7 @@ pub fn tauto_imply_transitivity<A: Prop, B: Prop, C: Prop>(
 
 /// `(a^true ∧ b^true) => (a == b)^true`.
 pub fn tauto_and_to_eq_pos<A: Prop, B: Prop>(a: Tauto<A>, b: Tauto<B>) -> Tauto<Eq<A, B>> {
-    fn f<A: Prop, B: Prop>(_: True) -> Imply<And<A, B>, Eq<A, B>> {
-        Rc::new(move |ab| and::to_eq_pos(ab))
-    }
-    let f = hooo_imply(f::<A, B>);
-    let x = hooo_rev_and((a, b));
-    f(x)
+    hooo_imply(pow_to_imply_lift(and::to_eq_pos))(hooo_rev_and((a, b)))
 }
 
 /// `a^true => (a ⋁ b)^true`.
