@@ -526,9 +526,7 @@ pub fn tauto_hooo_imply<A: Prop, B: Prop, C: Prop>(
 /// `(a => b)^c => (a^c => b^c)`.
 pub fn hooo_imply<A: Prop, B: Prop, C: Prop>(
     x: Pow<Imply<A, B>, C>
-) -> Imply<Pow<A, C>, Pow<B, C>> {
-    tauto_hooo_imply(x)(True)
-}
+) -> Imply<Pow<A, C>, Pow<B, C>> {tauto_hooo_imply(x)(True)}
 
 /// `(¬(c^b => c^a))^true => c^(a => b)`.
 pub fn tauto_hooo_dual_rev_imply<A: DProp, B: DProp, C: DProp>(
