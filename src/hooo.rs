@@ -113,9 +113,7 @@ pub type PowEq<A, B> = And<Pow<B, A>, Pow<A, B>>;
 type NEq<A, B> = Not<Eq<A, B>>;
 
 /// `a^b => (a^b)^c`.
-pub fn pow_lift<A: Prop, B: Prop, C: Prop>(_: Pow<A, B>) -> Pow<Pow<A, B>, C> {
-    unimplemented!()
-}
+pub fn pow_lift<A: Prop, B: Prop, C: Prop>(_: Pow<A, B>) -> Pow<Pow<A, B>, C> {unimplemented!()}
 
 /// `(a^b)^b => a^b`.
 pub fn pow_rev_lift_refl<A: Prop, B: Prop>(x: Pow<Pow<A, B>, B>) -> Pow<A, B> {
