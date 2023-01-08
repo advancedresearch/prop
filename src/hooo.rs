@@ -1575,9 +1575,7 @@ pub fn pow_to_imply_lift<A: Prop, B: Prop, C: Prop>(pow_ba: Pow<B, A>) -> Pow<Im
 }
 
 /// `(a => b)^true => b^a`.
-pub fn tauto_imply_to_pow<A: Prop, B: Prop>(
-    x: Tauto<Imply<A, B>>
-) -> Pow<B, A> {
+pub fn tauto_imply_to_pow<A: Prop, B: Prop>(x: Tauto<Imply<A, B>>) -> Pow<B, A> {
     fn f<A: Prop, B: Prop>(a: A) -> Imply<Tauto<Imply<A, B>>, B> {
         Rc::new(move |x| x(True)(a.clone()))
     }
