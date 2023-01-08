@@ -110,6 +110,10 @@ pub fn q_adjoint_left<F: Prop, G: Prop>(x: Q<Inv<F>, G>) -> Q<F, Inv<G>> {
 pub fn q_adjoint_right<F: Prop, G: Prop>(x: Q<F, Inv<G>>) -> Q<Inv<F>, G> {
     quality::symmetry(q_adjoint_left(quality::symmetry(x)))
 }
+/// `inv(f) ~~ g  ==  f ~~ inv(g)`.
+pub fn q_adjoint<F: Prop, G: Prop>() -> Eq<Q<Inv<F>, G>, Q<F, Inv<G>>> {
+    hooo::pow_eq_to_tauto_eq((q_adjoint_left, q_adjoint_right))(True)
+}
 
 /// Apply 2 function arguments.
 pub type App2<F, X, Y> = App<App<F, X>, Y>;
