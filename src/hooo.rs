@@ -468,9 +468,7 @@ pub fn hooo_dual_rev_eq<A: DProp, B: DProp, C: DProp>(
 /// `(¬(a^c == b^c))^true => (¬(a == b))^c`.
 pub fn tauto_hooo_rev_neq<A: DProp, B: DProp, C: Prop>(
     x: Tauto<NEq<Pow<A, C>, Pow<B, C>>>
-) -> Pow<NEq<A, B>, C> {
-    hooo_imply(pow_to_imply_lift(hooo_rev_neq))(x)(True)
-}
+) -> Pow<NEq<A, B>, C> {x.tapp(hooo_rev_neq)(True)}
 
 /// `¬(a^c == b^c) => (¬(a == b))^c`.
 pub fn hooo_rev_neq<A: DProp, B: DProp, C: Prop>(
