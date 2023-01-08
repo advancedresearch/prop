@@ -166,9 +166,7 @@ pub fn pow_in_right_arg<A: Prop, B: Prop, C: Prop>(
 /// `a^(b ⋀ c) => a^(c ⋀ b)`
 pub fn pow_right_and_symmetry<A: Prop, B: Prop, C: Prop>(
     x: Pow<A, And<B, C>>
-) -> Pow<A, And<C, B>> {
-    pow_transitivity(and::symmetry, x)
-}
+) -> Pow<A, And<C, B>> {pow_transitivity(and::symmetry, x)}
 
 /// `¬(a^b) => a^(¬b)`.
 pub fn pow_not<A: Prop, B: DProp>(x: Not<Pow<A, B>>) -> Pow<A, Not<B>> {
