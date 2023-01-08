@@ -635,9 +635,7 @@ pub fn q_in_left_arg<A: Prop, B: Prop, C: Prop>(
 pub fn q_in_right_arg<A: Prop, B: Prop, C: Prop>(
     (eq_ab, (qu_a, qu_b)): Q<A, B>,
     g: Tauto<Eq<B, C>>
-) -> Q<A, C> {
-    (eq::in_right_arg(eq_ab, g(True)), (qu_a, qu_in_arg(qu_b, g)))
-}
+) -> Q<A, C> {(eq::in_right_arg(eq_ab, g(True)), (qu_a, qu_in_arg(qu_b, g)))}
 
 /// `true^a`.
 pub fn tr<A: Prop>() -> Pow<True, A> {
