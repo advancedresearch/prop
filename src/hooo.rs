@@ -39,6 +39,18 @@ use tauto::TautoExt;
 
 pub mod tauto;
 
+/// A tautological proposition.
+pub type Tauto<A> = fn(True) -> A;
+
+/// A paradoxical proposition.
+pub type Para<A> = fn(A) -> False;
+
+/// A uniform proposition.
+pub type Uniform<A> = Or<Tauto<A>, Para<A>>;
+
+/// A proposition is a theory when non-uniform.
+pub type Theory<A> = Not<Uniform<A>>;
+
 impl<A: DProp, B: DProp> Decidable for Pow<A, B> {
     fn decide() -> ExcM<Self> {decide()}
 }
@@ -603,18 +615,6 @@ pub fn hooo_dual_rev_nrimply<A: DProp, B: DProp, C: DProp>(
         Right(ny) => imply::absurd()(hooo_rev_not(ny)(True)(x)),
     }
 }
-
-/// A tautological proposition.
-pub type Tauto<A> = fn(True) -> A;
-
-/// A paradoxical proposition.
-pub type Para<A> = fn(A) -> False;
-
-/// A uniform proposition.
-pub type Uniform<A> = Or<Tauto<A>, Para<A>>;
-
-/// A proposition is a theory when non-uniform.
-pub type Theory<A> = Not<Uniform<A>>;
 
 /// Lift equality with tautological distinction into quality.
 pub fn lift_q<A: Prop, B: Prop>(
