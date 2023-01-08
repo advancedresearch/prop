@@ -521,9 +521,7 @@ pub fn hooo_dual_rev_neq<A: DProp, B: DProp, C: DProp>(
 /// `(a => b)^c => (a^c => b^c)^true`.
 pub fn tauto_hooo_imply<A: Prop, B: Prop, C: Prop>(
     _: Pow<Imply<A, B>, C>
-) -> Tauto<Imply<Pow<A, C>, Pow<B, C>>> {
-    unimplemented!()
-}
+) -> Tauto<Imply<Pow<A, C>, Pow<B, C>>> {unimplemented!()}
 
 /// `(a => b)^c => (a^c => b^c)`.
 pub fn hooo_imply<A: Prop, B: Prop, C: Prop>(
