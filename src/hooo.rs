@@ -546,9 +546,7 @@ pub fn hooo_dual_rev_imply<A: DProp, B: DProp, C: DProp>(
 /// `(¬(b^c => a^c))^true => (¬(b => a))^c`.
 pub fn tauto_hooo_rev_nrimply<A: DProp, B: DProp, C: Prop>(
     x: Tauto<Not<Imply<Pow<B, C>, Pow<A, C>>>>
-) -> Pow<Not<Imply<B, A>>, C> {
-    hooo_imply(pow_to_imply_lift(hooo_rev_nrimply))(x)(True)
-}
+) -> Pow<Not<Imply<B, A>>, C> {x.tapp(hooo_rev_nrimply)(True)}
 
 /// `¬(b^c => a^c) => (¬(b => a))^c`.
 pub fn hooo_rev_nrimply<A: DProp, B: DProp, C: Prop>(
