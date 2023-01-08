@@ -1167,9 +1167,7 @@ pub fn tauto_and_to_eq_pos<A: Prop, B: Prop>(a: Tauto<A>, b: Tauto<B>) -> Tauto<
 }
 
 /// `a^true => (a ⋁ b)^true`.
-pub fn tauto_or_left<A: Prop, B: Prop>(x: Tauto<A>) -> Tauto<Or<A, B>> {
-    hooo_imply(pow_to_imply_lift(Left))(x)
-}
+pub fn tauto_or_left<A: Prop, B: Prop>(x: Tauto<A>) -> Tauto<Or<A, B>> {x.tapp(Left)}
 
 /// `b^true => (a ⋁ b)^true`.
 pub fn tauto_or_right<A: Prop, B: Prop>(
