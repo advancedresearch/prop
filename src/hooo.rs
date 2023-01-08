@@ -160,9 +160,7 @@ pub fn pow_in_right_arg<A: Prop, B: Prop, C: Prop>(
     fn f<B: Prop, C: Prop>(c: C) -> Imply<Tauto<Eq<B, C>>, B> {
         Rc::new(move |x| x(True).1(c.clone()))
     }
-    let y: Pow<Tauto<Eq<B, C>>, C> = pow_lift(tauto_eq_b_c);
-    let pow_bc: Pow<B, C> = hooo_imply(f)(y);
-    pow_transitivity(pow_bc, x)
+    pow_transitivity(hooo_imply(f)(pow_lift(tauto_eq_b_c)), x)
 }
 
 /// `a^(b ⋀ c) => a^(c ⋀ b)`
