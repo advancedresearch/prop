@@ -1516,8 +1516,8 @@ pub fn tauto_excm_to_uniform<A: Prop>(x: Tauto<ExcM<A>>) -> Uniform<A> {
 
 /// `¬theory(a)`.
 pub fn not_theory<A: DProp>() -> Not<Theory<A>> {
-    fn f<A: DProp>(_: True) -> ExcM<A> {A::decide()}
-    Rc::new(move |theory_a| imply::in_left(theory_a, |x| tauto_excm_to_uniform(x))(f))
+    Rc::new(move |theory_a| imply::in_left(theory_a, |x|
+            tauto_excm_to_uniform(x))(tauto!(A::decide())))
 }
 
 /// `(a ⋁ ¬a)^true => ¬theory(a)`.
