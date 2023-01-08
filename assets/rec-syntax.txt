@@ -80,6 +80,7 @@ _seps: "|!:.,;<>(){}[]"
 
 5 exprs = [.l([.w? fn_decl:"fn"]) .w? .s!.(; expr)]
 4 expr = [.r?(["//" ..."\n"? .w?]) {
+    ["tauto!(" .w? expr .w? ")"]
     let:"let"
     ["match " expr .w! "{" .w? .r?([.w? branch]) .w? "}"]
     [?"move " "|" .w? closure_args .w? "|" .w! {
@@ -110,6 +111,7 @@ _seps: "|!:.,;<>(){}[]"
   ["macro_rules! " .._seps! .w! "{" .w? .s?(; macro_branch) .w? "}"]
   [?"pub " {
     ["use " ...";"? ";"]
+    ["mod " ...";"? ";"]
     ["type " .._seps! ?["<" .w? type_args .w? ">"] .w! "=" .w! ty .w? ";"]
     ["trait " .._seps! ?["<" .w? trait_args .w? ">"] ?[":" .w! trait_inh .w!
       "{" .w? .w? "}"]]

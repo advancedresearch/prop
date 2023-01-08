@@ -35,6 +35,9 @@ use crate::*;
 use quality::Q;
 use qubit::Qu;
 use existence::{E, EProp};
+use tauto::TautoExt;
+
+pub mod tauto;
 
 impl<A: DProp, B: DProp> Decidable for Pow<A, B> {
     fn decide() -> ExcM<Self> {decide()}
