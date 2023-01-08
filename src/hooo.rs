@@ -539,10 +539,7 @@ pub fn hooo_dual_rev_imply<A: DProp, B: DProp, C: DProp>(
 ) -> Pow<C, Imply<A, B>> {
     match Pow::<C, Imply<A, B>>::decide() {
         Left(y) => y,
-        Right(ny) => {
-            let y: Imply<Pow<C, B>, Pow<C, A>> = hooo_dual_nrimply(pow_not(ny));
-            not::absurd(x, y)
-        }
+        Right(ny) => not::absurd(x, hooo_dual_nrimply(pow_not(ny))),
     }
 }
 
