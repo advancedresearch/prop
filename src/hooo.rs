@@ -531,9 +531,7 @@ pub fn hooo_imply<A: Prop, B: Prop, C: Prop>(
 /// `(¬(c^b => c^a))^true => c^(a => b)`.
 pub fn tauto_hooo_dual_rev_imply<A: DProp, B: DProp, C: DProp>(
     x: Tauto<Not<Imply<Pow<C, B>, Pow<C, A>>>>
-) -> Pow<C, Imply<A, B>> {
-    hooo_imply(pow_to_imply_lift(hooo_dual_rev_imply))(x)(True)
-}
+) -> Pow<C, Imply<A, B>> {x.tapp(hooo_dual_rev_imply)(True)}
 
 /// `¬(c^b => c^a) => c^(a => b)`.
 pub fn hooo_dual_rev_imply<A: DProp, B: DProp, C: DProp>(
