@@ -1350,11 +1350,7 @@ pub fn tauto_imply_in_right_arg<A: Prop, B: Prop, C: Prop>(
     ab: Tauto<Imply<A, B>>,
     eq_b_c: Tauto<Eq<B, C>>
 ) -> Tauto<Imply<A, C>> {
-    fn f<A: Prop, B: Prop, C: Prop>(_: True)
-    -> Imply<And<Imply<A, B>, Eq<B, C>>, Imply<A, C>> {
-        Rc::new(move |(ab, eq_b_c)| imply::in_right_arg(ab, eq_b_c))
-    }
-    let f = hooo_imply(f);
+    let f = hooo_imply(tauto!(Rc::new(move |(ab, eq_b_c)| imply::in_right_arg(ab, eq_b_c))));
     let x = hooo_rev_and((ab, eq_b_c));
     f(x)
 }
