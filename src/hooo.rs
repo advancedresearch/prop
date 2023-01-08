@@ -1170,12 +1170,10 @@ pub fn tauto_imply_transitivity<A: Prop, B: Prop, C: Prop>(
     ab: Tauto<Imply<A, B>>,
     bc: Tauto<Imply<B, C>>,
 ) -> Tauto<Imply<A, C>> {
-    fn f<A: Prop, B: Prop, C: Prop>(_: True) -> Imply<And<Imply<A, B>, Imply<B, C>>, Imply<A, C>> {
-        Rc::new(move |(ab, bc)| imply::transitivity(ab, bc))
+    fn f<A: Prop, B: Prop, C: Prop>((ab, bc): And<Imply<A, B>, Imply<B, C>>) -> Imply<A, C> {
+        imply::transitivity(ab, bc)
     }
-    let f = hooo_imply(f::<A, B, C>);
-    let x = hooo_rev_and((ab, bc));
-    f(x)
+    pow_transitivity(hooo_rev_and((ab, bc)), f)
 }
 
 /// `(a^true ∧ b^true) => (a == b)^true`.
