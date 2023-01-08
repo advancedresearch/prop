@@ -652,9 +652,7 @@ pub fn fa<A: Prop>() -> Pow<A, False> {
 /// `¬(false^true)`.
 ///
 /// A consistent logic can't prove `false` without further assumptions.
-pub fn consistency() -> Not<Tauto<False>> {
-    Rc::new(move |f| f(True))
-}
+pub fn consistency() -> Not<Tauto<False>> {Rc::new(move |f| f(True))}
 
 /// `a^true ∧ (a == b)^true => b^true`.
 pub fn tauto_in_arg<A: Prop, B: Prop>(
