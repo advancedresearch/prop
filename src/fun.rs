@@ -693,3 +693,8 @@ pub fn norm2_comp<F: Prop, G1: Prop, G2: Prop, G3: Prop, G4: Prop, G5: Prop, G6:
 pub fn sym_norm2_comp<F: Prop, G1: Prop, G2: Prop>() ->
     Eq<SymNorm2<SymNorm2<F, G1>, G2>, SymNorm2<F, Comp<G2, G1>>>
 {norm2_comp()}
+/// `f[id]  == f` for 1 argument.
+pub fn sym_norm1_id<F: Prop>() -> Eq<SymNorm1<F, FId>, F> {
+    let x = quality::to_eq(id_q());
+    eq::transitivity(eq::transitivity(comp_eq_right(x), comp_id_right()), comp_id_left())
+}
