@@ -146,7 +146,7 @@ pub fn pow_lower<A: Prop, B: Prop, C: Prop>(x: Pow<Pow<A, B>, C>) -> Pow<A, And<
         fn f2<A: Prop, B: Prop, C: Prop>((b, c): And<B, C>) -> Imply<Pow<Pow<A, And<B, C>>, C>, A> {
             Rc::new(move |x| x(c.clone())((b.clone(), c.clone())))
         }
-        hooo_imply(f2)(pow_lift(x))
+        hooo_imply(f2)(x.lift())
     }
     h(hooo_imply(g)(x))
 }
@@ -160,7 +160,7 @@ pub fn pow_in_left_arg<A: Prop, B: Prop, C: Prop>(
     tauto_eq_a_c: Tauto<Eq<A, C>>,
 ) -> Pow<C, B> {
     fn f<A: Prop, C: Prop>((a, x): And<A, Tauto<Eq<A, C>>>) -> C {x(True).0(a)}
-    hooo_rev_and((x, pow_lift(tauto_eq_a_c))).trans(f)
+    hooo_rev_and((x, tauto_eq_a_c.lift())).trans(f)
 }
 
 /// `a^b ⋀ (b == c)^true => a^c`.
@@ -171,7 +171,7 @@ pub fn pow_in_right_arg<A: Prop, B: Prop, C: Prop>(
     fn f<B: Prop, C: Prop>(c: C) -> Imply<Tauto<Eq<B, C>>, B> {
         Rc::new(move |x| x(True).1(c.clone()))
     }
-    hooo_imply(f)(pow_lift(tauto_eq_b_c)).trans(x)
+    hooo_imply(f)(tauto_eq_b_c.lift()).trans(x)
 }
 
 /// `a^(b ⋀ c) => a^(c ⋀ b)`
@@ -230,7 +230,7 @@ pub fn pow_transitivity<A: Prop, B: Prop, C: Prop>(ab: Pow<B, A>, bc: Pow<C, B>)
     fn f<A: Prop, B: Prop, C: Prop>(a: A) -> Imply<And<Pow<B, A>, Pow<C, B>>, C> {
         Rc::new(move |(ab, bc)| bc(ab(a.clone())))
     }
-    hooo_imply(f)(hooo_rev_and((pow_lift(ab), pow_lift(bc))))
+    hooo_imply(f)(hooo_rev_and((ab.lift(), bc.lift())))
 }
 
 /// `x =^= x`.
@@ -247,7 +247,7 @@ pub fn pow_eq_transitivity<A: Prop, B: Prop, C: Prop>(
 pub fn pow_eq_to_tauto_eq<A: Prop, B: Prop>((ba, ab): PowEq<A, B>) -> Tauto<Eq<A, B>> {
     let f1 = hooo_imply(pow_to_imply_lift(pow_to_imply));
     let f2 = hooo_imply(pow_to_imply_lift(pow_to_imply));
-    hooo_rev_and((f1(pow_lift(ba)), f2(pow_lift(ab))))
+    hooo_rev_and((f1(ba.lift()), f2(ab.lift())))
 }
 
 /// `(a == b)^true => (x =^= y)`.
@@ -304,7 +304,7 @@ pub fn hooo_rev_not_excm<A: Prop, B: Prop>(
 /// `(a ⋀ b)^c => (a^c ⋀ b^c)^true`.
 pub fn tauto_hooo_and<A: Prop, B: Prop, C: Prop>(
     x: Pow<And<A, B>, C>
-) -> Tauto<And<Pow<A, C>, Pow<B, C>>> {pow_lift(x).tapp(hooo_and)}
+) -> Tauto<And<Pow<A, C>, Pow<B, C>>> {x.lift().tapp(hooo_and)}
 
 /// `(a^c ⋀ b^c)^true => (a ⋀ b)^c`.
 pub fn tauto_hooo_rev_and<A: Prop, B: Prop, C: Prop>(
@@ -339,8 +339,8 @@ pub fn tauto_hooo_dual_and<A: DProp, B: DProp, C: DProp>(
             let y = pow_transitivity(and::to_or, hooo_dual_rev_or((pow_nc_a, pow_nc_b)));
             let y = hooo_rev_and((x, y)).trans(and::paradox);
             match para_and_to_or(y) {
-                Left(para_a) => pow_lift(para_a.trans(fa())).trans(Left),
-                Right(para_b) => pow_lift(para_b.trans(fa())).trans(Right),
+                Left(para_a) => para_a.trans(fa()).lift().trans(Left),
+                Right(para_b) => para_b.trans(fa()).lift().trans(Right),
             }
         }
     }
@@ -396,7 +396,7 @@ pub fn hooo_rev_or<A: Prop, B: Prop, C: Prop>(
 /// `c^(a ⋁ b) => (c^a ⋀ c^b)^true`.
 pub fn tauto_hooo_dual_or<A: Prop, B: Prop, C: Prop>(
     x: Pow<C, Or<A, B>>
-) -> Tauto<And<Pow<C, A>, Pow<C, B>>> {pow_lift(x).tapp(hooo_dual_or)}
+) -> Tauto<And<Pow<C, A>, Pow<C, B>>> {x.lift().tapp(hooo_dual_or)}
 
 /// `(c^a ⋀ c^b)^true => c^(a ⋁ b)`.
 pub fn tauto_hooo_dual_rev_or<A: Prop, B: Prop, C: Prop>(
@@ -421,7 +421,7 @@ pub fn hooo_dual_rev_or<A: Prop, B: Prop, C: Prop>(
 /// `(a == b)^c => (a^c == b^c)^true`.
 pub fn tauto_hooo_eq<A: Prop, B: Prop, C: Prop>(
     x: Pow<Eq<A, B>, C>
-) -> Tauto<Eq<Pow<A, C>, Pow<B, C>>> {pow_lift(x).trans(hooo_eq)}
+) -> Tauto<Eq<Pow<A, C>, Pow<B, C>>> {x.lift().trans(hooo_eq)}
 
 /// `(a^c == b^c)^true => (a == b)^c`.
 ///
@@ -497,7 +497,7 @@ pub fn tauto_hooo_dual_neq<A: DProp, B: DProp, C: DProp>(
         Left(y) => y,
         Right(ny) => {
             let f = Rc::new(move |x| pow_lift(x).tapp(f));
-            pow_lift(hooo_rev_not(imply::modus_tollens(f)(ny)).trans(x)).tapp(g)
+            hooo_rev_not(imply::modus_tollens(f)(ny)).trans(x).lift().tapp(g)
         }
     }
 }
@@ -574,7 +574,7 @@ pub fn tauto_hooo_dual_nrimply<A: DProp, B: DProp, C: DProp>(
         Left(y) => y,
         Right(ny) => {
             let f = Rc::new(move |x| pow_lift(x).tapp(f));
-            pow_lift(hooo_rev_not(imply::modus_tollens(f)(ny)).trans(x)).tapp(g)
+            hooo_rev_not(imply::modus_tollens(f)(ny)).trans(x).lift().tapp(g)
         }
     }
 }
@@ -687,12 +687,12 @@ pub fn tauto_rev_not<A: Prop>(x: Tauto<Not<A>>) -> Not<Tauto<A>> {
 /// `(¬a)^true => false^a`.
 pub fn tauto_not_to_para<A: Prop>(x: Tauto<Not<A>>) -> Para<A> {
     fn f<A: Prop>(a: A) -> Imply<Tauto<Not<A>>, False> {Rc::new(move |x| x(True)(a.clone()))}
-    hooo_imply(f)(pow_lift(x))
+    hooo_imply(f)(x.lift())
 }
 
 /// `false^a => (¬a)^true`.
 pub fn para_to_tauto_not<A: Prop>(x: Para<A>) -> Tauto<Not<A>> {
-    hooo_imply(pow_to_imply_lift(para_to_not))(pow_lift(x))
+    hooo_imply(pow_to_imply_lift(para_to_not))(x.lift())
 }
 
 /// `a^true => false^(¬a)`.
@@ -710,7 +710,7 @@ pub fn tauto_not_double<A: Prop>(x: Tauto<A>) -> Tauto<Not<Not<A>>> {x.tapp(not:
 
 /// `false^(¬x) => (¬false^x)^true`.
 pub fn tauto_para_rev_not<A: Prop>(para_na: Para<Not<A>>) -> Tauto<Not<Para<A>>> {
-    pow_lift(para_na).trans(para_rev_not)
+    para_na.lift().trans(para_rev_not)
 }
 
 /// `false^(¬x) => false^(false^x)`.
@@ -1128,12 +1128,12 @@ pub fn tauto_rev_and<A: Prop, B: Prop>(x: Tauto<And<A, B>>) -> And<Tauto<A>, Tau
 
 /// `false^a => false^(a ∧ b)`.
 pub fn para_left_and<A: Prop, B: Prop>(para_a: Para<A>) -> Para<And<A, B>> {
-    pow_lower(pow_lift(para_a))
+    pow_lower(para_a.lift())
 }
 
 /// `false^b => false^(a ∧ b)`.
 pub fn para_right_and<A: Prop, B: Prop>(para_b: Para<B>) -> Para<And<A, B>> {
-    pow_right_and_symmetry(pow_lower(pow_lift(para_b)))
+    pow_right_and_symmetry(pow_lower(para_b.lift()))
 }
 
 /// `(a => b)^true ∧ (a == c)^true  =>  (c => b)^true`.
@@ -1350,7 +1350,7 @@ pub fn pow_to_imply_lift<A: Prop, B: Prop, C: Prop>(pow_ba: Pow<B, A>) -> Pow<Im
     fn f<A: Prop, B: Prop, C: Prop>(_: C) -> Imply<Tauto<Imply<A, B>>, Imply<A, B>> {
         Rc::new(move |x| x(True))
     }
-    hooo_imply(f)(pow_lift(pow_to_tauto_imply(pow_ba)))
+    hooo_imply(f)(pow_to_tauto_imply(pow_ba).lift())
 }
 
 /// `(a => b)^true => b^a`.
@@ -1358,19 +1358,19 @@ pub fn tauto_imply_to_pow<A: Prop, B: Prop>(x: Tauto<Imply<A, B>>) -> Pow<B, A> 
     fn f<A: Prop, B: Prop>(a: A) -> Imply<Tauto<Imply<A, B>>, B> {
         Rc::new(move |x| x(True)(a.clone()))
     }
-    hooo_imply(f)(pow_lift(x))
+    hooo_imply(f)(x.lift())
 }
 
 /// `b^a => (a => b)^true`.
 pub fn pow_to_tauto_imply<A: Prop, B: Prop>(x: Pow<B, A>) -> Tauto<Imply<A, B>> {
     let f: Imply<Pow<Pow<B, A>, True>, Tauto<Imply<A, B>>> =
         hooo_imply(tauto!(Rc::new(|pow_ba: Pow<B, A>| Rc::new(move |a: A| pow_ba(a)))));
-    f(pow_lift(x))
+    f(x.lift())
 }
 
 /// `(a => b)^true => (b^a)^true`.
 pub fn tauto_pow_imply<A: Prop, B: Prop>(x: Tauto<Imply<A, B>>) -> Pow<Pow<B, A>, True> {
-    pow_lift(tauto_imply_to_pow(x))
+    tauto_imply_to_pow(x).lift()
 }
 
 /// `(b^a)^true => (a => b)^true`.
