@@ -746,6 +746,15 @@ pub fn fun_ext_symmetry_ty<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>(
 ) -> FunExtTy<G, F, X, Y, A> {
     fun_ext_ty().0(eq::symmetry(fun_ext_ty().1(x)))
 }
+/// `fun_ext_ty(f, g) ⋀ fun_ext_ty(g, h)  =>  fun_ext_ty(f, h)`.
+pub fn fun_ext_transitivity_ty<F: Prop, G: Prop, H: Prop, X: Prop, Y: Prop, A: Prop>(
+    fun_ext_fg: FunExtTy<F, G, X, Y, A>,
+    fun_ext_gh: FunExtTy<G, H, X, Y, A>,
+) -> FunExtTy<F, H, X, Y, A> {
+    let fg = fun_ext_ty().1(fun_ext_fg);
+    let gh = fun_ext_ty().1(fun_ext_gh);
+    fun_ext_ty().0(eq::transitivity(fg, gh))
+}
 /// `p : (((f, f, a) : (x -> y, x -> y, x)) -> (\(a : x) = (f(a) == f(a)))(a))`.
 pub fn fun_ext_refl<F: Prop, X: Prop, Y: Prop, A: Prop, P: LProp>() -> FunExt<P, F, F, X, Y, A>
     where P::N: Nat
