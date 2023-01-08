@@ -342,9 +342,7 @@ pub fn tauto_hooo_dual_and<A: DProp, B: DProp, C: DProp>(
 /// `(c^a ⋁ c^b)^true => c^(a ⋀ b)`.
 pub fn tauto_hooo_dual_rev_and<A: Prop, B: Prop, C: Prop>(
     x: Tauto<Or<Pow<C, A>, Pow<C, B>>>
-) -> Pow<C, And<A, B>> {
-    pow_transitivity(x, hooo_dual_rev_and)(True)
-}
+) -> Pow<C, And<A, B>> {x.tapp(hooo_dual_rev_and)(True)}
 
 /// `c^(a ⋀ b) => (c^a ⋁ c^b)`.
 ///
