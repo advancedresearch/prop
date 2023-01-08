@@ -364,9 +364,7 @@ pub fn hooo_dual_rev_and<A: Prop, B: Prop, C: Prop>(
 /// `(a ⋁ b)^c => (a^c ⋁ b^c)^true`.
 pub fn tauto_hooo_or<A: Prop, B: Prop, C: Prop>(
     _: Pow<Or<A, B>, C>
-) -> Tauto<Or<Pow<A, C>, Pow<B, C>>> {
-    unimplemented!()
-}
+) -> Tauto<Or<Pow<A, C>, Pow<B, C>>> {unimplemented!()}
 
 /// `(a^c ⋁ b^c)^true => (a ⋁ b)^c`.
 pub fn tauto_hooo_rev_or<A: Prop, B: Prop, C: Prop>(
