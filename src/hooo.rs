@@ -1158,7 +1158,7 @@ pub fn tauto_imply_transitivity<A: Prop, B: Prop, C: Prop>(
     fn f<A: Prop, B: Prop, C: Prop>((ab, bc): And<Imply<A, B>, Imply<B, C>>) -> Imply<A, C> {
         imply::transitivity(ab, bc)
     }
-    pow_transitivity(hooo_rev_and((ab, bc)), f)
+    hooo_rev_and((ab, bc)).tapp(f)
 }
 
 /// `(a^true ∧ b^true) => (a == b)^true`.
