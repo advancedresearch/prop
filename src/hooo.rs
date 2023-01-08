@@ -297,9 +297,7 @@ pub fn hooo_rev_not_excm<A: Prop, B: Prop>(
 /// `(a ⋀ b)^c => (a^c ⋀ b^c)^true`.
 pub fn tauto_hooo_and<A: Prop, B: Prop, C: Prop>(
     x: Pow<And<A, B>, C>
-) -> Tauto<And<Pow<A, C>, Pow<B, C>>> {
-    pow_transitivity(pow_lift(x), hooo_and)
-}
+) -> Tauto<And<Pow<A, C>, Pow<B, C>>> {pow_lift(x).tapp(hooo_and)}
 
 /// `(a^c ⋀ b^c)^true => (a ⋀ b)^c`.
 pub fn tauto_hooo_rev_and<A: Prop, B: Prop, C: Prop>(
