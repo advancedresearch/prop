@@ -655,10 +655,7 @@ pub fn fa<A: Prop>() -> Pow<A, False> {
 pub fn consistency() -> Not<Tauto<False>> {Rc::new(move |f| f(True))}
 
 /// `a^true ∧ (a == b)^true => b^true`.
-pub fn tauto_in_arg<A: Prop, B: Prop>(
-    a: Tauto<A>,
-    eq: Tauto<Eq<A, B>>
-) -> Tauto<B> {
+pub fn tauto_in_arg<A: Prop, B: Prop>(a: Tauto<A>, eq: Tauto<Eq<A, B>>) -> Tauto<B> {
     hooo_eq(eq).0(a)
 }
 
