@@ -711,9 +711,7 @@ pub fn para_not_to_not_not_tauto<A: DProp>(x: Para<Not<A>>) -> Not<Not<Tauto<A>>
 }
 
 /// `x^true => (¬¬x)^true`.
-pub fn tauto_not_double<A: Prop>(x: Tauto<A>) -> Tauto<Not<Not<A>>> {
-    hooo_imply(pow_to_imply_lift(not::double))(x)
-}
+pub fn tauto_not_double<A: Prop>(x: Tauto<A>) -> Tauto<Not<Not<A>>> {x.tapp(not::double)}
 
 /// `false^(¬x) => (¬false^x)^true`.
 pub fn tauto_para_rev_not<A: Prop>(para_na: Para<Not<A>>) -> Tauto<Not<Para<A>>> {
