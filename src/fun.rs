@@ -713,3 +713,19 @@ pub fn sym_norm2_id<F: Prop>() -> Eq<SymNorm2<F, FId>, F> {
 pub fn norm1_inv<F: Prop>() -> Eq<Norm1<FId, F, FId>, Inv<F>> {
     eq::transitivity(comp_eq_left(comp_id_left()), comp_id_left())
 }
+
+/// `\(a : x) = (f(a) == g(a))`.
+pub type AppEq<F, G, A, X> = Lam<Ty<A, X>, Eq<App<F, A>, App<G, A>>>;
+
+/// `((f, g, a) : (x -> y, x -> y, x)) -> (\(a : x) = (f(a) == g(a)))(a)`.
+///
+/// Function extensionality type.
+pub type FunExt<F, G, X, Y, A> = DepFunTy<
+    Tup3<F, G, A>, Tup3<Pow<Y, X>, Pow<Y, X>, X>,
+    AppEq<F, G, A, X>,
+>;
+
+/// Function extentionality.
+pub fn fun_ext<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>() ->
+    Eq<Eq<F, G>, FunExt<F, G, X, Y, A>>
+{unimplemented!()}
