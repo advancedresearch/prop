@@ -252,9 +252,7 @@ pub fn tauto_eq_to_pow_eq<A: Prop, B: Prop>(x: Tauto<Eq<A, B>>) -> PowEq<A, B> {
 pub fn tauto_to_tauto_excm<A: Prop>(x: Tauto<A>) -> Tauto<ExcM<A>> {x.tapp(Left)}
 
 /// `false^a => (a ⋁ ¬a)^true`.
-pub fn para_to_tauto_excm<A: Prop>(x: Para<A>) -> Tauto<ExcM<A>> {
-    hooo_rev_or(Right(para_to_tauto_not(x)))
-}
+pub fn para_to_tauto_excm<A: Prop>(x: Para<A>) -> Tauto<ExcM<A>> {para_to_tauto_not(x).tapp(Right)}
 
 /// `(a ⋁ ¬a)^true => (¬a ⋁ ¬¬a)^true`.
 pub fn tauto_excm_to_tauto_excm_not<A: Prop>(x: Tauto<ExcM<A>>) -> Tauto<ExcM<Not<A>>> {
