@@ -148,9 +148,7 @@ pub fn pow_in_left_arg<A: Prop, B: Prop, C: Prop>(
     x: Pow<A, B>,
     tauto_eq_a_c: Tauto<Eq<A, C>>,
 ) -> Pow<C, B> {
-    fn f<A: Prop, C: Prop>((a, x): And<A, Tauto<Eq<A, C>>>) -> C {
-        x(True).0(a)
-    }
+    fn f<A: Prop, C: Prop>((a, x): And<A, Tauto<Eq<A, C>>>) -> C {x(True).0(a)}
     pow_transitivity(hooo_rev_and((x, pow_lift(tauto_eq_a_c))), f)
 }
 
