@@ -116,3 +116,5 @@ pub fn is_groupoid_to_id<
     let is_prop_eq = is_set_to_is_prop(is_set_eq, path_p, path_q);
     is_prop_to_id(is_prop_eq, hom_p, hom_q)
 }
+/// `is_contr(true)`.
+pub fn true_is_contr() -> IsContr<True> {to_is_contr(True)}
