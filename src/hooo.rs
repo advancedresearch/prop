@@ -1065,9 +1065,7 @@ pub fn para_to_or<A: Prop, B: Prop>(para_a: Para<A>, para_b: Para<B>) -> Para<Or
 }
 
 /// `false^(a ⋁ b) => false^a ∧ false^b`.
-pub fn para_from_or<A: Prop, B: Prop>(
-    x: Para<Or<A, B>>,
-) -> And<Para<A>, Para<B>> {
+pub fn para_from_or<A: Prop, B: Prop>(x: Para<Or<A, B>>,) -> And<Para<A>, Para<B>> {
     hooo_dual_or(x)
 }
 
