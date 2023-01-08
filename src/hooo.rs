@@ -563,15 +563,11 @@ pub fn tauto_hooo_dual_nrimply<A: DProp, B: DProp, C: DProp>(
     fn g<A: Prop, B: Prop, C: Prop>(tauto_c: Tauto<C>) -> Imply<Pow<C, A>, Pow<C, B>> {
         pow_transitivity(tr(), tauto_c).map_any()
     }
-    match Tauto::<Imply<Pow<C, A>, Pow<C, B>>>::decide() {
+    match tauto_decide() {
         Left(y) => y,
         Right(ny) => {
-            let f: Imply<Tauto<Imply<B, A>>, Tauto<Imply<Pow<C, A>, Pow<C, B>>>> =
-                Rc::new(move |x| hooo_imply(pow_to_imply_lift(f))(pow_lift(x)));
-            let y: Not<Tauto<Imply<B, A>>> = imply::modus_tollens(f)(ny);
-            let y: Tauto<Not<Imply<B, A>>> = hooo_rev_not(y);
-            let y: Tauto<C> = pow_transitivity(y, x);
-            hooo_imply(pow_to_imply_lift(g))(pow_lift(y))
+            let f = Rc::new(move |x| pow_lift(x).tapp(f));
+            pow_lift(pow_transitivity(hooo_rev_not(imply::modus_tollens(f)(ny)), x)).tapp(g)
         }
     }
 }
