@@ -914,9 +914,7 @@ pub fn eq_tauto_to_eq_para_excm<A: Prop, B: Prop>(
     excm_a: Tauto<ExcM<A>>,
     excm_b: Tauto<ExcM<B>>,
 ) -> Eq<Para<A>, Para<B>> {
-    let y0 = imply_tauto_to_imply_para_excm(x.0, excm_a);
-    let y1 = imply_tauto_to_imply_para_excm(x.1, excm_b);
-    (y1, y0)
+    (imply_tauto_to_imply_para_excm(x.1, excm_b), imply_tauto_to_imply_para_excm(x.0, excm_a))
 }
 
 /// `(a^true == false^a) => false^uniform(a)`.
