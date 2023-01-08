@@ -1356,14 +1356,8 @@ pub fn tauto_imply_in_right_arg<A: Prop, B: Prop, C: Prop>(
 }
 
 /// `(a => b)^true ∧ a^true  =>  b^true`.
-pub fn tauto_modus_ponens<A: Prop, B: Prop>(
-    ab: Tauto<Imply<A, B>>,
-    a: Tauto<A>,
-) -> Tauto<B> {
-    fn f<A: Prop, B: Prop>(_: True) -> Imply<And<Imply<A, B>, A>, B> {
-        Rc::new(move |(ab, a)| ab(a))
-    }
-    let f = hooo_imply(f);
+pub fn tauto_modus_ponens<A: Prop, B: Prop>(ab: Tauto<Imply<A, B>>, a: Tauto<A>) -> Tauto<B> {
+    let f = hooo_imply(tauto!(Rc::new(move |(ab, a): And<Imply<_, _>, _>| ab(a))));
     let x = hooo_rev_and((ab, a));
     f(x)
 }
