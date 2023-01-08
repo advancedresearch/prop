@@ -393,6 +393,9 @@ pub fn tup_is_const<A: Prop, B: Prop>(_a: IsConst<A>, _b: IsConst<B>) -> IsConst
     unimplemented!()
 }
 
+/// Tuple of 3 elements.
+pub type Tup3<A, B, C> = Tup<A, Tup<B, C>>;
+
 /// Fst.
 #[derive(Copy, Clone)]
 pub struct Fst(());
