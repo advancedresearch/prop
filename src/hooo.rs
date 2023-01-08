@@ -227,10 +227,7 @@ pub fn pow_transitivity<A: Prop, B: Prop, C: Prop>(ab: Pow<B, A>, bc: Pow<C, B>)
 }
 
 /// `x =^= x`.
-pub fn pow_eq_refl<A: Prop>() -> PowEq<A, A> {
-    fn f<A: Prop>(a: A) -> A {a}
-    (f, f)
-}
+pub fn pow_eq_refl<A: Prop>() -> PowEq<A, A> {(pow_refl, pow_refl)}
 /// `(x =^= y) => (y =^= x)`.
 pub fn pow_eq_symmetry<A: Prop, B: Prop>((ab, ba): PowEq<A, B>) -> PowEq<B, A> {(ba, ab)}
 /// `(x =^= y) ⋀ (y =^= z) => (x =^= z)`.
