@@ -199,6 +199,8 @@ pub fn inv_involve<F: Prop>(_: Inv<Inv<F>>) -> F {unimplemented!()}
 pub fn involve_inv<F: Prop>(_: F) -> Inv<Inv<F>> {unimplemented!()}
 /// `(f == g)  =>  inv(f) == inv(g)`.
 pub fn inv_eq<F: Prop, G: Prop>(_: Eq<F, G>) -> Eq<Inv<F>, Inv<G>> {unimplemented!()}
+/// `~f => ~inv(f)`.
+pub fn inv_qu<F: Prop>(_: Qu<F>) -> Qu<Inv<F>> {unimplemented!()}
 
 /// Get inverse map of `f` if there exists a proof `g`.
 ///
