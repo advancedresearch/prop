@@ -1170,15 +1170,7 @@ pub fn tauto_and_to_eq_pos<A: Prop, B: Prop>(a: Tauto<A>, b: Tauto<B>) -> Tauto<
 pub fn tauto_or_left<A: Prop, B: Prop>(x: Tauto<A>) -> Tauto<Or<A, B>> {x.tapp(Left)}
 
 /// `b^true => (a ⋁ b)^true`.
-pub fn tauto_or_right<A: Prop, B: Prop>(
-    x: Tauto<B>
-) -> Tauto<Or<A, B>> {
-    fn f<A: Prop, B: Prop>(_: True) -> Imply<B, Or<A, B>> {
-        Rc::new(move |b| Right(b))
-    }
-    let f = hooo_imply(f);
-    f(x)
-}
+pub fn tauto_or_right<A: Prop, B: Prop>(x: Tauto<B>) -> Tauto<Or<A, B>> {x.tapp(Right)}
 
 /// `(a^true ⋁ b^true) => (a ⋁ b)^true`.
 pub fn tauto_or<A: Prop, B: Prop>(or_ab: Or<Tauto<A>, Tauto<B>>) -> Tauto<Or<A, B>> {
