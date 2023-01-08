@@ -930,12 +930,10 @@ pub fn eq_tauto_para_to_para_uniform<A: DProp>(eq: Eq<Tauto<A>, Para<A>>) -> Par
 }
 
 /// `false^uniform(a) => (a^true == false^a)`.
-pub fn para_uniform_to_eq_tauto_para<A: Prop>(
-    para_uni: Para<Uniform<A>>
-) -> Eq<Tauto<A>, Para<A>> {
+pub fn para_uniform_to_eq_tauto_para<A: Prop>(x: Para<Uniform<A>>) -> Eq<Tauto<A>, Para<A>> {
     (
-        Rc::new(move |tauto_a| imply::absurd()(para_uni(Left(tauto_a)))),
-        Rc::new(move |para_a| imply::absurd()(para_uni(Right(para_a)))),
+        Rc::new(move |tauto_a| imply::absurd()(x(Left(tauto_a)))),
+        Rc::new(move |para_a| imply::absurd()(x(Right(para_a)))),
     )
 }
 
