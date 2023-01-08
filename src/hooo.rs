@@ -473,9 +473,7 @@ pub fn tauto_hooo_rev_neq<A: DProp, B: DProp, C: Prop>(
 /// `¬(a^c == b^c) => (¬(a == b))^c`.
 pub fn hooo_rev_neq<A: DProp, B: DProp, C: Prop>(
     x: NEq<Pow<A, C>, Pow<B, C>>
-) -> Pow<NEq<A, B>, C> {
-    hooo_rev_not(imply::in_left(x, |y| hooo_eq(y)))
-}
+) -> Pow<NEq<A, B>, C> {hooo_rev_not(imply::in_left(x, |y| hooo_eq(y)))}
 
 /// `c^(¬(a == b)) => (c^a == c^b)^true`.
 pub fn tauto_hooo_dual_neq<A: DProp, B: DProp, C: DProp>(
