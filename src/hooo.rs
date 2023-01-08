@@ -499,10 +499,8 @@ pub fn tauto_hooo_dual_neq<A: DProp, B: DProp, C: DProp>(
 pub fn tauto_hooo_dual_rev_neq<A: DProp, B: DProp, C: Prop>(
     x: Tauto<Eq<Pow<C, A>, Pow<C, B>>>
 ) -> Pow<C, NEq<A, B>> {
-    fn f<A: Prop, B: Prop>(x: Eq<A, B>) -> Imply<A, B> {x.0}
-    fn g<A: Prop, B: Prop>(x: Eq<A, B>) -> Imply<B, A> {x.1}
-    let x0 = tauto_hooo_dual_rev_nrimply(pow_transitivity(x, f));
-    let x1 = tauto_hooo_dual_rev_nrimply(pow_transitivity(x, g));
+    let x0 = tauto_hooo_dual_rev_nrimply(pow_transitivity(x, and::fst));
+    let x1 = tauto_hooo_dual_rev_nrimply(pow_transitivity(x, and::snd));
     let y = hooo_dual_rev_or((x0, x1));
     pow_transitivity(eq::neq_symmetry, pow_transitivity(or::from_de_morgan, y))
 }
