@@ -167,8 +167,7 @@ pub fn pow_in_right_arg<A: Prop, B: Prop, C: Prop>(
 pub fn pow_right_and_symmetry<A: Prop, B: Prop, C: Prop>(
     x: Pow<A, And<B, C>>
 ) -> Pow<A, And<C, B>> {
-    fn f<A: Prop, B: Prop>((a, b): And<A, B>) -> And<B, A> {(b, a)}
-    pow_transitivity(f, x)
+    pow_transitivity(and::symmetry, x)
 }
 
 /// `¬(a^b) => a^(¬b)`.
