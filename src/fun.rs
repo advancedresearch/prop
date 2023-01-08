@@ -729,3 +729,8 @@ pub type FunExt<F, G, X, Y, A> = DepFunTy<
 pub fn fun_ext<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>() ->
     Eq<Eq<F, G>, FunExt<F, G, X, Y, A>>
 {unimplemented!()}
+
+/// `((f, f, a) : (x -> y, x -> y, x)) -> (\(a : x) = (f(a) == f(a)))(a)`.
+pub fn fun_ext_refl<F: Prop, X: Prop, Y: Prop, A: Prop>() -> FunExt<F, F, X, Y, A> {
+    fun_ext().0(eq::refl())
+}
