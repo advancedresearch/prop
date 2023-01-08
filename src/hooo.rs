@@ -255,14 +255,9 @@ pub fn pow_eq_transitivity<A: Prop, B: Prop, C: Prop>(
 
 /// `(x =^= y) => (a == b)^true`.
 pub fn pow_eq_to_tauto_eq<A: Prop, B: Prop>((ba, ab): PowEq<A, B>) -> Tauto<Eq<A, B>> {
-    fn f<A: Prop, B: Prop>(_: True) -> Imply<Pow<A, B>, Imply<B, A>> {
-        Rc::new(move |ba| Rc::new(move |b| ba(b)))
-    }
-    let f1 = hooo_imply(f);
-    let tauto_ba = f1(pow_lift(ab));
-    let f2 = hooo_imply(f);
-    let tauto_ab = f2(pow_lift(ba));
-    hooo_rev_and((tauto_ab, tauto_ba))
+    let f1 = hooo_imply(pow_to_imply_lift(pow_to_imply));
+    let f2 = hooo_imply(pow_to_imply_lift(pow_to_imply));
+    hooo_rev_and((f1(pow_lift(ba)), f2(pow_lift(ab))))
 }
 
 /// `(a == b)^true => (x =^= y)`.
