@@ -43,7 +43,7 @@
 //! If a function `f` has no inverse, it is useful to prove `false^(inv(f) ~~ g)`.
 
 use crate::*;
-use path_semantics::{POrdProof, Ty};
+use path_semantics::{LProp, POrdProof, Ty};
 use quality::Q;
 use qubit::Qu;
 use hooo::{Pow, Tauto};
@@ -720,17 +720,30 @@ pub type AppEq<F, G, A, X> = Lam<Ty<A, X>, Eq<App<F, A>, App<G, A>>>;
 /// `((f, g, a) : (x -> y, x -> y, x)) -> (\(a : x) = (f(a) == g(a)))(a)`.
 ///
 /// Function extensionality type.
-pub type FunExt<F, G, X, Y, A> = DepFunTy<
+pub type FunExtTy<F, G, X, Y, A> = DepFunTy<
+    Tup3<F, G, A>, Tup3<Pow<Y, X>, Pow<Y, X>, X>,
+    AppEq<F, G, A, X>,
+>;
+/// `p : (((f, g, a) : (x -> y, x -> y, x)) -> (\(a : x) = (f(a) == g(a)))(a))`.
+pub type FunExt<P, F, G, X, Y, A> = DepFun<
+    P,
     Tup3<F, G, A>, Tup3<Pow<Y, X>, Pow<Y, X>, X>,
     AppEq<F, G, A, X>,
 >;
 
-/// Function extentionality.
-pub fn fun_ext<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>() ->
-    Eq<Eq<F, G>, FunExt<F, G, X, Y, A>>
+/// Function extensionality.
+pub fn fun_ext_ty<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>() ->
+    Eq<Eq<F, G>, FunExtTy<F, G, X, Y, A>>
 {unimplemented!()}
 
 /// `((f, f, a) : (x -> y, x -> y, x)) -> (\(a : x) = (f(a) == f(a)))(a)`.
-pub fn fun_ext_refl<F: Prop, X: Prop, Y: Prop, A: Prop>() -> FunExt<F, F, X, Y, A> {
-    fun_ext().0(eq::refl())
+pub fn fun_ext_refl_ty<F: Prop, X: Prop, Y: Prop, A: Prop>() -> FunExtTy<F, F, X, Y, A> {
+    fun_ext_ty().0(eq::refl())
+}
+/// `p : (((f, f, a) : (x -> y, x -> y, x)) -> (\(a : x) = (f(a) == f(a)))(a))`.
+pub fn fun_ext_refl<F: Prop, X: Prop, Y: Prop, A: Prop, P: LProp>() -> FunExt<P, F, F, X, Y, A>
+    where P::N: Nat
+{
+    let x = (fun_ext_refl_ty().map_any(), True.map_any());
+    path_semantics::ty_in_right_arg(path_semantics::ty_true(), x)
 }
