@@ -948,12 +948,8 @@ pub fn para_in_arg<A: Prop, B: Prop>(para_a: Para<A>, tauto_eq_a_b: Tauto<Eq<A, 
 pub fn para_to_tauto_excm_transitivity<A: Prop, B: Prop>(
     para_a: Para<A>, x: Tauto<Eq<A, B>>
 ) -> Tauto<ExcM<B>> {
-    fn f<A: Prop, B: Prop>(x: Eq<A, B>) -> Imply<Not<A>, Not<B>> {
-        Rc::new(move |na| eq::modus_tollens(x.clone()).1(na))
-    }
-    para_to_tauto_excm(tauto_not_to_para(
-        hooo_imply(pow_transitivity(x, f))(para_to_tauto_not(para_a))
-    ))
+    para_to_tauto_excm(tauto_not_to_para(hooo_imply(pow_transitivity(x,
+        pow_transitivity(and::snd, imply::modus_tollens)))(para_to_tauto_not(para_a))))
 }
 
 /// `(false^(a == b) ∧ (b == c)^true) => false^(a == c)`.
