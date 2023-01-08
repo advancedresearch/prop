@@ -606,6 +606,9 @@ pub fn par_tup_lam_ty<F: Prop, G: Prop, X1: Prop, X2: Prop, Y1: Prop, Y2: Prop>(
 }
 /// `is_const(par_tup)`.
 pub fn par_tup_is_const() -> IsConst<ParTup> {unimplemented!()}
+/// `(id x id) == id`.
+pub fn par_tup_id() -> Eq<App<ParTup, Tup<FId, FId>>, FId> {unimplemented!()}
+
 /// `is_const(f) ⋀ is_const(g)  =>  is_const(f x g)`.
 pub fn par_tup_app_is_const<F: Prop, G: Prop>(
     f: IsConst<F>,
