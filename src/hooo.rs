@@ -264,7 +264,7 @@ pub fn tauto_excm_to_tauto_excm_not<A: Prop>(x: Tauto<ExcM<A>>) -> Tauto<ExcM<No
 
 /// `(¬(a^b))^true => (¬a)^b`.
 pub fn tauto_hooo_rev_not<A: DProp, B: Prop>(x: Tauto<Not<Pow<A, B>>>) -> Pow<Not<A>, B> {
-    hooo_imply(pow_to_imply_lift(hooo_rev_not))(x)(True)
+    x.tapp(hooo_rev_not)(True)
 }
 
 /// `¬(a^b) => (¬a)^b`.
