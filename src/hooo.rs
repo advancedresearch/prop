@@ -1012,13 +1012,10 @@ pub fn tauto_eq_transitivity<A: Prop, B: Prop, C: Prop>(
     ab: Tauto<Eq<A, B>>,
     bc: Tauto<Eq<B, C>>
 ) -> Tauto<Eq<A, C>> {
-    fn f<A: Prop, B: Prop, C: Prop>(_: True) ->
-    Imply<Eq<A, B>, Imply<Eq<B, C>, Eq<A, C>>> {
-        Rc::new(move |ab| Rc::new(move |bc| eq::transitivity(ab.clone(), bc)))
+    fn f<A: Prop, B: Prop, C: Prop>((x, y): And<Eq<A, B>, Eq<B, C>>) -> Eq<A, C> {
+        eq::transitivity(x, y)
     }
-    let f = hooo_imply(f);
-    let g = hooo_imply(f(ab));
-    g(bc)
+    pow_transitivity(hooo_rev_and((ab, bc)), f)
 }
 
 pub use tauto_eq_transitivity as tauto_eq_in_right_arg;
