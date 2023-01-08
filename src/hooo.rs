@@ -245,9 +245,7 @@ pub fn pow_eq_to_tauto_eq<A: Prop, B: Prop>((ba, ab): PowEq<A, B>) -> Tauto<Eq<A
 
 /// `(a == b)^true => (x =^= y)`.
 pub fn tauto_eq_to_pow_eq<A: Prop, B: Prop>(x: Tauto<Eq<A, B>>) -> PowEq<A, B> {
-    let pow_ab: Pow<A, B> = pow_in_right_arg(pow_refl, x.clone());
-    let pow_ba: Pow<B, A> = pow_in_left_arg(pow_refl, x);
-    (pow_ba, pow_ab)
+    (pow_in_left_arg(pow_refl, x), pow_in_right_arg(pow_refl, x.clone()))
 }
 
 /// `a^true => (a ⋁ ¬a)^true`.
