@@ -821,6 +821,11 @@ pub fn para_para<A: DProp>(a: A) -> Para<Para<A>> {
     not_not_to_para_para(not::double(a))
 }
 
+/// `¬¬(false^a) => false^a`.
+pub fn not_not_para_rev_double<A: DProp>(nnpara_a: Not<Not<Para<A>>>) -> Para<A> {
+    para_not_rev_double(pow_not(imply::in_left(nnpara_a, |x| para_rev_not(x))))
+}
+
 /// `(¬(false^a) == ¬(false^b)) => (false^a == false^b)`.
 pub fn eq_not_para_to_eq_para<A: DProp, B: DProp>(
     eq_npara_a_npara_b: Eq<Not<Para<A>>, Not<Para<B>>>
