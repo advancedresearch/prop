@@ -25,7 +25,7 @@ pub type IsNGroupoid<N, A> = IsHType<S<S<N>>, A>;
 /// Whether some type is a groupoid.
 pub type IsGroupoid<A> = IsNGroupoid<S<Z>, A>;
 
-/// `refl{x}(a) : id{x}(a, a)`.
+/// `(a : x)  =>  refl{x}(a) : id{x}(a, a)`.
 pub fn refl<A: Prop, X: Prop, PathP: Prop>(_ty_a: Ty<A, X>) -> Ty<Refl<X, A>, Id<X, A, A>>{
     unimplemented!()
 }
