@@ -782,14 +782,8 @@ pub fn tauto_in_arg<A: Prop, B: Prop>(
 }
 
 /// `a^true => (a == true)^true`.
-pub fn tauto_to_eq_true<A: Prop>(
-    x: Tauto<A>
-) -> Tauto<Eq<A, True>> {
-    fn f<A: Prop>(_: True) -> Imply<A, Eq<A, True>> {
-        Rc::new(move |a| (True.map_any(), a.map_any()))
-    }
-    let f = hooo_imply(f);
-    f(x)
+pub fn tauto_to_eq_true<A: Prop>(x: Tauto<A>) -> Tauto<Eq<A, True>> {
+    hooo_imply(tauto!(Rc::new(|a: A| (True.map_any(), a.map_any()))))(x)
 }
 
 /// `(a == true)^true => a^true`.
