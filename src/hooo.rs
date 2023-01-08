@@ -306,9 +306,7 @@ pub fn tauto_hooo_rev_and<A: Prop, B: Prop, C: Prop>(
 
 /// `(a ⋀ b)^c => (a^c ⋀ b^c)`.
 pub fn hooo_and<A: Prop, B: Prop, C: Prop>(x: Pow<And<A, B>, C>) -> And<Pow<A, C>, Pow<B, C>> {
-    fn f<A: Prop, B: Prop>((a, _): And<A, B>) -> A {a}
-    fn g<A: Prop, B: Prop>((_, b): And<A, B>) -> B {b}
-    (pow_transitivity(x.clone(), f), pow_transitivity(x, g))
+    (pow_transitivity(x.clone(), and::fst), pow_transitivity(x, and::snd))
 }
 
 /// `(a^c ⋀ b^c) => (a ⋀ b)^c`.
