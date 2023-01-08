@@ -349,9 +349,7 @@ pub fn tauto_hooo_dual_rev_and<A: Prop, B: Prop, C: Prop>(
 /// This is only valid for decidable propositions.
 pub fn hooo_dual_and<A: DProp, B: DProp, C: DProp>(
     x: Pow<C, And<A, B>>
-) -> Or<Pow<C, A>, Pow<C, B>> {
-    tauto_hooo_dual_and(x)(True)
-}
+) -> Or<Pow<C, A>, Pow<C, B>> {tauto_hooo_dual_and(x)(True)}
 
 /// `(c^a ⋁ c^b) => c^(a ⋀ b)`.
 pub fn hooo_dual_rev_and<A: Prop, B: Prop, C: Prop>(
