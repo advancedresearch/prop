@@ -969,14 +969,9 @@ pub fn para_eq_transitivity_right<A: Prop, B: Prop, C: Prop>(
     bc: Para<Eq<B, C>>
 ) -> Para<Eq<A, C>> {
     fn f<A: Prop, B: Prop, C: Prop>((neq_bc, eq_ab): And<Not<Eq<B, C>>, Eq<A, B>>) -> Not<Eq<A, C>> {
-        Rc::new(move |eq_ac| {
-            let eq_bc: Eq<B, C> = eq::transitivity(eq::symmetry(eq_ab.clone()), eq_ac);
-            neq_bc(eq_bc)
-        })
+        Rc::new(move |eq_ac| neq_bc(eq::transitivity(eq::symmetry(eq_ab.clone()), eq_ac)))
     }
-    let bc = para_to_tauto_not(bc);
-    let x = hooo_rev_and((bc, ab));
-    tauto_not_to_para(pow_transitivity(x, f))
+    tauto_not_to_para(pow_transitivity(hooo_rev_and((para_to_tauto_not(bc), ab)), f))
 }
 
 /// `x => x`.
