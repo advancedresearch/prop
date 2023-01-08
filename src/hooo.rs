@@ -629,9 +629,7 @@ pub fn qu_in_arg<A: Prop, B: Prop>(x: Qu<A>, y: Tauto<Eq<A, B>>) -> Qu<B> {qubit
 pub fn q_in_left_arg<A: Prop, B: Prop, C: Prop>(
     (eq_ab, (qu_a, qu_b)): Q<A, B>,
     g: Tauto<Eq<A, C>>
-) -> Q<C, B> {
-    (eq::in_left_arg(eq_ab, g(True)), (qu_in_arg(qu_a, g), qu_b))
-}
+) -> Q<C, B> {(eq::in_left_arg(eq_ab, g(True)), (qu_in_arg(qu_a, g), qu_b))}
 
 /// `(a ~~ b) ∧ (b == c)^true  =>  (a ~~ c)`.
 pub fn q_in_right_arg<A: Prop, B: Prop, C: Prop>(
