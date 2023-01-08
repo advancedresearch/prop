@@ -866,9 +866,7 @@ pub use tauto_eq_transitivity as tauto_eq_in_right_arg;
 pub fn tauto_eq_in_left_arg<A: Prop, B: Prop, C: Prop>(
     f: Tauto<Eq<A, B>>,
     g: Tauto<Eq<A, C>>,
-) -> Tauto<Eq<C, B>> {
-    tauto_eq_transitivity(tauto_eq_symmetry(g), f)
-}
+) -> Tauto<Eq<C, B>> {tauto_eq_transitivity(tauto_eq_symmetry(g), f)}
 
 /// `uniform(a) ⋁ false^uniform(a)`.
 pub fn program<A: DProp>() -> Or<Uniform<A>, Para<Uniform<A>>> {
