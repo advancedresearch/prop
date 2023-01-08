@@ -1197,8 +1197,7 @@ pub fn tauto_excm_to_or<A: Prop>(x: Tauto<ExcM<A>>) -> Or<Tauto<A>, Tauto<Not<A>
 
 /// `(¬¬a)^true ⋁ (¬a)^true`.
 pub fn tauto_to_or_e<A: EProp>() -> Or<Tauto<Not<Not<A>>>, Tauto<Not<A>>> {
-    fn f<A: EProp>(_: True) -> E<A> {A::e()}
-    tauto_e_to_or(f)
+    tauto_e_to_or(tauto!(A::e()))
 }
 
 /// `(¬¬a ⋁ ¬a)^true => ((¬¬a)^true ⋁ (¬a)^true)`.
