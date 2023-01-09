@@ -786,12 +786,12 @@ pub fn fun_ext_app_eq_from_eq<F: Prop, G: Prop, A: Prop, X: Prop>(
     eq::transitivity(x, eq::transitivity(lam(ty_a), subst_nop())).1(True)
 }
 /// `(a : x)  =>  ((\(a : x) = (f(a) == f(a))) . (snd . snd))((f, f, a))`.
-pub fn app_eq_refl<F: Prop, A: Prop, X: Prop>(
+pub fn fun_ext_app_eq_refl<F: Prop, A: Prop, X: Prop>(
     ty_a: Ty<A, X>
 ) -> App<AppEq<F, F, A, X>, Tup3<F, F, A>> {fun_ext_app_eq_from_eq(ty_a, eq::refl())}
 /// `fun_ext_ty(f, f)`.
 pub fn fun_ext_refl_ty<F: Prop, X: Prop, Y: Prop, A: Prop>() -> FunExtTy<F, F, X, Y, A> {
-    hooo::pow_transitivity(tup3_trd, app_eq_refl)
+    hooo::pow_transitivity(tup3_trd, fun_ext_app_eq_refl)
 }
 /// `fun_ext_ty(f, g) => fun_ext_ty(g, f)`.
 pub fn fun_ext_symmetry_ty<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>(
