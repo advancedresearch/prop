@@ -115,20 +115,6 @@ pub fn q_adjoint<F: Prop, G: Prop>() -> Eq<Q<Inv<F>, G>, Q<F, Inv<G>>> {
     hooo::pow_eq_to_tauto_eq((q_adjoint_left, q_adjoint_right))(True)
 }
 
-/// `(p : true) ⋀ ((x == x) == y)  =>  (p : y)`.
-pub fn path_lift_by_eq_refl<P: Prop, X: Prop, Y: Prop>(
-    ty_p: Ty<P, True>,
-    eq_refl: Eq<Eq<X, X>, Y>
-) -> Ty<P, Y> {
-    let x = eq::transitivity((eq::refl().map_any(), True.map_any()), eq_refl);
-    path_semantics::ty_in_right_arg(ty_p, x)
-}
-/// `(x == x) : true`.
-pub fn path_ty_eq_refl_true<X: Prop>() -> Ty<Eq<X, X>, True> {
-    path_semantics::ty_in_left_arg(path_semantics::ty_true_true(),
-        (eq::refl().map_any(), True.map_any()))
-}
-
 /// Apply 2 function arguments.
 pub type App2<F, X, Y> = App<App<F, X>, Y>;
 
