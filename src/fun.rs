@@ -752,16 +752,16 @@ pub fn norm1_inv<F: Prop>() -> Eq<Norm1<FId, F, FId>, Inv<F>> {
 }
 
 /// `\(a : x) = (f(a) == g(a))`.
-pub type AppEq<F, G, A, X> = Lam<Ty<A, X>, Eq<App<F, A>, App<G, A>>>;
+pub type AppEq<F, G, A, X> = Comp<Lam<Ty<A, X>, Eq<App<F, A>, App<G, A>>>, Comp<Snd, Snd>>;
 
-/// `((f, g, a) : (x -> y, x -> y, x)) -> (\(a : x) = (f(a) == g(a)))(a)`.
+/// `((f, g, a) : (x -> y, x -> y, x)) -> ((\(a : x) = (f(a) == g(a))) . (snd . snd))((f, g, a))`.
 ///
 /// Function extensionality type.
 pub type FunExtTy<F, G, X, Y, A> = DepFunTy<
     Tup3<F, G, A>, Tup3<Pow<Y, X>, Pow<Y, X>, X>,
     AppEq<F, G, A, X>,
 >;
-/// `p : (((f, g, a) : (x -> y, x -> y, x)) -> (\(a : x) = (f(a) == g(a)))(a))`.
+/// `p : ((f, g, a) : (x -> y, x -> y, x)) -> ((\(a : x) = (f(a) == g(a))) . (snd . snd))((f, g, a))`.
 pub type FunExt<P, F, G, X, Y, A> = DepFun<
     P,
     Tup3<F, G, A>, Tup3<Pow<Y, X>, Pow<Y, X>, X>,
@@ -773,9 +773,14 @@ pub fn fun_ext_ty<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>() ->
     Eq<Eq<F, G>, FunExtTy<F, G, X, Y, A>>
 {unimplemented!()}
 
-/// `\(a : x) = (f(a) == f(a))`.
-pub fn app_eq_refl<F: Prop, A: Prop, X: Prop>(ty_a: Ty<A, X>) -> AppEq<F, F, A, X> {
-    lam_lift(ty_a, app_eq(eq::refl()))
+/// `(a : x)  =>  ((\(a : x) = (f(a) == f(a))) . (snd . snd))((f, f, a))`.
+pub fn app_eq_refl<F: Prop, A: Prop, X: Prop>(ty_a: Ty<A, X>) -> App<AppEq<F, F, A, X>, Tup3<F, F, A>> {
+    let x = app_map_eq(comp_eq_left(lam_eq_lift(ty_a.clone(),
+        (True.map_any(), eq::refl().map_any()))));
+    let x = eq::transitivity(x, eq::symmetry(eq_app_comp()));
+    let x = eq::transitivity(x, app_eq(eq::symmetry(eq_app_comp())));
+    let x = eq::transitivity(eq::transitivity(x, app_eq(app_eq(snd_def()))), app_eq(snd_def()));
+    eq::transitivity(x, eq::transitivity(lam(ty_a), subst_nop())).1(True)
 }
 /// `((f, f, a) : (x -> y, x -> y, x)) -> (\(a : x) = (f(a) == f(a)))(a)`.
 pub fn fun_ext_refl_ty<F: Prop, X: Prop, Y: Prop, A: Prop>() -> FunExtTy<F, F, X, Y, A> {
