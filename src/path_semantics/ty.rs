@@ -20,6 +20,13 @@ pub fn ty_in_right_arg<A: Prop, B: Prop, C: Prop>((ab, pord): Ty<A, B>, eq: Eq<B
     (imply::in_right_arg(ab, eq.clone()), pord.by_eq_right(eq))
 }
 
+/// `(a == b)  =>  (a : c) == (b : c)`.
+pub fn ty_eq_left<A: Prop, B: Prop, C: Prop>(x: Eq<A, B>) -> Eq<Ty<A, C>, Ty<B, C>> {
+    let x2 = eq::symmetry(x.clone());
+    (Rc::new(move |ty_a| ty_in_left_arg(ty_a, x.clone())),
+     Rc::new(move |ty_b| ty_in_left_arg(ty_b, x2.clone())))
+}
+
 /// `(x : false) => ¬x`.
 pub fn ty_false<X: Prop>(ty_x_false: Ty<X, False>) -> Not<X> {ty_x_false.0}
 
