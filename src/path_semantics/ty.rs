@@ -26,6 +26,11 @@ pub fn ty_not<X: Prop>(ty_x_false: Ty<X, False>) -> Not<X> {ty_x_false.0}
 /// `(true : x) => x`.
 pub fn ty_true_prop<X: Prop>(ty_true_x: Ty<True, X>) -> X {ty_true_x.0(True)}
 
+/// `(a : x) ⋀ a => (true : x)`.
+pub fn ty_prop_true<A: Prop, X: Prop>(ty_a_x: Ty<A, X>, a: A) -> Ty<True, X> {
+    ty_in_left_arg(ty_a_x, (True.map_any(), a.map_any()))
+}
+
 /// `(x : a) ⋀ a => (x : true)`.
 pub fn ty_triv<X: Prop, A: Prop>(
     ty_x_a: Ty<X, A>,
