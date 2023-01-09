@@ -625,11 +625,10 @@ pub fn hooo_dual_rev_nrimply<A: DProp, B: DProp, C: DProp>(
     }
 }
 
+/// `(a == b) ⋀ theory(a == b)  =>  (a ~~ b)`.
+///
 /// Lift equality with tautological distinction into quality.
-pub fn lift_q<A: Prop, B: Prop>(
-    _: Eq<A, B>,
-    _: Theory<Eq<A, B>>
-) -> Q<A, B> {unimplemented!()}
+pub fn lift_q<A: Prop, B: Prop>(_: Eq<A, B>, _: Theory<Eq<A, B>>) -> Q<A, B> {unimplemented!()}
 
 /// `~a ∧ (a == b)^true  =>  ~b`.
 pub fn qu_in_arg<A: Prop, B: Prop>(x: Qu<A>, y: Tauto<Eq<A, B>>) -> Qu<B> {qubit::in_arg(x, y)}
