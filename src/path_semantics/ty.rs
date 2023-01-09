@@ -23,6 +23,9 @@ pub fn ty_in_right_arg<A: Prop, B: Prop, C: Prop>((ab, pord): Ty<A, B>, eq: Eq<B
 /// `(x : false) => ¬x`.
 pub fn ty_not<X: Prop>(ty_x_false: Ty<X, False>) -> Not<X> {ty_x_false.0}
 
+/// `(true : x) => x`.
+pub fn ty_true_prop<X: Prop>(ty_true_x: Ty<True, X>) -> X {ty_true_x.0(True)}
+
 /// `(x : a) ⋀ a => (x : true)`.
 pub fn ty_triv<X: Prop, A: Prop>(
     ty_x_a: Ty<X, A>,
