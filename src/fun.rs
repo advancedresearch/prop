@@ -115,7 +115,7 @@ pub fn q_adjoint<F: Prop, G: Prop>() -> Eq<Q<Inv<F>, G>, Q<F, Inv<G>>> {
     hooo::pow_eq_to_tauto_eq((q_adjoint_left, q_adjoint_right))(True)
 }
 /// `~inv(f)  =>  (f(a) == b) == (inv(f)(b) == a)`.
-fn qu_to_app_eq<A: Prop, B: Prop, F: Prop>(
+pub fn qu_to_app_eq<A: Prop, B: Prop, F: Prop>(
     x: Qu<Inv<F>>
 ) -> Eq<Eq<App<F, A>, B>, Eq<App<Inv<F>, B>, A>> {
     let qu_inv_inv_f: Qu<Inv<Inv<F>>> = inv_qu(x.clone());
