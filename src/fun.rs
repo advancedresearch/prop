@@ -41,6 +41,32 @@
 //! only for functions that have inverses.
 //!
 //! If a function `f` has no inverse, it is useful to prove `false^(inv(f) ~~ g)`.
+//!
+//! ### Function Extensionality
+//!
+//! It is possible to prove the following (`fun_ext`):
+//!
+//! `(f == g)^true => fun_ext_ty(f, g)`
+//!
+//! However, the reverse is not possible to prove.
+//!
+//! By using path semantical quality, the `path` axiom makes it possible to get the inverse map:
+//!
+//! `~inv(f) ⋀ (f : x -> y) ⋀ (x -> y)  =>  f ⋀ inv(f)`
+//!
+//! Which proves (`path_inv`):
+//!
+//! `~inv(f) ⋀ (f : x -> y) ⋀ (x -> y)  =>  (y -> x)`
+//!
+//! This means, only `~inv(fun_ext(f, g))` needs to be added,
+//! together with declaration of the type of function extensionality:
+//!
+//! `fun_ext(f, g) : (f == g)^true -> fun_ext_ty(f, g)`
+//!
+//! The `path` axiom might be thought of as collapsing the proof space of all
+//! tautology transforms with inverses, together with the proof space of inverses.
+//! With other words, it leverages PSI to say that any proof of `x -> y` is identical to having a
+//! proof of `y -> x` when there exists an inverse and a proof `f : x -> y`.
 
 use crate::*;
 use path_semantics::{POrdProof, Ty};
