@@ -856,7 +856,7 @@ pub fn norm1_inv<F: Prop>() -> Eq<Norm1<FId, F, FId>, Inv<F>> {
     eq::transitivity(comp_eq_left(comp_id_left()), comp_id_left())
 }
 
-/// `\(a : x) = (f(a) == g(a))`.
+/// `(\(a : x) = (f(a) == g(a))) . (snd . snd)`.
 pub type FunExtAppEq<F, G, A, X> = Comp<Lam<Ty<A, X>, Eq<App<F, A>, App<G, A>>>, Comp<Snd, Snd>>;
 
 /// `((f, g, a) : (x -> y, x -> y, x)) -> ((\(a : x) = (f(a) == g(a))) . (snd . snd))((f, g, a))`.
