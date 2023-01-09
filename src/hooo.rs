@@ -181,6 +181,13 @@ pub fn pow_eq_left<A: Prop, B: Prop, C: Prop>(x: Tauto<Eq<A, B>>) -> Eq<Pow<A, C
      Rc::new(move |pow_bc| pow_in_left_arg(pow_bc, x2)))
 }
 
+/// `(b == c)^true  =>  (a^b == a^c)`.
+pub fn pow_eq_right<A: Prop, B: Prop, C: Prop>(x: Tauto<Eq<B, C>>) -> Eq<Pow<A, B>, Pow<A, C>> {
+    let x2 = tauto_eq_symmetry(x);
+    (Rc::new(move |pow_ab| pow_in_right_arg(pow_ab, x)),
+     Rc::new(move |pow_ac| pow_in_right_arg(pow_ac, x2)))
+}
+
 /// `a^(b ⋀ c) => a^(c ⋀ b)`
 pub fn pow_right_and_symmetry<A: Prop, B: Prop, C: Prop>(
     x: Pow<A, And<B, C>>
