@@ -405,6 +405,10 @@ pub fn tup_is_const<A: Prop, B: Prop>(_a: IsConst<A>, _b: IsConst<B>) -> IsConst
 pub fn tup_fst<A: Prop, B: Prop, X: Prop, Y: Prop>(_: Ty<Tup<A, B>, Tup<X, Y>>) -> Ty<A, X> {
     unimplemented!()
 }
+/// `(a, b) : (x, y)  =>  (b : y)`.
+pub fn tup_snd<A: Prop, B: Prop, X: Prop, Y: Prop>(_: Ty<Tup<A, B>, Tup<X, Y>>) -> Ty<B, Y> {
+    unimplemented!()
+}
 
 /// Tuple of 3 elements.
 pub type Tup3<A, B, C> = Tup<A, Tup<B, C>>;
