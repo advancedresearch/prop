@@ -55,9 +55,9 @@ pub fn ty_true<X: LProp>() -> Ty<X, True>
 }
 
 /// `true : true`.
-pub fn ty_true_true<N: Nat>() -> Ty<True, True> {
-    let x = ty_in_left_arg(ty_ltrue::<LTrue<N>>(), eq::symmetry(eq_true_ltrue::<N>()));
-    ty_in_right_arg(x, eq::symmetry(eq_true_ltrue::<S<N>>()))
+pub fn ty_true_true() -> Ty<True, True> {
+    let x = ty_in_left_arg(ty_ltrue(), eq::symmetry(eq_true_ltrue::<Z>()));
+    ty_in_right_arg(x, eq::symmetry(eq_true_ltrue::<S<Z>>()))
 }
 
 /// `(x : a) ⋀ (y : b)  =>  ((x ⋀ y) : (a ⋀ b))`.
