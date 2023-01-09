@@ -42,6 +42,11 @@ pub fn ty_non_triv<X: Prop, A: Prop>(
     ty_in_right_arg(ty_x_a, eq_a_false)
 }
 
+/// `true == ltrue`.
+pub fn eq_true_ltrue<N: Nat>() -> Eq<True, LTrue<N>> {
+    (LTrue(Default::default()).map_any(), True.map_any())
+}
+
 /// `x : true`.
 pub fn ty_true<X: LProp>() -> Ty<X, True>
     where X::N: Nat
