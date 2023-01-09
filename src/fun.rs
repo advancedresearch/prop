@@ -795,17 +795,23 @@ pub type FunExtTy<F, G, X, Y, A> = DepFunTy<
     Tup3<F, G, A>, Tup3<Pow<Y, X>, Pow<Y, X>, X>,
     FunExtAppEq<F, G, A, X>,
 >;
-/// `p : ((f, g, a) : (x -> y, x -> y, x)) -> ((\(a : x) = (f(a) == g(a))) . (snd . snd))((f, g, a))`.
-pub type FunExt<P, F, G, X, Y, A> = DepFun<
-    P,
-    Tup3<F, G, A>, Tup3<Pow<Y, X>, Pow<Y, X>, X>,
-    FunExtAppEq<F, G, A, X>,
->;
-
 /// Function extensionality.
+#[derive(Copy, Clone)]
+pub struct FunExt(());
+
+/// `~inv(f) ⋀ (f : x -> y) ⋀ (x -> y)  =>  f ⋀ inv(f)`.
+pub fn path<F: Prop, X: Prop, Y: Prop>(
+    _: Qu<Inv<F>>,
+    _: Ty<F, Pow<Y, X>>,
+    _: Pow<Y, X>
+) -> And<F, Inv<F>> {unimplemented!()}
+
+/// Type of function extensionality.
 pub fn fun_ext_ty<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>() ->
-    Eq<Eq<F, G>, FunExtTy<F, G, X, Y, A>>
+    Ty<App<FunExt, Tup<F, G>>, Pow<FunExtTy<F, G, X, Y, A>, Tauto<Eq<F, G>>>>
 {unimplemented!()}
+/// `~inv(fun_ext(f, g))`.
+pub fn qu_inv_fun_ext<F: Prop, G: Prop>() -> Qu<Inv<App<FunExt, Tup<F, G>>>> {unimplemented!()}
 
 /// `(a : x) ⋀ (f == g)  =>  ((\(a : x) = (f(a) == g(a))) . (snd . snd))((f, g, a))`.
 pub fn fun_ext_app_eq_from_eq<F: Prop, G: Prop, A: Prop, X: Prop>(
@@ -842,6 +848,15 @@ pub fn fun_ext<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>(
     };
     eq::in_left_arg(hooo_eq(pow_transitivity(tup3_trd, x)), y).0(fun_ext_refl_ty())
 }
+/// `fun_ext_ty(f, g) => (f == g)^true`.
+pub fn fun_rev_ext<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>(
+    x: FunExtTy<F, G, X, Y, A>
+) -> Tauto<Eq<F, G>> {
+    use path_semantics::{ty_triv, ty_true};
+
+    let (_, inv_fg) = path(qu_inv_fun_ext(), fun_ext_ty::<F, G, X, Y, A>(), fun_ext);
+    ty_true(ty_triv(inv_ty(fun_ext_ty()), inv_fg))(x)
+}
 /// `(a : x)  =>  ((\(a : x) = (f(a) == f(a))) . (snd . snd))((f, f, a))`.
 pub fn fun_ext_app_eq_refl<F: Prop, A: Prop, X: Prop>(
     ty_a: Ty<A, X>
@@ -853,15 +868,13 @@ pub fn fun_ext_refl_ty<F: Prop, X: Prop, Y: Prop, A: Prop>() -> FunExtTy<F, F, X
 /// `fun_ext_ty(f, g) => fun_ext_ty(g, f)`.
 pub fn fun_ext_symmetry_ty<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>(
     x: FunExtTy<F, G, X, Y, A>
-) -> FunExtTy<G, F, X, Y, A> {
-    fun_ext_ty().0(eq::symmetry(fun_ext_ty().1(x)))
-}
+) -> FunExtTy<G, F, X, Y, A> {fun_ext(hooo::tauto_eq_symmetry(fun_rev_ext(x)))}
 /// `fun_ext_ty(f, g) ⋀ fun_ext_ty(g, h)  =>  fun_ext_ty(f, h)`.
 pub fn fun_ext_transitivity_ty<F: Prop, G: Prop, H: Prop, X: Prop, Y: Prop, A: Prop>(
     fun_ext_fg: FunExtTy<F, G, X, Y, A>,
     fun_ext_gh: FunExtTy<G, H, X, Y, A>,
 ) -> FunExtTy<F, H, X, Y, A> {
-    let fg = fun_ext_ty().1(fun_ext_fg);
-    let gh = fun_ext_ty().1(fun_ext_gh);
-    fun_ext_ty().0(eq::transitivity(fg, gh))
+    let fg = fun_rev_ext(fun_ext_fg);
+    let gh = fun_rev_ext(fun_ext_gh);
+    fun_ext(hooo::tauto_eq_transitivity(fg, gh))
 }
