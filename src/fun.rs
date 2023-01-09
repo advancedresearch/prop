@@ -413,6 +413,19 @@ pub fn tup_snd<A: Prop, B: Prop, X: Prop, Y: Prop>(_: Ty<Tup<A, B>, Tup<X, Y>>) 
 /// Tuple of 3 elements.
 pub type Tup3<A, B, C> = Tup<A, Tup<B, C>>;
 
+/// `(a, b, c) : (x, y, z)  =>  (a : x)`.
+pub fn tup3_fst<A: Prop, B: Prop, C: Prop, X: Prop, Y: Prop, Z: Prop>(
+    x: Ty<Tup3<A, B, C>, Tup3<X, Y, Z>>
+) -> Ty<A, X> {tup_fst(x)}
+/// `(a, b, c) : (x, y, z)  =>  (b : y)`.
+pub fn tup3_snd<A: Prop, B: Prop, C: Prop, X: Prop, Y: Prop, Z: Prop>(
+    x: Ty<Tup3<A, B, C>, Tup3<X, Y, Z>>
+) -> Ty<B, Y> {tup_fst(tup_snd(x))}
+/// `(a, b, c) : (x, y, z)  =>  (c : z)`.
+pub fn tup3_trd<A: Prop, B: Prop, C: Prop, X: Prop, Y: Prop, Z: Prop>(
+    x: Ty<Tup3<A, B, C>, Tup3<X, Y, Z>>
+) -> Ty<C, Z> {tup_snd(tup_snd(x))}
+
 /// Fst.
 #[derive(Copy, Clone)]
 pub struct Fst(());
