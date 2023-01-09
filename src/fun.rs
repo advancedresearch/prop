@@ -745,6 +745,10 @@ pub fn fun_ext_ty<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>() ->
     Eq<Eq<F, G>, FunExtTy<F, G, X, Y, A>>
 {unimplemented!()}
 
+/// `\(a : x) = (f(a) == f(a))`.
+pub fn app_eq_refl<F: Prop, A: Prop, X: Prop>(ty_a: Ty<A, X>) -> AppEq<F, F, A, X> {
+    lam_lift(ty_a, app_eq(eq::refl()))
+}
 /// `((f, f, a) : (x -> y, x -> y, x)) -> (\(a : x) = (f(a) == f(a)))(a)`.
 pub fn fun_ext_refl_ty<F: Prop, X: Prop, Y: Prop, A: Prop>() -> FunExtTy<F, F, X, Y, A> {
     fun_ext_ty().0(eq::refl())
