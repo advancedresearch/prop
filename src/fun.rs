@@ -227,6 +227,14 @@ pub fn involve_inv<F: Prop>(_: F) -> Inv<Inv<F>> {unimplemented!()}
 pub fn inv_eq<F: Prop, G: Prop>(_: Eq<F, G>) -> Eq<Inv<F>, Inv<G>> {unimplemented!()}
 /// `~f => ~inv(f)`.
 pub fn inv_qu<F: Prop>(_: Qu<F>) -> Qu<Inv<F>> {unimplemented!()}
+/// `~inv(f) ⋀ (f : x -> y) ⋀ (x -> y)  =>  f ⋀ inv(f)`.
+///
+/// This makes it possible to get inverse map for free.
+pub fn path<F: Prop, X: Prop, Y: Prop>(
+    _: Qu<Inv<F>>,
+    _: Ty<F, Pow<Y, X>>,
+    _: Pow<Y, X>
+) -> And<F, Inv<F>> {unimplemented!()}
 
 /// Get inverse map of `f` if there exists a proof `g`.
 ///
@@ -826,13 +834,6 @@ pub type FunExtTy<F, G, X, Y, A> = DepFunTy<
 /// Function extensionality.
 #[derive(Copy, Clone)]
 pub struct FunExt(());
-
-/// `~inv(f) ⋀ (f : x -> y) ⋀ (x -> y)  =>  f ⋀ inv(f)`.
-pub fn path<F: Prop, X: Prop, Y: Prop>(
-    _: Qu<Inv<F>>,
-    _: Ty<F, Pow<Y, X>>,
-    _: Pow<Y, X>
-) -> And<F, Inv<F>> {unimplemented!()}
 
 /// Type of function extensionality.
 pub fn fun_ext_ty<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>() ->
