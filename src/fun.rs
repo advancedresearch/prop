@@ -114,6 +114,16 @@ pub fn q_adjoint_right<F: Prop, G: Prop>(x: Q<F, Inv<G>>) -> Q<Inv<F>, G> {
 pub fn q_adjoint<F: Prop, G: Prop>() -> Eq<Q<Inv<F>, G>, Q<F, Inv<G>>> {
     hooo::pow_eq_to_tauto_eq((q_adjoint_left, q_adjoint_right))(True)
 }
+/// `~inv(f)  =>  (f(a) == b) == (inv(f)(b) == a)`.
+fn qu_to_app_eq<A: Prop, B: Prop, F: Prop>(
+    x: Qu<Inv<F>>
+) -> Eq<Eq<App<F, A>, B>, Eq<App<Inv<F>, B>, A>> {
+    let qu_inv_inv_f: Qu<Inv<Inv<F>>> = inv_qu(x.clone());
+
+    (Rc::new(move |y| inv_val_qu(x.clone(), y)),
+     Rc::new(move |y|
+        eq::in_left_arg(inv_val_qu(qu_inv_inv_f.clone(), y), app_map_eq(involve_eq()))))
+}
 
 /// Apply 2 function arguments.
 pub type App2<F, X, Y> = App<App<F, X>, Y>;
