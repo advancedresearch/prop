@@ -363,15 +363,24 @@ pub fn self_inv_to_eq_id<F: Prop>(eq_f: Eq<Inv<F>, F>) -> Eq<Comp<F, F>, FId> {
 
 /// Cumulative type hierarchy.
 #[derive(Copy, Clone)]
-pub struct Type<N: Nat>(N);
+pub struct Type<N>(N);
 
-/// `type(n) : type(n+1)`.
-pub fn type_ty<N: Nat>() -> Ty<Type<N>, Type<S<N>>> {unimplemented!()}
+impl<N: 'static + Clone> path_semantics::LProp for Type<N> {
+    type N = N;
+    type SetLevel<T: 'static + Clone> = Type<T>;
+}
+
+/// `type(n) => type(n+1)`.
+pub fn type_imply<N: Nat>(Type(n): Type<N>) -> Type<S<N>> {Type(S(n))}
 /// `is_const(type(n))`.
 pub fn type_is_const<N: Nat>() -> IsConst<Type<N>> {unimplemented!()}
 /// `(a -> b) : type(0)`.
 pub fn pow_ty<A: Prop, B: Prop>() -> Ty<Pow<B, A>, Type<Z>> {unimplemented!()}
 
+/// `type(n) : type(n+1)`.
+pub fn type_ty<N: Nat>() -> Ty<Type<N>, Type<S<N>>> {
+    (hooo::pow_to_imply(type_imply), POrdProof::new())
+}
 /// `(f : A -> B) ⋀ (inv(f) ~~ g) => ((f ~~ g) : ((A -> B) ~~ (B -> A)))`.
 pub fn q_inv_ty<F: Prop, G: Prop, A: Prop, B: Prop>(
     ty_f: Ty<F, Pow<B, A>>,
