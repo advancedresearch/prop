@@ -409,6 +409,10 @@ pub fn tup_fst<A: Prop, B: Prop, X: Prop, Y: Prop>(_: Ty<Tup<A, B>, Tup<X, Y>>) 
 pub fn tup_snd<A: Prop, B: Prop, X: Prop, Y: Prop>(_: Ty<Tup<A, B>, Tup<X, Y>>) -> Ty<B, Y> {
     unimplemented!()
 }
+/// `(a == b)  =>  (a, c) == (b, c)`.
+pub fn tup_eq_fst<A: Prop, B: Prop, C: Prop>((ab, ba): Eq<A, B>) -> Eq<Tup<A, C>, Tup<B, C>> {
+    (Rc::new(move |y| Tup(ab(y.0), y.1)), Rc::new(move |y| Tup(ba(y.0), y.1)))
+}
 
 /// Tuple of 3 elements.
 pub type Tup3<A, B, C> = Tup<A, Tup<B, C>>;
