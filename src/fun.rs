@@ -96,7 +96,7 @@ pub fn qu_inv_tauto_eq_to_qu_inv<F: Prop, G: Prop>(
 ) -> Qu<Inv<G>> {qu_tauto_eq_to_q(x, hooo::pow_transitivity(tauto_eq, inv_eq)).1.1}
 /// `inv(inv(f))(x) == f(x)`.
 pub fn inv_double_val<F: Prop, X: Prop>() -> Eq<App<Inv<Inv<F>>, X>, App<F, X>> {
-    app_map_eq(hooo::pow_eq_to_tauto_eq((inv_involve, involve_inv))(True))
+    app_map_eq(involve_eq())
 }
 /// `f ~~ g  =>  inv(f) ~~ inv(g)`.
 pub fn q_inv<F: Prop, G: Prop>((eq_fg, (qu_f, qu_g)): Q<F, G>) -> Q<Inv<F>, Inv<G>> {
@@ -233,6 +233,10 @@ pub fn inv_val_other<F: Prop, G: Prop, A: Prop, B: Prop>(
     y: Eq<App<F, A>, B>
 ) -> Eq<App<G, B>, A> {
     eq::in_left_arg(inv_val(x.clone(), y), app_map_eq(quality::to_eq(x)))
+}
+/// `inv(inv(f)) == f`.
+pub fn involve_eq<F: Prop>() -> Eq<Inv<Inv<F>>, F> {
+    hooo::pow_eq_to_tauto_eq((inv_involve, involve_inv))(True)
 }
 
 /// Composition.
