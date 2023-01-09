@@ -28,11 +28,6 @@ pub fn fa_is_const() -> IsConst<Fa> {unimplemented!()}
 pub fn bool_values<A: Prop>(_ty_a: Ty<A, Bool>) -> Or<Eq<A, Tr>, Eq<A, Fa>> {unimplemented!()}
 /// True and false are exclusive.
 pub fn para_eq_tr_fa(_: Eq<Tr, Fa>) -> False {unimplemented!()}
-/// True and false are exclusive in tuples.
-pub fn para_eq_tup_tr_tup_fa<A: Prop>(
-    _ty_a: Ty<A, Bool>,
-    _: Eq<Tup<A, Tr>, Tup<A, Fa>>
-) -> False {unimplemented!()}
 
 /// False1 function.
 #[derive(Clone, Copy)]
@@ -108,7 +103,7 @@ pub fn para_inv_and<F: Prop>(x: Q<Inv<FAnd>, F>) -> False {
     let y0 = inv_val(x.clone(), and_fa(tr_ty()));
     let y1 = inv_val(x.clone(), and_fa(fa_ty()));
     let y2: Eq<Tup<Fa, Fa>, Tup<Fa, Tr>> = eq::transitivity(eq::symmetry(y1), y0);
-    para_eq_tup_tr_tup_fa(fa_ty(), eq::symmetry(y2))
+    para_eq_tr_fa(tup_rev_eq_snd(fa_ty(), eq::symmetry(y2)))
 }
 
 /// Or function.
@@ -128,7 +123,7 @@ pub fn or_fa<A: Prop>(_ty_a: Ty<A, Bool>) -> Eq<App<FOr, Tup<Fa, A>>, A> {unimpl
 pub fn para_inv_or<F: Prop>(x: Q<Inv<FOr>, F>) -> False {
     let y0 = inv_val(x.clone(), or_tr(tr_ty()));
     let y1 = inv_val(x.clone(), or_tr(fa_ty()));
-    para_eq_tup_tr_tup_fa(tr_ty(), eq::transitivity(eq::symmetry(y0), y1))
+    para_eq_tr_fa(tup_rev_eq_snd(tr_ty(), eq::transitivity(eq::symmetry(y0), y1)))
 }
 
 /// Nand function.
