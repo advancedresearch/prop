@@ -256,6 +256,15 @@ pub fn inv_val_other<F: Prop, G: Prop, A: Prop, B: Prop>(
 pub fn involve_eq<F: Prop>() -> Eq<Inv<Inv<F>>, F> {
     hooo::pow_eq_to_tauto_eq((inv_involve, involve_inv))(True)
 }
+/// `~inv(f) ⋀ (f : x -> y) ⋀ (x -> y)  =>  (y -> x)`.
+pub fn path_inv<F: Prop, X: Prop, Y: Prop>(
+    qu_inv_f: Qu<Inv<F>>,
+    ty_f: Ty<F, Pow<Y, X>>,
+    x: Pow<Y, X>
+) -> Pow<X, Y> {
+    use path_semantics::{ty_triv, ty_true};
+    ty_true(ty_triv(inv_ty(ty_f.clone()), path(qu_inv_f, ty_f, x).1))
+}
 
 /// Composition.
 #[derive(Clone)]
