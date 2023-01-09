@@ -846,7 +846,7 @@ pub fn fun_ext<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>(
         let x = tauto_eq_symmetry(tauto_eq_fg).trans(tup3_eq_snd);
         eq::transitivity(hooo_eq(tr().trans(x.trans(app_eq))), pow_eq_right(x.trans(ty_eq_left)))
     };
-    eq::in_left_arg(hooo_eq(pow_transitivity(tup3_trd, x)), y).0(fun_ext_refl_ty())
+    eq::in_left_arg(hooo_eq(pow_transitivity(tup3_trd, x)), y).0(fun_ext_refl())
 }
 /// `fun_ext_ty(f, g) => (f == g)^true`.
 pub fn fun_rev_ext<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>(
@@ -862,15 +862,15 @@ pub fn fun_ext_app_eq_refl<F: Prop, A: Prop, X: Prop>(
     ty_a: Ty<A, X>
 ) -> App<FunExtAppEq<F, F, A, X>, Tup3<F, F, A>> {fun_ext_app_eq_from_eq(ty_a, eq::refl())}
 /// `fun_ext_ty(f, f)`.
-pub fn fun_ext_refl_ty<F: Prop, X: Prop, Y: Prop, A: Prop>() -> FunExtTy<F, F, X, Y, A> {
+pub fn fun_ext_refl<F: Prop, X: Prop, Y: Prop, A: Prop>() -> FunExtTy<F, F, X, Y, A> {
     hooo::pow_transitivity(tup3_trd, fun_ext_app_eq_refl)
 }
 /// `fun_ext_ty(f, g) => fun_ext_ty(g, f)`.
-pub fn fun_ext_symmetry_ty<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>(
+pub fn fun_ext_symmetry<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>(
     x: FunExtTy<F, G, X, Y, A>
 ) -> FunExtTy<G, F, X, Y, A> {fun_ext(hooo::tauto_eq_symmetry(fun_rev_ext(x)))}
 /// `fun_ext_ty(f, g) ⋀ fun_ext_ty(g, h)  =>  fun_ext_ty(f, h)`.
-pub fn fun_ext_transitivity_ty<F: Prop, G: Prop, H: Prop, X: Prop, Y: Prop, A: Prop>(
+pub fn fun_ext_transitivity<F: Prop, G: Prop, H: Prop, X: Prop, Y: Prop, A: Prop>(
     fun_ext_fg: FunExtTy<F, G, X, Y, A>,
     fun_ext_gh: FunExtTy<G, H, X, Y, A>,
 ) -> FunExtTy<F, H, X, Y, A> {
