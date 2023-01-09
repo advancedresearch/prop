@@ -773,15 +773,22 @@ pub fn fun_ext_ty<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>() ->
     Eq<Eq<F, G>, FunExtTy<F, G, X, Y, A>>
 {unimplemented!()}
 
-/// `(a : x)  =>  ((\(a : x) = (f(a) == f(a))) . (snd . snd))((f, f, a))`.
-pub fn app_eq_refl<F: Prop, A: Prop, X: Prop>(ty_a: Ty<A, X>) -> App<AppEq<F, F, A, X>, Tup3<F, F, A>> {
+/// `(a : x) ⋀ (f == g)  =>  ((\(a : x) = (f(a) == g(a))) . (snd . snd))((f, g, a))`.
+pub fn fun_ext_app_eq_from_eq<F: Prop, G: Prop, A: Prop, X: Prop>(
+    ty_a: Ty<A, X>,
+    eq: Eq<F, G>
+) -> App<AppEq<F, G, A, X>, Tup3<F, G, A>> {
     let x = app_map_eq(comp_eq_left(lam_eq_lift(ty_a.clone(),
-        (True.map_any(), eq::refl().map_any()))));
+        (True.map_any(), app_map_eq(eq).map_any()))));
     let x = eq::transitivity(x, eq::symmetry(eq_app_comp()));
     let x = eq::transitivity(x, app_eq(eq::symmetry(eq_app_comp())));
     let x = eq::transitivity(eq::transitivity(x, app_eq(app_eq(snd_def()))), app_eq(snd_def()));
     eq::transitivity(x, eq::transitivity(lam(ty_a), subst_nop())).1(True)
 }
+/// `(a : x)  =>  ((\(a : x) = (f(a) == f(a))) . (snd . snd))((f, f, a))`.
+pub fn app_eq_refl<F: Prop, A: Prop, X: Prop>(
+    ty_a: Ty<A, X>
+) -> App<AppEq<F, F, A, X>, Tup3<F, F, A>> {fun_ext_app_eq_from_eq(ty_a, eq::refl())}
 /// `fun_ext_ty(f, f)`.
 pub fn fun_ext_refl_ty<F: Prop, X: Prop, Y: Prop, A: Prop>() -> FunExtTy<F, F, X, Y, A> {
     hooo::pow_transitivity(tup3_trd, app_eq_refl)
