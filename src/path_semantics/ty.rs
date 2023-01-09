@@ -21,28 +21,19 @@ pub fn ty_in_right_arg<A: Prop, B: Prop, C: Prop>((ab, pord): Ty<A, B>, eq: Eq<B
 }
 
 /// `(x : false) => ¬x`.
-pub fn ty_not<X: Prop>(ty_x_false: Ty<X, False>) -> Not<X> {ty_x_false.0}
+pub fn ty_false<X: Prop>(ty_x_false: Ty<X, False>) -> Not<X> {ty_x_false.0}
 
 /// `(true : x) => x`.
-pub fn ty_true_prop<X: Prop>(ty_true_x: Ty<True, X>) -> X {ty_true_x.0(True)}
+pub fn ty_true<X: Prop>(ty_true_x: Ty<True, X>) -> X {ty_true_x.0(True)}
 
 /// `a => (true : a)`.
-pub fn ty_rev_true_prop<A: Prop>(a: A) -> Ty<True, A> {
+pub fn ty_rev_true<A: Prop>(a: A) -> Ty<True, A> {
     ty_in_right_arg(ty_true_true(), (a.map_any(), True.map_any()))
 }
 
 /// `(a : x) ⋀ a => (true : x)`.
-pub fn ty_prop_true<A: Prop, X: Prop>(ty_a_x: Ty<A, X>, a: A) -> Ty<True, X> {
+pub fn ty_triv<A: Prop, X: Prop>(ty_a_x: Ty<A, X>, a: A) -> Ty<True, X> {
     ty_in_left_arg(ty_a_x, (True.map_any(), a.map_any()))
-}
-
-/// `(x : a) ⋀ a => (x : true)`.
-pub fn ty_triv<X: Prop, A: Prop>(
-    ty_x_a: Ty<X, A>,
-    a: A,
-) -> Ty<X, True> {
-    let eq_a_true = (True.map_any(), a.map_any());
-    ty_in_right_arg(ty_x_a, eq_a_true)
 }
 
 /// `(x : a) ⋀ ¬a => (x : false)`.
@@ -58,13 +49,6 @@ pub fn ty_non_triv<X: Prop, A: Prop>(
 /// `true == ltrue`.
 pub fn eq_true_ltrue<N: Nat>() -> Eq<True, LTrue<N>> {
     (LTrue(Default::default()).map_any(), True.map_any())
-}
-
-/// `x : true`.
-pub fn ty_true<X: LProp>() -> Ty<X, True>
-    where X::N: Nat
-{
-    ty_in_right_arg(ty_ltrue(), eq::symmetry(eq_true_ltrue::<S<X::N>>()))
 }
 
 /// `true : true`.
