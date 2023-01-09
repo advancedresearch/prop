@@ -509,6 +509,11 @@ pub fn lam_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
 ) -> Ty<Lam<Ty<A, X>, B>, Imply<X, Y>> {unimplemented!()}
 /// `(a : x) ⋀ b  =>  (\(a : x) = b)`.
 pub fn lam_lift<A: Prop, B: Prop, X: Prop>(ty_a: Ty<A, X>, b: B) -> Lam<Ty<A, X>, B> {Lam(ty_a, b)}
+/// `(a : x) ⋀ (b == c)  =>  (\(a : x) = b) == (\(a : x) = c)`.
+pub fn lam_eq_lift<A: Prop, X: Prop, B: Prop, C: Prop>(
+    _ty_a: Ty<A, X>,
+    _eq: Eq<B, C>
+) -> Eq<Lam<Ty<A, X>, B>, Lam<Ty<A, X>, C>> {unimplemented!()}
 /// `(c : x) => ((\(a : x) = b)(c) == b[a := c])`.
 pub fn lam<A: Prop, B: Prop, X: Prop, C: Prop>(
     _ty_c: Ty<C, X>
