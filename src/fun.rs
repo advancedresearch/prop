@@ -441,6 +441,10 @@ pub fn tup3_eq_fst<A: Prop, B: Prop, C: Prop, D: Prop>(
 pub fn tup3_eq_snd<A: Prop, B: Prop, C: Prop, D: Prop>(
     x: Eq<A, B>
 ) -> Eq<Tup3<C, A, D>, Tup3<C, B, D>> {tup_eq_snd(tup_eq_fst(x))}
+/// `(a == b)  =>  (c, d, a) == (c, d, b)`.
+pub fn tup3_eq_trd<A: Prop, B: Prop, C: Prop, D: Prop>(
+    x: Eq<A, B>
+) -> Eq<Tup3<C, D, A>, Tup3<C, D, B>> {tup_eq_snd(tup_eq_snd(x))}
 
 /// Fst.
 #[derive(Copy, Clone)]
