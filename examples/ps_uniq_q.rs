@@ -5,8 +5,8 @@ use prop::quality::{
     right,
     symmetry,
     Q,
-    UniqQ,
 };
+use prop::quality_traits::UniqQ;
 use prop::*;
 
 fn main() {}
