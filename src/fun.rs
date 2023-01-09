@@ -889,12 +889,7 @@ pub fn fun_ext<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>(
 /// `fun_ext_ty(f, g) => (f == g)^true`.
 pub fn fun_rev_ext<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>(
     x: FunExtTy<F, G, X, Y, A>
-) -> Tauto<Eq<F, G>> {
-    use path_semantics::{ty_triv, ty_true};
-
-    let (_, inv_fg) = path(qu_inv_fun_ext(), fun_ext_ty::<F, G, X, Y, A>(), fun_ext);
-    ty_true(ty_triv(inv_ty(fun_ext_ty()), inv_fg))(x)
-}
+) -> Tauto<Eq<F, G>> {path_inv(qu_inv_fun_ext(), fun_ext_ty(), fun_ext)(x)}
 /// `(a : x)  =>  ((\(a : x) = (f(a) == f(a))) . (snd . snd))((f, f, a))`.
 pub fn fun_ext_app_eq_refl<F: Prop, A: Prop, X: Prop>(
     ty_a: Ty<A, X>
