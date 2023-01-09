@@ -805,6 +805,29 @@ pub fn fun_ext_app_eq_from_eq<F: Prop, G: Prop, A: Prop, X: Prop>(
     let x = eq::transitivity(eq::transitivity(x, app_eq(app_eq(snd_def()))), app_eq(snd_def()));
     eq::transitivity(x, eq::transitivity(lam(ty_a), subst_nop())).1(True)
 }
+/// `(f == g)^true => fun_ext_ty(f, g)`.
+pub fn fun_ext<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>(
+    tauto_eq_fg: Tauto<Eq<F, G>>
+) -> FunExtTy<F, G, X, Y, A> {
+    use path_semantics::ty_eq_left;
+    use hooo::{hooo_eq, hooo_imply, pow_eq_right, pow_transitivity, tauto_eq_symmetry, tr};
+    use hooo::pow::PowExt;
+
+    fn g<F: Prop, G: Prop>(x: Eq<F, G>) -> Eq<Eq<F, F>, Eq<F, G>> {
+        (x.map_any(), eq::refl().map_any())
+    }
+    fn h<A: Prop, B: Prop, C: Prop, X: Prop>(ty_a: Ty<A, X>) ->
+        Imply<Eq<B, C>, Eq<Lam<Ty<A, X>, B>, Lam<Ty<A, X>, C>>>
+    {Rc::new(move |x| lam_eq_lift(ty_a.clone(), x))}
+
+    let x = hooo_imply(h)(hooo::tr().trans(tauto_eq_fg.trans(app_map_eq).trans(g)))
+        .trans(comp_eq_left).trans(app_map_eq);
+    let y = {
+        let x = tauto_eq_symmetry(tauto_eq_fg).trans(tup3_eq_snd);
+        eq::transitivity(hooo_eq(tr().trans(x.trans(app_eq))), pow_eq_right(x.trans(ty_eq_left)))
+    };
+    eq::in_left_arg(hooo_eq(pow_transitivity(tup3_trd, x)), y).0(fun_ext_refl_ty())
+}
 /// `(a : x)  =>  ((\(a : x) = (f(a) == f(a))) . (snd . snd))((f, f, a))`.
 pub fn fun_ext_app_eq_refl<F: Prop, A: Prop, X: Prop>(
     ty_a: Ty<A, X>
