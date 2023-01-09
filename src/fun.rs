@@ -43,7 +43,7 @@
 //! If a function `f` has no inverse, it is useful to prove `false^(inv(f) ~~ g)`.
 
 use crate::*;
-use path_semantics::{LProp, POrdProof, Ty};
+use path_semantics::{POrdProof, Ty};
 use quality::Q;
 use qubit::Qu;
 use hooo::{Pow, Tauto};
@@ -113,6 +113,15 @@ pub fn q_adjoint_right<F: Prop, G: Prop>(x: Q<F, Inv<G>>) -> Q<Inv<F>, G> {
 /// `inv(f) ~~ g  ==  f ~~ inv(g)`.
 pub fn q_adjoint<F: Prop, G: Prop>() -> Eq<Q<Inv<F>, G>, Q<F, Inv<G>>> {
     hooo::pow_eq_to_tauto_eq((q_adjoint_left, q_adjoint_right))(True)
+}
+
+/// `(p : true) ⋀ ((x == x) == y)  =>  (p : y)`.
+pub fn path_lift_by_eq_refl<P: Prop, X: Prop, Y: Prop>(
+    ty_p: Ty<P, True>,
+    eq_refl: Eq<Eq<X, X>, Y>
+) -> Ty<P, Y> {
+    let x = eq::transitivity((eq::refl().map_any(), True.map_any()), eq_refl);
+    path_semantics::ty_in_right_arg(ty_p, x)
 }
 
 /// Apply 2 function arguments.
@@ -754,11 +763,4 @@ pub fn fun_ext_transitivity_ty<F: Prop, G: Prop, H: Prop, X: Prop, Y: Prop, A: P
     let fg = fun_ext_ty().1(fun_ext_fg);
     let gh = fun_ext_ty().1(fun_ext_gh);
     fun_ext_ty().0(eq::transitivity(fg, gh))
-}
-/// `p : (((f, f, a) : (x -> y, x -> y, x)) -> (\(a : x) = (f(a) == f(a)))(a))`.
-pub fn fun_ext_refl<F: Prop, X: Prop, Y: Prop, A: Prop, P: LProp>() -> FunExt<P, F, F, X, Y, A>
-    where P::N: Nat
-{
-    let x = (fun_ext_refl_ty().map_any(), True.map_any());
-    path_semantics::ty_in_right_arg(path_semantics::ty_true(), x)
 }
