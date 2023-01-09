@@ -481,6 +481,12 @@ pub fn tup3_rev_eq_snd<A: Prop, B: Prop, C: Prop, D: Prop, X: Prop, Y: Prop>(
     ty_d: Ty<D, Y>,
     x: Eq<Tup3<C, A, D>, Tup3<C, B, D>>
 ) -> Eq<A, B> {tup_rev_eq_fst(ty_d, tup_rev_eq_snd(ty_c, x))}
+/// `(c : x) ⋀ (d : y) ⋀ ((c, d, a) == (c, d, b))  =>  (a == b)`.
+pub fn tup3_rev_eq_trd<A: Prop, B: Prop, C: Prop, D: Prop, X: Prop, Y: Prop>(
+    ty_c: Ty<C, X>,
+    ty_d: Ty<D, Y>,
+    x: Eq<Tup3<C, D, A>, Tup3<C, D, B>>
+) -> Eq<A, B> {tup_rev_eq_snd(ty_d, tup_rev_eq_snd(ty_c, x))}
 
 /// Fst.
 #[derive(Copy, Clone)]
