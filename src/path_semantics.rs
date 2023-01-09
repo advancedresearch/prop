@@ -30,11 +30,6 @@ mod lprop;
 mod pord;
 mod ty;
 
-/// `true == ltrue`.
-pub fn eq_true_ltrue<N: Nat>() -> Eq<True, LTrue<N>> {
-    (LTrue(Default::default()).map_any(), True.map_any())
-}
-
 /// Core axiom of Path Semantics.
 pub type PSem<F1, F2, X1, X2> = Imply<
     And<And<Q<F1, F2>, And<POrdProof<F1, X1>, POrdProof<F2, X2>>>,
