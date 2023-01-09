@@ -436,6 +436,11 @@ pub fn tup_rev_eq_fst<A: Prop, B: Prop, C: Prop, D: Prop>(
     _: Ty<C, D>,
     _: Eq<Tup<A, C>, Tup<B, C>>
 ) -> Eq<A, B> {unimplemented!()}
+/// `(c : d) ⋀ ((c, a) == (c, b))  =>  (a == b)`.
+pub fn tup_rev_eq_snd<A: Prop, B: Prop, C: Prop, D: Prop>(
+    _: Ty<C, D>,
+    _: Eq<Tup<C, A>, Tup<C, B>>
+) -> Eq<A, B> {unimplemented!()}
 
 /// Tuple of 3 elements.
 pub type Tup3<A, B, C> = Tup<A, Tup<B, C>>;
