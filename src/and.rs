@@ -127,6 +127,11 @@ pub fn eq_left<A: Prop, B: Prop, C: Prop>((ab, ba): Eq<A, B>) -> Eq<And<A, C>, A
     (Rc::new(move |(a, c)| (ab(a), c)), Rc::new(move |(b, c)| (ba(b), c)))
 }
 
+/// `(a == b)  =>  (c ∧ a) == (c ∧ b)`.
+pub fn eq_right<A: Prop, B: Prop, C: Prop>((ab, ba): Eq<A, B>) -> Eq<And<C, A>, And<C, B>> {
+    (Rc::new(move |(c, a)| (c, ab(a))), Rc::new(move |(c, b)| (c, ba(b))))
+}
+
 /// `¬(a => b)  =>  (a ∧ ¬b)`.
 pub fn from_imply<A: DProp, B: Prop>(f: Not<Imply<A, B>>) -> And<A, Not<B>> {
     // `(¬a ∨ b)  =>  (a => b)`
