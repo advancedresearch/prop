@@ -132,6 +132,38 @@ pub fn eq_right<A: Prop, B: Prop, C: Prop>((ab, ba): Eq<A, B>) -> Eq<And<C, A>, 
     (Rc::new(move |(c, a)| (c, ab(a))), Rc::new(move |(c, b)| (c, ba(b))))
 }
 
+/// `¬c  =>  (a ∧ c) == (b ∧ c)`.
+pub fn eq_left_false<A: Prop, B: Prop, C: Prop>(nc: Not<C>) -> Eq<And<A, C>, And<B, C>> {
+    let x = imply::in_left(nc.clone(), |(_, c)| c);
+    let y = imply::in_left(nc, |(_, c)| c);
+    to_eq_neg((x, y))
+}
+
+/// `¬c  =>  (c ∧ a) == (c ∧ b)`.
+pub fn eq_right_false<A: Prop, B: Prop, C: Prop>(nc: Not<C>) -> Eq<And<C, A>, And<C, B>> {
+    let x = imply::in_left(nc.clone(), |(c, _)| c);
+    let y = imply::in_left(nc, |(c, _)| c);
+    to_eq_neg((x, y))
+}
+
+/// `((a ∧ c) == (b ∧ c)) ∧ c  =>  (a == b)`.
+pub fn rev_eq_left_true<A: Prop, B: Prop, C: Prop>(
+    (f, g): Eq<And<A, C>, And<B, C>>,
+    c: C
+) -> Eq<A, B> {
+    let c2 = c.clone();
+    (Rc::new(move |a| f((a, c.clone())).0), Rc::new(move |b| g((b, c2.clone())).0))
+}
+
+/// `((c ∧ a) == (c ∧ b)) ∧ c  =>  (a == b)`.
+pub fn rev_eq_right_true<A: Prop, B: Prop, C: Prop>(
+    (f, g): Eq<And<C, A>, And<C, B>>,
+    c: C
+) -> Eq<A, B> {
+    let c2 = c.clone();
+    (Rc::new(move |a| f((c.clone(), a)).1), Rc::new(move |b| g((c2.clone(), b)).1))
+}
+
 /// `¬(a => b)  =>  (a ∧ ¬b)`.
 pub fn from_imply<A: DProp, B: Prop>(f: Not<Imply<A, B>>) -> And<A, Not<B>> {
     // `(¬a ∨ b)  =>  (a => b)`
