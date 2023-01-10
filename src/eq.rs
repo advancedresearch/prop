@@ -217,6 +217,13 @@ pub fn in_right<A: Prop, B: Prop, C: Prop, F, G>(
     eq::symmetry(in_left(eq::symmetry(eq_ab), f, g))
 }
 
+/// `(a == b)  =>  (a == c) == (b == c)`.
+pub fn eq_left<A: Prop, B: Prop, C: Prop>(x: Eq<A, B>) -> Eq<Eq<A, C>, Eq<B, C>> {
+    let x2 = symmetry(x.clone());
+    (Rc::new(move |ac| in_left_arg(ac, x.clone())),
+     Rc::new(move |bc| in_left_arg(bc, x2.clone())))
+}
+
 /// `(a == b) == (b == a)`.
 pub fn symmetry_eq<A: Prop, B: Prop>() -> Eq<Eq<A, B>, Eq<B, A>> {
     (Rc::new(move |x| eq::symmetry(x)),
