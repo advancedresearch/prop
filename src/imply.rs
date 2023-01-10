@@ -248,6 +248,12 @@ pub fn in_right<A: Prop, B: Prop, C: Prop, F>(
     Rc::new(move |a| f(a.clone(), ab(a)))
 }
 
+/// `(a == b)  =>  (a => c) == (b => c)`.
+pub fn eq_left<A: Prop, B: Prop, C: Prop>((ab, ba): Eq<A, B>) -> Eq<Imply<A, C>, Imply<B, C>> {
+    (Rc::new(move |ac| transitivity(ba.clone(), ac)),
+     Rc::new(move |bc| transitivity(ab.clone(), bc)))
+}
+
 /// `(a => c) ∧ (b => c)  =>  ((a ∧ b) => c)`.
 pub fn join<A: Prop, B: Prop, C: Prop>(f: Imply<A, C>, _: Imply<B, C>) -> Imply<And<A, B>, C> {
     Rc::new(move |(a, _)| f.clone()(a))
