@@ -33,3 +33,8 @@ pub fn rev_triple<A: Prop>(x: Not<Not<Not<A>>>) -> Not<A> {
 pub fn absurd<A: Prop, B: Prop>(f: Not<A>, g: A) -> B {
     imply::absurd()(f(g))
 }
+
+/// `(a == b)  =>  (¬a == ¬b)`.
+pub fn eq<A: Prop, B: Prop>(x: Eq<A, B>) -> Eq<Not<A>, Not<B>> {
+    eq::symmetry(eq::modus_tollens(x))
+}
