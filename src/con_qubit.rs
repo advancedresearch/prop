@@ -83,7 +83,7 @@ pub fn nn_cqunn_to_ncqun_absurd<A: Prop>(
 
 /// `¬.~x => false`.
 pub fn ncqu_absurd<A: Prop>(nx: Not<ConQubit<A>>) -> False {
-    let nnnx = not::double(nx.clone());
+    let nnnx = not::double(nx);
     let y: Not<ExcM<A>> = imply::in_left_arg(nnnx, (
         Rc::new(move |nnx| ConQubit::to_excm(nnx)),
         Rc::new(move |excm| excm_to_nncqu(excm))

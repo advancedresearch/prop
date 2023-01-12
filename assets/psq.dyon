@@ -100,7 +100,7 @@ pub fn nn_cqunn_to_ncqun_absurd<A: Prop>(
 
 /// `¬.~x => false`.
 pub fn ncqu_absurd<A: Prop>(nx: Not<ConQubit<A>>) -> False {
-    let nnnx = not::double(nx.clone());
+    let nnnx = not::double(nx);
     let y: Not<ExcM<A>> = imply::in_left_arg(nnnx, (
         Rc::new(move |nnx| ConQubit::to_excm(nnx)),
         Rc::new(move |excm| excm_to_nncqu(excm))
@@ -195,11 +195,6 @@ code(obj: {}) = link {
 
 use crate::*;
 
-pub use "q"_commute as "q"_symmetry;
-pub use "aq"_commute as "aq"_symmetry;
-pub use n"q"_commute as n"q"_symmetry;
-pub use n"aq"_commute as n"aq"_symmetry;
-
 /// Path semantical "obj.qual.name" `a "q_sym" b`.
 pub type "q_id"<A, B> = And<Eq<A, B>, And<"qu_id"<A>, "qu_id"<B>>>;
 
@@ -213,23 +208,23 @@ pub struct "qu_id"<A>(A);
 "trim(str(\obj.code(obj)))"
 
 /// Symmetry `(a "q_sym" b) => (b "q_sym" a)`.
-pub fn "q"_commute<A: Prop, B: Prop>(f: "q_id"<A, B>) -> "q_id"<B, A> {
+pub fn "q"_symmetry<A: Prop, B: Prop>(f: "q_id"<A, B>) -> "q_id"<B, A> {
     (eq::symmetry(f.0), (f.1.1, f.1.0))
 }
 
 /// Symmetry `(a "aq_sym" b) => (b "aq_sym" a)`.
-pub fn "aq"_commute<A: Prop, B: Prop>(f: "aq_id"<A, B>) -> "aq_id"<B, A> {
+pub fn "aq"_symmetry<A: Prop, B: Prop>(f: "aq_id"<A, B>) -> "aq_id"<B, A> {
     (eq::symmetry(f.0), (f.1.1, f.1.0))
 }
 
 /// Negated symmetry `¬(a "q_sym" b) => ¬(b "q_sym" a)`.
-pub fn n"q"_commute<A: Prop, B: Prop>(nq: Not<"q_id"<A, B>>) -> Not<"q_id"<B, A>> {
-    Rc::new(move |ba| nq("q"_commute(ba)))
+pub fn n"q"_symmetry<A: Prop, B: Prop>(nq: Not<"q_id"<A, B>>) -> Not<"q_id"<B, A>> {
+    Rc::new(move |ba| nq("q"_symmetry(ba)))
 }
 
 /// Negated symmetry `¬(a "aq_sym" b) => ¬(b "aq_sym" a)`.
-pub fn n"aq"_commute<A: Prop, B: Prop>(nq: Not<"aq_id"<A, B>>) -> Not<"aq_id"<B, A>> {
-    Rc::new(move |ba| nq("aq"_commute(ba)))
+pub fn n"aq"_symmetry<A: Prop, B: Prop>(nq: Not<"aq_id"<A, B>>) -> Not<"aq_id"<B, A>> {
+    Rc::new(move |ba| nq("aq"_symmetry(ba)))
 }
 
 /// Transitivity `(a "q_sym" b) ⋀ (b "q_sym" c) => (a "q_sym" c)`.
@@ -280,21 +275,21 @@ pub fn "aq"_to_eq<A: Prop, B: Prop>(f: "aq_id"<A, B>) -> Eq<A, B> {
 
 /// `(a "q_sym" b) => (a "q_sym" a)`.
 pub fn "q"_left<A: Prop, B: Prop>(f: "q_id"<A, B>) -> "q_id"<A, A> {
-    "q"_transitivity(f.clone(), "q"_commute(f))
+    "q"_transitivity(f.clone(), "q"_symmetry(f))
 }
 
 /// `(a "aq_sym" b) => (a "aq_sym" a)`.
 pub fn "aq"_left<A: Prop, B: Prop>(f: "aq_id"<A, B>) -> "aq_id"<A, A> {
-    "aq"_transitivity(f.clone(), "aq"_commute(f))
+    "aq"_transitivity(f.clone(), "aq"_symmetry(f))
 }
 
 /// `(a "q_sym" b) => (b "q_sym" b)`.
 pub fn "q"_right<A: Prop, B: Prop>(f: "q_id"<A, B>) -> "q_id"<B, B> {
-    "q"_transitivity("q"_commute(f.clone()), f)
+    "q"_transitivity("q"_symmetry(f.clone()), f)
 }
 
 /// `(a "aq_sym" b) => (b "aq_sym" b)`.
 pub fn "aq"_right<A: Prop, B: Prop>(f: "aq_id"<A, B>) -> "aq_id"<B, B> {
-    "aq"_transitivity("aq"_commute(f.clone()), f)
+    "aq"_transitivity("aq"_symmetry(f.clone()), f)
 }
 "}
