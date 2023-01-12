@@ -735,6 +735,12 @@ pub type DepTupTy<A, X, PredP> = Tup<Ty<A, X>, App<PredP, A>>;
 /// Dependent tuple `(a, b) : ((a : x), p(a))`.
 pub type DepTup<A, X, B, PredP> = Ty<Tup<A, B>, DepTupTy<A, X, PredP>>;
 
+/// `(x : type(0))^true ⋀ (p(a) : type(0))^(a : x)  =>  (((a : x), p(a)) : type(0))^true`.
+pub fn dep_tup_ty_formation<A: Prop, X: Prop, P: Prop>(
+    _ty_a: Tauto<Ty<X, Type<Z>>>,
+    _x: Pow<Ty<App<P, A>, Type<Z>>, Ty<A, X>>
+) -> Tauto<Ty<DepTupTy<A, X, P>, Type<Z>>> {unimplemented!()}
+
 /// Parallel tuple.
 #[derive(Copy, Clone)]
 pub struct ParTup(());
