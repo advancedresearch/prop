@@ -730,6 +730,10 @@ pub type DepFun<F, A, X, PredP> = Ty<F, DepFunTy<A, X, PredP>>;
 pub type DepLamTy<A, X, PredP> = Imply<Ty<A, X>, App<PredP, X>>;
 /// Dependent lambda `f : ((a : x) => p(a))`.
 pub type DepLam<F, A, X, PredP> = Ty<F, DepLamTy<A, X, PredP>>;
+/// Dependent tuple type `((a : x), p(a))`.
+pub type DepTupTy<A, X, PredP> = Tup<Ty<A, X>, App<PredP, A>>;
+/// Dependent tuple `(a, b) : ((a : x), p(a))`.
+pub type DepTup<A, X, B, PredP> = Ty<Tup<A, B>, DepTupTy<A, X, PredP>>;
 
 /// Parallel tuple.
 #[derive(Copy, Clone)]
