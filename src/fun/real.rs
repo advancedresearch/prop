@@ -32,7 +32,7 @@ pub type AddRealTy<X, A, Y> = DepTupTy<A, Real, AddRealLam<X, A, Y>>;
 /// `(a, q) : (a : real, (\(a : real) = (x == (a + y)))(a))`.
 pub type AddReal<X, A, Q, Y> = DepTup<A, Q, Real, AddRealLam<X, A, Y>>;
 
-/// `(x : real) => ((a, q) : (a : real, (\(a : real) = (x == (a + y)))(a)))^
+/// `((a, q) : (a : real, (\(a : real) = (x == (a + y)))(a)))^
 ///  ((y, p) : (y : real, (\(y : real) = y < aleph(0))(y)))`
 pub type RealDef<X, A, Q, Y, P> = Pow<AddReal<X, A, Q, Y>, Aleph0Real<Y, P>>;
 
