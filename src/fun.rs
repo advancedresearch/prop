@@ -745,6 +745,12 @@ pub fn dep_tup_ty_intro<A: Prop, X: Prop, B: Prop, P: Prop>(
     ty_a: Tauto<Ty<A, X>>,
     ty_b: Tauto<Ty<B, App<P, A>>>,
 ) -> Tauto<DepTup<A, X, B, P>> {
+    use hooo::pow::PowExt;
+
+    let f = hooo::hooo_imply(tauto!(Rc::new(move |(ty_a, ty_b)| tup_ty(ty_a, ty_b))));
+    let x = hooo::hooo_rev_and((ty_a.trans(path_semantics::ty_lift), ty_b));
+    f(x)
+}
 
 /// Parallel tuple.
 #[derive(Copy, Clone)]
