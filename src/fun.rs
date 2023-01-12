@@ -740,6 +740,11 @@ pub fn dep_tup_ty_formation<A: Prop, X: Prop, P: Prop>(
     _ty_x: Tauto<Ty<X, Type<Z>>>,
     _: Pow<Ty<App<P, A>, Type<Z>>, Ty<A, X>>
 ) -> Tauto<Ty<DepTupTy<A, X, P>, Type<Z>>> {unimplemented!()}
+/// `(a : x)^true ⋀ (b : p(a))^true  =>  ((a, b) : ((a : x, p(a))))^true`.
+pub fn dep_tup_ty_intro<A: Prop, X: Prop, B: Prop, P: Prop>(
+    ty_a: Tauto<Ty<A, X>>,
+    ty_b: Tauto<Ty<B, App<P, A>>>,
+) -> Tauto<DepTup<A, X, B, P>> {
 
 /// Parallel tuple.
 #[derive(Copy, Clone)]

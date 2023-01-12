@@ -196,3 +196,10 @@ pub fn ty_transitivity<A: Prop, B: Prop, C: Prop>(
 ) -> Ty<A, C> {
     (imply::transitivity(ab, bc.clone()), pord_ab.by_imply_right(bc))
 }
+
+/// `(a : x) => (a : (a : x))`.
+pub fn ty_lift<A: Prop, X: Prop>(ty_a: Ty<A, X>) -> Ty<A, Ty<A, X>> {
+    let pord1 = ty_a.1.clone().by_imply_right(Rc::new(|x| x.map_any()));
+    let pord2 = ty_a.1.clone().by_imply_right(ty_a.1.clone().map_any());
+    (ty_a.map_any(), pord1.merge_right(pord2))
+}
