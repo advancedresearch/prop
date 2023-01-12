@@ -69,7 +69,7 @@ pub fn decide<A: DProp, B: DProp>() -> ExcM<Pow<A, B>> {
                         Left(para_a) => {
                             Right(Rc::new(move |pow_ab| {
                                 let para_b = pow_ab.trans(para_a);
-                                let nb: Not<B> = Rc::new(move |b| para_b(b));
+                                let nb: Not<B> = Rc::new(para_b);
                                 let para_nb = pow_not(npara_b.clone());
                                 para_nb(nb)
                             }))
@@ -215,7 +215,7 @@ pub fn pow_not_tauto_excm<A: Prop, B: Prop>(
     x: Not<Pow<A, B>>,
     tauto_excm_b: Tauto<ExcM<B>>,
 ) -> Pow<A, Not<B>> {
-    let tauto_excm_nb = tauto_excm_to_tauto_excm_not(tauto_excm_b.clone());
+    let tauto_excm_nb = tauto_excm_to_tauto_excm_not(tauto_excm_b);
     match para_and_to_or_excm(and::paradox, tauto_excm_b, tauto_excm_nb) {
         Left(para_b) => not::absurd(x, para_b.trans(fa())),
         Right(para_nb) => para_nb.trans(fa()),
@@ -266,7 +266,7 @@ pub fn pow_eq_to_tauto_eq<A: Prop, B: Prop>((ba, ab): PowEq<A, B>) -> Tauto<Eq<A
 
 /// `(a == b)^true => (x =^= y)`.
 pub fn tauto_eq_to_pow_eq<A: Prop, B: Prop>(x: Tauto<Eq<A, B>>) -> PowEq<A, B> {
-    (pow_in_left_arg(pow_refl, x), pow_in_right_arg(pow_refl, x.clone()))
+    (pow_in_left_arg(pow_refl, x), pow_in_right_arg(pow_refl, x))
 }
 
 /// `a^true => (a ⋁ ¬a)^true`.
@@ -420,7 +420,7 @@ pub fn tauto_hooo_dual_rev_or<A: Prop, B: Prop, C: Prop>(
 /// `c^(a ⋁ b) => (c^a ⋀ c^b)`.
 pub fn hooo_dual_or<A: Prop, B: Prop, C: Prop>(
     x: Pow<C, Or<A, B>>
-) -> And<Pow<C, A>, Pow<C, B>> {(pow_transitivity(Left, x.clone()), pow_transitivity(Right, x))}
+) -> And<Pow<C, A>, Pow<C, B>> {(pow_transitivity(Left, x), pow_transitivity(Right, x))}
 
 /// `(c^a ⋀ c^b) => c^(a ⋁ b)`.
 pub fn hooo_dual_rev_or<A: Prop, B: Prop, C: Prop>(
@@ -736,12 +736,12 @@ pub fn para_not<A: EProp>(npara_a: Not<Para<A>>) -> Para<Not<A>> {pow_not_e(npar
 
 /// `false^(¬x) => ¬false^x`.
 pub fn para_rev_not<A: Prop>(para_na: Para<Not<A>>) -> Not<Para<A>> {
-    Rc::new(move |para_a| para_na(Rc::new(move |a| para_a(a))))
+    Rc::new(move |para_a| para_na(Rc::new(para_a)))
 }
 
 /// `false^a => false^(¬¬a)`.
 pub fn para_not_double<A: Prop>(x: Para<A>) -> Para<Not<Not<A>>> {
-    let y: Tauto<ExcM<Not<A>>> = tauto_excm_to_tauto_excm_not(para_to_tauto_excm(x.clone()));
+    let y: Tauto<ExcM<Not<A>>> = tauto_excm_to_tauto_excm_not(para_to_tauto_excm(x));
     pow_not_tauto_excm(imply::in_left(not::double(x), |x: Para<Not<A>>| para_rev_not(x)), y)
 }
 
@@ -761,7 +761,7 @@ pub fn para_not_rev_triple<A: Prop>(x: Para<Not<Not<Not<A>>>>) -> Para<Not<A>> {
 }
 
 /// `false^x => ¬x`.
-pub fn para_to_not<A: Prop>(para_a: Para<A>) -> Not<A> {Rc::new(move |a| para_a(a))}
+pub fn para_to_not<A: Prop>(para_a: Para<A>) -> Not<A> {Rc::new(para_a)}
 
 /// `¬(false^a) => false^(false^a)`.
 pub fn not_para_to_para_para<A: DProp>(npara_a: Not<Para<A>>) -> Para<Para<A>> {
@@ -783,7 +783,7 @@ pub fn not_para_to_para_para_e<A: EProp>(npara_a: Not<Para<A>>) -> Para<Para<A>>
 
 /// `false^(false^a) => ¬(false^a)`.
 pub fn para_para_to_not_para<A: Prop>(para_para_a: Para<Para<A>>) -> Not<Para<A>> {
-    Rc::new(move |para_a| para_para_a(para_a))
+    Rc::new(para_para_a)
 }
 
 /// `¬¬a => ¬(false^a)`.
@@ -948,7 +948,7 @@ pub fn para_uniform_to_eq_tauto_para<A: Prop>(x: Para<Uniform<A>>) -> Eq<Tauto<A
 /// `(false^a ∧ (a == b)^true) => false^b`.
 pub fn para_in_arg<A: Prop, B: Prop>(para_a: Para<A>, tauto_eq_a_b: Tauto<Eq<A, B>>) -> Para<B> {
     let y0 = para_to_tauto_excm(para_a);
-    let y1 = para_to_tauto_excm_transitivity(para_a.clone(), tauto_eq_a_b.clone());
+    let y1 = para_to_tauto_excm_transitivity(para_a, tauto_eq_a_b);
     eq_tauto_to_eq_para_excm(hooo_eq(tauto_eq_a_b), y0, y1).0(para_a)
 }
 
@@ -1235,7 +1235,7 @@ pub fn tauto_from_para_transitivity<A: DProp, B: DProp, C: DProp>(
                 Left(Left(tauto_eq_ac)) => tauto_eq_ac,
                 Left(Right(para_eq_ac)) => imply::absurd()(para_rev_not(y)(para_eq_ac)),
                 Right(para_uni_eq_ac) => {
-                    let nuni_eq_ac = Rc::new(move |x| para_uni_eq_ac(x));
+                    let nuni_eq_ac = Rc::new(para_uni_eq_ac);
                     let (x, _): And<Not<Tauto<Eq<A, C>>>, Not<Para<Eq<A, C>>>> = and::from_de_morgan(nuni_eq_ac);
                     let x: Tauto<Not<Eq<A, C>>> = hooo_rev_not(x);
                     imply::absurd()(y(x(True)))
@@ -1322,10 +1322,10 @@ pub fn tauto_excm_to_not_theory<A: Prop>(x: Tauto<ExcM<A>>) -> Not<Theory<A>> {
 }
 
 /// `theory(a) => ¬(a^true)`.
-pub fn theory_to_not_tauto<A: Prop>(x: Theory<A>) -> Not<Tauto<A>> {imply::in_left(x, |y| Left(y))}
+pub fn theory_to_not_tauto<A: Prop>(x: Theory<A>) -> Not<Tauto<A>> {imply::in_left(x, Left)}
 
 /// `theory(a) => ¬(false^a)`.
-pub fn theory_to_not_para<A: Prop>(x: Theory<A>) -> Not<Para<A>> {imply::in_left(x, |y| Right(y))}
+pub fn theory_to_not_para<A: Prop>(x: Theory<A>) -> Not<Para<A>> {imply::in_left(x, Right)}
 
 /// `¬(a^true) ⋀ ¬(false^a) => theory(a)`.
 pub fn not_tauto_not_para_to_theory<A: Prop>(
@@ -1354,9 +1354,7 @@ pub fn para_liar<A: DProp>(
 }
 
 /// `b^a => (a => b)`.
-pub fn pow_to_imply<A: Prop, B: Prop>(pow_ba: Pow<B, A>) -> Imply<A, B> {
-    Rc::new(move |a| pow_ba(a))
-}
+pub fn pow_to_imply<A: Prop, B: Prop>(pow_ba: Pow<B, A>) -> Imply<A, B> {Rc::new(pow_ba)}
 
 /// `b^a  =>  (a => b)^c`.
 pub fn pow_to_imply_lift<A: Prop, B: Prop, C: Prop>(pow_ba: Pow<B, A>) -> Pow<Imply<A, B>, C> {
@@ -1377,7 +1375,7 @@ pub fn tauto_imply_to_pow<A: Prop, B: Prop>(x: Tauto<Imply<A, B>>) -> Pow<B, A> 
 /// `b^a => (a => b)^true`.
 pub fn pow_to_tauto_imply<A: Prop, B: Prop>(x: Pow<B, A>) -> Tauto<Imply<A, B>> {
     let f: Imply<Pow<Pow<B, A>, True>, Tauto<Imply<A, B>>> =
-        hooo_imply(tauto!(Rc::new(|pow_ba: Pow<B, A>| Rc::new(move |a: A| pow_ba(a)))));
+        hooo_imply(tauto!(Rc::new(|pow_ba: Pow<B, A>| Rc::new(pow_ba))));
     f(x.lift())
 }
 

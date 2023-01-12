@@ -201,9 +201,7 @@ pub fn in_left<A: Prop, B: Prop, C: Prop, F, G>(
 ) -> Eq<C, B>
     where F: Fn(A) -> C + 'static,
           G: Fn(C) -> A + 'static
-{
-    in_left_arg(eq_ab, (Rc::new(move |a| f(a)), Rc::new(move |c| g(c))))
-}
+{in_left_arg(eq_ab, (Rc::new(f), Rc::new(g)))}
 
 /// Makes it easier to traverse.
 pub fn in_right<A: Prop, B: Prop, C: Prop, F, G>(
@@ -213,9 +211,7 @@ pub fn in_right<A: Prop, B: Prop, C: Prop, F, G>(
 ) -> Eq<A, C>
     where F: Fn(B) -> C + 'static,
           G: Fn(C) -> B + 'static
-{
-    eq::symmetry(in_left(eq::symmetry(eq_ab), f, g))
-}
+{eq::symmetry(in_left(eq::symmetry(eq_ab), f, g))}
 
 /// `(a == b)  =>  (a == c) == (b == c)`.
 pub fn eq_left<A: Prop, B: Prop, C: Prop>(x: Eq<A, B>) -> Eq<Eq<A, C>, Eq<B, C>> {

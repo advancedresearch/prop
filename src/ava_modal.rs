@@ -53,6 +53,10 @@ mod protection {
     }
 
     /// `◇a => false^(false^a)`.
+    ///
+    /// # Safety
+    ///
+    /// This function is declared unsafe because it uses the "taboo" knowledge in Avatar Modal Logic.
     pub unsafe fn pos_to_para_para<A: Prop>(Pos(x): Pos<A>) -> Para<Para<A>> {x}
 }
 
@@ -78,6 +82,10 @@ pub fn nec_to_tauto<A: DProp>(nec_a: Nec<A>) -> Tauto<A> {
 }
 
 /// `a^true => □a`.
+///
+/// # Safety
+///
+/// This function is declared unsafe because it uses the "taboo" knowledge in Avatar Modal Logic.
 pub unsafe fn tauto_to_nec<A: DProp>(tauto_a: Tauto<A>) -> Nec<A> {
     Rc::new(move |pos_na| {
         match para_decide() {
@@ -99,6 +107,10 @@ pub fn npos_to_para<A: DProp>(npos: Not<Pos<A>>) -> Para<A> {
 }
 
 /// `false^a => ¬◇a`.
+///
+/// # Safety
+///
+/// This function is declared unsafe because it uses the "taboo" knowledge in Avatar Modal Logic.
 pub unsafe fn para_to_npos<A: Prop>(para_a: Para<A>) -> Not<Pos<A>> {
     Rc::new(move |pos_a| pos_to_para_para(pos_a)(para_a))
 }
@@ -109,6 +121,10 @@ pub fn not_not_to_pos<A: DProp>(nna: Not<Not<A>>) -> Pos<A> {
 }
 
 /// `◇a => ¬¬a`.
+///
+/// # Safety
+///
+/// This function is declared unsafe because it uses the "taboo" knowledge in Avatar Modal Logic.
 pub unsafe fn pos_to_not_not<A: DProp>(pos: Pos<A>) -> Not<Not<A>> {
     hooo::para_para_to_not_not(pos_to_para_para(pos))
 }
@@ -145,7 +161,7 @@ pub fn eq_nnecn_pos<A: DProp>() -> Eq<Not<Nec<Not<A>>>, Pos<A>> {
             let x = not::double(x);
             let x = imply::in_left(x, |y| para_rev_not(y));
             let x = imply::in_left(x, |y| para_in_arg(y, tauto_eq_symmetry(g)));
-            let x: Not<Not<Para<Para<Not<Not<A>>>>>> = imply::in_left(x, |y| pow_not(y));
+            let x: Not<Not<Para<Para<Not<Not<A>>>>>> = imply::in_left(x, pow_not);
             nnpara_para_to_nnpos(x)
         })
     )
@@ -170,7 +186,7 @@ pub fn eq_nnec_posn<A: DProp>() -> Eq<Not<Nec<A>>, Pos<Not<A>>> {
             Rc::new(move |x| {
                 let x = para_in_arg(x, tauto_eq_symmetry(f));
                 let x: Not<Para<Not<Not<A>>>> = para_rev_not(x);
-                imply::in_left(x, |y| pow_not(y))
+                imply::in_left(x, pow_not)
             })
         )
     }
@@ -185,8 +201,8 @@ pub fn eq_nnec_posn<A: DProp>() -> Eq<Not<Nec<A>>, Pos<Not<A>>> {
             let x = unsafe {pos_to_para_para(pos_na)};
             let x: Para<Not<Not<Para<Not<A>>>>> = para_in_arg(x, tauto_eq_symmetry(g));
             let x = para_rev_not(x);
-            let x: Not<Not<Para<Para<Not<A>>>>> = imply::in_left(x, |y| pow_not(y));
-            imply::in_left(x, |y| imply::in_left(y, |x| Pos::new(x)))
+            let x: Not<Not<Para<Para<Not<A>>>>> = imply::in_left(x, pow_not);
+            imply::in_left(x, |y| imply::in_left(y, Pos::new))
         })
     )
 }
@@ -225,6 +241,10 @@ pub fn eq_posn_nnec<A: DProp>() -> Eq<Not<Pos<A>>, Nec<Not<A>>> {
 }
 
 /// `¬¬◇a => ¬¬(false^(false^a))`.
+///
+/// # Safety
+///
+/// This function is declared unsafe because it uses the "taboo" knowledge of Avatar Modal Logic.
 pub unsafe fn nnpos_to_nnpara_para<A: Prop>(x: Not<Not<Pos<A>>>) -> Not<Not<Para<Para<A>>>> {
     imply::in_left(x, |y| imply::in_left(y, |x| pos_to_para_para(x)))
 }

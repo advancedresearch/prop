@@ -75,12 +75,7 @@ pub fn ty_and<X: Prop, Y: Prop, A: Prop, B: Prop>(
     (xa, pord_xa): Ty<X, A>,
     (yb, pord_yb): Ty<Y, B>,
 ) -> Ty<And<X, Y>, And<A, B>> {
-    let imply_and_xy_and_ab: Imply<And<X, Y>, And<A, B>> = Rc::new(move |(x, y)| {
-        let a = xa(x);
-        let b = yb(y);
-        let and_ab = (a, b);
-        and_ab
-    });
+    let imply_and_xy_and_ab: Imply<And<X, Y>, And<A, B>> = Rc::new(move |(x, y)| (xa(x), yb(y)));
     (imply_and_xy_and_ab, pord_xa.and(pord_yb))
 }
 

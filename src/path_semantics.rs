@@ -178,6 +178,7 @@ pub fn naive_red_false<A: Prop, B: Prop>(
 }
 
 /// Composition.
+#[allow(clippy::too_many_arguments)]
 pub fn comp<F1: Prop, F2: Prop, F3: Prop, F4: Prop, X1: Prop, X2: Prop>(
     f: PSem<F1, F2, F3, F4>,
     g: PSem<F3, F4, X1, X2>,
@@ -191,9 +192,9 @@ pub fn comp<F1: Prop, F2: Prop, F3: Prop, F4: Prop, X1: Prop, X2: Prop>(
     f4_x2: Imply<F4, X2>,
 ) -> PSem<F1, F2, X1, X2> {
     Rc::new(move |((f1_eq_f2, (_pr_f1_x1, _pr_f2_x2)), (_f1_x1, _f2_x2))| {
-        let f3_eq_f4 = f(((f1_eq_f2, (pr_f1_f3.clone(), pr_f2_f4.clone())), (f1_f3.clone(), f2_f4.clone())));
-        let x1_eq_x2 = g(((f3_eq_f4, (pr_f3_x1.clone(), pr_f4_x2.clone())), (f3_x1.clone(), f4_x2.clone())));
-        x1_eq_x2
+        let f3_eq_f4 = f(((f1_eq_f2, (pr_f1_f3.clone(), pr_f2_f4.clone())),
+                          (f1_f3.clone(), f2_f4.clone())));
+        g(((f3_eq_f4, (pr_f3_x1.clone(), pr_f4_x2.clone())), (f3_x1.clone(), f4_x2.clone())))
     })
 }
 
@@ -208,8 +209,7 @@ pub fn naive_comp<F1: Prop, F2: Prop, F3: Prop, F4: Prop, X1: Prop, X2: Prop>(
 ) -> PSemNaive<F1, F2, X1, X2> {
     Rc::new(move |(f1_eq_f2, (_f1_x1, _f2_x2))| {
         let f3_eq_f4 = f((f1_eq_f2, (f1_f3.clone(), f2_f4.clone())));
-        let x1_eq_x2 = g((f3_eq_f4, (f3_x1.clone(), f4_x2.clone())));
-        x1_eq_x2
+        g((f3_eq_f4, (f3_x1.clone(), f4_x2.clone())))
     })
 }
 
@@ -315,7 +315,7 @@ pub fn to_por_snd<A: Prop, B: DProp, C: DProp, D: Prop>(
                     p((f, (b.map_any(), g)))
                 }
                 (Left(b), Right(not_c)) => {
-                    let c = quality::to_eq(f.clone()).0(Right(b));
+                    let c = quality::to_eq(f).0(Right(b));
                     match not_c(c) {}
                 }
                 (Right(not_b), _) => {

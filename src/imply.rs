@@ -161,7 +161,7 @@ pub fn to_or_excm_a<A: Prop, B: Prop>(f: Imply<A, B>, excm_a: ExcM<A>) -> Or<Not
 
     match excm_a {
         Left(a) => Right(f(a)),
-        Right(na) => Left(na.clone()),
+        Right(na) => Left(na),
     }
 }
 
