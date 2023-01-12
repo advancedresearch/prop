@@ -10,7 +10,7 @@ pub trait TautoExt<A: Prop>: Sized {
 
 impl<A: Prop> TautoExt<A> for Tauto<A> {
     fn tapp<B: Prop>(&self, f: Pow<B, A>) -> Tauto<B> {
-        hooo_imply(pow_to_imply_lift(f))(self.clone())
+        hooo_imply(pow_to_imply_lift(f))(*self)
     }
 }
 

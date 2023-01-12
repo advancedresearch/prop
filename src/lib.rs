@@ -1,8 +1,8 @@
 #![deny(missing_docs)]
 #![deny(dead_code)]
 #![feature(marker_trait_attr)]
-#![feature(generic_associated_types)]
 #![allow(incomplete_features)]
+#![allow(clippy::type_complexity)]
 
 //! # Prop
 //! Propositional logic with types in Rust.
