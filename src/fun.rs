@@ -614,6 +614,10 @@ pub fn const_tup<A: Prop, B: Prop>(a: IsConst<A>, b: IsConst<B>) -> IsConst<Tup<
 pub fn tup_const<A: Prop, B: Prop>(_x: IsConst<Tup<A, B>>) -> And<IsConst<A>, IsConst<B>> {
     unimplemented!()
 }
+/// `(a == b)  =>  (is_const(a) == is_const(b))`.
+pub fn const_eq<A: Prop, B: Prop>((ab, ba): Eq<A, B>) -> Eq<IsConst<A>, IsConst<B>> {
+    (Rc::new(move |a| IsConst(ab(a.0))), Rc::new(move |b| IsConst(ba(b.0))))
+}
 
 /// Lambda.
 #[derive(Copy, Clone)]
