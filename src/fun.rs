@@ -156,7 +156,7 @@ pub fn qu_to_app_eq<A: Prop, B: Prop, F: Prop>(
 pub type App2<F, X, Y> = App<App<F, X>, Y>;
 
 /// Applied function.
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub struct App<F: Prop, X: Prop>(F, X);
 
 /// `is_const(f) ⋀ is_const(x)  =>  is_const(f(x))`.
@@ -294,7 +294,7 @@ pub fn path_inv<F: Prop, X: Prop, Y: Prop>(
 }
 
 /// Composition.
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub struct Comp<F: Prop, G: Prop>(F, G);
 
 /// Type of composition.
@@ -447,7 +447,7 @@ pub fn q_inv_ty<F: Prop, G: Prop, A: Prop, B: Prop>(
 }
 
 /// Tuple.
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub struct Tup<A, B>(A, B);
 
 /// `(a : x) ⋀ (b : y)  =>  (a, b) : (x, y)`.
