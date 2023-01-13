@@ -1,7 +1,7 @@
 //! Real numbers.
 
 use super::*;
-use bool_alg::FNot;
+use bool_alg::{AndNotEq, FNot};
 
 /// Real type.
 #[derive(Copy, Clone)]
@@ -61,6 +61,10 @@ pub struct Lt(());
 /// Greater than or equal to.
 #[derive(Copy, Clone)]
 pub struct Ge(pub Comp<FNot, Lt>);
+
+/// Greater than.
+#[derive(Copy, Clone)]
+pub struct Gt(pub AndNotEq<Ge>);
 
 /// Infinite cardinality.
 #[derive(Copy, Clone)]
