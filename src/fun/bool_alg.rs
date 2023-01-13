@@ -192,3 +192,8 @@ pub fn eq_lift<A: Prop, B: Prop>(x: Eq<A, B>) -> Eq<App<FEq, Tup<A, B>>, Tr> {
     eq::eq_left(app_eq(tup_eq_snd(x))).0(eq_refl())
 }
 
+/// `and . ((f x (not . eq)) . dup)`.
+///
+/// For any `a, b`, this is `f((a, b)) & !eq((a, b))`.
+#[derive(Copy, Clone)]
+pub struct AndNotEq<F: Prop>(pub Comp<FAnd, Comp<Par<F, Comp<FNot, FEq>>, Dup>>);
