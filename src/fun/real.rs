@@ -57,7 +57,7 @@ pub type Sub = Comp<Add, Par<FId, Neg>>;
 #[derive(Copy, Clone)]
 pub struct Lt(());
 
-/// Greater or equal to.
+/// Greater than or equal to.
 pub type Ge = Comp<FNot, Lt>;
 
 /// Infinite cardinality.
