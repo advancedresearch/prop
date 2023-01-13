@@ -1,7 +1,7 @@
 //! Real numbers.
 
 use super::*;
-use bool_alg::{AndNotEq, FNot};
+use bool_alg::{AndNotEq, FAnd, FNot};
 
 /// Real type.
 #[derive(Copy, Clone)]
@@ -20,11 +20,13 @@ pub fn zero_ty() -> Ty<Zero, Real> {unimplemented!()}
 /// `is_const(zero)`.
 pub fn zero_is_const() -> IsConst<Zero> {unimplemented!()}
 
-/// `\(y : real) = y < aleph(0)`.
-pub type Aleph0RealLam<Y> = Lam<Ty<Y, Real>, App<Lt, Tup<Y, Aleph<Z>>>>;
-/// `(y : real, (\(y : real) = y < aleph(0))(y))`.
+/// `real_range(y) = (aleph(0) < y) & (y < aleph(0))`.
+pub type RealRange<Y> = App<FAnd, Tup<App<Lt, Tup<Aleph<Z>, Y>>, App<Lt, Tup<Y, Aleph<Z>>>>>;
+/// `\(y : real) = real_range(y)`.
+pub type Aleph0RealLam<Y> = Lam<Ty<Y, Real>, RealRange<Y>>;
+/// `(y : real, (\(y : real) = real_range(y))(y))`.
 pub type Aleph0RealTy<Y> = DepTupTy<Y, Real, Aleph0RealLam<Y>>;
-/// `(y, p) : (y : real, (\(y : real) = y < aleph(0))(y))`.
+/// `(y, p) : (y : real, (\(y : real) = real_range(y))(y))`.
 pub type Aleph0Real<Y, P> = DepTup<Y, Real, P, Aleph0RealLam<Y>>;
 /// `\(a : real) = (x == (a + y))`.
 pub type AddRealLam<X, A, Y> = Lam<Ty<A, Real>, Eq<X, App<Add, Tup<A, Y>>>>;
@@ -32,9 +34,8 @@ pub type AddRealLam<X, A, Y> = Lam<Ty<A, Real>, Eq<X, App<Add, Tup<A, Y>>>>;
 pub type AddRealTy<X, A, Y> = DepTupTy<A, Real, AddRealLam<X, A, Y>>;
 /// `(a, q) : (a : real, (\(a : real) = (x == (a + y)))(a))`.
 pub type AddReal<X, A, Q, Y> = DepTup<A, Q, Real, AddRealLam<X, A, Y>>;
-
 /// `((a, q) : (a : real, (\(a : real) = (x == (a + y)))(a)))^
-///  ((y, p) : (y : real, (\(y : real) = y < aleph(0))(y)))`
+///  ((y, p) : (y : real, (\(y : real) = real_range(y))(y)))`
 pub type RealDef<X, A, Q, Y, P> = Pow<AddReal<X, A, Q, Y>, Aleph0Real<Y, P>>;
 
 /// Definition of real.
