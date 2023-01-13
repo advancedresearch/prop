@@ -175,3 +175,20 @@ pub fn imply_fa<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FImply, Tup<Fa, A>>, Tr> {
     eq::symmetry(eq::in_left_arg(eq::in_left_arg(eq_app_comp(),
         app_eq(par_tup_def(not_fa(), id_def()))), or_tr(ty_a)))
 }
+
+/// Composable equality.
+#[derive(Copy, Clone)]
+pub struct FEq(());
+
+/// `eq{t : type(0)} : t x t -> bool`.
+pub fn eq_ty<T: Prop>(_ty_t: Ty<T, Type<Z>>) -> Ty<FEq, Pow<Bool, Tup<T, T>>> {unimplemented!()}
+/// `is_const(eq)`.
+pub fn eq_is_const() -> IsConst<FEq> {unimplemented!()}
+/// `eq((a, a)) = true`.
+pub fn eq_refl<A: Prop>() -> Eq<App<FEq, Tup<A, A>>, Tr> {unimplemented!()}
+
+/// `(a == b)  =>  eq((a, b)) = true`.
+pub fn eq_lift<A: Prop, B: Prop>(x: Eq<A, B>) -> Eq<App<FEq, Tup<A, B>>, Tr> {
+    eq::eq_left(app_eq(tup_eq_snd(x))).0(eq_refl())
+}
+
