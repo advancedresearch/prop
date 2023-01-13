@@ -2,6 +2,11 @@
 
 use crate::*;
 use crate::quality::*;
+use path_semantics::Ty;
+use crate::nat::Z;
+use crate::hooo::Pow;
+use crate::fun::{App, Tup, Type};
+use crate::fun::bool_alg::{Bool, Fa, FEq};
 
 /// Prevents other qualities of `A` from excluding `B`.
 pub trait NoOtherQ<A, B>: 'static + Clone {
@@ -62,4 +67,28 @@ pub trait PurePlatonism {
 
     /// `((a == a) => ¬¬(a ~~ a)) ⋀ ¬(a ~~ a)  =>  false`.
     fn sesh_absurd<A: Prop>(&self, f: Not<Q<A, A>>) -> False {self.mirror()(f)}
+}
+
+/// Seshatic Inequality Overloading.
+///
+/// For more information, see [paper](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip2/seshatic-inequality-overloading.pdf).
+pub trait SeshNeq {
+    /// `¬(a ~~ b)  =>  eq((a, b)) = false`.
+    fn sesh_neq<A: Prop, B: Prop>(&self) ->
+        Pow<Eq<App<FEq, Tup<A, B>>, Fa>, Not<Q<A, B>>>;
+    /// `eq{t : type(0), u: type(0)} : t x u -> bool`.
+    ///
+    /// This extends the type of the equality operator to allow different types as input.
+    fn eq_ext_ty<T: Prop, U: Prop>(&self, _: Not<Eq<T, U>>) ->
+        Pow<Ty<FEq, Pow<Bool, Tup<T, U>>>, And<Ty<T, Type<Z>>, Ty<U, Type<Z>>>>;
+
+    /// `(a : x) ⋀ (b : y) ⋀ ¬(x == y)  =>  eq((a, b)) = false`.
+    fn neq_ty_to_eq_fa<A: Prop, B: Prop, X: Prop, Y: Prop>(
+        &self,
+        ty_a: Ty<A, X>,
+        ty_b: Ty<B, Y>,
+        x: Not<Eq<X, Y>>
+    ) -> Eq<App<FEq, Tup<A, B>>, Fa> {
+        self.sesh_neq()(path_semantics::ty_neq_to_sesh(ty_a, ty_b, x))
+    }
 }
