@@ -127,19 +127,30 @@ pub fn para_inv_or<F: Prop>(x: Q<Inv<FOr>, F>) -> False {
 }
 
 /// Nand function.
-pub type FNand = Comp<FNot, FAnd>;
+#[derive(Copy, Clone)]
+pub struct FNand(pub Comp<FNot, FAnd>);
 
+/// `nand  ==  not . and`.
+pub fn nand_def() -> Eq<FNand, Comp<FNot, FAnd>> {(Rc::new(|x| x.0), Rc::new(|x| FNand(x)))}
 /// Type of Nand.
-pub fn nand_ty() -> Ty<FNand, Pow<Bool, Tup<Bool, Bool>>> {comp_ty(and_ty(), not_ty())}
+pub fn nand_ty() -> Ty<FNand, Pow<Bool, Tup<Bool, Bool>>> {
+    path_semantics::ty_in_left_arg(comp_ty(and_ty(), not_ty()), eq::symmetry(nand_def()))
+}
 /// `is_const(nand)`.
-pub fn nand_is_const() -> IsConst<FNand> {comp_is_const(and_is_const(), not_is_const())}
+pub fn nand_is_const() -> IsConst<FNand> {
+    const_in_arg(comp_is_const(and_is_const(), not_is_const()), eq::symmetry(nand_def()))
+}
 /// `nand(true, a) = not(a)`.
 pub fn nand_tr<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FNand, Tup<Tr, A>>, App<FNot, A>> {
-    eq::in_left_arg(app_eq(and_tr(ty_a)), eq_app_comp())
+    let x = app_map_eq(eq::symmetry(nand_def()));
+    eq::in_left_arg(eq::in_left_arg(app_eq(and_tr(ty_a)), eq_app_comp()), x)
 }
 /// `nand(false, a) = true`.
 pub fn nand_fa<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FNand, Tup<Fa, A>>, Tr> {
-    eq::transitivity(eq::in_left_arg(app_eq(and_fa(ty_a)), eq_app_comp()), not_fa())
+    eq::in_left_arg(
+        eq::transitivity(eq::in_left_arg(app_eq(and_fa(ty_a)), eq_app_comp()), not_fa()),
+        app_map_eq(eq::symmetry(nand_def()))
+    )
 }
 
 /// Imply function.
