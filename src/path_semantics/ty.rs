@@ -189,6 +189,15 @@ pub fn ty_q_formation<A: Prop, B: Prop, T: Prop, U: Prop>(
     })
 }
 
+/// `(a : T) ⋀ (b : U) ⋀ ¬(T == U)  =>  ¬(a ~~ b)`.
+pub fn ty_neq_to_sesh<A: Prop, B: Prop, T: Prop, U: Prop>(
+    ty_a: Ty<A, T>,
+    ty_b: Ty<B, U>,
+    neq_tu: Not<Eq<T, U>>,
+) -> Not<Q<A, B>> {
+    imply::modus_tollens(ty_q_formation(ty_a, ty_b).0)(quality::neq_to_sesh(neq_tu))
+}
+
 /// `(a : b) ⋀ (b : c) => (a : c)`.
 pub fn ty_transitivity<A: Prop, B: Prop, C: Prop>(
     (ab, pord_ab): Ty<A, B>,
