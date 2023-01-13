@@ -760,6 +760,9 @@ pub struct ParTup(());
 /// Apply parallel tuple to two functions.
 pub type Par<F, G> = App<ParTup, Tup<F, G>>;
 
+/// Apply parallel tuple to two inverted functions.
+pub type ParInv<F, G> = Par<Inv<F>, Inv<G>>;
+
 /// `(f : (x1 -> y1)) ⋀ (g : (x2 -> y2))  =>  (f x g) : ((x1, x2) -> (y1, y2))`.
 pub fn par_tup_fun_ty<F: Prop, G: Prop, X1: Prop, X2: Prop, Y1: Prop, Y2: Prop>(
     _ty_f: Ty<F, Pow<Y1, X1>>,
@@ -791,7 +794,7 @@ pub fn par_tup_comp<F1: Prop, F2: Prop, G1: Prop, G2: Prop>() ->
     Eq<Comp<Par<G1, G2>, Par<F1, F2>>, Par<Comp<G1, F1>, Comp<G2, F2>>>
 {unimplemented!()}
 /// `inv(f x g)  ==  inv(f) x inv(g)`.
-pub fn par_tup_inv<F: Prop, G: Prop>() -> Eq<Inv<Par<F, G>>, Par<Inv<F>, Inv<G>>>
+pub fn par_tup_inv<F: Prop, G: Prop>() -> Eq<Inv<Par<F, G>>, ParInv<F, G>>
 {unimplemented!()}
 
 /// `(f(i0) == o0) ⋀ (g(i1) == o1)  =>  (f x g)(i0, i1) == (o0, o1)`.
@@ -809,7 +812,7 @@ pub type SymNorm1<F, G> = Norm1<F, G, G>;
 /// `f[g1 x g2 -> g3]`.
 ///
 /// Normal path of 2 arguments.
-pub type Norm2<F, G1, G2, G3> = Comp<Comp<G3, F>, Par<Inv<G1>, Inv<G2>>>;
+pub type Norm2<F, G1, G2, G3> = Comp<Comp<G3, F>, ParInv<G1, G2>>;
 /// `f[g]` of 2 arguments.
 pub type SymNorm2<F, G> = Norm2<F, G, G, G>;
 
