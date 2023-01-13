@@ -45,6 +45,10 @@ pub fn real_def<X: Prop, A: Prop, Q: Prop, Y: Prop, P: Prop>(
 #[derive(Copy, Clone)]
 pub struct Add(());
 
+/// Negation.
+#[derive(Copy, Clone)]
+pub struct Neg(());
+
 /// Subtraction.
 #[derive(Copy, Clone)]
 pub struct Sub(());
