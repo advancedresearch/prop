@@ -191,6 +191,10 @@ pub fn eq_refl<A: Prop>() -> Eq<App<FEq, Tup<A, A>>, Tr> {unimplemented!()}
 pub fn eq_lift<A: Prop, B: Prop>(x: Eq<A, B>) -> Eq<App<FEq, Tup<A, B>>, Tr> {
     eq::eq_left(app_eq(tup_eq_snd(x))).0(eq_refl())
 }
+/// `eq((a, b)) = false  =>  ¬(a == b)`.
+pub fn eq_fa_lower<A: Prop, B: Prop>(x: Eq<App<FEq, Tup<A, B>>, Fa>) -> Not<Eq<A, B>> {
+    Rc::new(move |eq_ab| para_eq_tr_fa(eq::in_left_arg(x.clone(), eq_lift(eq_ab))))
+}
 
 /// `and . ((f x (not . eq)) . dup)`.
 ///
