@@ -66,6 +66,10 @@ pub struct Ge(pub Comp<FNot, Lt>);
 #[derive(Copy, Clone)]
 pub struct Gt(pub AndNotEq<Ge>);
 
+/// Less than or equal to.
+#[derive(Copy, Clone)]
+pub struct Le(pub Comp<FNot, Gt>);
+
 /// Infinite cardinality.
 #[derive(Copy, Clone)]
 pub struct Aleph<N>(N);
