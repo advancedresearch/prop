@@ -554,6 +554,17 @@ pub fn snd_is_const() -> IsConst<Snd> {unimplemented!()}
 /// `snd((a, b)) = b`.
 pub fn snd_def<A: Prop, B: Prop>() -> Eq<App<Snd, Tup<A, B>>, B> {unimplemented!()}
 
+/// Composable equality.
+#[derive(Copy, Clone)]
+pub struct FEq(());
+
+/// `eq : (a, b) -> (a == b)`.
+pub fn eq_ty<A: Prop, B: Prop>() -> Ty<FEq, Pow<Eq<A, B>, Tup<A, B>>> {unimplemented!()}
+/// `is_const(eq)`.
+pub fn eq_is_const() -> IsConst<FEq> {unimplemented!()}
+/// `eq((a, b)) = (a == b)`.
+pub fn eq_def<A: Prop, B: Prop>() -> Eq<App<FEq, Tup<A, B>>, Eq<A, B>> {unimplemented!()}
+
 /// Substitute in expression.
 #[derive(Clone, Copy)]
 pub struct Subst<E: Prop, A: Prop, B: Prop>(E, A, B);
