@@ -76,7 +76,7 @@ pub trait SeshNeq {
     /// `¬(a ~~ b)  =>  eq((a, b)) = false`.
     fn sesh_neq<A: Prop, B: Prop>(&self) ->
         Pow<Eq<App<FEq, Tup<A, B>>, Fa>, Not<Q<A, B>>>;
-    /// `eq{t : type(0), u: type(0)} : t x u -> bool`.
+    /// `eq{t : type(0), u : type(0)} : t x u -> bool`.
     ///
     /// This extends the type of the equality operator to allow different types as input.
     fn eq_ext_ty<T: Prop, U: Prop>(&self, _: Not<Eq<T, U>>) ->
