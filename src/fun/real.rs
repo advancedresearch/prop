@@ -1,6 +1,7 @@
 //! Real numbers.
 
 use super::*;
+use bool_alg::FNot;
 
 /// Real type.
 #[derive(Copy, Clone)]
@@ -55,6 +56,9 @@ pub type Sub = Comp<Add, App<ParTup, Tup<FId, Neg>>>;
 /// Less than.
 #[derive(Copy, Clone)]
 pub struct Lt(());
+
+/// Greater or equal to.
+pub type Ge = Comp<FNot, Lt>;
 
 /// Infinite cardinality.
 #[derive(Copy, Clone)]
