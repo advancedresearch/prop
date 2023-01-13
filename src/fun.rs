@@ -619,6 +619,11 @@ pub fn const_eq<A: Prop, B: Prop>((ab, ba): Eq<A, B>) -> Eq<IsConst<A>, IsConst<
     (Rc::new(move |a| IsConst(ab(a.0))), Rc::new(move |b| IsConst(ba(b.0))))
 }
 
+/// `is_const(a) ⋀ (a == b)  =>  is_const(b)`.
+pub fn const_in_arg<A: Prop, B: Prop>(a: IsConst<A>, x: Eq<A, B>) -> IsConst<B> {
+    const_eq(x).0(a)
+}
+
 /// Lambda.
 #[derive(Copy, Clone)]
 pub struct Lam<X, Y>(X, Y);
