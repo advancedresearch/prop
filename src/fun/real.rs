@@ -51,7 +51,7 @@ pub struct Add(());
 pub struct Neg(());
 
 /// Subtraction.
-pub type Sub = Comp<Add, App<ParTup, Tup<FId, Neg>>>;
+pub type Sub = Comp<Add, Par<FId, Neg>>;
 
 /// Less than.
 #[derive(Copy, Clone)]

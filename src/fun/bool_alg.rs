@@ -143,7 +143,7 @@ pub fn nand_fa<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FNand, Tup<Fa, A>>, Tr> {
 }
 
 /// Imply function.
-pub type FImply = Comp<FOr, App<ParTup, Tup<FNot, FId>>>;
+pub type FImply = Comp<FOr, Par<FNot, FId>>;
 
 /// Type of Imply.
 pub fn imply_ty() -> Ty<FImply, Pow<Bool, Tup<Bool, Bool>>> {
