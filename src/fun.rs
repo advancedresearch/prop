@@ -232,7 +232,7 @@ pub fn app_lift_ty_lam<F: Prop, A: Prop, B: Prop, X: Prop, Y: Prop>(
 }
 
 /// Imaginary inverse.
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub struct Inv<F: Prop>(F);
 
 /// Inverse type `(f : x -> y) => (inv(f) : y -> x)`.
