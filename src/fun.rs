@@ -823,13 +823,17 @@ pub type SymNorm1<F, G> = Norm1<F, G, G>;
 /// `f[g1 x g2 -> g3]`.
 ///
 /// Normal path of 2 arguments.
-pub type Norm2<F, G1, G2, G3> = Comp<Comp<G3, F>, ParInv<G1, G2>>;
+#[derive(Copy, Clone)]
+pub struct Norm2<F: Prop, G1: Prop, G2: Prop, G3: Prop>(pub Comp<Comp<G3, F>, ParInv<G1, G2>>);
 /// `f[g]` of 2 arguments.
 pub type SymNorm2<F, G> = Norm2<F, G, G, G>;
 
 /// `f[g1 -> g2]  ==  (g2 . f) . inv(g1)`.
 pub fn norm1_def<F: Prop, G1: Prop, G2: Prop>() ->
     Eq<Norm1<F, G1, G2>, Comp<Comp<G2, F>, Inv<G1>>> {eqx!(def Norm1)}
+/// `f[g1 x g2 -> g3]  ==  (g3 . f) . (inv(g1) x inv(g2))`.
+pub fn norm2_def<F: Prop, G1: Prop, G2: Prop, G3: Prop>() ->
+    Eq<Norm2<F, G1, G2, G3>, Comp<Comp<G3, F>, ParInv<G1, G2>>> {eqx!(def Norm2)}
 /// `f[g1 -> g2][g3 -> g4]  ==  f[(g3 . g1) -> (g4 . g2)]`.
 pub fn norm1_comp<F: Prop, G1: Prop, G2: Prop, G3: Prop, G4: Prop>() ->
     Eq<Norm1<Norm1<F, G1, G2>, G3, G4>, Norm1<F, Comp<G3, G1>, Comp<G4, G2>>>
@@ -855,11 +859,11 @@ pub fn norm1_eq_out<F: Prop, G1: Prop, G2: Prop, H: Prop>(x: Eq<G2, H>) ->
 /// `(f == h)  =>  f[g1 x g2 -> g3] == h[g1 x g2 -> g3]`.
 pub fn norm2_eq<F: Prop, G1: Prop, G2: Prop, G3: Prop, H: Prop>(x: Eq<F, H>) ->
     Eq<Norm2<F, G1, G2, G3>, Norm2<H, G1, G2, G3>>
-{comp_eq_left(comp_eq_right(x))}
+{eqx!(comp_eq_left(comp_eq_right(x)), norm2_def, eq)}
 /// `f[g1 x g2 -> g3]  ==  f[(g1 x g2) -> g3]`.
 pub fn eq_norm2_norm1<F: Prop, G1: Prop, G2: Prop, G3: Prop>() ->
     Eq<Norm2<F, G1, G2, G3>, Norm1<F, Par<G1, G2>, G3>>
-{eqx!(comp_eq_right(eq::symmetry(par_tup_inv())), norm1_def, r)}
+{eqx!(eqx!(comp_eq_right(eq::symmetry(par_tup_inv())), norm1_def, r), norm2_def, l)}
 /// `f[g1 x g2 -> g3][g4 x g5 -> g6]  ==  f[(g1 x g2) -> g3][(g4 x g5) -> g6]`.
 pub fn eq_norm2_norm1_comp<F: Prop, G1: Prop, G2: Prop, G3: Prop, G4: Prop, G5: Prop, G6: Prop>()
     -> Eq<Norm2<Norm2<F, G1, G2, G3>, G4, G5, G6>,
