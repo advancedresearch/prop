@@ -131,26 +131,23 @@ pub fn para_inv_or<F: Prop>(x: Q<Inv<FOr>, F>) -> False {
 pub struct FNand(pub Comp<FNot, FAnd>);
 
 /// `nand  ==  not . and`.
-pub fn nand_def() -> Eq<FNand, Comp<FNot, FAnd>> {(Rc::new(|x| x.0), Rc::new(|x| FNand(x)))}
+pub fn nand_def() -> Eq<FNand, Comp<FNot, FAnd>> {eqx!(def FNand)}
 /// Type of Nand.
 pub fn nand_ty() -> Ty<FNand, Pow<Bool, Tup<Bool, Bool>>> {
-    path_semantics::ty_in_left_arg(comp_ty(and_ty(), not_ty()), eq::symmetry(nand_def()))
+    eqx!(comp_ty(and_ty(), not_ty()), nand_def, tyl)
 }
 /// `is_const(nand)`.
 pub fn nand_is_const() -> IsConst<FNand> {
-    const_in_arg(comp_is_const(and_is_const(), not_is_const()), eq::symmetry(nand_def()))
+    eqx!(comp_is_const(and_is_const(), not_is_const()), nand_def, co)
 }
 /// `nand(true, a) = not(a)`.
 pub fn nand_tr<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FNand, Tup<Tr, A>>, App<FNot, A>> {
-    let x = app_map_eq(eq::symmetry(nand_def()));
-    eq::in_left_arg(eq::in_left_arg(app_eq(and_tr(ty_a)), eq_app_comp()), x)
+    eqx!(eq::in_left_arg(app_eq(and_tr(ty_a)), eq_app_comp()), nand_def, am, l)
 }
 /// `nand(false, a) = true`.
 pub fn nand_fa<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FNand, Tup<Fa, A>>, Tr> {
-    eq::in_left_arg(
-        eq::transitivity(eq::in_left_arg(app_eq(and_fa(ty_a)), eq_app_comp()), not_fa()),
-        app_map_eq(eq::symmetry(nand_def()))
-    )
+    let x = eq::transitivity(eq::in_left_arg(app_eq(and_fa(ty_a)), eq_app_comp()), not_fa());
+    eqx!(x, nand_def, am, l)
 }
 
 /// Imply function.
@@ -158,35 +155,26 @@ pub fn nand_fa<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FNand, Tup<Fa, A>>, Tr> {
 pub struct FImply(pub Comp<FOr, Par<FNot, FId>>);
 
 /// `imply  ==  or . (not x id)`.
-pub fn imply_def() -> Eq<FImply, Comp<FOr, Par<FNot, FId>>> {
-    (Rc::new(|x| x.0), Rc::new(|x| FImply(x)))
-}
+pub fn imply_def() -> Eq<FImply, Comp<FOr, Par<FNot, FId>>> {eqx!(def FImply)}
 /// Type of Imply.
 pub fn imply_ty() -> Ty<FImply, Pow<Bool, Tup<Bool, Bool>>> {
-    path_semantics::ty_in_left_arg(comp_ty(par_tup_fun_ty(not_ty(), id_ty()), or_ty()),
-        eq::symmetry(imply_def()))
+    eqx!(comp_ty(par_tup_fun_ty(not_ty(), id_ty()), or_ty()), imply_def, tyl)
 }
 /// `is_const(imply)`.
 pub fn imply_is_const() -> IsConst<FImply> {
-    const_in_arg(comp_is_const(par_tup_app_is_const(not_is_const(), id_is_const()), or_is_const()),
-        eq::symmetry(imply_def()))
+    let x = comp_is_const(par_tup_app_is_const(not_is_const(), id_is_const()), or_is_const());
+    eqx!(x, imply_def, co)
 }
 
 /// `imply(true, a) = a`.
 pub fn imply_tr<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FImply, Tup<Tr, A>>, A> {
-    eq::in_left_arg(
-        eq::symmetry(eq::in_left_arg(eq::in_left_arg(eq_app_comp(),
-            app_eq(par_tup_def(not_tr(), id_def()))), or_fa(ty_a))),
-        app_map_eq(eq::symmetry(imply_def()))
-    )
+    eqx!(eq::symmetry(eq::in_left_arg(eq::in_left_arg(eq_app_comp(),
+        app_eq(par_tup_def(not_tr(), id_def()))), or_fa(ty_a))), imply_def, am, l)
 }
 /// `imply(false, a) = true`.
 pub fn imply_fa<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FImply, Tup<Fa, A>>, Tr> {
-    eq::in_left_arg(
-        eq::symmetry(eq::in_left_arg(eq::in_left_arg(eq_app_comp(),
-            app_eq(par_tup_def(not_fa(), id_def()))), or_tr(ty_a))),
-        app_map_eq(eq::symmetry(imply_def()))
-    )
+    eqx!(eq::symmetry(eq::in_left_arg(eq::in_left_arg(eq_app_comp(),
+        app_eq(par_tup_def(not_fa(), id_def()))), or_tr(ty_a))), imply_def, am, l)
 }
 
 /// Composable equality.
