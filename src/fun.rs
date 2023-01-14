@@ -816,7 +816,8 @@ pub fn par_tup_def<F: Prop, G: Prop, I0: Prop, I1: Prop, O0: Prop, O1: Prop>(
 /// `f[g1 -> g2]`.
 ///
 /// Normal path of 1 argument.
-pub type Norm1<F, G1, G2> = Comp<Comp<G2, F>, Inv<G1>>;
+#[derive(Copy, Clone)]
+pub struct Norm1<F: Prop, G1: Prop, G2: Prop>(pub Comp<Comp<G2, F>, Inv<G1>>);
 /// `f[g]` of 1 argument.
 pub type SymNorm1<F, G> = Norm1<F, G, G>;
 /// `f[g1 x g2 -> g3]`.
@@ -826,12 +827,16 @@ pub type Norm2<F, G1, G2, G3> = Comp<Comp<G3, F>, ParInv<G1, G2>>;
 /// `f[g]` of 2 arguments.
 pub type SymNorm2<F, G> = Norm2<F, G, G, G>;
 
+/// `f[g1 -> g2]  ==  (g2 . f) . inv(g1)`.
+pub fn norm1_def<F: Prop, G1: Prop, G2: Prop>() ->
+    Eq<Norm1<F, G1, G2>, Comp<Comp<G2, F>, Inv<G1>>> {eqx!(def Norm1)}
 /// `f[g1 -> g2][g3 -> g4]  ==  f[(g3 . g1) -> (g4 . g2)]`.
 pub fn norm1_comp<F: Prop, G1: Prop, G2: Prop, G3: Prop, G4: Prop>() ->
     Eq<Norm1<Norm1<F, G1, G2>, G3, G4>, Norm1<F, Comp<G3, G1>, Comp<G4, G2>>>
 {
     let y = eq::transitivity(comp_eq_left(comp_assoc()), eq::symmetry(comp_assoc()));
-    eq::transitivity(eq::transitivity(y, comp_eq_right(comp_inv())), comp_eq_left(comp_assoc()))
+    let y = eq::transitivity(eq::transitivity(y, comp_eq_right(comp_inv())), comp_eq_left(comp_assoc()));
+    eqx!(eqx!(y, norm1_def, cr, cl, l), norm1_def, l, r)
 }
 /// `f[g1][g2]  ==  f[g2 . g1]` for 1 argument.
 pub fn sym_norm1_comp<F: Prop, G1: Prop, G2: Prop>() ->
@@ -839,16 +844,14 @@ pub fn sym_norm1_comp<F: Prop, G1: Prop, G2: Prop>() ->
 {norm1_comp()}
 /// `(f == h)  =>  f[g1 -> g2] == h[g1 -> g2]`.
 pub fn norm1_eq<F: Prop, G1: Prop, G2: Prop, H: Prop>(x: Eq<F, H>) ->
-    Eq<Norm1<F, G1, G2>, Norm1<H, G1, G2>>
-{comp_eq_left(comp_eq_right(x))}
+    Eq<Norm1<F, G1, G2>, Norm1<H, G1, G2>> {eqx!(comp_eq_left(comp_eq_right(x)), norm1_def, eq)}
 /// `(g1 == h)  =>  f[g1 -> g2] == f[h -> g2]`.
 pub fn norm1_eq_in<F: Prop, G1: Prop, G2: Prop, H: Prop>(x: Eq<G1, H>) ->
-    Eq<Norm1<F, G1, G2>, Norm1<F, H, G2>>
-{comp_eq_right(inv_eq(x))}
+    Eq<Norm1<F, G1, G2>, Norm1<F, H, G2>> {eqx!(comp_eq_right(inv_eq(x)), norm1_def, eq)}
 /// `(g2 == h)  =>  f[g1 -> g2] == f[g1 -> h]`.
 pub fn norm1_eq_out<F: Prop, G1: Prop, G2: Prop, H: Prop>(x: Eq<G2, H>) ->
     Eq<Norm1<F, G1, G2>, Norm1<F, G1, H>>
-{comp_eq_left(comp_eq_left(x))}
+{eqx!(eqx!(comp_eq_left(comp_eq_left(x)), norm1_def, l), norm1_def, r)}
 /// `(f == h)  =>  f[g1 x g2 -> g3] == h[g1 x g2 -> g3]`.
 pub fn norm2_eq<F: Prop, G1: Prop, G2: Prop, G3: Prop, H: Prop>(x: Eq<F, H>) ->
     Eq<Norm2<F, G1, G2, G3>, Norm2<H, G1, G2, G3>>
@@ -856,7 +859,7 @@ pub fn norm2_eq<F: Prop, G1: Prop, G2: Prop, G3: Prop, H: Prop>(x: Eq<F, H>) ->
 /// `f[g1 x g2 -> g3]  ==  f[(g1 x g2) -> g3]`.
 pub fn eq_norm2_norm1<F: Prop, G1: Prop, G2: Prop, G3: Prop>() ->
     Eq<Norm2<F, G1, G2, G3>, Norm1<F, Par<G1, G2>, G3>>
-{comp_eq_right(eq::symmetry(par_tup_inv()))}
+{eqx!(comp_eq_right(eq::symmetry(par_tup_inv())), norm1_def, r)}
 /// `f[g1 x g2 -> g3][g4 x g5 -> g6]  ==  f[(g1 x g2) -> g3][(g4 x g5) -> g6]`.
 pub fn eq_norm2_norm1_comp<F: Prop, G1: Prop, G2: Prop, G3: Prop, G4: Prop, G5: Prop, G6: Prop>()
     -> Eq<Norm2<Norm2<F, G1, G2, G3>, G4, G5, G6>,
@@ -880,16 +883,17 @@ pub fn sym_norm2_comp<F: Prop, G1: Prop, G2: Prop>() ->
 /// `f[id]  == f` for 1 argument.
 pub fn sym_norm1_id<F: Prop>() -> Eq<SymNorm1<F, FId>, F> {
     let x = quality::to_eq(id_q());
-    eq::transitivity(eq::transitivity(comp_eq_right(x), comp_id_right()), comp_id_left())
+    let x = eq::transitivity(eq::transitivity(comp_eq_right(x), comp_id_right()), comp_id_left());
+    eqx!(x, norm1_def, l)
 }
 /// `f[id] == f` for 2 arguments.
 pub fn sym_norm2_id<F: Prop>() -> Eq<SymNorm2<F, FId>, F> {
-    eq::transitivity(eq::transitivity(eq_norm2_norm1(),
-        comp_eq_right(inv_eq(par_tup_id()))), sym_norm1_id())
+    let x = eqx!(comp_eq_right(inv_eq(par_tup_id())), norm1_def, eq);
+    eq::transitivity(eq::transitivity(eq_norm2_norm1(), x), sym_norm1_id())
 }
 /// `id[f -> id] == inv(f)`.
 pub fn norm1_inv<F: Prop>() -> Eq<Norm1<FId, F, FId>, Inv<F>> {
-    eq::transitivity(comp_eq_left(comp_id_left()), comp_id_left())
+    eqx!(eq::transitivity(comp_eq_left(comp_id_left()), comp_id_left()), norm1_def, l)
 }
 
 /// `(\(a : x) = (f(a) == g(a))) . (snd . snd)`.
