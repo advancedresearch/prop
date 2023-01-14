@@ -158,7 +158,7 @@ pub type App2<F, X, Y> = App<App<F, X>, Y>;
 
 /// Applied function.
 #[derive(Copy, Clone)]
-pub struct App<F: Prop, X: Prop>(F, X);
+pub struct App<F, X>(F, X);
 
 /// `is_const(f) ⋀ is_const(x)  =>  is_const(f(x))`.
 pub fn app_is_const<F: Prop, X: Prop>(_f: IsConst<F>, _x: IsConst<X>) -> IsConst<App<F, X>> {
@@ -234,7 +234,7 @@ pub fn app_lift_ty_lam<F: Prop, A: Prop, B: Prop, X: Prop, Y: Prop>(
 
 /// Imaginary inverse.
 #[derive(Copy, Clone)]
-pub struct Inv<F: Prop>(F);
+pub struct Inv<F>(F);
 
 /// Inverse type `(f : x -> y) => (inv(f) : y -> x)`.
 pub fn inv_ty<F: Prop, X: Prop, Y: Prop>(
@@ -296,7 +296,7 @@ pub fn path_inv<F: Prop, X: Prop, Y: Prop>(
 
 /// Composition.
 #[derive(Copy, Clone)]
-pub struct Comp<F: Prop, G: Prop>(F, G);
+pub struct Comp<F, G>(F, G);
 
 /// Type of composition.
 pub fn comp_ty<F: Prop, G: Prop, X: Prop, Y: Prop, Z: Prop>(
@@ -557,7 +557,7 @@ pub fn snd_def<A: Prop, B: Prop>() -> Eq<App<Snd, Tup<A, B>>, B> {unimplemented!
 
 /// Substitute in expression.
 #[derive(Clone, Copy)]
-pub struct Subst<E: Prop, A: Prop, B: Prop>(E, A, B);
+pub struct Subst<E, A, B>(E, A, B);
 
 /// `a[a := b] == b`
 pub fn subst_trivial<A: Prop, B: Prop>() -> Eq<Subst<A, A, B>, B> {unimplemented!()}
@@ -817,14 +817,14 @@ pub fn par_tup_def<F: Prop, G: Prop, I0: Prop, I1: Prop, O0: Prop, O1: Prop>(
 ///
 /// Normal path of 1 argument.
 #[derive(Copy, Clone)]
-pub struct Norm1<F: Prop, G1: Prop, G2: Prop>(pub Comp<Comp<G2, F>, Inv<G1>>);
+pub struct Norm1<F, G1, G2>(pub Comp<Comp<G2, F>, Inv<G1>>);
 /// `f[g]` of 1 argument.
 pub type SymNorm1<F, G> = Norm1<F, G, G>;
 /// `f[g1 x g2 -> g3]`.
 ///
 /// Normal path of 2 arguments.
 #[derive(Copy, Clone)]
-pub struct Norm2<F: Prop, G1: Prop, G2: Prop, G3: Prop>(pub Comp<Comp<G3, F>, ParInv<G1, G2>>);
+pub struct Norm2<F, G1, G2, G3>(pub Comp<Comp<G3, F>, ParInv<G1, G2>>);
 /// `f[g]` of 2 arguments.
 pub type SymNorm2<F, G> = Norm2<F, G, G, G>;
 
