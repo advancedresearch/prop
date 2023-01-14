@@ -16,4 +16,4 @@ impl<A: Prop> TautoExt<A> for Tauto<A> {
 
 /// Maps expression to tautology.
 #[macro_export]
-macro_rules! tauto(($x:expr) => {|_: True| $x});
+macro_rules! tauto(($x:expr) => {|_: $crate::True| $x});
