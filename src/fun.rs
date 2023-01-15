@@ -172,6 +172,8 @@ pub fn app_eq<F: Prop, X: Prop, Y: Prop>(
 pub fn app_map_eq<F: Prop, G: Prop, X: Prop>(
     _eq_fg: Eq<F, G>
 ) -> Eq<App<F, X>, App<G, X>> {unimplemented!()}
+/// `(f : (x -> y)) ⋀ (a : x)  =>  (f(a) : y)`.
+///
 /// Get type of applied function.
 pub fn app_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
     _ty_f: Ty<F, Pow<Y, X>>,
