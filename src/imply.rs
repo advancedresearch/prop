@@ -209,9 +209,7 @@ pub fn flip_neg_right<A: Prop, B: Prop>(f: Imply<A, Not<B>>) -> Imply<B, Not<A>>
 }
 
 /// `((a ∧ b) => c)  =>  (a => (b => c))`.
-pub fn chain<A: Prop, B: Prop, C: Prop>(
-    f: Imply<And<A, B>, C>
-) -> Imply<A, Imply<B, C>> {
+pub fn chain<A: Prop, B: Prop, C: Prop>(f: Imply<And<A, B>, C>) -> Imply<A, Imply<B, C>> {
     Rc::new(move |x| {
         let f = f.clone();
         Rc::new(move |y| f((x.clone(), y)))
