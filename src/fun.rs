@@ -448,6 +448,8 @@ pub fn q_inv_ty<F: Prop, G: Prop, A: Prop, B: Prop>(
 #[derive(Copy, Clone)]
 pub struct Tup<A, B>(A, B);
 
+/// `(type(0), type(0)) : type(0)`.
+pub fn tup_type0_ty<A: Prop, B: Prop>() -> Ty<Tup<Type<Z>, Type<Z>>, Type<Z>> {unimplemented!()}
 /// `(a : x) ⋀ (b : y)  =>  (a, b) : (x, y)`.
 pub fn tup_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
     _ty_a: Ty<A, X>,
