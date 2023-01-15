@@ -218,6 +218,11 @@ pub fn chain<A: Prop, B: Prop, C: Prop>(
     })
 }
 
+/// `a => (b => c)  =>  ((a ∧ b) => c)`.
+pub fn rev_chain<A: Prop, B: Prop, C: Prop>(f: Imply<A, Imply<B, C>>) -> Imply<And<A, B>, C> {
+    Rc::new(move |(a, b)| f(a)(b))
+}
+
 /// `(a => b) ∧ (a == c)  =>  (c => b)`.
 pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(f: Imply<A, B>, (_, g1): Eq<A, C>) -> Imply<C, B> {
     transitivity(g1, f)
