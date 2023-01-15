@@ -70,6 +70,11 @@ pub fn ty_instance<A: Prop, B: Prop, X: Prop>((ab_x, pord_ab_x): Ty<Ty<A, B>, X>
      pord_ab_x.by_imply_left(Rc::new(move |b| ty_inhabit(ty_rev_true(b)))))
 }
 
+/// `((a : b) : x)  =>  (a : (b : x))`.
+pub fn ty_assoc_right<A: Prop, B: Prop, X: Prop>(x: Ty<Ty<A, B>, X>) -> Ty<A, Ty<B, X>> {
+    ty_inhabit(ty_rev_true(ty_instance(x)))
+}
+
 /// `true == ltrue`.
 pub fn eq_true_ltrue<N: Nat>() -> Eq<True, LTrue<N>> {
     (LTrue(Default::default()).map_any(), True.map_any())
