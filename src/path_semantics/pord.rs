@@ -106,6 +106,13 @@ impl<A, B, C> POrdProof<A, Or<B, C>> {
     }
 }
 
+impl<A, B> POrdProof<A, Imply<A, B>> {
+    /// Get reduced proof `a < b`.
+    pub fn imply_reduce(self) -> POrdProof<A, B> {
+        POrdProof(std::marker::PhantomData)
+    }
+}
+
 /// Path semantical order.
 ///
 /// This is implemented by types to define an order
