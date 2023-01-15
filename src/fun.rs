@@ -466,6 +466,8 @@ pub fn tup_fst<A: Prop, B: Prop, X: Prop, Y: Prop>(_: Ty<Tup<A, B>, Tup<X, Y>>) 
 }
 /// `is_const((a, b))  =>  is_const(a)`.
 pub fn tup_fst_const<A: Prop, B: Prop>(_: IsConst<Tup<A, B>>) -> IsConst<A> {unimplemented!()}
+/// `is_const((a, b))  =>  is_const(b)`.
+pub fn tup_snd_const<A: Prop, B: Prop>(_: IsConst<Tup<A, B>>) -> IsConst<B> {unimplemented!()}
 /// `(a, b) : (x, y)  =>  (b : y)`.
 pub fn tup_snd<A: Prop, B: Prop, X: Prop, Y: Prop>(_: Ty<Tup<A, B>, Tup<X, Y>>) -> Ty<B, Y> {
     unimplemented!()
