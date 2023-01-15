@@ -457,18 +457,10 @@ pub fn tup_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
 pub fn tup_is_const<A: Prop, B: Prop>(_a: IsConst<A>, _b: IsConst<B>) -> IsConst<Tup<A, B>> {
     unimplemented!()
 }
-/// `(a, b) : (x, y)  =>  (a : x)`.
-pub fn tup_fst<A: Prop, B: Prop, X: Prop, Y: Prop>(_: Ty<Tup<A, B>, Tup<X, Y>>) -> Ty<A, X> {
-    unimplemented!()
-}
 /// `is_const((a, b))  =>  is_const(a)`.
 pub fn tup_fst_const<A: Prop, B: Prop>(_: IsConst<Tup<A, B>>) -> IsConst<A> {unimplemented!()}
 /// `is_const((a, b))  =>  is_const(b)`.
 pub fn tup_snd_const<A: Prop, B: Prop>(_: IsConst<Tup<A, B>>) -> IsConst<B> {unimplemented!()}
-/// `(a, b) : (x, y)  =>  (b : y)`.
-pub fn tup_snd<A: Prop, B: Prop, X: Prop, Y: Prop>(_: Ty<Tup<A, B>, Tup<X, Y>>) -> Ty<B, Y> {
-    unimplemented!()
-}
 /// `(a == b)  =>  (a, c) == (b, c)`.
 pub fn tup_eq_fst<A: Prop, B: Prop, C: Prop>((ab, ba): Eq<A, B>) -> Eq<Tup<A, C>, Tup<B, C>> {
     (Rc::new(move |y| Tup(ab(y.0), y.1)), Rc::new(move |y| Tup(ba(y.0), y.1)))
@@ -488,6 +480,14 @@ pub fn tup_rev_eq_snd<A: Prop, B: Prop, C: Prop, D: Prop>(
     _: Eq<Tup<C, A>, Tup<C, B>>
 ) -> Eq<A, B> {unimplemented!()}
 
+/// `(a, b) : (x, y) ⋀ is_const((a, b))  =>  (a : x)`.
+pub fn tup_fst<A: Prop, B: Prop, X: Prop, Y: Prop>(
+    ty_tup_ab: Ty<Tup<A, B>, Tup<X, Y>>
+) -> Ty<A, X> {path_semantics::ty_in_left_arg(app_fun_ty(fst_ty(), ty_tup_ab), fst_def())}
+/// `(a, b) : (x, y) ⋀ is_const((a, b))  =>  (b : y)`.
+pub fn tup_snd<A: Prop, B: Prop, X: Prop, Y: Prop>(
+    ty_tup_ab: Ty<Tup<A, B>, Tup<X, Y>>
+) -> Ty<B, Y> {path_semantics::ty_in_left_arg(app_fun_ty(snd_ty(), ty_tup_ab), snd_def())}
 /// `(a, b) ⋀ (a == c)  =>  (c, b)`.
 pub fn tup_in_left_arg<A: Prop, B: Prop, C: Prop>(x: Tup<A, B>, y: Eq<A, C>) -> Tup<C, B> {
     tup_eq_fst(y).0(x)
