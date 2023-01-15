@@ -423,8 +423,8 @@ pub fn type_imply<N: Nat>(Type(n): Type<N>) -> Type<S<N>> {Type(S(n))}
 pub fn type_is_const<N: Nat>() -> IsConst<Type<N>> {unimplemented!()}
 /// `(a -> b) : type(0)`.
 pub fn pow_ty<A: Prop, B: Prop>() -> Ty<Pow<B, A>, Type<Z>> {unimplemented!()}
-/// `(b : type(0))  =>  (a : b) : type(0)`.
-pub fn judgement_ty<A: Prop, B: Prop>(ty_b: Ty<B, Type<Z>>) -> Ty<Ty<A, B>, Type<Z>> {
+/// `(b : type(n))  =>  (a : b) : type(n)`.
+pub fn judgement_ty<A: Prop, B: Prop, N: Nat>(_ty_b: Ty<B, Type<N>>) -> Ty<Ty<A, B>, Type<N>> {
     unimplemented!()
 }
 
