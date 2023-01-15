@@ -487,6 +487,10 @@ pub fn tup_rev_eq_snd<A: Prop, B: Prop, C: Prop, D: Prop>(
     _: Eq<Tup<C, A>, Tup<C, B>>
 ) -> Eq<A, B> {unimplemented!()}
 
+/// `(a, b) ⋀ (a == c)  =>  (c, b)`.
+pub fn tup_in_left_arg<A: Prop, B: Prop, C: Prop>(x: Tup<A, B>, y: Eq<A, C>) -> Tup<C, B> {
+    tup_eq_fst(y).0(x)
+}
 /// `(a, b)  ==  (fst((a, b)), snd((a, b)))`.
 pub fn tup_eq_fst_snd<A: Prop, B: Prop>() ->
     Eq<Tup<A, B>, Tup<App<Fst, Tup<A, B>>, App<Snd, Tup<A, B>>>>
