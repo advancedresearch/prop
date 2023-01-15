@@ -212,3 +212,10 @@ pub fn ty_lift<A: Prop, X: Prop>(ty_a: Ty<A, X>) -> Ty<A, Ty<A, X>> {
     let pord2 = ty_a.1.clone().by_imply_right(ty_a.1.clone().map_any());
     (ty_a.map_any(), pord1.merge_right(pord2))
 }
+
+/// `(a : (a : x)) => (a : x)`.
+pub fn ty_lower<A: Prop, B: Prop, X: Prop>((a_ty_a, pord_a_ty_a): Ty<A, Ty<A, X>>) -> Ty<A, X> {
+    let ax = imply::reduce(Rc::new(move |a| a_ty_a(a).0));
+    let x: POrdProof<A, Imply<A, X>> = pord_a_ty_a.by_imply_right(ax.clone().map_any());
+    (ax, x.imply_reduce())
+}
