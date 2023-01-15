@@ -340,3 +340,8 @@ pub fn total_excm<A: Prop, B: Prop>(excm_a: ExcM<A>) -> Or<Imply<A, B>, Imply<B,
             Rc::new(move |a| not::absurd(na.clone(), a)))),
     }
 }
+
+/// `(a => (a => b))  =>  (a => b)`.
+pub fn reduce<A: Prop, B: Prop>(x: Imply<A, Imply<A, B>>) -> Imply<A, B> {
+    Rc::new(move |a| x(a.clone())(a))
+}
