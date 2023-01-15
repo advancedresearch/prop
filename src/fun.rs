@@ -176,7 +176,6 @@ pub fn app_map_eq<F: Prop, G: Prop, X: Prop>(
 pub fn app_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
     _ty_f: Ty<F, Pow<Y, X>>,
     _ty_a: Ty<A, X>,
-    _x_is_const: IsConst<X>,
 ) -> Ty<App<F, A>, Y> {
     unimplemented!()
 }
@@ -207,10 +206,8 @@ pub fn app2_fun_ty<F: Prop, X: Prop, Y: Prop, Z: Prop, A: Prop, B: Prop>(
     ty_f: Ty<F, Pow<Pow<Z, Y>, X>>,
     ty_a: Ty<A, X>,
     ty_b: Ty<B, Y>,
-    x_is_const: IsConst<X>,
-    y_is_const: IsConst<Y>,
 ) -> Ty<App2<F, A, B>, Z> {
-    app_fun_ty(app_fun_ty(ty_f, ty_a, x_is_const), ty_b, y_is_const)
+    app_fun_ty(app_fun_ty(ty_f, ty_a), ty_b)
 }
 /// Get type of applied binary operator.
 pub fn app2_lam_ty<F: Prop, X: Prop, Y: Prop, Z: Prop, A: Prop, B: Prop>(
