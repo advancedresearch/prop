@@ -453,7 +453,7 @@ pub fn q_inv_ty<F: Prop, G: Prop, A: Prop, B: Prop>(
 pub struct Tup<A, B>(A, B);
 
 /// `(type(n), type(m)) : type(0)`.
-pub fn tup_type_ty<A: Prop, B: Prop, N: Nat, M: Nat>() -> Ty<Tup<Type<N>, Type<M>>, Type<Z>> {
+pub fn tup_type_ty<N: Nat, M: Nat>() -> Ty<Tup<Type<N>, Type<M>>, Type<Z>> {
     unimplemented!()
 }
 /// `(a : x) ⋀ (b : y)  =>  (a, b) : (x, y)`.
