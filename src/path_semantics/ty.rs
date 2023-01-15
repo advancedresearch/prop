@@ -64,6 +64,12 @@ pub fn ty_inhabit<A: Prop, X: Prop>(tr_x: Ty<True, X>) -> Ty<A, X> {
     (imply::transitivity(True.map_any(), tr_x.0), tr_x.1.by_imply_left(True.map_any()))
 }
 
+/// `((a : b) : x)  =>  (b : x)`.
+pub fn ty_instance<A: Prop, B: Prop, X: Prop>((ab_x, pord_ab_x): Ty<Ty<A, B>, X>) -> Ty<B, X> {
+    (Rc::new(move |b| ab_x(ty_inhabit(ty_rev_true(b)))),
+     pord_ab_x.by_imply_left(Rc::new(move |b| ty_inhabit(ty_rev_true(b)))))
+}
+
 /// `true == ltrue`.
 pub fn eq_true_ltrue<N: Nat>() -> Eq<True, LTrue<N>> {
     (LTrue(Default::default()).map_any(), True.map_any())
