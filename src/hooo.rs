@@ -651,7 +651,7 @@ pub fn tauto_hooo_pord<A: Prop, B: Prop, C: Prop>(
     _: Pow<POrdProof<A, B>, C>
 ) -> Tauto<POrdProof<Pow<A, C>, Pow<B, C>>> {unimplemented!()}
 
-/// `(a < b)^c  =>  (a^c < b^c)^true`
+/// `(a < b)^c  =>  (a^c < b^c)`
 pub fn hooo_pord<A: Prop, B: Prop, C: Prop>(
     x: Pow<POrdProof<A, B>, C>
 ) -> POrdProof<Pow<A, C>, Pow<B, C>> {tauto_hooo_pord(x)(True)}
