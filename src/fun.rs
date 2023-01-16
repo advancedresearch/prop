@@ -841,9 +841,19 @@ pub type DepTup<A, X, B, PredP> = Ty<Tup<A, B>, DepTupTy<A, X, PredP>>;
 
 /// `(x : type(0))^true ⋀ (p(a) : type(0))^(a : x)  =>  (((a : x), p(a)) : type(0))^true`.
 pub fn dep_tup_ty_formation<A: Prop, X: Prop, P: Prop>(
-    _ty_x: Tauto<Ty<X, Type<Z>>>,
-    _: Pow<Ty<App<P, A>, Type<Z>>, Ty<A, X>>
-) -> Tauto<Ty<DepTupTy<A, X, P>, Type<Z>>> {unimplemented!()}
+    ty_x: Tauto<Ty<X, Type<Z>>>,
+    pow_ty_pa_ty_a: Pow<Ty<App<P, A>, Type<Z>>, Ty<A, X>>
+) -> Tauto<Ty<DepTupTy<A, X, P>, Type<Z>>> {
+    use hooo::pow::PowExt;
+    use hooo::{pow_lift, hooo_rev_and};
+
+    fn f<A: Prop, B: Prop, X: Prop, Y: Prop>((x, y): And<Ty<A, X>, Pow<Ty<B, Y>, A>>) ->
+        Ty<Tup<A, B>, Tup<X, Y>> {dep_tup_ty(x, y)}
+    fn g<A: Prop, B: Prop>(x: Ty<Tup<A, B>, Tup<Type<Z>, Type<Z>>>) -> Ty<Tup<A, B>, Type<Z>> {
+        path_semantics::ty_transitivity(x, tup_type_ty())
+    }
+    hooo_rev_and((ty_x.trans(judgement_ty), pow_lift(pow_ty_pa_ty_a))).trans(f).trans(g)
+}
 /// `(a : x)^true ⋀ (b : p(a))^true  =>  ((a, b) : ((a : x, p(a))))^true`.
 pub fn dep_tup_intro<A: Prop, X: Prop, B: Prop, P: Prop>(
     ty_a: Tauto<Ty<A, X>>,
