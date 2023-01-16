@@ -500,11 +500,11 @@ pub fn tup_rev_eq_snd<A: Prop, B: Prop, C: Prop, D: Prop>(
     _: Eq<Tup<C, A>, Tup<C, B>>
 ) -> Eq<A, B> {unimplemented!()}
 
-/// `(a, b) : (x, y) ⋀ is_const((a, b))  =>  (a : x)`.
+/// `(a, b) : (x, y)  =>  (a : x)`.
 pub fn tup_fst<A: Prop, B: Prop, X: Prop, Y: Prop>(
     ty_tup_ab: Ty<Tup<A, B>, Tup<X, Y>>
 ) -> Ty<A, X> {path_semantics::ty_in_left_arg(app_fun_ty(fst_ty(), ty_tup_ab), fst_def())}
-/// `(a, b) : (x, y) ⋀ is_const((a, b))  =>  (b : y)`.
+/// `(a, b) : (x, y)  =>  (b : y)`.
 pub fn tup_snd<A: Prop, B: Prop, X: Prop, Y: Prop>(
     ty_tup_ab: Ty<Tup<A, B>, Tup<X, Y>>
 ) -> Ty<B, Y> {path_semantics::ty_in_left_arg(app_fun_ty(snd_ty(), ty_tup_ab), snd_def())}
