@@ -35,6 +35,7 @@ use crate::*;
 use quality::Q;
 use qubit::Qu;
 use existence::{E, EProp};
+use path_semantics::Ty;
 use tauto::TautoExt;
 use pow::PowExt;
 
@@ -624,6 +625,32 @@ pub fn hooo_dual_rev_nrimply<A: DProp, B: DProp, C: DProp>(
         Right(ny) => imply::absurd()(hooo_rev_not(ny)(True)(x)),
     }
 }
+
+/// `(b : y)^(a : x)  =>  (b^a : y^x)^true`.
+pub fn tauto_hooo_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
+    _: Pow<Ty<B, Y>, Ty<A, X>>
+) -> Tauto<Ty<Pow<B, A>, Pow<Y, X>>> {unimplemented!()}
+
+/// `(b : y)^(a : x)  =>  (b^a : y^x)`.
+pub fn hooo_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
+    x: Pow<Ty<B, Y>, Ty<A, X>>
+) -> Ty<Pow<B, A>, Pow<Y, X>> {tauto_hooo_ty(x)(True)}
+
+/// `(b^a : y^x)^true  =>  (b : y)^(a : x)`.
+pub fn tauto_hooo_rev_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
+    x: Tauto<Ty<Pow<B, A>, Pow<Y, X>>>
+) -> Pow<Ty<B, Y>, Ty<A, X>> {tauto_imply_to_pow(x.tapp(hooo_rev_ty))}
+
+/// `(b^a : y^x)  =>  ((a : x) => (b : y))`.
+pub fn hooo_rev_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
+    _: Ty<Pow<B, A>, Pow<Y, X>>
+) -> Imply<Ty<A, X>, Ty<B, Y>> {unimplemented!()}
+
+/// `(a : x) ⋀ (b^a : y^x)  =>  (b : y)`.
+pub fn pow_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
+    ty_a: Ty<A, X>,
+    ty_pow_ba: Ty<Pow<B, A>, Pow<Y, X>>
+) -> Ty<B, Y> {hooo_rev_ty(ty_pow_ba)(ty_a)}
 
 /// `(a == b) ⋀ theory(a == b)  =>  (a ~~ b)`.
 ///
