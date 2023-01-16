@@ -643,6 +643,11 @@ pub fn fst_lower<T: Prop, X: Prop, A: Prop, B: Prop>(
     _: Ty<T, Tup<Ty<X, A>, B>>
 ) -> Eq<App<Fst, T>, X> {unimplemented!()}
 
+/// `t : (a, b)  =>  fst(t) : a`.
+pub fn fst<T: Prop, A: Prop, B: Prop>(x: Ty<T, Tup<A, B>>) -> Ty<App<Fst, T>, A> {
+    app_fun_ty(fst_ty(), x)
+}
+
 /// Snd.
 #[derive(Copy, Clone)]
 pub struct Snd(());
