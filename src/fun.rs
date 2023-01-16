@@ -256,6 +256,17 @@ pub fn tauto_lam_to_tauto_fun_ty<F: Prop, X: Prop, Y: Prop>(
     (tauto_imply_to_imply_tauto_pow(ty_f.trans(and::fst)),
      hooo_pord(ty_f.trans(and::snd)).by_imply_right(pow_to_imply(tauto_imply_to_pow)))
 }
+/// `(f(a)^a : x => y)^true  =>  (f : x -> y)`.
+pub fn app_tauto_lam_to_tauto_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
+    ty_f: Tauto<Ty<Pow<App<F, A>, A>, Imply<X, Y>>>
+) -> Ty<F, Pow<Y, X>> {
+    use hooo::pow_lift;
+
+    let x = hooo::pow_tauto_to_pow_tauto_tauto(tauto_lam_to_tauto_fun_ty)(ty_f);
+    let y = tauto!(path_semantics::ty_eq_left((Rc::new(|x: Tauto<_>| x(True)), Rc::new(pow_lift))));
+    let x = hooo::tauto_in_arg(x, y);
+    app_fun_unfold(x)
+}
 
 /// Imaginary inverse.
 #[derive(Copy, Clone)]
