@@ -662,6 +662,11 @@ pub fn pow_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
     ty_pow_ba: Ty<Pow<B, A>, Pow<Y, X>>
 ) -> Ty<B, Y> {hooo_rev_ty(ty_pow_ba)(ty_a)}
 
+/// `(a : b)  =>  (a^true : b)`.
+pub fn tauto_ty<A: Prop, B: Prop>((x, y): Ty<A, B>) -> Ty<Tauto<A>, B> {
+    (imply::in_left(x, |y: Tauto<A>| y(True)), y.by_imply_left(Rc::new(|x| x(True))))
+}
+
 /// `(a == b) ⋀ theory(a == b)  =>  (a ~~ b)`.
 ///
 /// Lift equality with tautological distinction into quality.
