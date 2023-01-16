@@ -638,6 +638,10 @@ pub fn fst_ty<A: Prop, B: Prop>() -> Ty<Fst, Pow<A, Tup<A, B>>> {unimplemented!(
 pub fn fst_is_const() -> IsConst<Fst> {unimplemented!()}
 /// `fst((a, b)) = a`.
 pub fn fst_def<A: Prop, B: Prop>() -> Eq<App<Fst, Tup<A, B>>, A> {unimplemented!()}
+/// `t : (x : a, b)  =>  fst(t) == x`.
+pub fn fst_lower<T: Prop, X: Prop, A: Prop, B: Prop>(
+    _: Ty<T, Tup<Ty<X, A>, B>>
+) -> Eq<App<Fst, T>, X> {unimplemented!()}
 
 /// Snd.
 #[derive(Copy, Clone)]
