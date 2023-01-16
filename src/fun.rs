@@ -630,6 +630,8 @@ pub fn tup3_rev_eq_trd<A: Prop, B: Prop, C: Prop, D: Prop, X: Prop, Y: Prop>(
 #[derive(Copy, Clone)]
 pub struct Fst(());
 
+/// `fst : (a, b) -> a`.
+///
 /// Type of Fst.
 pub fn fst_ty<A: Prop, B: Prop>() -> Ty<Fst, Pow<A, Tup<A, B>>> {unimplemented!()}
 /// `is_const(fst)`.
