@@ -238,6 +238,11 @@ pub fn app_lift_ty_lam<F: Prop, A: Prop, B: Prop, X: Prop, Y: Prop>(
 ) -> Ty<Lam<Ty<A, X>, App<F, A>>, Imply<X, Y>> {
     lam_ty(ty_a, path_semantics::ty_in_left_arg(ty_b, eq::symmetry(x)))
 }
+/// `f : x -> y  =>  f : x => y`.
+pub fn fun_to_lam_ty<F: Prop, X: Prop, Y: Prop>(ty_f: Ty<F, Pow<Y, X>>) -> Ty<F, Imply<X, Y>> {
+    let x = hooo::pow_to_imply(hooo::pow_to_imply);
+    (imply::transitivity(ty_f.0, x.clone()), ty_f.1.by_imply_right(x))
+}
 
 /// Imaginary inverse.
 #[derive(Copy, Clone)]
