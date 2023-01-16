@@ -439,6 +439,11 @@ pub fn judgement_ty<A: Prop, B: Prop, N: Nat>(_ty_b: Ty<B, Type<N>>) -> Ty<Ty<A,
 pub fn type_ty<N: Nat>() -> Ty<Type<N>, Type<S<N>>> {
     (hooo::pow_to_imply(type_imply), POrdProof::new())
 }
+/// `(a : type(n)) ⋀ (b : type(m))  =>  (a -> b) : type(0)`.
+pub fn pow_type0<A: Prop, B: Prop, N: Nat, M: Nat>(
+    ty_a: Ty<A, Type<N>>,
+    ty_b: Ty<B, Type<M>>
+) -> Ty<Pow<B, A>, Type<Z>> {path_semantics::ty_transitivity(pow_ty(ty_a, ty_b), pow_type_ty())}
 /// `(f : A -> B) ⋀ (inv(f) ~~ g) => ((f ~~ g) : ((A -> B) ~~ (B -> A)))`.
 pub fn q_inv_ty<F: Prop, G: Prop, A: Prop, B: Prop>(
     ty_f: Ty<F, Pow<B, A>>,
