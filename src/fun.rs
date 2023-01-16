@@ -253,11 +253,8 @@ pub fn tauto_lam_to_tauto_fun_ty<F: Prop, X: Prop, Y: Prop>(
     use hooo::pow::PowExt;
     use hooo::*;
 
-    let x = pow_lift(ty_f.trans(and::fst));
-    let x = tauto_imply_transitivity(x.trans(hooo_imply), tauto!(pow_to_imply(tauto_imply_to_pow)));
-    let x = pow_to_imply(tauto_imply_to_pow(x));
-    let y = hooo_pord(ty_f.trans(and::snd)).by_imply_right(pow_to_imply(tauto_imply_to_pow));
-    (x, y)
+    (tauto_imply_to_imply_tauto_pow(ty_f.trans(and::fst)),
+     hooo_pord(ty_f.trans(and::snd)).by_imply_right(pow_to_imply(tauto_imply_to_pow)))
 }
 
 /// Imaginary inverse.
