@@ -665,6 +665,11 @@ pub fn snd_lower<T: Prop, X: Prop, A: Prop, B: Prop>(
     _: Ty<T, Tup<A, Ty<X, B>>>
 ) -> Eq<App<Snd, T>, X> {unimplemented!()}
 
+/// `t : (a, b)  =>  snd(t) : a`.
+pub fn snd<T: Prop, A: Prop, B: Prop>(x: Ty<T, Tup<A, B>>) -> Ty<App<Snd, T>, B> {
+    app_fun_ty(snd_ty(), x)
+}
+
 /// Substitute in expression.
 #[derive(Clone, Copy)]
 pub struct Subst<E, A, B>(E, A, B);
