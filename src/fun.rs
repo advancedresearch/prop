@@ -194,6 +194,11 @@ pub fn app_lam_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
 ) -> Ty<App<F, A>, Y> {
     unimplemented!()
 }
+/// `(a : x) ⋀ (f(a) : y)  =>  (f : (x => y))`.
+pub fn app_rev_lam_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
+    _ty_a: Ty<A, X>,
+    _ty_fa: Imply<Ty<A, X>, Ty<App<F, A>, Y>>
+) -> Ty<F, Imply<Y, X>> {unimplemented!()}
 /// `((\(a : x) = b) : (x => y)) ⋀ (a : x) ⋀ (b : y) ⋀ (c : x)  =>  (f(a) : y[a := c])`.
 ///
 /// Get type of applied lambda.
