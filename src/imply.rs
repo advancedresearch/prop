@@ -331,11 +331,15 @@ pub fn and_map<A: Prop, B: Prop>(a: A) -> Imply<B, And<A, B>> {
 }
 
 /// `(a => b) ∨ (b => a)`.
+///
+/// This is also called "trichotomy".
 pub fn total<A: DProp, B: Prop>() -> Or<Imply<A, B>, Imply<B, A>> {
     total_excm(A::decide())
 }
 
 /// `(a ∨ ¬a)  =>  (a => b) ∨ (b => a)`.
+///
+/// This is also called "trichotomy".
 pub fn total_excm<A: Prop, B: Prop>(excm_a: ExcM<A>) -> Or<Imply<A, B>, Imply<B, A>> {
     match excm_a {
         Left(a) => Right(a.map_any()),
