@@ -428,6 +428,8 @@ pub fn pow_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
     _: Ty<A, X>,
     _: Ty<B, Y>
 ) -> Ty<Pow<B, A>, Pow<X, Y>> {unimplemented!()}
+/// `(type(n) -> type(m)) : type(0)`.
+pub fn pow_type_ty<N: Nat, M: Nat>() -> Ty<Pow<Type<M>, Type<N>>, Type<Z>> {unimplemented!()}
 /// `(b : type(n))  =>  (a : b) : type(n)`.
 pub fn judgement_ty<A: Prop, B: Prop, N: Nat>(_ty_b: Ty<B, Type<N>>) -> Ty<Ty<A, B>, Type<N>> {
     unimplemented!()
