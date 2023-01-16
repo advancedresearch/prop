@@ -427,7 +427,7 @@ pub fn type_is_const<N: Nat>() -> IsConst<Type<N>> {unimplemented!()}
 pub fn pow_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
     _: Ty<A, X>,
     _: Ty<B, Y>
-) -> Ty<Pow<B, A>, Pow<X, Y>> {unimplemented!()}
+) -> Ty<Pow<B, A>, Pow<Y, X>> {unimplemented!()}
 /// `(type(n) -> type(m)) : type(0)`.
 pub fn pow_type_ty<N: Nat, M: Nat>() -> Ty<Pow<Type<M>, Type<N>>, Type<Z>> {unimplemented!()}
 /// `(b : type(n))  =>  (a : b) : type(n)`.
