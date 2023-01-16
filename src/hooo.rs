@@ -35,7 +35,7 @@ use crate::*;
 use quality::Q;
 use qubit::Qu;
 use existence::{E, EProp};
-use path_semantics::Ty;
+use path_semantics::{POrdProof, Ty};
 use tauto::TautoExt;
 use pow::PowExt;
 
@@ -645,6 +645,16 @@ pub fn tauto_hooo_rev_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
 pub fn hooo_rev_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
     _: Ty<Pow<B, A>, Pow<Y, X>>
 ) -> Imply<Ty<A, X>, Ty<B, Y>> {unimplemented!()}
+
+/// `(a < b)^c  =>  (a^c < b^c)^true`
+pub fn tauto_hooo_pord<A: Prop, B: Prop, C: Prop>(
+    _: Pow<POrdProof<A, B>, C>
+) -> Tauto<POrdProof<Pow<A, C>, Pow<B, C>>> {unimplemented!()}
+
+/// `(a < b)^c  =>  (a^c < b^c)^true`
+pub fn hooo_pord<A: Prop, B: Prop, C: Prop>(
+    x: Pow<POrdProof<A, B>, C>
+) -> POrdProof<Pow<A, C>, Pow<B, C>> {tauto_hooo_pord(x)(True)}
 
 /// `(a : x) ⋀ (b^a : y^x)  =>  (b : y)`.
 pub fn pow_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
