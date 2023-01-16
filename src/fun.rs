@@ -660,6 +660,10 @@ pub fn snd_ty<A: Prop, B: Prop>() -> Ty<Snd, Pow<B, Tup<A, B>>> {unimplemented!(
 pub fn snd_is_const() -> IsConst<Snd> {unimplemented!()}
 /// `snd((a, b)) = b`.
 pub fn snd_def<A: Prop, B: Prop>() -> Eq<App<Snd, Tup<A, B>>, B> {unimplemented!()}
+/// `t : (a, x : b)  =>  snd(t) == x`.
+pub fn snd_lower<T: Prop, X: Prop, A: Prop, B: Prop>(
+    _: Ty<T, Tup<A, Ty<X, B>>>
+) -> Eq<App<Snd, T>, X> {unimplemented!()}
 
 /// Substitute in expression.
 #[derive(Clone, Copy)]
