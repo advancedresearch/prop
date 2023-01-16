@@ -516,6 +516,8 @@ pub fn dep_tup_pord<A: Prop, B: Prop, X: Prop, Y: Prop>(
     _: Pow<POrdProof<B, Y>, A>
 ) -> POrdProof<Tup<A, B>, Tup<X, Y>> {unimplemented!()}
 /// `(a : x) ⋀ (b : y)^a  =>  (a, b) : (x, y)`.
+///
+/// Accesses the first element of the tuple, which makes this an axiom.
 pub fn dep_tup_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
     ty_a: Ty<A, X>,
     ty_b: Pow<Ty<B, Y>, A>
