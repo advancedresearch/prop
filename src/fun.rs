@@ -887,6 +887,19 @@ pub fn dep_tup_intro<A: Prop, X: Prop, B: Prop, P: Prop>(
     let x = hooo::hooo_rev_and((ty_a.trans(path_semantics::ty_lift), ty_b));
     f(x)
 }
+/// `(t : (x : a, b(x)))^true  =>  (fst(t) : a)^true ⋀ (snd(t) : b(fst(t)))^true`.
+pub fn dep_tup_elim<T: Prop, X: Prop, A: Prop, B: Prop>(
+    ty_t: Tauto<Ty<T, Tup<Ty<X, A>, App<B, X>>>>
+) -> And<Tauto<Ty<App<Fst, T>, A>>, Tauto<Ty<App<Snd, T>, App<B, App<Fst, T>>>>> {
+    use hooo::pow::PowExt;
+    use hooo::{tauto_eq_symmetry, tauto_in_arg};
+    use path_semantics::{ty_eq_left, ty_eq_right, ty_lower};
+
+    let x = ty_t.trans(fst_lower);
+    (tauto_in_arg(ty_t.trans(fst), tauto_eq_symmetry(x.trans(ty_eq_left)
+        .trans(ty_eq_right))).trans(ty_lower),
+     tauto_in_arg(ty_t.trans(snd), tauto_eq_symmetry(x.trans(app_eq).trans(ty_eq_right))))
+}
 
 /// Parallel tuple.
 #[derive(Copy, Clone)]
