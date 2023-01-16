@@ -510,6 +510,11 @@ pub fn tup_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
     _ty_a: Ty<A, X>,
     _ty_b: Ty<B, Y>
 ) -> Ty<Tup<A, B>, Tup<X, Y>> {unimplemented!()}
+/// `(a < x) ⋀ (b < y)^a  =>  (a, b) < (x, y)`.
+pub fn dep_tup_pord<A: Prop, B: Prop, X: Prop, Y: Prop>(
+    _: POrdProof<A, X>,
+    _: Pow<POrdProof<B, Y>, A>
+) -> POrdProof<Tup<A, B>, Tup<X, Y>> {unimplemented!()}
 /// `is_const(a) ⋀ is_const(b)  =>  is_const((a, b))`.
 pub fn tup_is_const<A: Prop, B: Prop>(_a: IsConst<A>, _b: IsConst<B>) -> IsConst<Tup<A, B>> {
     unimplemented!()
