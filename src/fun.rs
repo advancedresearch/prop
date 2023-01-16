@@ -178,9 +178,12 @@ pub fn app_map_eq<F: Prop, G: Prop, X: Prop>(
 pub fn app_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
     _ty_f: Ty<F, Pow<Y, X>>,
     _ty_a: Ty<A, X>,
-) -> Ty<App<F, A>, Y> {
-    unimplemented!()
-}
+) -> Ty<App<F, A>, Y> {unimplemented!()}
+/// `(a : x) ⋀ (f(a) : y)^(a : x)  =>  (f : (x -> y))`.
+pub fn app_rev_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
+    _ty_a: Ty<A, X>,
+    _ty_fa: Pow<Ty<App<F, A>, Y>, Ty<A, X>>
+) -> Ty<F, Pow<Y, X>> {unimplemented!()}
 /// `(f : (x => y)) ⋀ (a : x)  =>  (f(a) : y)`.
 ///
 /// Get type of applied lambda.
