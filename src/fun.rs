@@ -179,10 +179,9 @@ pub fn app_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
     _ty_f: Ty<F, Pow<Y, X>>,
     _ty_a: Ty<A, X>,
 ) -> Ty<App<F, A>, Y> {unimplemented!()}
-/// `(a : x) ⋀ (f(a) : y)^(a : x)  =>  (f : (x -> y))`.
+/// `(f(a) : y)^(a : x)  =>  (f : (x -> y))`.
 pub fn app_rev_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
-    _ty_a: Ty<A, X>,
-    _ty_fa: Pow<Ty<App<F, A>, Y>, Ty<A, X>>
+    _: Pow<Ty<App<F, A>, Y>, Ty<A, X>>
 ) -> Ty<F, Pow<Y, X>> {unimplemented!()}
 /// `(f : (x => y)) ⋀ (a : x)  =>  (f(a) : y)`.
 ///
@@ -243,11 +242,10 @@ pub fn fun_to_lam_ty<F: Prop, X: Prop, Y: Prop>(ty_f: Ty<F, Pow<Y, X>>) -> Ty<F,
     let x = hooo::pow_to_imply(hooo::pow_to_imply);
     (imply::transitivity(ty_f.0, x.clone()), ty_f.1.by_imply_right(x))
 }
-/// `(a : x) ⋀ (f(a)^a : x -> y)^true  =>  (f : x -> y)`.
+/// `(f(a)^a : x -> y)^true  =>  (f : x -> y)`.
 pub fn app_fun_unfold<F: Prop, A: Prop, X: Prop, Y: Prop>(
-    ty_a: Ty<A, X>,
     ty_f: Tauto<Ty<Pow<App<F, A>, A>, Pow<Y, X>>>,
-) -> Ty<F, Pow<Y, X>> {app_rev_fun_ty(ty_a, hooo::tauto_hooo_rev_ty(ty_f))}
+) -> Ty<F, Pow<Y, X>> {app_rev_fun_ty(hooo::tauto_hooo_rev_ty(ty_f))}
 
 /// Imaginary inverse.
 #[derive(Copy, Clone)]
