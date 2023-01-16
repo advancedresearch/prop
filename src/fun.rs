@@ -643,6 +643,8 @@ pub fn fst_def<A: Prop, B: Prop>() -> Eq<App<Fst, Tup<A, B>>, A> {unimplemented!
 #[derive(Copy, Clone)]
 pub struct Snd(());
 
+/// `snd : (a, b) -> b`.
+///
 /// Type of Snd.
 pub fn snd_ty<A: Prop, B: Prop>() -> Ty<Snd, Pow<B, Tup<A, B>>> {unimplemented!()}
 /// `is_const(snd)`.
