@@ -182,9 +182,7 @@ pub fn app_rev_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
 pub fn app_lam_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
     _ty_f: Ty<F, Imply<X, Y>>,
     _ty_a: Ty<A, X>,
-) -> Ty<App<F, A>, Y> {
-    unimplemented!()
-}
+) -> Ty<App<F, A>, Y> {unimplemented!()}
 /// `(a : x) ⋀ (f(a) : y)  =>  (f : (x => y))`.
 pub fn app_rev_lam_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
     _ty_a: Ty<A, X>,
