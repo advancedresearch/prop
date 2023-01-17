@@ -413,6 +413,8 @@ pub fn dup_def<A: Prop>() -> Eq<App<Dup, A>, Tup<A, A>> {unimplemented!()}
 #[derive(Clone, Copy)]
 pub struct FId(());
 
+/// `id{a} : a -> a`.
+///
 /// Type of Id.
 pub fn id_ty<A: Prop>() -> Ty<FId, Pow<A, A>> {unimplemented!()}
 /// `is_const(id)`.
