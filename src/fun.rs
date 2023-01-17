@@ -770,9 +770,13 @@ pub fn lam_app_trivial<A: Prop, B: Prop, X: Prop>(
 /// `\(a : x) = a`.
 pub type LamId<A, X> = Lam<Ty<A, X>, A>;
 
-/// `(\(a : x) = a) ~~ id`.
-pub fn lam_id_q<A: Prop, X: Prop>() -> Q<LamId<A, X>, FId> {unimplemented!()}
+/// `(\(a : x) = a) == id`.
+pub fn lam_id_eq<A: Prop, X: Prop>() -> Eq<LamId<A, X>, FId> {unimplemented!()}
 
+/// `(\(a : x) = a) ~~ id`.
+pub fn lam_id_q<A: Prop, X: Prop>() -> Q<LamId<A, X>, FId> {
+    hooo::q_in_left_arg(quality::right(id_q()), hooo::tauto_eq_symmetry(tauto!(lam_id_eq())))
+}
 /// `(a : x)  =>  (\(a : x) = a) : (x => x)`.
 pub fn lam_id_ty<A: Prop, X: Prop>(ty_a: Ty<A, X>) -> Ty<LamId<A, X>, Imply<X, X>> {
     lam_ty(ty_a.clone(), ty_a)
