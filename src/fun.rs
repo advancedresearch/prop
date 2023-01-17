@@ -189,7 +189,6 @@ pub fn app_rev_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
 pub fn app_lam_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
     _ty_f: Ty<F, Imply<X, Y>>,
     _ty_a: Ty<A, X>,
-    _x_is_const: IsConst<X>,
 ) -> Ty<App<F, A>, Y> {
     unimplemented!()
 }
@@ -220,15 +219,15 @@ pub fn app2_fun_ty<F: Prop, X: Prop, Y: Prop, Z: Prop, A: Prop, B: Prop>(
 ) -> Ty<App2<F, A, B>, Z> {
     app_fun_ty(app_fun_ty(ty_f, ty_a), ty_b)
 }
+/// `(f : x => y => z) ⋀ (a : x) ⋀ (b : y)  =>  f(a)(b) : z`.
+///
 /// Get type of applied binary operator.
 pub fn app2_lam_ty<F: Prop, X: Prop, Y: Prop, Z: Prop, A: Prop, B: Prop>(
     ty_f: Ty<F, Imply<X, Imply<Y, Z>>>,
     ty_a: Ty<A, X>,
     ty_b: Ty<B, Y>,
-    x_is_const: IsConst<X>,
-    y_is_const: IsConst<Y>,
 ) -> Ty<App2<F, A, B>, Z> {
-    app_lam_ty(app_lam_ty(ty_f, ty_a, x_is_const), ty_b, y_is_const)
+    app_lam_ty(app_lam_ty(ty_f, ty_a), ty_b)
 }
 
 /// `(f(a) == b) ⋀ (a : x) ⋀ (b : y)  =>  (\(a : x) = f(a)) : (x => y)`.
@@ -756,15 +755,14 @@ pub fn lam<A: Prop, B: Prop, X: Prop, C: Prop>(
     _ty_c: Ty<C, X>
 ) -> Eq<App<Lam<Ty<A, X>, B>, C>, Subst<B, A, C>> {unimplemented!()}
 
-/// `(a : x) ⋀ (b : y) ⋀ (c : x) ⋀ is_const(x)  =>  ((\(a : x) = b)(c) : y)`.
+/// `(a : x) ⋀ (b : y) ⋀ (c : x)  =>  ((\(a : x) = b)(c) : y)`.
 pub fn lam_app_ty<A: Prop, B: Prop, X: Prop, Y: Prop, C: Prop>(
     ty_a: Ty<A, X>,
     ty_b: Ty<B, Y>,
     ty_c: Ty<C, X>,
-    x_is_const: IsConst<X>
 ) -> Ty<App<Lam<Ty<A, X>, B>, C>, Y> {
     let ty_lam: Ty<Lam<Ty<A, X>, B>, Imply<X, Y>> = lam_ty(ty_a, ty_b);
-    let app_lam_ty: Ty<App<_, _>, Y> = app_lam_ty(ty_lam, ty_c, x_is_const);
+    let app_lam_ty: Ty<App<_, _>, Y> = app_lam_ty(ty_lam, ty_c);
     app_lam_ty
 }
 /// `(a : x) ⋀ (b : y) ⋀ (c : x)  =>  ((\(a : x) = b)(c) : y[a := c])`.
@@ -806,9 +804,8 @@ pub fn lam_id_ty<A: Prop, X: Prop>(ty_a: Ty<A, X>) -> Ty<LamId<A, X>, Imply<X, X
 pub fn lam_id_app_ty<A: Prop, B: Prop, X: Prop>(
     ty_a: Ty<A, X>,
     ty_b: Ty<B, X>,
-    x_is_const: IsConst<X>
 ) -> Ty<App<LamId<A, X>, B>, X> {
-    app_lam_ty(lam_id_ty(ty_a), ty_b, x_is_const)
+    app_lam_ty(lam_id_ty(ty_a), ty_b)
 }
 /// `(\(a : x) = a)(b) = b`.
 pub fn lam_id<A: Prop, B: Prop, X: Prop>() -> Eq<App<LamId<A, X>, B>, B> {
