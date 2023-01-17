@@ -210,6 +210,8 @@ pub fn app_dep_lam_ty<F: Prop, X: Prop, Y: Prop, A: Prop, B: Prop, C: Prop>(
     unimplemented!()
 }
 
+/// `(f : x -> y -> z) ⋀ (a : x) ⋀ (b : y)  =>  f(a)(b) : z`.
+///
 /// Get type of applied binary operator.
 pub fn app2_fun_ty<F: Prop, X: Prop, Y: Prop, Z: Prop, A: Prop, B: Prop>(
     ty_f: Ty<F, Pow<Pow<Z, Y>, X>>,
