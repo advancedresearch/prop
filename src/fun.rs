@@ -172,13 +172,6 @@ pub fn app_eq<F: Prop, X: Prop, Y: Prop>(
 pub fn app_map_eq<F: Prop, G: Prop, X: Prop>(
     _eq_fg: Eq<F, G>
 ) -> Eq<App<F, X>, App<G, X>> {unimplemented!()}
-/// `(f : (x -> y)) ⋀ (a : x)  =>  (f(a) : y)`.
-///
-/// Get type of applied function.
-pub fn app_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
-    _ty_f: Ty<F, Pow<Y, X>>,
-    _ty_a: Ty<A, X>,
-) -> Ty<App<F, A>, Y> {unimplemented!()}
 /// `(f(a) : y)^(a : x)  =>  (f : (x -> y))`.
 pub fn app_rev_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
     _: Pow<Ty<App<F, A>, Y>, Ty<A, X>>
@@ -209,6 +202,13 @@ pub fn app_dep_lam_ty<F: Prop, X: Prop, Y: Prop, A: Prop, B: Prop, C: Prop>(
     unimplemented!()
 }
 
+/// `(f : (x -> y)) ⋀ (a : x)  =>  (f(a) : y)`.
+///
+/// Get type of applied function.
+pub fn app_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
+    ty_f: Ty<F, Pow<Y, X>>,
+    ty_a: Ty<A, X>,
+) -> Ty<App<F, A>, Y> {app_lam_ty(fun_to_lam_ty(ty_f), ty_a)}
 /// `(f : x -> y -> z) ⋀ (a : x) ⋀ (b : y)  =>  f(a)(b) : z`.
 ///
 /// Get type of applied binary operator.
