@@ -188,17 +188,6 @@ pub fn app_rev_lam_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
     _ty_a: Ty<A, X>,
     _ty_fa: Imply<Ty<A, X>, Ty<App<F, A>, Y>>
 ) -> Ty<F, Imply<Y, X>> {unimplemented!()}
-/// `((\(a : x) = b) : (x => y)) ⋀ (a : x) ⋀ (b : y) ⋀ (c : x)  =>  (f(a) : y[a := c])`.
-///
-/// Get type of applied lambda.
-pub fn app_dep_lam_ty<F: Prop, X: Prop, Y: Prop, A: Prop, B: Prop, C: Prop>(
-    _ty_f: Ty<Lam<Ty<A, X>, B>, Imply<X, Y>>,
-    _ty_a: Ty<A, X>,
-    _ty_b: Ty<B, Y>,
-    _ty_c: Ty<C, X>,
-) -> Ty<App<F, C>, Subst<Y, A, C>> {
-    unimplemented!()
-}
 
 /// `(f : (x -> y)) ⋀ (a : x)  =>  (f(a) : y)`.
 ///
@@ -763,23 +752,11 @@ pub fn lam_app_ty<A: Prop, B: Prop, X: Prop, Y: Prop, C: Prop>(
     let app_lam_ty: Ty<App<_, _>, Y> = app_lam_ty(ty_lam, ty_c);
     app_lam_ty
 }
-/// `(a : x) ⋀ (b : y) ⋀ (c : x)  =>  ((\(a : x) = b)(c) : y[a := c])`.
-pub fn lam_dep_app_ty<A: Prop, B: Prop, X: Prop, Y: Prop, C: Prop>(
-    ty_a: Ty<A, X>,
-    ty_b: Ty<B, Y>,
-    ty_c: Ty<C, X>,
-) -> Ty<App<Lam<Ty<A, X>, B>, C>, Subst<Y, A, C>> {
-    let ty_lam: Ty<Lam<Ty<A, X>, B>, Imply<X, Y>> = lam_ty(ty_a.clone(), ty_b.clone());
-    let app_lam_ty: Ty<App<_, _>, Subst<Y, A, C>> = app_dep_lam_ty(ty_lam, ty_a, ty_b, ty_c);
-    app_lam_ty
-}
-/// `(a : x) ⋀ (b : x)  =>  (\(a : x) = b)(b) : x`.
+/// `(b : x)  =>  (\(a : x) = b)(b) : x`.
 pub fn lam_app_ty_trivial<A: Prop, B: Prop, X: Prop>(
-    ty_a: Ty<A, X>,
-    ty_b: Ty<B, X>,
+    ty_b: Ty<B, X>
 ) -> Ty<App<Lam<Ty<A, X>, B>, B>, X> {
-    let y = lam_dep_app_ty(ty_a, ty_b.clone(), ty_b.clone());
-    path_semantics::ty_in_right_arg(y, subst_ty(ty_b))
+    path_semantics::ty_eq_left(lam_app_trivial(ty_b.clone())).1(ty_b)
 }
 /// `(b : x) => ((\(a : x) = b)(b) == b`.
 pub fn lam_app_trivial<A: Prop, B: Prop, X: Prop>(
