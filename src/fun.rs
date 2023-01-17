@@ -266,6 +266,8 @@ pub fn inv_ty<F: Prop, X: Prop, Y: Prop>(
 ) -> Ty<Inv<F>, Pow<X, Y>> {unimplemented!()}
 /// `is_const(f) => is_const(inv(f))`.
 pub fn inv_is_const<F: Prop>(_a: IsConst<F>) -> IsConst<Inv<F>> {unimplemented!()}
+/// `~inv(f) ⋀ (f(a) == b)  =>  (inv(f)(b) == a)`.
+///
 /// Get inverse map of `f` if there exists a proof `~inv(f)`.
 pub fn inv_val_qu<F: Prop, A: Prop, B: Prop>(
     _: Qu<Inv<F>>,
