@@ -465,6 +465,16 @@ pub fn pow_type_ty<N: Nat, M: Nat>() -> Ty<Pow<Type<M>, Type<N>>, Type<Z>> {unim
 pub fn judgement_ty<A: Prop, B: Prop, N: Nat>(_ty_b: Ty<B, Type<N>>) -> Ty<Ty<A, B>, Type<N>> {
     unimplemented!()
 }
+/// `(a < x) ⋀ (b < y)^a  =>  b^a < y^x`.
+pub fn dep_fun_pord<A: Prop, B: Prop, X: Prop, Y: Prop>(
+    _: POrdProof<A, X>,
+    _: Pow<POrdProof<B, Y>, A>
+) -> POrdProof<Pow<B, A>, Pow<Y, X>> {unimplemented!()}
+/// `(a : x) ⋀ (b : y)^a  =>  b^a : y^x`.
+pub fn dep_fun_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
+    _ty_a: Ty<A, X>,
+    _ty_b: Pow<Ty<B, Y>, A>
+) -> Ty<Pow<B, A>, Pow<Y, X>> {unimplemented!()}
 
 /// `type(n) : type(n+1)`.
 pub fn type_ty<N: Nat>() -> Ty<Type<N>, Type<S<N>>> {
@@ -845,6 +855,21 @@ pub type DepTupTy<A, X, PredP> = Tup<Ty<A, X>, App<PredP, A>>;
 /// Dependent tuple `(a, b) : ((a : x), p(a))`.
 pub type DepTup<A, X, B, PredP> = Ty<Tup<A, B>, DepTupTy<A, X, PredP>>;
 
+/// `(x : type(0))^true ⋀ (p(a) : type(0))^(a : x)  =>  (((a : x) -> p(a)) : type(0))^true`.
+pub fn dep_fun_ty_formation<A: Prop, X: Prop, P: Prop>(
+    ty_x: Tauto<Ty<X, Type<Z>>>,
+    pow_ty_pa_ty_a: Pow<Ty<App<P, A>, Type<Z>>, Ty<A, X>>
+) -> Tauto<Ty<DepFunTy<A, X, P>, Type<Z>>> {
+    use hooo::pow::PowExt;
+    use hooo::{pow_lift, hooo_rev_and};
+
+    fn f<A: Prop, B: Prop, X: Prop, Y: Prop>((x, y): And<Ty<A, X>, Pow<Ty<B, Y>, A>>) ->
+        Ty<Pow<B, A>, Pow<Y, X>> {dep_fun_ty(x, y)}
+    fn g<A: Prop, B: Prop>(x: Ty<Pow<B, A>, Pow<Type<Z>, Type<Z>>>) -> Ty<Pow<B, A>, Type<Z>> {
+        path_semantics::ty_transitivity(x, pow_type_ty())
+    }
+    hooo_rev_and((ty_x.trans(judgement_ty), pow_lift(pow_ty_pa_ty_a))).trans(f).trans(g)
+}
 /// `(x : type(0))^true ⋀ (p(a) : type(0))^(a : x)  =>  (((a : x), p(a)) : type(0))^true`.
 pub fn dep_tup_ty_formation<A: Prop, X: Prop, P: Prop>(
     ty_x: Tauto<Ty<X, Type<Z>>>,
