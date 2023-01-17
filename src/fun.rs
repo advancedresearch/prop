@@ -420,6 +420,8 @@ pub fn id_ty<A: Prop>() -> Ty<FId, Pow<A, A>> {unimplemented!()}
 /// `is_const(id)`.
 pub fn id_is_const() -> IsConst<FId> {unimplemented!()}
 
+/// `id(a) = a`.
+///
 /// Definition of identity function.
 pub fn id_def<A: Prop>() -> Eq<App<FId, A>, A> {unimplemented!()}
 /// `inv(id) ~~ id`.
