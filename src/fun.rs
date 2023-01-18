@@ -920,6 +920,11 @@ pub fn dep_fun_intro<A: Prop, B: Prop, X: Prop, Y: Prop, P: Prop>(
     let y: Tauto<Eq<_, _>> = tauto!((Rc::new(dep_app), Rc::new(dep_app)));
     hooo_rev_and((tauto_hooo_ty(pow_transitivity(ty_lower, x.clone())), y)).trans(f)
 }
+/// `(f : (a : x) -> p(a))^true ⋀ (b : x)^true  =>  (f(b) : p(b))^true`
+pub fn dep_fun_elim<F: Prop, X: Prop, P: Prop, A: Prop, B: Prop>(
+    _ty_f: Tauto<Ty<F, Pow<App<P, A>, Ty<A, X>>>>,
+    _ty_b: Tauto<Ty<B, X>>
+) -> Tauto<Ty<App<F, B>, App<P, B>>> {unimplemented!()}
 /// `(x : type(0))^true ⋀ (p(a) : type(0))^(a : x)  =>  (((a : x), p(a)) : type(0))^true`.
 pub fn dep_tup_ty_formation<A: Prop, X: Prop, P: Prop>(
     ty_x: Tauto<Ty<X, Type<Z>>>,
