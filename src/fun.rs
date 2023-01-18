@@ -465,16 +465,6 @@ pub fn fun_type_ty<N: Nat, M: Nat>() -> Ty<Pow<Type<M>, Type<N>>, Type<Z>> {unim
 pub fn judgement_ty<A: Prop, B: Prop, N: Nat>(_ty_b: Ty<B, Type<N>>) -> Ty<Ty<A, B>, Type<N>> {
     unimplemented!()
 }
-/// `(a < x) ⋀ (b < y)^a  =>  b^a < y^x`.
-pub fn dep_fun_pord<A: Prop, B: Prop, X: Prop, Y: Prop>(
-    _: POrdProof<A, X>,
-    _: Pow<POrdProof<B, Y>, A>
-) -> POrdProof<Pow<B, A>, Pow<Y, X>> {unimplemented!()}
-/// `(a : x) ⋀ (b : y)^a  =>  b^a : y^x`.
-pub fn dep_fun_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
-    _ty_a: Ty<A, X>,
-    _ty_b: Pow<Ty<B, Y>, A>
-) -> Ty<Pow<B, A>, Pow<Y, X>> {unimplemented!()}
 
 /// `type(n) : type(n+1)`.
 pub fn type_ty<N: Nat>() -> Ty<Type<N>, Type<S<N>>> {
@@ -514,28 +504,6 @@ pub fn tup_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
     _ty_a: Ty<A, X>,
     _ty_b: Ty<B, Y>
 ) -> Ty<Tup<A, B>, Tup<X, Y>> {unimplemented!()}
-/// `(a < x) ⋀ (b < y)^a  =>  (a, b) < (x, y)`.
-pub fn dep_tup_pord<A: Prop, B: Prop, X: Prop, Y: Prop>(
-    _: POrdProof<A, X>,
-    _: Pow<POrdProof<B, Y>, A>
-) -> POrdProof<Tup<A, B>, Tup<X, Y>> {unimplemented!()}
-/// `(a : x) ⋀ (b : y)^a  =>  (a, b) : (x, y)`.
-///
-/// Accesses the first element of the tuple, which makes this an axiom.
-pub fn dep_tup_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
-    ty_a: Ty<A, X>,
-    ty_b: Pow<Ty<B, Y>, A>
-) -> Ty<Tup<A, B>, Tup<X, Y>> {
-    use hooo::pow::PowExt;
-
-    let ty_a2 = ty_a.clone();
-    let x: Imply<Tup<A, B>, Tup<X, Y>> = Rc::new(move |tup_ab| {
-        let x: Ty<B, Y> = ty_b(tup_ab.0.clone());
-        tup_ty(ty_a2.clone(), x).0(tup_ab)
-    });
-    let y: POrdProof<Tup<A, B>, Tup<X, Y>> = dep_tup_pord(ty_a.1, ty_b.trans(and::snd));
-    (x, y)
-}
 /// `is_const(a) ⋀ is_const(b)  =>  is_const((a, b))`.
 pub fn tup_is_const<A: Prop, B: Prop>(_a: IsConst<A>, _b: IsConst<B>) -> IsConst<Tup<A, B>> {
     unimplemented!()
@@ -854,6 +822,39 @@ pub type DepLam<F, A, X, PredP> = Ty<F, DepLamTy<A, X, PredP>>;
 pub type DepTupTy<A, X, PredP> = Tup<Ty<A, X>, App<PredP, A>>;
 /// Dependent tuple `(a, b) : ((a : x), p(a))`.
 pub type DepTup<A, X, B, PredP> = Ty<Tup<A, B>, DepTupTy<A, X, PredP>>;
+
+/// `(a < x) ⋀ (b < y)^a  =>  b^a < y^x`.
+pub fn dep_fun_pord<A: Prop, B: Prop, X: Prop, Y: Prop>(
+    _: POrdProof<A, X>,
+    _: Pow<POrdProof<B, Y>, A>
+) -> POrdProof<Pow<B, A>, Pow<Y, X>> {unimplemented!()}
+/// `(a : x) ⋀ (b : y)^a  =>  b^a : y^x`.
+pub fn dep_fun_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
+    _ty_a: Ty<A, X>,
+    _ty_b: Pow<Ty<B, Y>, A>
+) -> Ty<Pow<B, A>, Pow<Y, X>> {unimplemented!()}
+/// `(a < x) ⋀ (b < y)^a  =>  (a, b) < (x, y)`.
+pub fn dep_tup_pord<A: Prop, B: Prop, X: Prop, Y: Prop>(
+    _: POrdProof<A, X>,
+    _: Pow<POrdProof<B, Y>, A>
+) -> POrdProof<Tup<A, B>, Tup<X, Y>> {unimplemented!()}
+/// `(a : x) ⋀ (b : y)^a  =>  (a, b) : (x, y)`.
+///
+/// Accesses the first element of the tuple, which makes this an axiom.
+pub fn dep_tup_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
+    ty_a: Ty<A, X>,
+    ty_b: Pow<Ty<B, Y>, A>
+) -> Ty<Tup<A, B>, Tup<X, Y>> {
+    use hooo::pow::PowExt;
+
+    let ty_a2 = ty_a.clone();
+    let x: Imply<Tup<A, B>, Tup<X, Y>> = Rc::new(move |tup_ab| {
+        let x: Ty<B, Y> = ty_b(tup_ab.0.clone());
+        tup_ty(ty_a2.clone(), x).0(tup_ab)
+    });
+    let y: POrdProof<Tup<A, B>, Tup<X, Y>> = dep_tup_pord(ty_a.1, ty_b.trans(and::snd));
+    (x, y)
+}
 
 /// `(x : type(0))^true ⋀ (p(a) : type(0))^(a : x)  =>  (((a : x) -> p(a)) : type(0))^true`.
 pub fn dep_fun_ty_formation<A: Prop, X: Prop, P: Prop>(
