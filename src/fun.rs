@@ -887,6 +887,10 @@ pub fn dep_tup_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
 pub fn dep_app<F: Prop, X: Prop, A: Prop, B: Prop>(
     _: Pow<App<F, A>, Ty<A, X>>
 ) -> Pow<App<F, B>, Ty<B, X>> {unimplemented!()}
+/// `(f(a)^a)(b)  =>  f(b)`.
+pub fn dep_fun_app<F: Prop, A: Prop, B: Prop>(_: App<Pow<App<F, A>, A>, B>) -> App<F, B> {
+    unimplemented!()
+}
 
 /// `(f : (a : x) -> y(a))  =>  (f : (b : x) -> y(b))`.
 fn dep_fun_swap_app_ty<F: Prop, A: Prop, B: Prop, X: Prop, Y: Prop>(
