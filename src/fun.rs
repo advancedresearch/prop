@@ -888,6 +888,12 @@ pub fn dep_app<F: Prop, X: Prop, A: Prop, B: Prop>(
     _: Pow<App<F, A>, Ty<A, X>>
 ) -> Pow<App<F, B>, Ty<B, X>> {unimplemented!()}
 
+/// `(f : (a : x) -> y(a))  =>  (f : (b : x) -> y(b))`.
+fn dep_fun_swap_app_ty<F: Prop, A: Prop, B: Prop, X: Prop, Y: Prop>(
+    x: Ty<F, Pow<App<Y, A>, Ty<A, X>>>
+) -> Ty<F, Pow<App<Y, B>, Ty<B, X>>> {
+    path_semantics::ty_in_right_arg(x, (Rc::new(dep_app), Rc::new(dep_app)))
+}
 /// `(x : type(0))^true ⋀ (p(a) : type(0))^(a : x)  =>  (((a : x) -> p(a)) : type(0))^true`.
 pub fn dep_fun_ty_formation<A: Prop, X: Prop, P: Prop>(
     ty_x: Tauto<Ty<X, Type<Z>>>,
