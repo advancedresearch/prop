@@ -73,6 +73,7 @@ use path_semantics::{POrdProof, Ty};
 use quality::Q;
 use qubit::Qu;
 use hooo::{Pow, Tauto};
+use hooo::pow::PowExt;
 use nat::{Nat, S, Z};
 
 pub mod bool_alg;
@@ -242,8 +243,7 @@ pub fn app_fun_unfold<F: Prop, A: Prop, X: Prop, Y: Prop>(
 pub fn tauto_lam_to_tauto_fun_ty<F: Prop, X: Prop, Y: Prop>(
     ty_f: Tauto<Ty<F, Imply<X, Y>>>
 ) -> Ty<Tauto<F>, Pow<Y, X>> {
-    use hooo::pow::PowExt;
-    use hooo::*;
+    use hooo::{tauto_imply_to_imply_tauto_pow, tauto_imply_to_pow, hooo_pord, pow_to_imply};
 
     (tauto_imply_to_imply_tauto_pow(ty_f.trans(and::fst)),
      hooo_pord(ty_f.trans(and::snd)).by_imply_right(pow_to_imply(tauto_imply_to_pow)))
@@ -272,7 +272,6 @@ pub fn app_fun_swap_ty<F: Prop, X: Prop, Y: Prop, A: Prop, B: Prop>(
 pub fn app_fun_swap_tauto_ty<F: Prop, Y: Prop, A: Prop, B: Prop>() ->
     Eq<Tauto<Ty<App<F, A>, Y>>, Tauto<Ty<App<F, B>, Y>>>
 {
-    use hooo::pow::PowExt;
     use hooo::tr;
     use path_semantics::{ty_rev_true, ty_inhabit};
 
@@ -873,8 +872,6 @@ pub fn dep_tup_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
     ty_a: Ty<A, X>,
     ty_b: Pow<Ty<B, Y>, A>
 ) -> Ty<Tup<A, B>, Tup<X, Y>> {
-    use hooo::pow::PowExt;
-
     let ty_a2 = ty_a.clone();
     let x: Imply<Tup<A, B>, Tup<X, Y>> = Rc::new(move |tup_ab| {
         let x: Ty<B, Y> = ty_b(tup_ab.0.clone());
@@ -903,7 +900,6 @@ pub fn dep_fun_ty_formation<A: Prop, X: Prop, P: Prop>(
     ty_x: Tauto<Ty<X, Type<Z>>>,
     pow_ty_pa_ty_a: Pow<Ty<App<P, A>, Type<Z>>, Ty<A, X>>
 ) -> Tauto<Ty<DepFunTy<A, X, P>, Type<Z>>> {
-    use hooo::pow::PowExt;
     use hooo::{pow_lift, hooo_rev_and};
 
     fn f<A: Prop, B: Prop, X: Prop, Y: Prop>((x, y): And<Ty<A, X>, Pow<Ty<B, Y>, A>>) ->
@@ -917,7 +913,6 @@ pub fn dep_fun_ty_formation<A: Prop, X: Prop, P: Prop>(
 pub fn dep_fun_intro<A: Prop, B: Prop, X: Prop, Y: Prop, P: Prop>(
     x: Pow<Ty<App<P, A>, App<Y, A>>, Ty<A, X>>
 ) -> Tauto<Ty<Pow<App<P, A>, A>, Pow<App<Y, B>, Ty<B, X>>>> {
-    use hooo::pow::PowExt;
     use hooo::{pow_transitivity, tauto_hooo_ty};
 
     tauto_hooo_ty(pow_transitivity(path_semantics::ty_lower, x.clone())).trans(dep_fun_swap_app_ty)
@@ -927,7 +922,6 @@ pub fn dep_fun_elim<F: Prop, X: Prop, P: Prop, A: Prop, B: Prop>(
     ty_f: Tauto<Ty<F, Pow<App<P, A>, Ty<A, X>>>>,
     ty_b: Tauto<Ty<B, X>>
 ) -> Tauto<Ty<App<F, B>, App<P, B>>> {
-    use hooo::pow::PowExt;
     use hooo::hooo_rev_and;
 
     fn g<F: Prop, A: Prop, X: Prop, Y: Prop>(
@@ -941,7 +935,6 @@ pub fn dep_tup_ty_formation<A: Prop, X: Prop, P: Prop>(
     ty_x: Tauto<Ty<X, Type<Z>>>,
     pow_ty_pa_ty_a: Pow<Ty<App<P, A>, Type<Z>>, Ty<A, X>>
 ) -> Tauto<Ty<DepTupTy<A, X, P>, Type<Z>>> {
-    use hooo::pow::PowExt;
     use hooo::{pow_lift, hooo_rev_and};
 
     fn f<A: Prop, B: Prop, X: Prop, Y: Prop>((x, y): And<Ty<A, X>, Pow<Ty<B, Y>, A>>) ->
@@ -956,8 +949,6 @@ pub fn dep_tup_intro<A: Prop, X: Prop, B: Prop, P: Prop>(
     ty_a: Tauto<Ty<A, X>>,
     ty_b: Tauto<Ty<B, App<P, A>>>,
 ) -> Tauto<DepTup<A, X, B, P>> {
-    use hooo::pow::PowExt;
-
     let f = hooo::hooo_imply(tauto!(Rc::new(move |(ty_a, ty_b)| tup_ty(ty_a, ty_b))));
     let x = hooo::hooo_rev_and((ty_a.trans(path_semantics::ty_lift), ty_b));
     f(x)
@@ -966,7 +957,6 @@ pub fn dep_tup_intro<A: Prop, X: Prop, B: Prop, P: Prop>(
 pub fn dep_tup_elim<T: Prop, X: Prop, A: Prop, B: Prop>(
     ty_t: Tauto<Ty<T, Tup<Ty<X, A>, App<B, X>>>>
 ) -> And<Tauto<Ty<App<Fst, T>, A>>, Tauto<Ty<App<Snd, T>, App<B, App<Fst, T>>>>> {
-    use hooo::pow::PowExt;
     use hooo::{tauto_eq_symmetry, tauto_in_arg};
     use path_semantics::{ty_eq_left, ty_eq_right, ty_lower};
 
@@ -1154,7 +1144,6 @@ pub fn fun_ext<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>(
 ) -> FunExtTy<F, G, X, Y, A> {
     use path_semantics::ty_eq_left;
     use hooo::{hooo_eq, hooo_imply, pow_eq_right, pow_transitivity, tauto_eq_symmetry, tr};
-    use hooo::pow::PowExt;
 
     fn g<F: Prop, G: Prop>(x: Eq<F, G>) -> Eq<Eq<F, F>, Eq<F, G>> {
         (x.map_any(), eq::refl().map_any())
