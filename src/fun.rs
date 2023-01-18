@@ -908,17 +908,15 @@ pub fn dep_fun_intro<A: Prop, B: Prop, X: Prop, Y: Prop, P: Prop>(
     x: Pow<Ty<App<P, A>, App<Y, A>>, Ty<A, X>>
 ) -> Tauto<Ty<Pow<App<P, A>, A>, Pow<App<Y, B>, Ty<B, X>>>> {
     use hooo::pow::PowExt;
-    use hooo::{pow_transitivity, hooo_rev_and, tauto_hooo_ty};
+    use hooo::{pow_transitivity, tauto_hooo_ty};
     use path_semantics::{ty_lower, ty_in_right_arg};
 
     fn f<P: Prop, A: Prop, B: Prop, X: Prop, Y: Prop>(
-        (x, y): And<Ty<Pow<App<P, A>, A>, Pow<App<Y, A>, Ty<A, X>>>,
-                    Eq<Pow<App<Y, A>, Ty<A, X>>, Pow<App<Y, B>, Ty<B, X>>>>
+        x: Ty<Pow<App<P, A>, A>, Pow<App<Y, A>, Ty<A, X>>>
     ) -> Ty<Pow<App<P, A>, A>, Pow<App<Y, B>, Ty<B, X>>> {
-        ty_in_right_arg(x, y)
+        ty_in_right_arg(x, (Rc::new(dep_app), Rc::new(dep_app)))
     }
-    let y: Tauto<Eq<_, _>> = tauto!((Rc::new(dep_app), Rc::new(dep_app)));
-    hooo_rev_and((tauto_hooo_ty(pow_transitivity(ty_lower, x.clone())), y)).trans(f)
+    tauto_hooo_ty(pow_transitivity(ty_lower, x.clone())).trans(f)
 }
 /// `(f : (a : x) -> p(a))^true ⋀ (b : x)^true  =>  (f(b) : p(b))^true`
 pub fn dep_fun_elim<F: Prop, X: Prop, P: Prop, A: Prop, B: Prop>(
