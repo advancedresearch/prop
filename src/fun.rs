@@ -870,6 +870,10 @@ pub fn dep_fun_ty_formation<A: Prop, X: Prop, P: Prop>(
     }
     hooo_rev_and((ty_x.trans(judgement_ty), pow_lift(pow_ty_pa_ty_a))).trans(f).trans(g)
 }
+/// `((a : x) -> (p(a) : y(a)))  =>  ((a -> p(a)) : ((b : x) -> y(b)))`.
+pub fn dep_fun_intro<A: Prop, B: Prop, X: Prop, Y: Prop, P: Prop>(
+    _: Pow<Ty<App<P, A>, App<Y, A>>, Ty<A, X>>
+) -> Ty<Pow<App<P, A>, A>, Pow<App<Y, B>, Ty<B, X>>> {unimplemented!()}
 /// `(x : type(0))^true ⋀ (p(a) : type(0))^(a : x)  =>  (((a : x), p(a)) : type(0))^true`.
 pub fn dep_tup_ty_formation<A: Prop, X: Prop, P: Prop>(
     ty_x: Tauto<Ty<X, Type<Z>>>,
