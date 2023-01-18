@@ -268,6 +268,21 @@ pub fn app_fun_swap_ty<F: Prop, X: Prop, Y: Prop, A: Prop, B: Prop>(
     {Rc::new(move |x| app_fun_ty(app_rev_fun_ty(x), ty_b.clone()))}
     hooo::hooo_imply(f)(hooo::pow_lift(x))
 }
+/// `(f(a) : y)^true == (f(b) : y)^true`.
+pub fn app_fun_swap_tauto_ty<F: Prop, Y: Prop, A: Prop, B: Prop>() ->
+    Eq<Tauto<Ty<App<F, A>, Y>>, Tauto<Ty<App<F, B>, Y>>>
+{
+    use hooo::pow::PowExt;
+    use hooo::tr;
+    use path_semantics::{ty_rev_true, ty_inhabit};
+
+    let x: Tauto<True> = hooo::pow_refl;
+    let ty_a = x.trans(ty_rev_true).trans(ty_inhabit);
+    let ty_b = x.trans(ty_rev_true).trans(ty_inhabit);
+    let (y1, y2) = (Rc::new(app_fun_swap_ty), Rc::new(app_fun_swap_ty));
+    (Rc::new(move |x| ty_b.trans(y1(tr().trans(x)))),
+     Rc::new(move |x| ty_a.trans(y2(tr().trans(x)))))
+}
 
 /// Imaginary inverse.
 #[derive(Copy, Clone)]
