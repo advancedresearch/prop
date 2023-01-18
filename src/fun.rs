@@ -164,6 +164,8 @@ pub struct App<F, X>(F, X);
 pub fn app_is_const<F: Prop, X: Prop>(_f: IsConst<F>, _x: IsConst<X>) -> IsConst<App<F, X>> {
     unimplemented!()
 }
+/// `(x == y)  =>  (f(x) == f(y))`.
+///
 /// Indiscernibility of identicals (Leibniz's law).
 pub fn app_eq<F: Prop, X: Prop, Y: Prop>(
     _eq_xy: Eq<X, Y>
