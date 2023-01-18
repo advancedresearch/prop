@@ -40,6 +40,13 @@ pub type Down<A> = And<Not<A>, Not<Para<A>>>;
 pub type Mid<A> = Or<Up<A>, Down<A>>;
 /// A virtual middle proposition `a ⋀ ¬(a^true)`.
 pub type Virtual<A> = And<A, Not<Tauto<A>>>;
+/// A subordinate middle proposition `¬(x^true) => x`.
+///
+/// This is a proposition that uses abstract corruption.
+/// It means, it is attributed a certain property that makes it impossible to prove false.
+///
+/// For more information, see `subordinate`.
+pub type Subordinate<A> = Imply<Not<Tauto<A>>, A>;
 
 /// A middle Catuṣkoṭi proposition `(a^true ⋁ false^a) ⋁ (up(a) ⋁ down(a))`.
 pub type MidCatuskoti<A> = Or<Uniform<A>, Mid<A>>;
@@ -214,4 +221,21 @@ pub fn absurd_theory<A: DProp>(x: Theory<A>) -> False {
 /// `theory(a) ⋀ (a ⋁ ¬a)^true  =>  false`.
 pub fn absurd_theory_tauto_excm<A: Prop>(x: Theory<A>, y: Tauto<ExcM<A>>) -> False {
     tauto_excm_to_not_theory(y)(x)
+}
+
+/// `(¬(x^true) => x)  =>  ¬¬x`.
+///
+/// This proof is based on a discussion about the question:
+///
+/// "Is mathematics subordinate to philosophy?"
+///
+/// The basic idea is that if one can not prove from none assumptions that mathematics is
+/// subordinate to philosophy, then mathematics is subordinate to philosophy.
+///
+/// This proof does not solve the debate, but shows that a such statement can not be proven
+/// to be false. This is higly suspect and shows an example of abstract corruption.
+///
+/// For more about this debate, see [blog post](https://advancedresearch.github.io/blog/2023-01-17-is-mathematics-subordinate-to-philosophy).
+pub fn subordinate<A: Prop>(y: Subordinate<A>) -> Not<Not<A>> {
+    Rc::new(move |nx| not::absurd(nx.clone(), y(imply::in_left(nx, |y: Tauto<_>| y(True)))))
 }
