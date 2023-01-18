@@ -920,9 +920,18 @@ pub fn dep_fun_intro<A: Prop, B: Prop, X: Prop, Y: Prop, P: Prop>(
 }
 /// `(f : (a : x) -> p(a))^true ⋀ (b : x)^true  =>  (f(b) : p(b))^true`
 pub fn dep_fun_elim<F: Prop, X: Prop, P: Prop, A: Prop, B: Prop>(
-    _ty_f: Tauto<Ty<F, Pow<App<P, A>, Ty<A, X>>>>,
-    _ty_b: Tauto<Ty<B, X>>
-) -> Tauto<Ty<App<F, B>, App<P, B>>> {unimplemented!()}
+    ty_f: Tauto<Ty<F, Pow<App<P, A>, Ty<A, X>>>>,
+    ty_b: Tauto<Ty<B, X>>
+) -> Tauto<Ty<App<F, B>, App<P, B>>> {
+    use hooo::pow::PowExt;
+    use hooo::hooo_rev_and;
+
+    fn g<F: Prop, A: Prop, X: Prop, Y: Prop>(
+        (f, x): And<Ty<F, Pow<Y, Ty<A, X>>>, Ty<A, X>>
+    ) -> Ty<App<F, A>, Y> {app_fun_ty(f, path_semantics::ty_lift(x))}
+    let x: Tauto<Ty<F, Pow<App<P, B>, Ty<B, X>>>> = ty_f.trans(dep_fun_swap_app_ty);
+    hooo_rev_and((x, ty_b)).trans(g::<F, B, X, App<P, B>>)
+}
 /// `(x : type(0))^true ⋀ (p(a) : type(0))^(a : x)  =>  (((a : x), p(a)) : type(0))^true`.
 pub fn dep_tup_ty_formation<A: Prop, X: Prop, P: Prop>(
     ty_x: Tauto<Ty<X, Type<Z>>>,
