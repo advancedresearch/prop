@@ -259,6 +259,15 @@ pub fn app_tauto_lam_to_tauto_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
     let x = hooo::tauto_in_arg(x, y);
     app_fun_unfold(x)
 }
+/// `(f(a) : y)^(a : x)  =>  (f(b) : y)^(b : x)`.
+pub fn app_fun_swap_ty<F: Prop, X: Prop, Y: Prop, A: Prop, B: Prop>(
+    x: Pow<Ty<App<F, A>, Y>, Ty<A, X>>
+) -> Pow<Ty<App<F, B>, Y>, Ty<B, X>> {
+    fn f<F: Prop, X: Prop, Y: Prop, A: Prop, B: Prop>(ty_b: Ty<B, X>) ->
+        Imply<Pow<Ty<App<F, A>, Y>, Ty<A, X>>, Ty<App<F, B>, Y>>
+    {Rc::new(move |x| app_fun_ty(app_rev_fun_ty(x), ty_b.clone()))}
+    hooo::hooo_imply(f)(hooo::pow_lift(x))
+}
 
 /// Imaginary inverse.
 #[derive(Copy, Clone)]
