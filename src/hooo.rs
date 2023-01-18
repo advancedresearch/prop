@@ -36,7 +36,6 @@ use quality::Q;
 use qubit::Qu;
 use existence::{E, EProp};
 use path_semantics::{POrdProof, Ty};
-use tauto::TautoExt;
 use pow::PowExt;
 
 pub mod tauto;
@@ -269,10 +268,10 @@ pub fn tauto_eq_to_pow_eq<A: Prop, B: Prop>(x: Tauto<Eq<A, B>>) -> PowEq<A, B> {
 }
 
 /// `a^true => (a ⋁ ¬a)^true`.
-pub fn tauto_to_tauto_excm<A: Prop>(x: Tauto<A>) -> Tauto<ExcM<A>> {x.tapp(Left)}
+pub fn tauto_to_tauto_excm<A: Prop>(x: Tauto<A>) -> Tauto<ExcM<A>> {x.trans(Left)}
 
 /// `false^a => (a ⋁ ¬a)^true`.
-pub fn para_to_tauto_excm<A: Prop>(x: Para<A>) -> Tauto<ExcM<A>> {para_to_tauto_not(x).tapp(Right)}
+pub fn para_to_tauto_excm<A: Prop>(x: Para<A>) -> Tauto<ExcM<A>> {para_to_tauto_not(x).trans(Right)}
 
 /// `(a ⋁ ¬a)^true => (¬a ⋁ ¬¬a)^true`.
 pub fn tauto_excm_to_tauto_excm_not<A: Prop>(x: Tauto<ExcM<A>>) -> Tauto<ExcM<Not<A>>> {
@@ -284,7 +283,7 @@ pub fn tauto_excm_to_tauto_excm_not<A: Prop>(x: Tauto<ExcM<A>>) -> Tauto<ExcM<No
 
 /// `(¬(a^b))^true => (¬a)^b`.
 pub fn tauto_hooo_rev_not<A: DProp, B: Prop>(x: Tauto<Not<Pow<A, B>>>) -> Pow<Not<A>, B> {
-    x.tapp(hooo_rev_not)(True)
+    x.trans(hooo_rev_not)(True)
 }
 
 /// `¬(a^b) => (¬a)^b`.
@@ -317,12 +316,12 @@ pub fn hooo_rev_not_excm<A: Prop, B: Prop>(
 /// `(a ⋀ b)^c => (a^c ⋀ b^c)^true`.
 pub fn tauto_hooo_and<A: Prop, B: Prop, C: Prop>(
     x: Pow<And<A, B>, C>
-) -> Tauto<And<Pow<A, C>, Pow<B, C>>> {x.lift().tapp(hooo_and)}
+) -> Tauto<And<Pow<A, C>, Pow<B, C>>> {x.lift().trans(hooo_and)}
 
 /// `(a^c ⋀ b^c)^true => (a ⋀ b)^c`.
 pub fn tauto_hooo_rev_and<A: Prop, B: Prop, C: Prop>(
     x: Tauto<And<Pow<A, C>, Pow<B, C>>>
-) -> Pow<And<A, B>, C> {x.tapp(hooo_rev_and)(True)}
+) -> Pow<And<A, B>, C> {x.trans(hooo_rev_and)(True)}
 
 /// `(a ⋀ b)^c => (a^c ⋀ b^c)`.
 pub fn hooo_and<A: Prop, B: Prop, C: Prop>(x: Pow<And<A, B>, C>) -> And<Pow<A, C>, Pow<B, C>> {
@@ -362,7 +361,7 @@ pub fn tauto_hooo_dual_and<A: DProp, B: DProp, C: DProp>(
 /// `(c^a ⋁ c^b)^true => c^(a ⋀ b)`.
 pub fn tauto_hooo_dual_rev_and<A: Prop, B: Prop, C: Prop>(
     x: Tauto<Or<Pow<C, A>, Pow<C, B>>>
-) -> Pow<C, And<A, B>> {x.tapp(hooo_dual_rev_and)(True)}
+) -> Pow<C, And<A, B>> {x.trans(hooo_dual_rev_and)(True)}
 
 /// `c^(a ⋀ b) => (c^a ⋁ c^b)`.
 ///
@@ -389,7 +388,7 @@ pub fn tauto_hooo_or<A: Prop, B: Prop, C: Prop>(
 /// `(a^c ⋁ b^c)^true => (a ⋁ b)^c`.
 pub fn tauto_hooo_rev_or<A: Prop, B: Prop, C: Prop>(
     x: Tauto<Or<Pow<A, C>, Pow<B, C>>>
-) -> Pow<Or<A, B>, C> {x.tapp(hooo_rev_or)(True)}
+) -> Pow<Or<A, B>, C> {x.trans(hooo_rev_or)(True)}
 
 /// `(a ⋁ b)^c => (a^c ⋁ b^c)`.
 pub fn hooo_or<A: Prop, B: Prop, C: Prop>(x: Pow<Or<A, B>, C>) -> Or<Pow<A, C>, Pow<B, C>> {
@@ -409,12 +408,12 @@ pub fn hooo_rev_or<A: Prop, B: Prop, C: Prop>(
 /// `c^(a ⋁ b) => (c^a ⋀ c^b)^true`.
 pub fn tauto_hooo_dual_or<A: Prop, B: Prop, C: Prop>(
     x: Pow<C, Or<A, B>>
-) -> Tauto<And<Pow<C, A>, Pow<C, B>>> {x.lift().tapp(hooo_dual_or)}
+) -> Tauto<And<Pow<C, A>, Pow<C, B>>> {x.lift().trans(hooo_dual_or)}
 
 /// `(c^a ⋀ c^b)^true => c^(a ⋁ b)`.
 pub fn tauto_hooo_dual_rev_or<A: Prop, B: Prop, C: Prop>(
     x: Tauto<And<Pow<C, A>, Pow<C, B>>>
-) -> Pow<C, Or<A, B>> {x.tapp(hooo_dual_rev_or)(True)}
+) -> Pow<C, Or<A, B>> {x.trans(hooo_dual_rev_or)(True)}
 
 /// `c^(a ⋁ b) => (c^a ⋀ c^b)`.
 pub fn hooo_dual_or<A: Prop, B: Prop, C: Prop>(
@@ -441,7 +440,7 @@ pub fn tauto_hooo_eq<A: Prop, B: Prop, C: Prop>(
 /// This is only valid for decidable propositions.
 pub fn tauto_hooo_rev_eq<A: DProp, B: DProp, C: DProp>(
     x: Tauto<Eq<Pow<A, C>, Pow<B, C>>>
-) -> Pow<Eq<A, B>, C> {x.tapp(hooo_rev_eq)(True)}
+) -> Pow<Eq<A, B>, C> {x.trans(hooo_rev_eq)(True)}
 
 /// `(a == b)^c => (a^c == b^c)`.
 pub fn hooo_eq<A: Prop, B: Prop, C: Prop>(x: Pow<Eq<A, B>, C>) -> Eq<Pow<A, C>, Pow<B, C>> {
@@ -473,7 +472,7 @@ pub fn hooo_rev_eq<A: DProp, B: DProp, C: DProp>(x: Eq<Pow<A, C>, Pow<B, C>>) ->
 /// `(¬(c^a == c^b))^true => c^(a == b)`.
 pub fn tauto_hooo_dual_rev_eq<A: DProp, B: DProp, C: DProp>(
     x: Tauto<Not<Eq<Pow<C, A>, Pow<C, B>>>>
-) -> Pow<C, Eq<A, B>> {x.tapp(hooo_dual_rev_eq)(True)}
+) -> Pow<C, Eq<A, B>> {x.trans(hooo_dual_rev_eq)(True)}
 
 /// `¬(c^a == c^b) => c^(a == b)`.
 pub fn hooo_dual_rev_eq<A: DProp, B: DProp, C: DProp>(
@@ -488,7 +487,7 @@ pub fn hooo_dual_rev_eq<A: DProp, B: DProp, C: DProp>(
 /// `(¬(a^c == b^c))^true => (¬(a == b))^c`.
 pub fn tauto_hooo_rev_neq<A: DProp, B: DProp, C: Prop>(
     x: Tauto<NEq<Pow<A, C>, Pow<B, C>>>
-) -> Pow<NEq<A, B>, C> {x.tapp(hooo_rev_neq)(True)}
+) -> Pow<NEq<A, B>, C> {x.trans(hooo_rev_neq)(True)}
 
 /// `¬(a^c == b^c) => (¬(a == b))^c`.
 pub fn hooo_rev_neq<A: DProp, B: DProp, C: Prop>(
@@ -509,8 +508,8 @@ pub fn tauto_hooo_dual_neq<A: DProp, B: DProp, C: DProp>(
     match Tauto::<Eq<Pow<C, A>, Pow<C, B>>>::decide() {
         Left(y) => y,
         Right(ny) => {
-            let f = Rc::new(move |x| pow_lift(x).tapp(f));
-            hooo_rev_not(imply::modus_tollens(f)(ny)).trans(x).lift().tapp(g)
+            let f = Rc::new(move |x| pow_lift(x).trans(f));
+            hooo_rev_not(imply::modus_tollens(f)(ny)).trans(x).lift().trans(g)
         }
     }
 }
@@ -551,7 +550,7 @@ pub fn hooo_imply<A: Prop, B: Prop, C: Prop>(
 /// `(¬(c^b => c^a))^true => c^(a => b)`.
 pub fn tauto_hooo_dual_rev_imply<A: DProp, B: DProp, C: DProp>(
     x: Tauto<Not<Imply<Pow<C, B>, Pow<C, A>>>>
-) -> Pow<C, Imply<A, B>> {x.tapp(hooo_dual_rev_imply)(True)}
+) -> Pow<C, Imply<A, B>> {x.trans(hooo_dual_rev_imply)(True)}
 
 /// `¬(c^b => c^a) => c^(a => b)`.
 pub fn hooo_dual_rev_imply<A: DProp, B: DProp, C: DProp>(
@@ -566,7 +565,7 @@ pub fn hooo_dual_rev_imply<A: DProp, B: DProp, C: DProp>(
 /// `(¬(b^c => a^c))^true => (¬(b => a))^c`.
 pub fn tauto_hooo_rev_nrimply<A: DProp, B: DProp, C: Prop>(
     x: Tauto<Not<Imply<Pow<B, C>, Pow<A, C>>>>
-) -> Pow<Not<Imply<B, A>>, C> {x.tapp(hooo_rev_nrimply)(True)}
+) -> Pow<Not<Imply<B, A>>, C> {x.trans(hooo_rev_nrimply)(True)}
 
 /// `¬(b^c => a^c) => (¬(b => a))^c`.
 pub fn hooo_rev_nrimply<A: DProp, B: DProp, C: Prop>(
@@ -586,8 +585,8 @@ pub fn tauto_hooo_dual_nrimply<A: DProp, B: DProp, C: DProp>(
     match tauto_decide() {
         Left(y) => y,
         Right(ny) => {
-            let f = Rc::new(move |x| pow_lift(x).tapp(f));
-            hooo_rev_not(imply::modus_tollens(f)(ny)).trans(x).lift().tapp(g)
+            let f = Rc::new(move |x| pow_lift(x).trans(f));
+            hooo_rev_not(imply::modus_tollens(f)(ny)).trans(x).lift().trans(g)
         }
     }
 }
@@ -637,7 +636,7 @@ pub fn hooo_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
 /// `(b^a : y^x)^true  =>  (b : y)^(a : x)`.
 pub fn tauto_hooo_rev_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
     x: Tauto<Ty<Pow<B, A>, Pow<Y, X>>>
-) -> Pow<Ty<B, Y>, Ty<A, X>> {tauto_imply_to_pow(x.tapp(hooo_rev_ty))}
+) -> Pow<Ty<B, Y>, Ty<A, X>> {tauto_imply_to_pow(x.trans(hooo_rev_ty))}
 
 /// `(b^a : y^x)  =>  ((a : x) => (b : y))`.
 pub fn hooo_rev_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
@@ -750,7 +749,7 @@ pub fn para_to_tauto_not<A: Prop>(x: Para<A>) -> Tauto<Not<A>> {
 
 /// `a^true => false^(¬a)`.
 pub fn tauto_to_para_not<A: Prop>(x: Tauto<A>) -> Para<Not<A>> {
-    pow_not_tauto_excm(Rc::new(move |para_a| para_a(x(True))), x.tapp(Left))
+    pow_not_tauto_excm(Rc::new(move |para_a| para_a(x(True))), x.trans(Left))
 }
 
 /// `false^(¬a) => ¬¬(a^true)`.
@@ -759,7 +758,7 @@ pub fn para_not_to_not_not_tauto<A: DProp>(x: Para<Not<A>>) -> Not<Not<Tauto<A>>
 }
 
 /// `x^true => (¬¬x)^true`.
-pub fn tauto_not_double<A: Prop>(x: Tauto<A>) -> Tauto<Not<Not<A>>> {x.tapp(not::double)}
+pub fn tauto_not_double<A: Prop>(x: Tauto<A>) -> Tauto<Not<Not<A>>> {x.trans(not::double)}
 
 /// `false^(¬x) => (¬false^x)^true`.
 pub fn tauto_para_rev_not<A: Prop>(para_na: Para<Not<A>>) -> Tauto<Not<Para<A>>> {
@@ -889,7 +888,7 @@ pub fn eq_refl<A: Prop>() -> Tauto<Eq<A, A>> {tauto!(eq::refl())}
 
 /// `(x == y)^true => (y == x)^true`.
 pub fn tauto_eq_symmetry<A: Prop, B: Prop>(x: Tauto<Eq<A, B>>) -> Tauto<Eq<B, A>> {
-    x.tapp(eq::symmetry)
+    x.trans(eq::symmetry)
 }
 
 /// `false^(x == y) => false^(y == x)`.
@@ -1030,25 +1029,25 @@ pub fn tauto_imply_transitivity<A: Prop, B: Prop, C: Prop>(
     fn f<A: Prop, B: Prop, C: Prop>((ab, bc): And<Imply<A, B>, Imply<B, C>>) -> Imply<A, C> {
         imply::transitivity(ab, bc)
     }
-    hooo_rev_and((ab, bc)).tapp(f)
+    hooo_rev_and((ab, bc)).trans(f)
 }
 
 /// `(a^true ∧ b^true) => (a == b)^true`.
 pub fn tauto_and_to_eq_pos<A: Prop, B: Prop>(a: Tauto<A>, b: Tauto<B>) -> Tauto<Eq<A, B>> {
-    hooo_rev_and((a, b)).tapp(and::to_eq_pos)
+    hooo_rev_and((a, b)).trans(and::to_eq_pos)
 }
 
 /// `a^true => (a ⋁ b)^true`.
-pub fn tauto_or_left<A: Prop, B: Prop>(x: Tauto<A>) -> Tauto<Or<A, B>> {x.tapp(Left)}
+pub fn tauto_or_left<A: Prop, B: Prop>(x: Tauto<A>) -> Tauto<Or<A, B>> {x.trans(Left)}
 
 /// `b^true => (a ⋁ b)^true`.
-pub fn tauto_or_right<A: Prop, B: Prop>(x: Tauto<B>) -> Tauto<Or<A, B>> {x.tapp(Right)}
+pub fn tauto_or_right<A: Prop, B: Prop>(x: Tauto<B>) -> Tauto<Or<A, B>> {x.trans(Right)}
 
 /// `(a^true ⋁ b^true) => (a ⋁ b)^true`.
 pub fn tauto_or<A: Prop, B: Prop>(or_ab: Or<Tauto<A>, Tauto<B>>) -> Tauto<Or<A, B>> {
     match or_ab {
-        Left(tauto_a) => tauto_a.tapp(Left),
-        Right(tauto_b) => tauto_b.tapp(Right),
+        Left(tauto_a) => tauto_a.trans(Left),
+        Right(tauto_b) => tauto_b.trans(Right),
     }
 }
 
