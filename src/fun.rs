@@ -883,6 +883,10 @@ pub fn dep_tup_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
     let y: POrdProof<Tup<A, B>, Tup<X, Y>> = dep_tup_pord(ty_a.1, ty_b.trans(and::snd));
     (x, y)
 }
+/// `f(a)^(a : x)  =>  f(b)^(b : x)`.
+pub fn dep_app<F: Prop, X: Prop, A: Prop, B: Prop>(
+    _: Pow<App<F, A>, Ty<A, X>>
+) -> Pow<App<F, B>, Ty<B, X>> {unimplemented!()}
 
 /// `(x : type(0))^true ⋀ (p(a) : type(0))^(a : x)  =>  (((a : x) -> p(a)) : type(0))^true`.
 pub fn dep_fun_ty_formation<A: Prop, X: Prop, P: Prop>(
