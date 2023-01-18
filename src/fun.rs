@@ -905,8 +905,21 @@ pub fn dep_fun_ty_formation<A: Prop, X: Prop, P: Prop>(
 }
 /// `((a : x) -> (p(a) : y(a)))  =>  ((a -> p(a)) : ((b : x) -> y(b)))^true`.
 pub fn dep_fun_intro<A: Prop, B: Prop, X: Prop, Y: Prop, P: Prop>(
-    _: Pow<Ty<App<P, A>, App<Y, A>>, Ty<A, X>>
-) -> Tauto<Ty<Pow<App<P, A>, A>, Pow<App<Y, B>, Ty<B, X>>>> {unimplemented!()}
+    x: Pow<Ty<App<P, A>, App<Y, A>>, Ty<A, X>>
+) -> Tauto<Ty<Pow<App<P, A>, A>, Pow<App<Y, B>, Ty<B, X>>>> {
+    use hooo::pow::PowExt;
+    use hooo::{pow_transitivity, hooo_rev_and, tauto_hooo_ty};
+    use path_semantics::{ty_lower, ty_in_right_arg};
+
+    fn f<P: Prop, A: Prop, B: Prop, X: Prop, Y: Prop>(
+        (x, y): And<Ty<Pow<App<P, A>, A>, Pow<App<Y, A>, Ty<A, X>>>,
+                    Eq<Pow<App<Y, A>, Ty<A, X>>, Pow<App<Y, B>, Ty<B, X>>>>
+    ) -> Ty<Pow<App<P, A>, A>, Pow<App<Y, B>, Ty<B, X>>> {
+        ty_in_right_arg(x, y)
+    }
+    let y: Tauto<Eq<_, _>> = tauto!((Rc::new(dep_app), Rc::new(dep_app)));
+    hooo_rev_and((tauto_hooo_ty(pow_transitivity(ty_lower, x.clone())), y)).trans(f)
+}
 /// `(x : type(0))^true ⋀ (p(a) : type(0))^(a : x)  =>  (((a : x), p(a)) : type(0))^true`.
 pub fn dep_tup_ty_formation<A: Prop, X: Prop, P: Prop>(
     ty_x: Tauto<Ty<X, Type<Z>>>,
