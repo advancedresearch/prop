@@ -154,7 +154,10 @@ pub fn qu_to_app_eq<A: Prop, B: Prop, F: Prop>(
         eq::in_left_arg(inv_val_qu(qu_inv_inv_f.clone(), y), app_map_eq(involve_eq()))))
 }
 
-/// Apply 2 function arguments.
+/// Apply 2 function arguments using function currying.
+///
+/// Function currying means that each argument is applied in turn,
+/// instead of applying multiple arguments at once as a tuple.
 pub type App2<F, X, Y> = App<App<F, X>, Y>;
 
 /// Applied function.
