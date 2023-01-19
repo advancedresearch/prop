@@ -287,7 +287,7 @@ pub fn rev_crosseq_adjoint<A: Prop, B: Prop>(
 /// Proves that any Catuṣkoṭi with relative excluded middle is absurd.
 ///
 /// A Catuṣkoṭi is a 4-value logic.
-/// For more information, see https://en.wikipedia.org/wiki/Catu%E1%B9%A3ko%E1%B9%ADi
+/// For more information, see [wikipedia article](https://en.wikipedia.org/wiki/Catu%E1%B9%A3ko%E1%B9%ADi).
 pub fn catuskoti_excm_absurd<A: Prop, B: Prop>(
     catus: Not<Eq<ExcM<A>, ExcM<B>>>
 ) -> False {
@@ -330,7 +330,7 @@ pub fn catuskoti_excm_absurd<A: Prop, B: Prop>(
 /// Proves that any Catuṣkoṭi with relative excluded middle of non-existence is absurd.
 ///
 /// A Catuṣkoṭi is a 4-value logic.
-/// For more information, see https://en.wikipedia.org/wiki/Catu%E1%B9%A3ko%E1%B9%ADi
+/// For more information, see [wikipedia article](https://en.wikipedia.org/wiki/Catu%E1%B9%A3ko%E1%B9%ADi).
 pub fn catuskoti_e_absurd<A: Prop, B: Prop>(
     catus: Not<Eq<E<A>, E<B>>>
 ) -> False {
