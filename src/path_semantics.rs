@@ -6,7 +6,7 @@
 //! lifting proof of path semantical order to expressions of propositions.
 //!
 //! For more information, see
-//! https://github.com/advancedresearch/path_semantics.
+//! [Path Semantics project](https://github.com/advancedresearch/path_semantics).
 
 #![allow(unreachable_code)]
 
