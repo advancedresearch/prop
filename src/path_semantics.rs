@@ -370,6 +370,8 @@ pub fn pand_both_eq<A: Prop, B: Prop, C: Prop, D: Prop>(
     quality::transitivity(eq_a_c, quality::symmetry(eq_b_c))
 }
 
+/// `(a ~~ b) ⋀ (a => (c ⋀ d)) ⋀ (b => e)  =>  (c ~~ d)`.
+///
 /// Proves that types are unique.
 pub fn uniq_ty<A: Prop, B: Prop, C: Prop, D: Prop, E: Prop>(
     eq_a_b: Q<A, B>,
