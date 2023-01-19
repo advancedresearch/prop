@@ -420,11 +420,15 @@ pub fn comp_eq_right<F: Prop, G: Prop, H: Prop>(x: Eq<G, H>) -> Eq<Comp<F, G>, C
 #[derive(Clone, Copy)]
 pub struct Dup(());
 
+/// `dup : a -> (a, a)`.
+///
 /// Type of Dup.
 pub fn dup_ty<A: Prop>() -> Ty<Dup, Pow<Tup<A, A>, A>> {unimplemented!()}
-/// is_const(dup).
+/// `is_const(dup)`.
 pub fn dup_is_const() -> IsConst<Dup> {unimplemented!()}
 
+/// `dup(a) = (a, a)`.
+///
 /// Definition of Dup function.
 pub fn dup_def<A: Prop>() -> Eq<App<Dup, A>, Tup<A, A>> {unimplemented!()}
 
