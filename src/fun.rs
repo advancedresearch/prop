@@ -328,13 +328,13 @@ pub fn inv_val<F: Prop, G: Prop, A: Prop, B: Prop>(
     x: Q<Inv<F>, G>,
     y: Eq<App<F, A>, B>
 ) -> Eq<App<Inv<F>, B>, A> {inv_val_qu(Qu::<Inv<F>>::from_q(quality::left(x)), y)}
+/// `(inv(f) ~~ g) ⋀ (f(a) == b)  =>  (g(b) == a)`.
+///
 /// Get inverse map of `f` by `g`.
 pub fn inv_val_other<F: Prop, G: Prop, A: Prop, B: Prop>(
     x: Q<Inv<F>, G>,
     y: Eq<App<F, A>, B>
-) -> Eq<App<G, B>, A> {
-    eq::in_left_arg(inv_val(x.clone(), y), app_map_eq(quality::to_eq(x)))
-}
+) -> Eq<App<G, B>, A> {eq::in_left_arg(inv_val(x.clone(), y), app_map_eq(quality::to_eq(x)))}
 /// `inv(inv(f)) == f`.
 pub fn involve_eq<F: Prop>() -> Eq<Inv<Inv<F>>, F> {
     hooo::pow_eq_to_tauto_eq((inv_involve, involve_inv))(True)
