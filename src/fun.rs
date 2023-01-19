@@ -923,7 +923,7 @@ pub fn dep_fun_ty_formation<A: Prop, X: Prop, P: Prop>(
 /// `((a : x) -> (p(a) : y(a)))  =>  ((a -> p(a)) : ((b : x) -> y(b)))^true`.
 pub fn dep_fun_intro<A: Prop, B: Prop, X: Prop, Y: Prop, P: Prop>(
     x: Pow<Ty<App<P, A>, App<Y, A>>, Ty<A, X>>
-) -> Tauto<Ty<Pow<App<P, A>, A>, Pow<App<Y, B>, Ty<B, X>>>> {
+) -> Tauto<DepFun<Pow<App<P, A>, A>, A, X, Y>> {
     use hooo::{pow_transitivity, tauto_hooo_ty};
 
     tauto_hooo_ty(pow_transitivity(path_semantics::ty_lower, x.clone())).trans(dep_fun_swap_app_ty)
