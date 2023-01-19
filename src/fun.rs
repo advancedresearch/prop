@@ -317,6 +317,8 @@ pub fn path<F: Prop, X: Prop, Y: Prop>(
     _: Pow<Y, X>
 ) -> And<F, Inv<F>> {unimplemented!()}
 
+/// `(f ~~ g) ⋀ (f(a) == b)  =>  (inv(f)(b) == a)`.
+///
 /// Get inverse map of `f` if there exists a proof `g`.
 ///
 /// The proof needs to be path semantical quality,
