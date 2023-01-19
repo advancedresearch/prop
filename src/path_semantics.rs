@@ -2,8 +2,137 @@
 //!
 //! Path Semantics has a core axiom which is used to model mathematics.
 //!
-//! This core axiom is modelled here,
-//! lifting proof of path semantical order to expressions of propositions.
+//! This module formalizes the core axiom and models types as propositions.
+//!
+//! PSI = Path Semantical Intuitionistic Propositional Logic
+//!
+//! PSI is a generalization of IPL where propositions can be organized in path semantical levels.
+//! The corresponding generalization of PL is PSL. Just like adding the axiom of excluded
+//! middle to IPL gets you PL, one gets PSL from PSI. PSI can be thought of as IPL plus the core
+//! axiom of Path Semantics.
+//!
+//! - `PL = IPL + excluded middle`
+//! - `PSI = IPL + core axiom`
+//! - `PSL = PL + core axiom = PSI + excluded middle`
+//!
+//! The core axiom does not make sense for a single level of propositions like in normal logic.
+//! It requires extending propositions such that they have an associated level (a natural number).
+//! In addition, one needs to add a quality operator `~~` to solve the problem of reflexivity.
+//! PSL can avoid adding the quality operator `~~` by using brute force theorem proving.
+//!
+//! PSL has a famous "Creation Theorem" that makes it not entirely trustworthy as a language for
+//! reasoning. PSI avoids the Creation Theorem by being constructive. However, since PSL proves
+//! every theorem that PSI proves and has exponential speedup in brute force theorem proving,
+//! it is beneficial to check PSL first to see whether something can be true in PSL, before trying
+//! to find the constructive proof.
+//!
+//! ### Modelling Types as Propositions
+//!
+//! `a : T` can be modelled as `Ty<A, T>`, which is defined as `And<Imply<A, T>, POrdProof<A, T>>`.
+//! It means, there are two parts, one where `a` implies `T` and one where there is a proof that
+//! `a` is at a less propositional level than `T`. Together, these two parts model types.
+//!
+//! ### Path Semantical Quality & Qubit
+//!
+//! Since equality is reflexive, it does not make sense to use the core axiom for all pairs of
+//! propositions in a level, since the core axiom would be triggered by `a == a`.
+//! To fix this problem, `a == b` is lifted into `a ~~ b` when `¬((a == b)^true ⋁ false^(a == b))`
+//! (See `hooo::lift_q`).
+//! It means, `a == b` must have been made equal intensionally, by assuming something, and also
+//! without accident, e.g. by proving `false`.
+//!
+//! Since the `~~` operator is not reflexive, it is a partial equivalence relation and called
+//! "quality" as in "equality" without the "e". When one says `a ~~ a` this is equal to `~a`
+//! which is the "qubit" operator. Quality and qubit operaters can be defined from each other:
+//!
+//! - `(a ~~ b) == ((a == b) ⋀ ~a ⋀ ~b)`
+//! - `~a == (a ~~ a)`
+//!
+//! One can think about qubit as "any proposition". In PSL, the truth tables with `~a` are filled
+//! with random bits that uses the input `a` as seed. This means, proofs in PSL are probabilistic
+//! and the noise can be amplified or reduced, like in quantum mechanics to preserve states.
+//! Hence the name "qubit". Qubit is the unary operator analogue of quality, like `-a` is the
+//! unary analogue of `b - a`. In PSI, there is no noise, but proofs must be constructive.
+//!
+//! ### Path Semantics in Physics
+//!
+//! The difference between PSI and PSL is used in theoretical physics to reason about fundamental
+//! physics as seen from a constructive perspective (e.g. hypergraph rewriting) or probabilistic
+//! such as standard quantum mechanics. While Path Semantics does not assume enough to model our
+//! physical universe precisely, it can be used to reason about our universe as one of many
+//! possible ones, because fundamental physics has the same language as constructive logic.
+//!
+//! ### Why Path Semantics?
+//!
+//! In mathematics, the most important operator is equality `==`.
+//! However, there are many different versions of equality.
+//! In Prop, `==` means "propositional equality".
+//! Propositional equality consists of two maps `a => b` and `b => a`.
+//!
+//! Higher dimensional mathematics is about mathematics of extended concepts and notions,
+//! where the same ideas that exist in lower dimensions can be more abstract and propagate
+//! along many dimensions. For example, in most programming languages, there is just one way
+//! to evaluate an expression. In higher dimensional mathematics, there can be multiple dimensions
+//! of evaluation, such that computation can take complex paths in some space. An example of
+//! evaluation in higher dimensions is theorem proving, where expressions can be transformed in
+//! more than one way and where the "answer" might not be unique.
+//!
+//! Another example of higher dimensional mathematics is by extending binary logic to many-valued
+//! logics. Such logics can be modelled using binary logic, but when using propositional equaliy
+//! `==` alone, the result is always finite. It means, one can not construct a many-valued logic
+//! that has infinite dimensions. This is like a computer memory that can not be extended.
+//! In normal logic we extend the memory externally, but in infinite many-valued logic, the memory
+//! can be extended internally.
+//!
+//! To get to higher dimensional mathematics, one requires a path operator `~~`.
+//! This `~~` operator is called "quality" as in "equality" without the "e".
+//! The expression `a ~~ b` means there is a path between `a` and `b`.
+//! Unlike equality, one can not prove `a ~~ a` (a path from `a` to itself).
+//! Path semantical quality is simpler than paths in Homotopy Type Theory, but allows modelling
+//! types as propositions
+//!
+//! Path Semantics is the framework that tells how `~~` is functioning over levels of propositions.
+//! Basically, it allows, for example, doing type theoretic stuff in classical propositional logic.
+//!
+//! It can be very hard to understand Path Semantics, because it is abstract and high dimensional.
+//! Path Semantics is not "about" some easy to understand model in particular.
+//! Instead, it can be thought of as a logical language, or system of rules, that can be used in
+//! combinations with other languages like building blocks to construct mathematical theories.
+//! For example, in physics, time might be thought of as path semantical levels, where each level
+//! corresponds to a "moment" where local reasoning can take place as if time was frozen.
+//! Since there are infinite levels and each level is just as complex as normal logic,
+//! the combination of the core axiom and path semantical quality makes the complexity enormous.
+//! Just like chess, which has simple rules but the amount of options grow very large during play,
+//! Path Semantics gets enormously complex very quickly. It dwarfs chess in complexity.
+//!
+//! To get a feeling of how complex Path Semantics is, consider the number of binary operators:
+//!
+//! - Level 1: Normal logic, `2^4` in PL, `3^9` in IPL.
+//! - Level 2: Max 1-qubit, `4^16` in PL, 9^81` in IPL.
+//! - Level 3: Max 2-qubit, `8^64` in PL, `27^729` in IPL.
+//! - Level 4: Max 3-qubit, `16^256` in PL, `81^6561` in IPL.
+//!
+//! This is how many ways there are to write `f(a, b)` where `f` is some binary operator.
+//! Even with just putting two objects `a` and `b` together, it gets immensily complex very fast.
+//!
+//! This continues toward infinity. The complexity never stops increasing and it goes
+//! super-exponentially faster and faster. At level 4, if you listed every binary operator,
+//! space would collapse into a super-massive black hole long before you finished.
+//!
+//! Now, why should we bother extending mathematics this way, when it gets so complex?
+//! The motivation is to express operators over ideas such as "you are impressively wrong" concisely.
+//! This is called "Uberwrong Logic" and is the same as "Answered Modal Logic"
+//! (same logic, different interpretations).
+//! For example, when something is "unimpressively correct", it is the same as to say it is obvious.
+//!
+//! Another motivation is to understand time logically. Time is complex, so the theory is complex.
+//!
+//! However, one of the major motivations is to be able to model types as propositions.
+//! Since types are a foundation of mathematics, modelling types as propositions makes it possible
+//! to reason about mathematics within a logical framework. Using Path Semantics is beneficial
+//! because it does not assume a Set theoretic model, so we can explore higher dimensional
+//! mathematics without the concern that it has to correspond to something like sets.
+//! For example, in language design, we are not always talking about something as "simple" as sets.
 //!
 //! For more information, see
 //! [Path Semantics project](https://github.com/advancedresearch/path_semantics).
