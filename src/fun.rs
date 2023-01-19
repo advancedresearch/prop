@@ -351,6 +351,8 @@ pub fn path_inv<F: Prop, X: Prop, Y: Prop>(
 #[derive(Copy, Clone)]
 pub struct Comp<F, G>(F, G);
 
+/// `(f : x -> y) ⋀ (g : y -> z)  =>  (g . f) : x -> z`.
+///
 /// Type of composition.
 pub fn comp_ty<F: Prop, G: Prop, X: Prop, Y: Prop, Z: Prop>(
     _ty_f: Ty<F, Pow<Y, X>>,
