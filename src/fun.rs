@@ -930,7 +930,7 @@ pub fn dep_fun_intro<A: Prop, B: Prop, X: Prop, Y: Prop, P: Prop>(
 }
 /// `(f : (a : x) -> p(a))^true ⋀ (b : x)^true  =>  (f(b) : p(b))^true`
 pub fn dep_fun_elim<F: Prop, X: Prop, P: Prop, A: Prop, B: Prop>(
-    ty_f: Tauto<Ty<F, Pow<App<P, A>, Ty<A, X>>>>,
+    ty_f: Tauto<DepFun<F, A, X, P>>,
     ty_b: Tauto<Ty<B, X>>
 ) -> Tauto<Ty<App<F, B>, App<P, B>>> {
     use hooo::hooo_rev_and;
