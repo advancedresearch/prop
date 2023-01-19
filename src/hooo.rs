@@ -152,6 +152,9 @@ pub fn pow_lower<A: Prop, B: Prop, C: Prop>(x: Pow<Pow<A, B>, C>) -> Pow<A, And<
 /// `a => a`.
 pub fn pow_refl<A: Prop>(x: A) -> A {x}
 
+/// `a^(a^false) => a`.
+pub fn pow_unfold_fa<A: Prop>(x: Pow<A, Pow<A, False>>) -> A {x(fa())}
+
 /// `a^b ⋀ (a == c)^true => c^b`.
 pub fn pow_in_left_arg<A: Prop, B: Prop, C: Prop>(
     x: Pow<A, B>,
