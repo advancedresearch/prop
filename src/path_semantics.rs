@@ -374,7 +374,7 @@ pub fn pand_both_eq<A: Prop, B: Prop, C: Prop, D: Prop>(
 ///
 /// Proves that types are unique.
 pub fn uniq_ty<A: Prop, B: Prop, C: Prop, D: Prop, E: Prop>(
-    eq_a_b: Q<A, B>,
+    q_a_b: Q<A, B>,
     f: Imply<A, And<C, D>>,
     b_e: Imply<B, E>,
     p_a: PSemNaive<A, B, C, E>,
@@ -383,9 +383,9 @@ pub fn uniq_ty<A: Prop, B: Prop, C: Prop, D: Prop, E: Prop>(
     let f_copy = f.clone();
     let a_c = Rc::new(move |x| f_copy(x).0);
     let a_d = Rc::new(move |x| f.clone()(x).1);
-    let eq_c_e = p_a((eq_a_b.clone(), (a_c, b_e.clone())));
-    let eq_d_e = p_b((eq_a_b, (a_d, b_e)));
-    quality::transitivity(eq_c_e, quality::symmetry(eq_d_e))
+    let q_c_e = p_a((q_a_b.clone(), (a_c, b_e.clone())));
+    let q_d_e = p_b((q_a_b, (a_d, b_e)));
+    quality::transitivity(q_c_e, quality::symmetry(q_d_e))
 }
 
 /// Checks that `X` is qual to `T`.
