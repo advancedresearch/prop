@@ -20,11 +20,11 @@
 //! In addition, one needs to add a quality operator `~~` to solve the problem of reflexivity.
 //! PSL can avoid adding the quality operator `~~` by using brute force theorem proving.
 //!
-//! PSL has a famous "Creation Theorem" that makes it not entirely trustworthy as a language for
-//! reasoning. PSI avoids the Creation Theorem by being constructive. However, since PSL proves
-//! every theorem that PSI proves and has exponential speedup in brute force theorem proving,
-//! it is beneficial to check PSL first to see whether something is not false in PSI, before trying
-//! to find the constructive proof.
+//! PSL has a famous "Creation Theorem" (see `creation`) that makes it not entirely trustworthy
+//! as a language for reasoning. PSI avoids the Creation Theorem by being constructive.
+//! However, since PSL proves every theorem that PSI proves and has exponential speedup in brute
+//! force theorem proving, it is beneficial to check PSL first to see whether something is not
+//! false in PSI, before trying to find the constructive proof.
 //!
 //! ### Modelling Types as Propositions
 //!
