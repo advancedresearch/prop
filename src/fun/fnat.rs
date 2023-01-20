@@ -1,6 +1,7 @@
 //! Natural numbers.
 
 use super::*;
+use bool_alg::{Bool, Tr};
 
 /// The type of natural numbers.
 #[derive(Copy, Clone)]
@@ -14,6 +15,20 @@ pub fn nat_def<X: Prop, Y: Prop>(
 ) -> Either<Eq<X, Zero>, DepTupTy<Y, Nat, Lam<Ty<Y, Nat>, Eq<X, Inc<Y>>>>> {unimplemented!()}
 /// `(n : nat) ⋀ (n == n + 1)  =>  false`.
 pub fn para_eq_inc<N: Prop>(_: And<Ty<N, Nat>, Eq<N, Inc<N>>>) -> False {unimplemented!()}
+/// Induction on natural numbers.
+///
+/// ```text
+/// (p : nat -> bool)^true ⋀
+/// (p(0) == true)^true ⋀
+/// (p(n + 1) == true)^(n : nat)
+/// ----------------------------
+/// (p(n) == true)^(n : nat)
+/// ```
+pub fn induction<N: Prop, P: Prop>(
+    _ty_p: Tauto<Ty<P, Pow<Bool, Nat>>>,
+    _case_zero: Tauto<Eq<App<P, Zero>, Tr>>,
+    _case_n: Pow<Eq<App<P, Inc<N>>, Tr>, Ty<N, Nat>>,
+) -> Pow<Eq<App<P, N>, True>, Ty<N, Nat>> {unimplemented!()}
 
 /// `(0 == 1)  =>  false`.
 pub fn para_eq_zero_one(x: Eq<Zero, One>) -> False {para_eq_inc((zero_ty(), x))}
