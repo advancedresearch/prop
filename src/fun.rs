@@ -102,6 +102,7 @@ pub mod bool_alg;
 pub mod hott;
 pub mod real;
 pub mod eqx;
+pub mod fnat;
 
 /// `is_const(a) ⋀ is_const(b)  =>  is_const(a ⋀ b)`.
 pub fn and_is_const<A: Prop, B: Prop>(_a: IsConst<A>, _b: IsConst<B>) -> IsConst<And<A, B>> {
