@@ -67,6 +67,20 @@
 //! tautology transforms with inverses, together with the proof space of inverses.
 //! With other words, it leverages PSI to say that any proof of `x -> y` is identical to having a
 //! proof of `y -> x` when there exists an inverse and a proof `f : x -> y`.
+//!
+//! # Dependent Types
+//!
+//! [Dependent type theory in nLab](https://ncatlab.org/nlab/show/dependent+type+theory)
+//!
+//! Dependent types is heavily used in software verification.
+//! It is also used as a foundation of mathematics in terms of Homotopy Type Theory.
+//!
+//! There are two objects that are important for dependent types:
+//!
+//! - Dependent sum/tuple: `(a, b) : (a : x, p(a))`
+//! - Dependent product/function: `f : (a : x) -> p(a)`
+//!
+//! This allows `p(a)` to produce a type depending on previous arguments, hence "dependent type".
 
 use crate::*;
 use path_semantics::{POrdProof, Ty};
