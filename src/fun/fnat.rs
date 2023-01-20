@@ -36,6 +36,8 @@ pub fn succ_ty() -> Ty<Succ, Pow<Nat, Nat>> {unimplemented!()}
 pub type Inc<N> = App<Succ, N>;
 /// One.
 pub type One = Inc<Zero>;
+/// Two.
+pub type Two = Inc<One>;
 
 /// Addition.
 #[derive(Copy, Clone)]
@@ -56,3 +58,5 @@ pub fn add_succ<N: Prop, M: Prop>(
 
 /// `1 : nat`.
 pub fn one_ty() -> Ty<One, Nat> {app_fun_ty(succ_ty(), zero_ty())}
+/// `2 : nat`.
+pub fn two_ty() -> Ty<Two, Nat> {app_fun_ty(succ_ty(), one_ty())}
