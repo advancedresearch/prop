@@ -15,6 +15,9 @@ pub fn nat_def<X: Prop, Y: Prop>(
 /// `(n : nat) ⋀ (n == n + 1)  =>  false`.
 pub fn para_eq_inc<N: Prop>(_: And<Ty<N, Nat>, Eq<N, Inc<N>>>) -> False {unimplemented!()}
 
+/// `(0 == 1)  =>  false`.
+pub fn para_eq_zero_one(x: Eq<Zero, One>) -> False {para_eq_inc((zero_ty(), x))}
+
 /// Zero.
 #[derive(Copy, Clone)]
 pub struct Zero(());
