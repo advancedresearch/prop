@@ -30,12 +30,15 @@ pub type Inc<N> = App<Succ, N>;
 #[derive(Copy, Clone)]
 pub struct Add(());
 
+/// `a + b`.
+pub type Plus<A, B> = App<Add, Tup<A, B>>;
+
 /// `add : (nat, nat) -> nat`.
 pub fn add_ty() -> Ty<Add, Pow<Nat, Tup<Nat, Nat>>> {unimplemented!()}
 /// `(n : nat)  =>  add(0, n) = n`.
-pub fn add_zero<N: Prop>(_n_ty: Ty<N, Nat>) -> Eq<App<Add, Tup<Zero, N>>, N> {unimplemented!()}
+pub fn add_zero<N: Prop>(_n_ty: Ty<N, Nat>) -> Eq<Plus<Zero, N>, N> {unimplemented!()}
 /// `(n : nat) ⋀ (m : nat)  =>  add(n + 1, m) = add(n, m + 1)`.
 pub fn add_succ<N: Prop, M: Prop>(
     _n_ty: Ty<N, Nat>,
     _m_ty: Ty<M, Nat>
-) -> Eq<App<Add, Tup<Inc<N>, M>>, App<Add, Tup<N, Inc<M>>>> {unimplemented!()}
+) -> Eq<Plus<Inc<N>, M>, Plus<N, Inc<M>>> {unimplemented!()}
