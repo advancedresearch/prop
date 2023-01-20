@@ -60,3 +60,7 @@ pub fn add_succ<N: Prop, M: Prop>(
 pub fn one_ty() -> Ty<One, Nat> {app_fun_ty(succ_ty(), zero_ty())}
 /// `2 : nat`.
 pub fn two_ty() -> Ty<Two, Nat> {app_fun_ty(succ_ty(), one_ty())}
+/// `1 + 1 == 2`.
+pub fn eq_plus_one_one_two() -> Eq<Plus<One, One>, Two> {
+    eq::transitivity(add_succ(zero_ty(), one_ty()), add_zero(two_ty()))
+}
