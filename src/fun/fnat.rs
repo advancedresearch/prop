@@ -31,6 +31,8 @@ pub fn succ_ty() -> Ty<Succ, Pow<Nat, Nat>> {unimplemented!()}
 
 /// Increment.
 pub type Inc<N> = App<Succ, N>;
+/// One.
+pub type One = Inc<Zero>;
 
 /// Addition.
 #[derive(Copy, Clone)]
