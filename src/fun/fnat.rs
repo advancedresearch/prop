@@ -20,7 +20,7 @@ pub fn para_eq_inc<N: Prop>(_: And<Ty<N, Nat>, Eq<N, Inc<N>>>) -> False {unimple
 pub struct Zero(());
 
 /// `zero : nat`.
-pub fn zero_ty() -> Ty<Zero, Type<Z>> {unimplemented!()}
+pub fn zero_ty() -> Ty<Zero, Nat> {unimplemented!()}
 
 /// Successor.
 #[derive(Copy, Clone)]
