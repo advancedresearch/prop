@@ -8,6 +8,10 @@ pub struct Nat(());
 
 /// `nat : type(0)`.
 pub fn nat_ty() -> Ty<Nat, Type<Z>> {unimplemented!()}
+/// `(x : nat)  =>  (x == 0) ⋁ (y : nat, (\(y : nat) = x == (y + 1))(y))`.
+pub fn nat_def<X: Prop, Y: Prop>(
+    _x_ty: Ty<X, Nat>
+) -> Either<Eq<X, Zero>, DepTupTy<Y, Nat, Lam<Ty<Y, Nat>, Eq<X, Inc<Y>>>>> {unimplemented!()}
 
 /// Zero.
 #[derive(Copy, Clone)]
