@@ -29,6 +29,20 @@ pub fn induction<N: Prop, P: Prop>(
     _case_zero: Tauto<Eq<App<P, Zero>, Tr>>,
     _case_n: Pow<Eq<App<P, Inc<N>>, Tr>, Ty<N, Nat>>,
 ) -> Pow<Eq<App<P, N>, True>, Ty<N, Nat>> {unimplemented!()}
+/// Type induction on natural numbers.
+///
+/// ```text
+/// (p : nat -> type(0))^true ⋀
+/// p(0)^true ⋀
+/// p(n + 1)^(n : nat)
+/// ----------------------------
+/// p(n)^(n : nat)
+/// ```
+pub fn induction_ty<N: Prop, P: Prop>(
+    _ty_p: Tauto<Ty<P, Pow<Type<Z>, Nat>>>,
+    _case_zero: Tauto<App<P, Zero>>,
+    _case_n: Pow<App<P, Inc<N>>, Ty<N, Nat>>,
+) -> Pow<App<P, N>, Ty<N, Nat>> {unimplemented!()}
 
 /// `(0 == 1)  =>  false`.
 pub fn para_eq_zero_one(x: Eq<Zero, One>) -> False {para_eq_inc((zero_ty(), x))}
