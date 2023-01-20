@@ -53,3 +53,6 @@ pub fn add_succ<N: Prop, M: Prop>(
     _n_ty: Ty<N, Nat>,
     _m_ty: Ty<M, Nat>
 ) -> Eq<Plus<Inc<N>, M>, Plus<N, Inc<M>>> {unimplemented!()}
+
+/// `1 : nat`.
+pub fn one_ty() -> Ty<One, Nat> {app_fun_ty(succ_ty(), zero_ty())}
