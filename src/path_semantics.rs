@@ -32,6 +32,10 @@
 //! It means, there are two parts, one where `a` implies `T` and one where there is a proof that
 //! `a` is at a less propositional level than `T`. Together, these two parts model types.
 //!
+//! Since there are levels of propositions, one must think about what `true` and `false` means.
+//! The level of `false` is `nan` (not a number) and the level of `true` can be any level (`ltrue`).
+//! To get `true` to any level, one converts back and forth using `eq_true_ltrue`.
+//!
 //! ### Path Semantical Quality & Qubit
 //!
 //! Since equality is reflexive, it does not make sense to use the core axiom for all pairs of
@@ -49,10 +53,11 @@
 //! - `~a == (a ~~ a)`
 //!
 //! One can think about qubit as "any proposition". In PSL, the truth tables with `~a` are filled
-//! with random bits that uses the input `a` as seed. This means, proofs in PSL are probabilistic
-//! and the noise can be amplified or reduced, like in quantum mechanics to preserve states.
-//! Hence the name "qubit". Qubit is the unary operator analogue of quality, like `-a` is the
-//! unary analogue of `b - a`. In PSI, there is no noise, but proofs must be constructive.
+//! with random bits that uses the input `a` as seed. This means, some proofs in PSL are
+//! probabilistic and the noise can be amplified or reduced, like in quantum mechanics to preserve
+//! quantum superposition. Hence the name "qubit". Qubit is the unary operator analogue of quality,
+//! like `-a` is the unary analogue of `b - a`. In PSI, there is no noise, but proofs must be
+//! constructive.
 //!
 //! ### Path Semantics in Physics
 //!
@@ -89,7 +94,7 @@
 //! The expression `a ~~ b` means there is a path between `a` and `b`.
 //! Unlike equality, one can not prove `a ~~ a` (a path from `a` to itself).
 //! Path semantical quality is simpler than paths in Homotopy Type Theory, but allows modelling
-//! types as propositions
+//! types as propositions, which in turns allows modelling dependent types and Homotopy Type Theory.
 //!
 //! Path Semantics is the framework that tells how `~~` is functioning over levels of propositions.
 //! Basically, it allows, for example, doing type theoretic stuff in classical propositional logic.
@@ -108,9 +113,9 @@
 //! To get a feeling of how complex Path Semantics is, consider the number of binary operators:
 //!
 //! - Level 1: Normal logic, `2^4` in PL, `3^9` in IPL.
-//! - Level 2: Max 1-qubit, `4^16` in PL, 9^81` in IPL.
-//! - Level 3: Max 2-qubit, `8^64` in PL, `27^729` in IPL.
-//! - Level 4: Max 3-qubit, `16^256` in PL, `81^6561` in IPL.
+//! - Level 2: Max qubit^1, `4^16` in PL, 9^81` in IPL.
+//! - Level 3: Max qubit^2, `8^64` in PL, `27^729` in IPL.
+//! - Level 4: Max qubit^3, `16^256` in PL, `81^6561` in IPL.
 //!
 //! This is how many ways there are to write `f(a, b)` where `f` is some binary operator.
 //! Even with just putting two objects `a` and `b` together, it gets immensily complex very fast.
@@ -134,8 +139,8 @@
 //! mathematics without the concern that it has to correspond to something like sets.
 //! For example, in language design, we are not always talking about something as "simple" as sets.
 //!
-//! For more information, see
-//! [Path Semantics project](https://github.com/advancedresearch/path_semantics).
+//! For more information, see the
+//! [Path Semantics](https://github.com/advancedresearch/path_semantics) project.
 
 #![allow(unreachable_code)]
 
