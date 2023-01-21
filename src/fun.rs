@@ -746,6 +746,8 @@ pub fn subst_eq_lam_body<A: Prop, B: Prop, C: Prop, D: Prop, E: Prop>(
 ) -> Eq<Lam<E, Subst<A, C, D>>, Lam<E, B>> {unimplemented!()}
 
 /// Whether some symbol is a constant.
+///
+/// When a symbol `x` is a constant, `x[a := b] == x` (invariant under substitution).
 #[derive(Copy, Clone)]
 pub struct IsConst<A>(A);
 
