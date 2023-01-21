@@ -705,7 +705,10 @@ pub fn snd<T: Prop, A: Prop, B: Prop>(x: Ty<T, Tup<A, B>>) -> Ty<App<Snd, T>, B>
     app_fun_ty(snd_ty(), x)
 }
 
-/// Substitute in expression.
+/// Substitute in expression `e[a := b]`.
+///
+/// Substitution is about replacing variables in an expression with constants or other variables.
+/// Usually, the goal is to derive a constant expression that contains none variables.
 #[derive(Clone, Copy)]
 pub struct Subst<E, A, B>(E, A, B);
 
