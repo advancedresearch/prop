@@ -812,6 +812,10 @@ pub fn lam_app_trivial<A: Prop, B: Prop, X: Prop>(
 ) -> Eq<App<Lam<Ty<A, X>, B>, B>, B> {
     eq::transitivity(lam(ty_b), subst_id())
 }
+/// `(a : x) => ((\(a : x) = b)(a) == b`.
+pub fn lam_app_nop<A: Prop, B: Prop, X: Prop>(ty_a: Ty<A, X>) -> Eq<App<Lam<Ty<A, X>, B>, A>, B> {
+    eq::transitivity(lam(ty_a), subst_nop())
+}
 
 /// `\(a : x) = a`.
 pub type LamId<A, X> = Lam<Ty<A, X>, A>;
