@@ -7,12 +7,26 @@ use bool_alg::{Bool, Tr};
 #[derive(Copy, Clone)]
 pub struct Nat(());
 
+/// The number `prev(a)` is the number right before `a`, if it exists.
+///
+/// This not an operation, but a reference to some proposition depending on `a`.
+///
+/// It is used to prevent collisions with other propositions where the identity might be
+/// controlled by the scope, for example in `(x : nat)  =>  (x == 0) ⋁ (y : nat, x == y + 1)`.
+///
+/// A such statement in Prop can be changed into `(x : nat)  =>  (x == 0) ⋁ (x : nat, x == x + 1)`,
+/// which is unsound.
+///
+/// To avoid this form of collision, the statement is encoded as:
+/// `(x : nat)  =>  (x == 0) ⋁ (prev(x) : nat, x == prev(x) + 1)`.
+pub struct Prev<A>(A);
+
 /// `nat : type(0)`.
 pub fn nat_ty() -> Ty<Nat, Type<Z>> {unimplemented!()}
-/// `(x : nat)  =>  (x == 0) ⋁ (y : nat, (\(y : nat) = x == (y + 1))(y))`.
-pub fn nat_def<X: Prop, Y: Prop>(
+/// `(x : nat)  =>  (x == 0) ⋁ (prev(x) : nat, x == prev(x) + 1)`.
+pub fn nat_def<X: Prop>(
     _x_ty: Ty<X, Nat>
-) -> Either<Eq<X, Zero>, DepTupTy<Y, Nat, Lam<Ty<Y, Nat>, Eq<X, Inc<Y>>>>> {unimplemented!()}
+) -> Either<Eq<X, Zero>, Tup<Ty<Prev<X>, Nat>, Eq<X, Inc<Prev<X>>>>> {unimplemented!()}
 /// `(n : nat) ⋀ (n == n + 1)  =>  false`.
 pub fn para_eq_inc<N: Prop>(_: And<Ty<N, Nat>, Eq<N, Inc<N>>>) -> False {unimplemented!()}
 /// Induction on natural numbers.
