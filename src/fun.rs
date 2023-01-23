@@ -911,20 +911,10 @@ pub fn dep_tup_pord<A: Prop, B: Prop, X: Prop, Y: Prop>(
     _: Pow<POrdProof<B, Y>, A>
 ) -> POrdProof<Tup<A, B>, Tup<X, Y>> {unimplemented!()}
 /// `(a : x) ⋀ (b : y)^a  =>  (a, b) : (x, y)`.
-///
-/// Accesses the first element of the tuple, which makes this an axiom.
 pub fn dep_tup_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
-    ty_a: Ty<A, X>,
-    ty_b: Pow<Ty<B, Y>, A>
-) -> Ty<Tup<A, B>, Tup<X, Y>> {
-    let ty_a2 = ty_a.clone();
-    let x: Imply<Tup<A, B>, Tup<X, Y>> = Rc::new(move |tup_ab| {
-        let x: Ty<B, Y> = ty_b(tup_ab.0.clone());
-        tup_ty(ty_a2.clone(), x).0(tup_ab)
-    });
-    let y: POrdProof<Tup<A, B>, Tup<X, Y>> = dep_tup_pord(ty_a.1, ty_b.trans(and::snd));
-    (x, y)
-}
+    _ty_a: Ty<A, X>,
+    _ty_b: Pow<Ty<B, Y>, A>
+) -> Ty<Tup<A, B>, Tup<X, Y>> {unimplemented!()}
 /// `f(a)^(a : x)  =>  f(b)^(b : x)`.
 pub fn dep_app<F: Prop, X: Prop, A: Prop, B: Prop>(
     _: Pow<App<F, A>, Ty<A, X>>
