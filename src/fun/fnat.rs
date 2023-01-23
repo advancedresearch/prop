@@ -47,11 +47,8 @@ pub fn induction_ty<N: Prop, P: Prop>(
 /// `(0 == 1)  =>  false`.
 pub fn para_eq_zero_one(x: Eq<Zero, One>) -> False {para_eq_inc((zero_ty(), x))}
 /// `(n : nat) ⋀ (0 == n + 1)  =>  false`.
-pub fn para_pre_zero<N: Prop>((ty_n, x): And<Ty<N, Nat>, Eq<Zero, Inc<N>>>) -> False {
-    match nat_def::<N, N>(ty_n.clone()) {
-        Left(eq_n_zero) => para_eq_zero_one(eq::transitivity(x, app_eq(eq_n_zero))),
-        Right(t) => para_eq_inc((ty_n.clone(), lam_app_nop(ty_n).0(t.1))),
-    }
+pub fn para_pre_zero<N: Prop>((_ty_n, _x): And<Ty<N, Nat>, Eq<Zero, Inc<N>>>) -> False {
+    unimplemented!()
 }
 
 /// Zero.
