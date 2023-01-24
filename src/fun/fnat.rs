@@ -67,18 +67,14 @@ pub fn induction_ty<N: Prop, P: Prop>(
 /// `(0 == 1)  =>  false`.
 pub fn para_eq_zero_one(x: Eq<Zero, One>) -> False {para_eq_inc((zero_ty(), x))}
 
-/// Used to get full Peano axioms.
-///
-/// Adds the final axiom required to make natural numbers equal to the model of the Peano axioms.
-/// This final axiom states that there is no natural number before zero.
-///
-/// In the [Closed Natural Numbers](https://github.com/advancedresearch/path_semantics/blob/master/sequences.md#closed-natural-numbers)
-/// formulation, this final axiom is too strong, since it is sufficient that the natural number
-/// before zero is not unique (either none, multiple or non-constructive).
-pub trait Peano {
-    /// `(n : nat) ⋀ (0 == n + 1)  =>  false`.
-    fn para_pre_zero<N: Prop>(_: And<Ty<N, Nat>, Eq<Zero, Inc<N>>>) -> False;
-}
+/// The type of natural numbers satisfying Peano axioms.
+#[derive(Copy, Clone)]
+pub struct NatP(());
+
+/// `(x : nat_p)  =>  (x : nat)`.
+pub fn weaken_natp_ty<X: Prop>(_: Ty<X, NatP>) -> Ty<X, Nat> {unimplemented!()}
+/// `(n : nat_p) ⋀ (0 == n + 1)  =>  false`.
+pub fn para_pre_zero<N: Prop>(_: And<Ty<N, NatP>, Eq<Zero, Inc<N>>>) -> False {unimplemented!()}
 
 /// Zero.
 #[derive(Copy, Clone)]
