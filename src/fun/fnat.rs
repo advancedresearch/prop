@@ -23,10 +23,10 @@ pub struct Prev<A>(A);
 
 /// `nat : type(0)`.
 pub fn nat_ty() -> Ty<Nat, Type<Z>> {unimplemented!()}
-/// `(x : nat)  =>  (x == 0) ⋁ (prev(x) : nat, x == prev(x) + 1)`.
+/// `(x : nat)  =>  (x == 0) ⋁ ((prev(x) : nat) ⋀ (x == prev(x) + 1))`.
 pub fn nat_def<X: Prop>(
     _x_ty: Ty<X, Nat>
-) -> Either<Eq<X, Zero>, Tup<Ty<Prev<X>, Nat>, Eq<X, Inc<Prev<X>>>>> {unimplemented!()}
+) -> Either<Eq<X, Zero>, And<Ty<Prev<X>, Nat>, Eq<X, Inc<Prev<X>>>>> {unimplemented!()}
 /// `(n : nat) ⋀ (n == n + 1)  =>  false`.
 pub fn para_eq_inc<N: Prop>(_: And<Ty<N, Nat>, Eq<N, Inc<N>>>) -> False {unimplemented!()}
 /// `(n : nat) ⋀ (m : nat) ⋀ (n + 1 == m + 1)  =>  n == m`.
