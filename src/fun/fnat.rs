@@ -9,16 +9,16 @@ pub struct Nat(());
 
 /// The number `prev(a)` is the number right before `a`, if it exists.
 ///
-/// This not an operation, but a reference to some proposition depending on `a`.
+/// This not an operation, but a reference to some natural number depending on `a`.
 ///
 /// It is used to prevent collisions with other propositions where the identity might be
-/// controlled by the scope, for example in `(x : nat)  =>  (x == 0) ⋁ (y : nat, x == y + 1)`.
+/// controlled by the scope, for example in `(x : nat)  =>  (x == 0) ⋁ ((y : nat) ⋀ (x == y + 1))`.
 ///
-/// A such statement in Prop can be changed into `(x : nat)  =>  (x == 0) ⋁ (x : nat, x == x + 1)`,
-/// which is unsound.
+/// A such statement in Prop can be changed into
+/// `(x : nat)  =>  (x == 0) ⋁ ((x : nat) ⋀ (x == x + 1))`, which is unsound.
 ///
 /// To avoid this form of collision, the statement is encoded as:
-/// `(x : nat)  =>  (x == 0) ⋁ (prev(x) : nat, x == prev(x) + 1)`.
+/// `(x : nat)  =>  (x == 0) ⋁ ((prev(x) : nat) ⋀ (x == prev(x) + 1))`.
 pub struct Prev<A>(A);
 
 /// `nat : type(0)`.
