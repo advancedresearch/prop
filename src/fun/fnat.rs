@@ -73,6 +73,10 @@ pub struct NatP(());
 
 /// `(x : nat_p)  =>  (x : nat)`.
 pub fn weaken_natp_ty<X: Prop>(_: Ty<X, NatP>) -> Ty<X, Nat> {unimplemented!()}
+/// `(0 : nat_p)  =>  (succ : nat_p -> nat_p)`.
+pub fn natp_succ_ty(zero_ty: Ty<Zero, NatP>) -> Ty<Succ, Pow<NatP, NatP>> {
+    hooo::hooo_imply(succ_def)(weaken_natp_ty::<Zero>)(zero_ty)
+}
 /// `(n : nat_p) ⋀ (0 == n + 1)  =>  false`.
 pub fn para_pre_zero<N: Prop>(_: And<Ty<N, NatP>, Eq<Zero, Inc<N>>>) -> False {unimplemented!()}
 
@@ -87,8 +91,14 @@ pub fn zero_ty() -> Ty<Zero, Nat> {unimplemented!()}
 #[derive(Copy, Clone)]
 pub struct Succ(());
 
+/// `((x : nat) => (succ : t -> t))^(x : t)`.
+pub fn succ_def<X: Prop, T: Prop>(_: Ty<X, T>) -> Imply<Ty<X, Nat>, Ty<Succ, Pow<T, T>>> {
+    unimplemented!()
+}
 /// `succ : nat -> nat`.
-pub fn succ_ty() -> Ty<Succ, Pow<Nat, Nat>> {unimplemented!()}
+pub fn succ_ty() -> Ty<Succ, Pow<Nat, Nat>> {
+    hooo::hooo_imply(succ_def)(hooo::pow_refl::<Ty<Zero, Nat>>)(zero_ty())
+}
 
 /// Increment.
 pub type Inc<N> = App<Succ, N>;
