@@ -1550,3 +1550,8 @@ pub fn para_exists_false_false(x: Exists<False, False>) -> False {
         Rc::new(|_: True| Rc::new(|fa| imply::absurd()(fa))), Rc::new(tr())
     ))))(tr())
 }
+
+/// `∃ a { b }  =>  ∃ a { a }`.
+pub fn exists_left_refl<A: Prop, B: Prop>(x: Exists<A, B>) -> Exists<A, A> {
+    Rc::new(move |pow_na_a| x(hooo_rev_and((pow_refl, pow_na_a)).trans(and::paradox).trans(fa())))
+}
