@@ -1532,3 +1532,9 @@ pub fn pow_excm_nn_to_rev_double<A: Prop>(x: Pow<ExcM<A>, Not<Not<A>>>) -> Pow<A
 pub fn exists_true_true() -> Exists<True, True> {
     Rc::new(|pow_ntr_tr| pow_ntr_tr(True)(True))
 }
+
+/// `a  =>  ∃ a { a }`.
+pub fn exists_construct<A: Prop>(a: A) -> Exists<A, A> {
+    Rc::new(move |pow_na_a| hooo::hooo_rev_and((hooo::pow_refl, pow_na_a))
+        .trans(and::paradox)(a.clone()))
+}
