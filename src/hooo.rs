@@ -53,7 +53,7 @@ pub type Uniform<A> = Or<Tauto<A>, Para<A>>;
 /// A proposition is a theory when non-uniform.
 pub type Theory<A> = Not<Uniform<A>>;
 
-/// There exists statement.
+/// There exists statement `∃ a { b }`.
 ///
 /// This can be used as "there exists" `∃` in First Order Logic by using:
 /// `Exists<Ty<X, T>, ...>` as `∃ x : t { ... }`.
@@ -1526,4 +1526,9 @@ pub fn pow_excm_nn_to_rev_double<A: Prop>(x: Pow<ExcM<A>, Not<Not<A>>>) -> Pow<A
         Left(x) => x,
         Right(nx) => para_pow_contra_nn(nx).trans(fa()),
     }
+}
+
+/// `∃ true { true }`.
+pub fn exists_true_true() -> Exists<True, True> {
+    Rc::new(|pow_ntr_tr| pow_ntr_tr(True)(True))
 }
