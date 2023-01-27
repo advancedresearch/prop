@@ -1535,6 +1535,5 @@ pub fn exists_true_true() -> Exists<True, True> {
 
 /// `a  =>  ∃ a { a }`.
 pub fn exists_construct<A: Prop>(a: A) -> Exists<A, A> {
-    Rc::new(move |pow_na_a| hooo::hooo_rev_and((hooo::pow_refl, pow_na_a))
-        .trans(and::paradox)(a.clone()))
+    Rc::new(move |pow_na_a| hooo_rev_and((pow_refl, pow_na_a)).trans(and::paradox)(a.clone()))
 }
