@@ -53,6 +53,12 @@ pub type Uniform<A> = Or<Tauto<A>, Para<A>>;
 /// A proposition is a theory when non-uniform.
 pub type Theory<A> = Not<Uniform<A>>;
 
+/// There exists statement.
+///
+/// This can be used as "there exists" `∃` in First Order Logic by using:
+/// `Exists<Ty<X, T>, ...>` as `∃ x : t { ... }`.
+pub type Exists<A, B> = Not<Pow<Not<B>, A>>;
+
 impl<A: DProp, B: DProp> Decidable for Pow<A, B> {
     fn decide() -> ExcM<Self> {decide()}
 }
