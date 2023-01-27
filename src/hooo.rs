@@ -1537,3 +1537,9 @@ pub fn exists_true_true() -> Exists<True, True> {
 pub fn exists_construct<A: Prop>(a: A) -> Exists<A, A> {
     Rc::new(move |pow_na_a| hooo_rev_and((pow_refl, pow_na_a)).trans(and::paradox)(a.clone()))
 }
+
+/// `¬¬a  =>  ∃ a { a }`.
+pub fn not_not_to_exists<A: Prop>(nna: Not<Not<A>>) -> Exists<A, A> {
+    Rc::new(move |pow_na_a|
+        not_not_to_not_para(nna.clone())(hooo_rev_and((pow_refl, pow_na_a)).trans(and::paradox)))
+}
