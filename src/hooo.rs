@@ -181,6 +181,11 @@ pub fn pow_in_right_arg<A: Prop, B: Prop, C: Prop>(
     hooo_imply(f)(tauto_eq_b_c.lift()).trans(x)
 }
 
+/// `(a == b)^true  =>  (a^c == b^c)^true`.
+pub fn tauto_pow_eq_left<A: Prop, B: Prop, C: Prop>(
+    x: Tauto<Eq<A, B>>
+) -> Tauto<Eq<Pow<A, C>, Pow<B, C>>> {x.lift().trans(pow_eq_left)}
+
 /// `(a == b)^true  =>  (a^c == b^c)`.
 pub fn pow_eq_left<A: Prop, B: Prop, C: Prop>(x: Tauto<Eq<A, B>>) -> Eq<Pow<A, C>, Pow<B, C>> {
     let x2 = tauto_eq_symmetry(x);
