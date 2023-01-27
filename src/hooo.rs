@@ -1543,3 +1543,10 @@ pub fn not_not_to_exists<A: Prop>(nna: Not<Not<A>>) -> Exists<A, A> {
     Rc::new(move |pow_na_a|
         not_not_to_not_para(nna.clone())(hooo_rev_and((pow_refl, pow_na_a)).trans(and::paradox)))
 }
+
+/// `∃ false { false }  =>  false`.
+pub fn para_exists_false_false(x: Exists<False, False>) -> False {
+    imply::in_left(x, |y| pow_in_left_arg(y, tauto!((
+        Rc::new(|_: True| Rc::new(|fa| imply::absurd()(fa))), Rc::new(tr())
+    ))))(tr())
+}
