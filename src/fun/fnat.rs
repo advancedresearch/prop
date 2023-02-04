@@ -117,8 +117,8 @@ pub fn add_is_const() -> IsConst<Add> {unimplemented!()}
 pub fn add_zero<N: Prop>(_n_ty: Ty<N, Nat>) -> Eq<Plus<Zero, N>, N> {unimplemented!()}
 /// `(n : nat) ⋀ (m : nat)  =>  add(n + 1, m) = add(n, m + 1)`.
 pub fn add_succ<N: Prop, M: Prop>(
-    _n_ty: Ty<N, Nat>,
-    _m_ty: Ty<M, Nat>
+    _ty_n: Ty<N, Nat>,
+    _ty_m: Ty<M, Nat>
 ) -> Eq<Plus<Inc<N>, M>, Plus<N, Inc<M>>> {unimplemented!()}
 
 /// `1 : nat`.
