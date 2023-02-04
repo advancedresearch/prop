@@ -142,3 +142,11 @@ pub fn add_eq_zero_to_add_zero_right<N: Prop>(eq_n_zero: Eq<N, Zero>) -> Eq<Plus
     eq::transitivity(eq::transitivity(add_eq_left(eq_n_zero.clone()),
         add_zero(zero_ty())), eq::symmetry(eq_n_zero))
 }
+/// `is_const(k)  =>  ((n + k)[n := m]  ==  m + k)`.
+pub fn add_subst_const_right<N: Prop, M: Prop, K: Prop>(
+    k_is_const: IsConst<K>
+) -> Eq<Subst<Plus<N, K>, N, M>, Plus<M, K>> {
+    eq::transitivity(eq::transitivity(subst_app(), app_map_eq(subst_const(add_is_const()))),
+        app_eq(eq::transitivity(eq::transitivity(subst_tup(),
+        tup_eq_snd(subst_const(k_is_const))), tup_eq_fst(subst_trivial()))))
+}
