@@ -69,6 +69,11 @@ pub fn induction_ty<N: Prop, P: Prop>(
     _case_n: Pow<App<P, Inc<N>>, Ty<N, Nat>>,
 ) -> Pow<App<P, N>, Ty<N, Nat>> {unimplemented!()}
 
+/// `succ(n)[n := a]  ==  succ(a)`.
+pub fn subst_inc<N: Prop, A: Prop>() -> Eq<Subst<Inc<N>, N, A>, Inc<A>> {
+    eq::transitivity(eq::transitivity(subst_app(), app_map_eq(subst_const(succ_is_const()))),
+        app_eq(subst_trivial()))
+}
 /// `(0 == 1)  =>  false`.
 pub fn para_eq_zero_one(x: Eq<Zero, One>) -> False {para_eq_inc((zero_ty(), x))}
 
