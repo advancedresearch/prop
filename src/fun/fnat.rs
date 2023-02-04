@@ -137,3 +137,8 @@ pub fn add_eq_left<A: Prop, B: Prop, C: Prop>(x: Eq<A, B>) -> Eq<Plus<A, C>, Plu
 pub fn add_eq_right<A: Prop, B: Prop, C: Prop>(x: Eq<A, B>) -> Eq<Plus<C, A>, Plus<C, B>> {
     app_eq(tup_eq_snd(x))
 }
+/// `(n == 0)  =>  (n + 0 == n)`.
+pub fn add_eq_zero_to_add_zero_right<N: Prop>(eq_n_zero: Eq<N, Zero>) -> Eq<Plus<N, Zero>, N> {
+    eq::transitivity(eq::transitivity(add_eq_left(eq_n_zero.clone()),
+        add_zero(zero_ty())), eq::symmetry(eq_n_zero))
+}
