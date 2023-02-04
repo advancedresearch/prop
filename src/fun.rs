@@ -707,6 +707,9 @@ pub fn subst_eq<A: Prop, B: Prop, C: Prop, D: Prop, E: Prop, F: Prop>(_x: Eq<Sub
 pub fn subst_eq_lam_body<A: Prop, B: Prop, C: Prop, D: Prop, E: Prop>(
     _x: Eq<Subst<A, C, D>, B>
 ) -> Eq<Lam<E, Subst<A, C, D>>, Lam<E, B>> {unimplemented!()}
+/// `f(a)[b := c] == f[b := c](a[b := c])`.
+pub fn subst_app<F: Prop, A: Prop, B: Prop, C: Prop>() ->
+    Eq<Subst<App<F, A>, B, C>, App<Subst<F, B, C>, Subst<A, B, C>>> {unimplemented!()}
 
 /// Whether some symbol is a constant.
 ///
