@@ -78,6 +78,8 @@ pub struct Zero(());
 
 /// `zero : nat`.
 pub fn zero_ty() -> Ty<Zero, Nat> {unimplemented!()}
+/// `is_const(zero)`.
+pub fn zero_is_const() -> IsConst<Zero> {unimplemented!()}
 
 /// Successor.
 #[derive(Copy, Clone)]
