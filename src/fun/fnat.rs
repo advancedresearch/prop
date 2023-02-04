@@ -19,6 +19,7 @@ pub struct Nat(());
 ///
 /// To avoid this form of collision, the statement is encoded as:
 /// `(x : nat)  =>  (x == 0) ⋁ ((prev(x) : nat) ⋀ (x == prev(x) + 1))`.
+#[derive(Clone)]
 pub struct Prev<A>(A);
 
 /// `nat : type(0)`.
