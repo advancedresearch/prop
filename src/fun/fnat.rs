@@ -29,6 +29,8 @@ pub fn nat_def<X: Prop>(
 ) -> Either<Eq<X, Zero>, And<Ty<Prev<X>, Nat>, Eq<X, Inc<Prev<X>>>>> {unimplemented!()}
 /// `(n : nat) ⋀ (n == n + 1)  =>  false`.
 pub fn para_eq_inc<N: Prop>(_: And<Ty<N, Nat>, Eq<N, Inc<N>>>) -> False {unimplemented!()}
+/// `(n : nat) ⋀ (0 == n + 1)  =>  false`.
+pub fn para_pre_zero<N: Prop>(_: And<Ty<N, Nat>, Eq<Zero, Inc<N>>>) -> False {unimplemented!()}
 /// `(n : nat) ⋀ (m : nat) ⋀ (n + 1 == m + 1)  =>  n == m`.
 pub fn inc_eq_rev<N: Prop, M: Prop>(
     _ty_n: Ty<N, Nat>,
@@ -67,19 +69,6 @@ pub fn induction_ty<N: Prop, P: Prop>(
 /// `(0 == 1)  =>  false`.
 pub fn para_eq_zero_one(x: Eq<Zero, One>) -> False {para_eq_inc((zero_ty(), x))}
 
-/// The type of natural numbers satisfying Peano axioms.
-#[derive(Copy, Clone)]
-pub struct NatP(());
-
-/// `(x : nat_p)  =>  (x : nat)`.
-pub fn weaken_natp_ty<X: Prop>(_: Ty<X, NatP>) -> Ty<X, Nat> {unimplemented!()}
-/// `(0 : nat_p)  =>  (succ : nat_p -> nat_p)`.
-pub fn natp_succ_ty(zero_ty: Ty<Zero, NatP>) -> Ty<Succ, Pow<NatP, NatP>> {
-    hooo::hooo_imply(succ_def)(weaken_natp_ty::<Zero>)(zero_ty)
-}
-/// `(n : nat_p) ⋀ (0 == n + 1)  =>  false`.
-pub fn para_pre_zero<N: Prop>(_: And<Ty<N, NatP>, Eq<Zero, Inc<N>>>) -> False {unimplemented!()}
-
 /// Zero.
 #[derive(Copy, Clone)]
 pub struct Zero(());
@@ -91,14 +80,8 @@ pub fn zero_ty() -> Ty<Zero, Nat> {unimplemented!()}
 #[derive(Copy, Clone)]
 pub struct Succ(());
 
-/// `((x : nat) => (succ : t -> t))^(x : t)`.
-pub fn succ_def<X: Prop, T: Prop>(_: Ty<X, T>) -> Imply<Ty<X, Nat>, Ty<Succ, Pow<T, T>>> {
-    unimplemented!()
-}
 /// `succ : nat -> nat`.
-pub fn succ_ty() -> Ty<Succ, Pow<Nat, Nat>> {
-    hooo::hooo_imply(succ_def)(hooo::pow_refl::<Ty<Zero, Nat>>)(zero_ty())
-}
+pub fn succ_ty() -> Ty<Succ, Pow<Nat, Nat>> {unimplemented!()}
 
 /// Increment.
 pub type Inc<N> = App<Succ, N>;
