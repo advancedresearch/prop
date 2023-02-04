@@ -115,11 +115,11 @@ pub fn add_ty() -> Ty<Add, Pow<Nat, Tup<Nat, Nat>>> {unimplemented!()}
 pub fn add_is_const() -> IsConst<Add> {unimplemented!()}
 /// `(n : nat)  =>  add(0, n) = n`.
 pub fn add_zero<N: Prop>(_n_ty: Ty<N, Nat>) -> Eq<Plus<Zero, N>, N> {unimplemented!()}
-/// `(n : nat) ⋀ (m : nat)  =>  add(n + 1, m) = add(n, m + 1)`.
+/// `(n : nat) ⋀ (m : nat)  =>  add(succ(n), m) = succ(add(n, m))`.
 pub fn add_succ<N: Prop, M: Prop>(
     _ty_n: Ty<N, Nat>,
     _ty_m: Ty<M, Nat>
-) -> Eq<Plus<Inc<N>, M>, Plus<N, Inc<M>>> {unimplemented!()}
+) -> Eq<Plus<Inc<N>, M>, Inc<Plus<N, M>>> {unimplemented!()}
 
 /// `1 : nat`.
 pub fn one_ty() -> Ty<One, Nat> {app_fun_ty(succ_ty(), zero_ty())}
@@ -127,7 +127,7 @@ pub fn one_ty() -> Ty<One, Nat> {app_fun_ty(succ_ty(), zero_ty())}
 pub fn two_ty() -> Ty<Two, Nat> {app_fun_ty(succ_ty(), one_ty())}
 /// `1 + 1 == 2`.
 pub fn eq_plus_one_one_two() -> Eq<Plus<One, One>, Two> {
-    eq::transitivity(add_succ(zero_ty(), one_ty()), add_zero(two_ty()))
+    eq::transitivity(add_succ(zero_ty(), one_ty()), app_eq(add_zero(one_ty())))
 }
 /// `(a == b)  =>  (a + c == b + c)`.
 pub fn add_eq_left<A: Prop, B: Prop, C: Prop>(x: Eq<A, B>) -> Eq<Plus<A, C>, Plus<B, C>> {
