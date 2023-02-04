@@ -111,6 +111,8 @@ pub type Plus<A, B> = App<Add, Tup<A, B>>;
 
 /// `add : (nat, nat) -> nat`.
 pub fn add_ty() -> Ty<Add, Pow<Nat, Tup<Nat, Nat>>> {unimplemented!()}
+/// `is_const(add)`.
+pub fn add_is_const() -> IsConst<Add> {unimplemented!()}
 /// `(n : nat)  =>  add(0, n) = n`.
 pub fn add_zero<N: Prop>(_n_ty: Ty<N, Nat>) -> Eq<Plus<Zero, N>, N> {unimplemented!()}
 /// `(n : nat) ⋀ (m : nat)  =>  add(n + 1, m) = add(n, m + 1)`.
