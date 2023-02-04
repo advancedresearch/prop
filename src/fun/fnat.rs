@@ -24,6 +24,8 @@ pub struct Prev<A>(A);
 
 /// `nat : type(0)`.
 pub fn nat_ty() -> Ty<Nat, Type<Z>> {unimplemented!()}
+/// `is_const(nat)`.
+pub fn nat_is_const() -> IsConst<Nat> {unimplemented!()}
 /// `(x : nat)  =>  (x == 0) ⋁ ((prev(x) : nat) ⋀ (x == prev(x) + 1))`.
 pub fn nat_def<X: Prop>(
     _x_ty: Ty<X, Nat>
