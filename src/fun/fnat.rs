@@ -90,6 +90,11 @@ pub fn succ_ty() -> Ty<Succ, Pow<Nat, Nat>> {unimplemented!()}
 /// `is_const(succ)`.
 pub fn succ_is_const() -> IsConst<Succ> {unimplemented!()}
 
+/// `is_const(n)  =>  is_const(succ(n))`.
+pub fn inc_is_const<N: Prop>(n_is_const: IsConst<N>) -> IsConst<Inc<N>> {
+    app_is_const(succ_is_const(), n_is_const)
+}
+
 /// Increment.
 pub type Inc<N> = App<Succ, N>;
 /// One.
