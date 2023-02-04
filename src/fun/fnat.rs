@@ -87,6 +87,8 @@ pub struct Succ(());
 
 /// `succ : nat -> nat`.
 pub fn succ_ty() -> Ty<Succ, Pow<Nat, Nat>> {unimplemented!()}
+/// `is_const(succ)`.
+pub fn succ_is_const() -> IsConst<Succ> {unimplemented!()}
 
 /// Increment.
 pub type Inc<N> = App<Succ, N>;
