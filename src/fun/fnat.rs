@@ -115,3 +115,7 @@ pub fn two_ty() -> Ty<Two, Nat> {app_fun_ty(succ_ty(), one_ty())}
 pub fn eq_plus_one_one_two() -> Eq<Plus<One, One>, Two> {
     eq::transitivity(add_succ(zero_ty(), one_ty()), add_zero(two_ty()))
 }
+/// `(a == b)  =>  (a + c == b + c)`.
+pub fn add_eq_left<A: Prop, B: Prop, C: Prop>(x: Eq<A, B>) -> Eq<Plus<A, C>, Plus<B, C>> {
+    app_eq(tup_eq_fst(x))
+}
