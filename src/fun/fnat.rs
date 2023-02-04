@@ -119,3 +119,7 @@ pub fn eq_plus_one_one_two() -> Eq<Plus<One, One>, Two> {
 pub fn add_eq_left<A: Prop, B: Prop, C: Prop>(x: Eq<A, B>) -> Eq<Plus<A, C>, Plus<B, C>> {
     app_eq(tup_eq_fst(x))
 }
+/// `(a == b)  =>  (c + a == c + b)`.
+pub fn add_eq_right<A: Prop, B: Prop, C: Prop>(x: Eq<A, B>) -> Eq<Plus<C, A>, Plus<C, B>> {
+    app_eq(tup_eq_snd(x))
+}
