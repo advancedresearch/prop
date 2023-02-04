@@ -677,8 +677,6 @@ pub struct Subst<E, A, B>(E, A, B);
 
 /// `a[a := b] == b`
 pub fn subst_trivial<A: Prop, B: Prop>() -> Eq<Subst<A, A, B>, B> {unimplemented!()}
-/// `a[b := a] == a`.
-pub fn subst_id<A: Prop, B: Prop>() -> Eq<Subst<A, B, A>, A> {unimplemented!()}
 /// `a[b := b] == a`.
 pub fn subst_nop<A: Prop, B: Prop>() -> Eq<Subst<A, B, B>, A> {unimplemented!()}
 /// `(a : b) => (b[c := a] == b)`.
@@ -768,15 +766,17 @@ pub fn lam_app_ty<A: Prop, B: Prop, X: Prop, Y: Prop, C: Prop>(
 }
 /// `(b : x)  =>  (\(a : x) = b)(b) : x`.
 pub fn lam_app_ty_trivial<A: Prop, B: Prop, X: Prop>(
-    ty_b: Ty<B, X>
+    ty_b: Ty<B, X>,
+    b_is_const: IsConst<B>,
 ) -> Ty<App<Lam<Ty<A, X>, B>, B>, X> {
-    path_semantics::ty_eq_left(lam_app_trivial(ty_b.clone())).1(ty_b)
+    path_semantics::ty_eq_left(lam_app_trivial(ty_b.clone(), b_is_const)).1(ty_b)
 }
 /// `(b : x) => ((\(a : x) = b)(b) == b`.
 pub fn lam_app_trivial<A: Prop, B: Prop, X: Prop>(
-    ty_b: Ty<B, X>
+    ty_b: Ty<B, X>,
+    b_is_const: IsConst<B>
 ) -> Eq<App<Lam<Ty<A, X>, B>, B>, B> {
-    eq::transitivity(lam(ty_b), subst_id())
+    eq::transitivity(lam(ty_b), subst_const(b_is_const))
 }
 /// `(a : x) => ((\(a : x) = b)(a) == b`.
 pub fn lam_app_nop<A: Prop, B: Prop, X: Prop>(ty_a: Ty<A, X>) -> Eq<App<Lam<Ty<A, X>, B>, A>, B> {
@@ -821,10 +821,11 @@ pub fn lam_fst_ty<A: Prop, X: Prop, B: Prop, Y: Prop>(
 }
 /// `(c : x)  =>  (\(a : x) = \(b : y) = a)(c) == (\(b : y[a := c]) = c)`.
 pub fn lam_fst<A: Prop, X: Prop, B: Prop, Y: Prop, C: Prop>(
-    ty_c: Ty<C, X>
+    ty_c: Ty<C, X>,
+    c_is_const: IsConst<C>,
 ) -> Eq<App<LamFst<A, X, B, Y>, C>, Lam<Ty<B, Subst<Y, A, C>>, C>> {
     eq::transitivity(eq::transitivity(lam(ty_c), subst_lam()),
-        subst_eq_lam_body(eq::transitivity(subst_eq(subst_trivial()), subst_id())))
+        subst_eq_lam_body(eq::transitivity(subst_eq(subst_trivial()), subst_const(c_is_const))))
 }
 
 /// `\(a : x) = \(b : y) = b`.
