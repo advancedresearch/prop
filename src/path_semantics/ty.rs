@@ -205,6 +205,12 @@ pub fn ty_q_formation<A: Prop, B: Prop, T: Prop, U: Prop>(
     })
 }
 
+/// `(a : T)  =>  (~a : ~T)`.
+pub fn ty_qu_formation<A: Prop, T: Prop>(ty_a: Ty<A, T>) -> Ty<Qu<A>, Qu<T>> {
+    ty_in_right_arg(ty_in_left_arg(ty_q_formation(ty_a.clone(), ty_a),
+        (Rc::new(Qu::from_q), Rc::new(Qu::to_q))), (Rc::new(Qu::from_q), Rc::new(Qu::to_q)))
+}
+
 /// `(a : T) ⋀ (b : U) ⋀ ¬(T == U)  =>  ¬(a ~~ b)`.
 pub fn ty_neq_to_sesh<A: Prop, B: Prop, T: Prop, U: Prop>(
     ty_a: Ty<A, T>,
