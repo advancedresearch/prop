@@ -525,6 +525,13 @@ pub fn self_inv_to_eq_id<F: Prop>(eq_f: Eq<Inv<F>, F>) -> Eq<Comp<F, F>, FId> {
 pub fn id_qu_ty<A: Prop>() -> Ty<Qu<FId>, Qu<Pow<A, A>>> {path_semantics::ty_qu_formation(id_ty())}
 /// `~id`.
 pub fn id_qu() -> Qu<FId> {Qu::from_q(quality::right(id_q()))}
+/// `~true`.
+pub fn true_qu() -> Qu<True> {
+    use path_semantics::{ty_triv, ty_true};
+
+    qubit::in_arg(ty_true(ty_triv(id_qu_ty(), id_qu())),
+        tauto!((True.map_any(), Rc::new(|_| hooo::pow_refl::<True>))))
+}
 
 /// Cumulative type hierarchy.
 #[derive(Copy, Clone)]
