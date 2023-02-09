@@ -68,7 +68,7 @@
 //! With other words, it leverages PSI to say that any proof of `x -> y` is identical to having a
 //! proof of `y -> x` when there exists an inverse and a proof `f : x -> y`.
 //!
-//! # Dependent Types
+//! ### Dependent Types
 //!
 //! [Dependent type theory in nLab](https://ncatlab.org/nlab/show/dependent+type+theory)
 //!
@@ -89,6 +89,21 @@
 //!     - Computation: `dep_fun_app`
 //!
 //! This allows `p(a)` to produce a type depending on previous arguments, hence "dependent type".
+//!
+//! ### Category Theory Perspective
+//!
+//! This model seen from a Category Theory perspective produces an ∞-groupoid.
+//!
+//! - Object: `A: Prop` as generic argument is an object `A` in the ∞-groupoid
+//! - Morphism: `Ty<F, Pow<B, A>>` is a morphism `F` from `A` to `B`, `f : A -> B`
+//! - Identity: `FId` is the identity morphism `id` from any object `A` to `A`
+//! - Composition: `Comp<G, F>` is the composition `g . f`
+//! - Inverse: `Inv<F>` is the imaginary inverse `inv(f)`
+//!
+//! The imaginary inverse makes the category realizable as a groupoid.
+//!
+//! Any expression constructed from these operations can be used where `A: Prop` is allowed.
+//! Therefore, morphisms and higher morphisms are also objects, hence this form an ∞-groupoid.
 
 use crate::*;
 use path_semantics::{POrdProof, Ty};
