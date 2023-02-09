@@ -521,6 +521,8 @@ pub fn self_inv_to_eq_id<F: Prop>(eq_f: Eq<Inv<F>, F>) -> Eq<Comp<F, F>, FId> {
         Rc::new(move |x| comp_in_right_arg(id_to_comp_right_inv(x), eq_f.clone())),
     )
 }
+/// `~id{a} : ~(a -> a)`.
+pub fn id_qu_ty<A: Prop>() -> Ty<Qu<FId>, Qu<Pow<A, A>>> {path_semantics::ty_qu_formation(id_ty())}
 
 /// Cumulative type hierarchy.
 #[derive(Copy, Clone)]
