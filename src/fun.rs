@@ -576,6 +576,8 @@ pub fn tauto_to_eq_qu<A: Prop>(tauto_a: Tauto<A>) -> Eq<Qu<A>, A> {
 pub type IsProp<A> = Tauto<Eq<Qu<A>, A>>;
 /// `is_set(a) := is_prop(~a)`.
 pub type IsSet<A> = IsProp<Qu<A>>;
+/// `is_groupoid(a) := is_set(~a)`.
+pub type IsGroupoid<A> = IsSet<Qu<A>>;
 
 /// `is_prop(true)`.
 pub fn is_prop_true() -> IsProp<True> {tauto!(eq_qu_true_true())}
