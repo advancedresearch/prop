@@ -538,6 +538,11 @@ pub fn tauto_to_qu<A: Prop>(tauto_a: Tauto<A>) -> Qu<A> {
 }
 /// `a^b  =>  ~(a^b)`.
 pub fn pow_qu<A: Prop, B: Prop>(x: Pow<A, B>) -> Qu<Pow<A, B>> {tauto_to_qu(hooo::pow_lift(x))}
+/// `¬~false`.
+pub fn not_qu_false() -> Not<Qu<False>> {
+    imply::in_left(quality::q_inv_to_sesh(Qu::to_q(qubit::in_arg(true_qu(),
+        tauto!((imply::id().map_any(), True.map_any()))))), |y| Qu::to_q(y))
+}
 
 /// Cumulative type hierarchy.
 #[derive(Copy, Clone)]
