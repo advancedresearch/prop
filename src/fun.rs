@@ -593,6 +593,10 @@ pub fn is_prop_to_is_set<A: Prop>(x: IsProp<A>) -> IsSet<A> {
 }
 /// `is_set(a)  =>  is_groupoid(a)`.
 pub fn is_set_to_is_groupoid<A: Prop>(x: IsSet<A>) -> IsGroupoid<A> {is_prop_to_is_set(x)}
+/// `is_prop(a)  =>  is_groupoid(a)`.
+pub fn is_prop_to_is_groupoid<A: Prop>(x: IsProp<A>) -> IsGroupoid<A> {
+    is_set_to_is_groupoid(is_prop_to_is_set(x))
+}
 /// `a^true  =>  is_prop(a)`.
 pub fn tauto_to_is_prop<A: Prop>(tauto_a: Tauto<A>) -> IsProp<A> {
     tauto_a.lift().trans(tauto_to_eq_qu)
