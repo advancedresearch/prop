@@ -583,6 +583,14 @@ pub type IsGroupoid<A> = IsSet<Qu<A>>;
 pub fn is_prop_true() -> IsProp<True> {tauto!(eq_qu_true_true())}
 /// `is_prop(false)`.
 pub fn is_prop_false() -> IsProp<False> {tauto!(eq_qu_false_false())}
+/// `is_prop(a)  =>  is_set(a)`.
+pub fn is_prop_to_is_set<A: Prop>(x: IsProp<A>) -> IsSet<A> {
+    fn f<A: Prop>(x: IsProp<A>) -> Eq<Qu<Qu<A>>, Qu<A>> {
+        let x2 = hooo::tauto_eq_symmetry(x.clone());
+        (Rc::new(move |y| qubit::in_arg(y, x)), Rc::new(move |y| qubit::in_arg(y, x2)))
+    }
+    x.lift().trans(f)
+}
 /// `a^true  =>  is_prop(a)`.
 pub fn tauto_to_is_prop<A: Prop>(tauto_a: Tauto<A>) -> IsProp<A> {
     tauto_a.lift().trans(tauto_to_eq_qu)
