@@ -3,7 +3,7 @@
 //! For an implementation, see the [Pocket-Prover](https://github.com/advancedresearch/pocket_prover) library.
 
 use crate::*;
-use nat::{Z, S};
+use nat::{Nat, Z, S};
 use quality::{Aq, Q};
 
 /// Represents a recursive qubit proposition.
@@ -32,6 +32,15 @@ impl<A: Prop> Qubit<S<Z>, Not<A>> {
     pub fn to_aq(self) -> Aq<A, A> {(eq::refl(), (self.clone(), self))}
     /// Convert from self-quality.
     pub fn from_aq((_, (x, _)): Aq<A, A>) -> Self {x}
+}
+
+/// `~qubit^n(a)  =>  qubit^(n+1)(a)`.
+pub fn normalize<A: Prop, N: Nat>(x: Qubit<S<Z>, Qubit<N, A>>) -> Qubit<S<N>, A> {
+    Qubit(S(x.1.0), x.1.1)
+}
+/// `qubit^(n+1)(a)  =>  ~qubit^n(a)`.
+pub fn rev_normalize<A: Prop, N: Nat>(x: Qubit<S<N>, A>) -> Qubit<S<Z>, Qubit<N, A>> {
+    Qubit(S(Z), Qubit(x.0.0, x.1))
 }
 
 /// `¬~a => ~¬a`.
