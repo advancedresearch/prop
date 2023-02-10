@@ -575,6 +575,8 @@ pub fn tauto_to_eq_qu<A: Prop>(tauto_a: Tauto<A>) -> Eq<Qu<A>, A> {
 /// `is_prop(a) := (~a == a)^true`.
 pub type IsProp<A> = Tauto<Eq<Qu<A>, A>>;
 
+/// `is_prop(true)`.
+pub fn is_prop_true() -> IsProp<True> {tauto!(eq_qu_true_true())}
 /// `a^true  =>  is_prop(a)`.
 pub fn tauto_to_is_prop<A: Prop>(tauto_a: Tauto<A>) -> IsProp<A> {
     tauto_a.lift().trans(tauto_to_eq_qu)
