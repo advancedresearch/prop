@@ -536,6 +536,8 @@ pub fn true_qu() -> Qu<True> {
 pub fn tauto_to_qu<A: Prop>(tauto_a: Tauto<A>) -> Qu<A> {
     qubit::in_arg(true_qu(), hooo::pow_eq_to_tauto_eq((tauto_a, hooo::tr())))
 }
+/// `a^b  =>  ~(a^b)`.
+pub fn pow_qu<A: Prop, B: Prop>(x: Pow<A, B>) -> Qu<Pow<A, B>> {tauto_to_qu(hooo::pow_lift(x))}
 
 /// Cumulative type hierarchy.
 #[derive(Copy, Clone)]
