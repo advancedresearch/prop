@@ -571,6 +571,10 @@ pub fn eq_qu_false_false() -> Eq<Qu<False>, False> {and::to_eq_neg((not_qu_false
 pub fn tauto_to_eq_qu<A: Prop>(tauto_a: Tauto<A>) -> Eq<Qu<A>, A> {
     (tauto_a(True).map_any(), tauto_to_qu(tauto_a).map_any())
 }
+
+/// `is_prop(a) := (~a == a)^true`.
+pub type IsProp<A> = Tauto<Eq<Qu<A>, A>>;
+
 /// `(f ~~ g)^true  =>  (~~f == ~f)^true`.
 pub fn collapse_to_set_left<F: Prop, G: Prop>(x: Tauto<Q<F, G>>) -> Tauto<Eq<Qu<Qu<F>>, Qu<F>>> {
     x.trans(quality::left).trans(Qu::from_q).lift().trans(tauto_to_eq_qu)
