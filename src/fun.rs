@@ -585,6 +585,8 @@ pub fn is_prop_true() -> IsProp<True> {tauto!(eq_qu_true_true())}
 pub fn is_prop_false() -> IsProp<False> {tauto!(eq_qu_false_false())}
 /// `is_set(id)`.
 pub fn is_set_id() -> IsSet<FId> {collapse_to_set_right(tauto!(id_q()))}
+/// `is_set(not)`.
+pub fn is_set_not() -> IsSet<bool_alg::FNot> {collapse_to_set_right(tauto!(bool_alg::not_q()))}
 /// `is_prop(a)  =>  is_set(a)`.
 pub fn is_prop_to_is_set<A: Prop>(x: IsProp<A>) -> IsSet<A> {
     fn f<A: Prop>(x: IsProp<A>) -> Eq<Qu<Qu<A>>, Qu<A>> {
