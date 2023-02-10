@@ -131,6 +131,7 @@ use qubit::Qu;
 use hooo::{Pow, Tauto};
 use hooo::pow::PowExt;
 use nat::{Nat, S, Z};
+use univalence::HomEq3;
 pub use tup::*;
 
 mod tup;
@@ -586,6 +587,16 @@ pub fn collapse_to_eq_qu_2<F: Prop, G: Prop>(
     hooo::tauto_eq_transitivity(
         hooo::tauto_eq_transitivity(collapse_to_set_left(x.clone()), x.trans(h)),
         hooo::tauto_eq_symmetry(collapse_to_set_right(x)))
+}
+/// `(f ~~ g)^true  =>  hom_eq(3, f, g)^true`.
+pub fn collapse_to_hom_eq_3<F: Prop, G: Prop>(x: Tauto<Q<F, G>>) -> Tauto<HomEq3<F, G>> {
+    use qubit::{Qubit, normalize, rev_normalize};
+    use nat::Two;
+    fn h<F: Prop, G: Prop>((a, b): Eq<Qu<Qu<F>>, Qu<Qu<G>>>) -> Eq<Qubit<Two, F>, Qubit<Two, G>> {
+        (Rc::new(move |x| normalize(a(rev_normalize(x)))),
+         Rc::new(move |x| normalize(b(rev_normalize(x)))))
+    }
+    hooo::hooo_rev_and((collapse_to_eq_qu_2(x).trans(h), x.trans(univalence::q_to_hom_eq_2)))
 }
 
 /// Cumulative type hierarchy.
