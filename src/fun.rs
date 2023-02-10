@@ -566,6 +566,10 @@ pub fn not_qu_false() -> Not<Qu<False>> {
 }
 /// `~false == false`.
 pub fn eq_qu_false_false() -> Eq<Qu<False>, False> {and::to_eq_neg((not_qu_false(), imply::id()))}
+/// `a^true  =>  (~a == a)`.
+pub fn tauto_to_eq_qu<A: Prop>(tauto_a: Tauto<A>) -> Eq<Qu<A>, A> {
+    (tauto_a(True).map_any(), tauto_to_qu(tauto_a).map_any())
+}
 
 /// Cumulative type hierarchy.
 #[derive(Copy, Clone)]
