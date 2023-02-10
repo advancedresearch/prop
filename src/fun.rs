@@ -585,8 +585,8 @@ pub fn is_prop_false() -> IsProp<False> {tauto!(eq_qu_false_false())}
 pub fn tauto_to_is_prop<A: Prop>(tauto_a: Tauto<A>) -> IsProp<A> {
     tauto_a.lift().trans(tauto_to_eq_qu)
 }
-/// `(f ~~ g)^true  =>  (~~f == ~f)^true`.
-pub fn collapse_to_set_left<F: Prop, G: Prop>(x: Tauto<Q<F, G>>) -> Tauto<Eq<Qu<Qu<F>>, Qu<F>>> {
+/// `(f ~~ g)^true  =>  is_set(f)`.
+pub fn collapse_to_set_left<F: Prop, G: Prop>(x: Tauto<Q<F, G>>) -> IsSet<F> {
     x.trans(quality::left).trans(Qu::from_q).lift().trans(tauto_to_eq_qu)
 }
 /// `(f ~~ g)^true  =>  (~~g == ~g)^true`.
