@@ -575,6 +575,10 @@ pub fn tauto_to_eq_qu<A: Prop>(tauto_a: Tauto<A>) -> Eq<Qu<A>, A> {
 /// `is_prop(a) := (~a == a)^true`.
 pub type IsProp<A> = Tauto<Eq<Qu<A>, A>>;
 
+/// `a^true  =>  is_prop(a)`.
+pub fn tauto_to_is_prop<A: Prop>(tauto_a: Tauto<A>) -> IsProp<A> {
+    tauto_a.lift().trans(tauto_to_eq_qu)
+}
 /// `(f ~~ g)^true  =>  (~~f == ~f)^true`.
 pub fn collapse_to_set_left<F: Prop, G: Prop>(x: Tauto<Q<F, G>>) -> Tauto<Eq<Qu<Qu<F>>, Qu<F>>> {
     x.trans(quality::left).trans(Qu::from_q).lift().trans(tauto_to_eq_qu)
