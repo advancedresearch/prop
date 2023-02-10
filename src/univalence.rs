@@ -191,6 +191,8 @@ for And<Eq<Qubit<X, A>, Qubit<X, A>>, <X as HLev>::Out<A, A>>
 pub type HomEq<N, A, B> = <N as HLev>::Out<A, B>;
 /// Homotopy equality of level 2.
 pub type HomEq2<A, B> = HomEq<S<S<Z>>, A, B>;
+/// Homotopy equality of level 3.
+pub type HomEq3<A, B> = HomEq<S<S<S<Z>>>, A, B>;
 
 /// `hom_eq(n, a, b) ⋀ hom_eq(n, b, c) => hom_eq(n, a, c)`.
 pub fn hom_eq_transitivity<N: HLev, A: Prop, B: Prop, C: Prop>(
