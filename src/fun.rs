@@ -578,6 +578,15 @@ pub fn collapse_to_set_left<F: Prop, G: Prop>(x: Tauto<Q<F, G>>) -> Tauto<Eq<Qu<
 pub fn collapse_to_set_right<F: Prop, G: Prop>(x: Tauto<Q<F, G>>) -> Tauto<Eq<Qu<Qu<G>>, Qu<G>>> {
     collapse_to_set_left(x.trans(quality::symmetry))
 }
+/// `(f ~~ g)^true  =>  (~~g == ~~f)^true`.
+pub fn collapse_to_eq_qu_2<F: Prop, G: Prop>(
+    x: Tauto<Q<F, G>>
+) -> Tauto<Eq<Qu<Qu<F>>, Qu<Qu<G>>>> {
+    fn h<F: Prop, G: Prop>(q: Q<F, G>) -> Eq<Qu<F>, Qu<G>> {and::to_eq_pos(q.1)}
+    hooo::tauto_eq_transitivity(
+        hooo::tauto_eq_transitivity(collapse_to_set_left(x.clone()), x.trans(h)),
+        hooo::tauto_eq_symmetry(collapse_to_set_right(x)))
+}
 
 /// Cumulative type hierarchy.
 #[derive(Copy, Clone)]
