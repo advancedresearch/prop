@@ -128,7 +128,7 @@ use crate::*;
 use path_semantics::{POrdProof, Ty};
 use quality::Q;
 use qubit::Qu;
-use hooo::{Pow, Tauto};
+use hooo::{Para, Pow, Tauto};
 use hooo::pow::PowExt;
 use nat::{Nat, S, Z};
 use univalence::HomEq3;
@@ -574,6 +574,11 @@ pub fn not_qu_false() -> Not<Qu<False>> {
 }
 /// `~false == false`.
 pub fn eq_qu_false_false() -> Eq<Qu<False>, False> {and::to_eq_neg((not_qu_false(), imply::id()))}
+/// `false^a  =>  ¬~a`.
+pub fn para_to_not_qu<A: Prop>(para_a: Para<A>) -> Not<Qu<A>> {
+    imply::in_left(not_qu_false(),
+        move |y| qubit::in_arg(y, hooo::pow_eq_to_tauto_eq((para_a, hooo::fa()))))
+}
 /// `a^true  =>  (~a == a)`.
 pub fn tauto_to_eq_qu<A: Prop>(tauto_a: Tauto<A>) -> Eq<Qu<A>, A> {
     (tauto_a(True).map_any(), tauto_to_qu(tauto_a).map_any())
