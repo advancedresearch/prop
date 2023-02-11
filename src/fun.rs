@@ -211,6 +211,12 @@ pub fn app_rev_lam_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
     _ty_a: Ty<A, X>,
     _ty_fa: Imply<Ty<A, X>, Ty<App<F, A>, Y>>
 ) -> Ty<F, Imply<Y, X>> {unimplemented!()}
+/// `(f : (x -> y)) ⋀ (g : (x -> y)) ⋀ (f(a) == g(a))^(a : x)  =>  (f == g)`.
+pub fn app_fun_ext<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>(
+    _ty_f: Ty<F, Pow<Y, X>>,
+    _ty_g: Ty<G, Pow<Y, X>>,
+    _pow_eq_fa_ga_ty_a: Pow<Eq<App<F, A>, App<G, A>>, Ty<A, X>>
+) -> Eq<F, G> {unimplemented!()}
 
 /// `(f : (x -> y)) ⋀ (a : x)  =>  (f(a) : y)`.
 ///
