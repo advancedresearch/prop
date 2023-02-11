@@ -583,6 +583,11 @@ pub fn para_to_not_qu<A: Prop>(para_a: Para<A>) -> Not<Qu<A>> {
 pub fn tauto_to_eq_qu<A: Prop>(tauto_a: Tauto<A>) -> Eq<Qu<A>, A> {
     (tauto_a(True).map_any(), tauto_to_qu(tauto_a).map_any())
 }
+/// `false^a  =>  (~a == a)`.
+pub fn para_to_eq_qu<A: Prop>(para_a: Para<A>) -> Eq<Qu<A>, A> {
+    (Rc::new(move |qu_a| imply::absurd()(para_to_not_qu(para_a)(qu_a))),
+     Rc::new(move |a| imply::absurd()(para_a(a))))
+}
 
 /// `is_prop(a) := (~a == a)^true`.
 pub type IsProp<A> = Tauto<Eq<Qu<A>, A>>;
