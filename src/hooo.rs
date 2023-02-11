@@ -1565,3 +1565,8 @@ pub fn para_exists_false_false(x: Exists<False, False>) -> False {
 pub fn exists_left_refl<A: Prop, B: Prop>(x: Exists<A, B>) -> Exists<A, A> {
     Rc::new(move |pow_na_a| x(hooo_rev_and((pow_refl, pow_na_a)).trans(and::paradox).trans(fa())))
 }
+
+/// `b^a ⋀ a  =>  ∃ a { b }`.
+pub fn modus_ponens_to_exists<A: Prop, B: Prop>(pow_ba: Pow<B, A>, a: A) -> Exists<A, B> {
+    Rc::new(move |pow_nb_a| hooo_rev_and((pow_ba, pow_nb_a)).trans(and::paradox)(a.clone()))
+}
