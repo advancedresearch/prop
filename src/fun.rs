@@ -612,6 +612,10 @@ pub type IsGroupoid<A> = IsSet<Qu<A>>;
 pub fn is_prop_true() -> IsProp<True> {tauto!(eq_qu_true_true())}
 /// `is_prop(false)`.
 pub fn is_prop_false() -> IsProp<False> {tauto!(eq_qu_false_false())}
+/// `a^b  =>  is_prop(a^b)`.
+pub fn pow_to_is_prop<A: Prop, B: Prop>(x: Pow<A, B>) -> IsProp<Pow<A, B>> {
+    x.lift().trans(pow_to_eq_qu)
+}
 /// `is_set(id)`.
 pub fn is_set_id() -> IsSet<FId> {collapse_to_set_right(tauto!(id_q()))}
 /// `is_set(not)`.
