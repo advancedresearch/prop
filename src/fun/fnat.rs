@@ -72,6 +72,12 @@ pub fn induction_ty<N: Prop, P: Prop>(
 pub fn subst_induction<N: Prop, X: Prop, M: Prop>(
     _: Pow<X, Ty<N, Nat>>
 ) -> Pow<Subst<X, N, Inc<N>>, Ty<Inc<N>, Nat>> {unimplemented!()}
+/// `n : nat ⋀ ∃ 0 : nat { x } ⋀ ∃ succ(n) : nat { x }  =>  x`.
+pub fn exists_induction<N: Prop, X: Prop>(
+    _ty_n: Ty<N, Nat>,
+    _exists_zero_x: Exists<Ty<Zero, Nat>, X>,
+    _exists_succ_n_x: Exists<Ty<Inc<N>, Nat>, X>
+) -> X {unimplemented!()}
 
 /// `succ(n)[n := a]  ==  succ(a)`.
 pub fn subst_inc<N: Prop, A: Prop>() -> Eq<Subst<Inc<N>, N, A>, Inc<A>> {
