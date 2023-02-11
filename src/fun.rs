@@ -622,6 +622,8 @@ pub fn is_prop_to_is_groupoid<A: Prop>(x: IsProp<A>) -> IsGroupoid<A> {
 pub fn tauto_to_is_prop<A: Prop>(tauto_a: Tauto<A>) -> IsProp<A> {
     tauto_a.lift().trans(tauto_to_eq_qu)
 }
+/// `false^a  =>  is_prop(a)`.
+pub fn para_to_is_prop<A: Prop>(para_a: Para<A>) -> IsProp<A> {para_a.lift().trans(para_to_eq_qu)}
 /// `(f ~~ g)^true  =>  is_set(f)`.
 pub fn collapse_to_set_left<F: Prop, G: Prop>(x: Tauto<Q<F, G>>) -> IsSet<F> {
     x.trans(quality::left).trans(Qu::from_q).lift().trans(tauto_to_eq_qu)
