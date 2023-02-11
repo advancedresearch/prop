@@ -1580,3 +1580,8 @@ pub fn exists_true<A: Prop>(a: A) -> Exists<True, A> {
 pub fn exists_not_to_not_pow<A: Prop, B: Prop>(x: Exists<A, Not<B>>) -> Not<Pow<B, A>> {
     imply::in_left(x, |y: Pow<B, A>| y.trans(not::double))
 }
+
+/// `∃ a { ¬b }  =>  ¬(b^true)`.
+pub fn exists_not_to_not_tauto_right<A: Prop, B: Prop>(x: Exists<A, Not<B>>) -> Not<Tauto<B>> {
+    imply::in_left(exists_not_to_not_pow(x), |y: Tauto<B>| tr().trans(y))
+}
