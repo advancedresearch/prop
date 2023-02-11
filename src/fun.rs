@@ -23,6 +23,8 @@
 //! (inv(f) ~~ g) => ~inv(f)
 //! ```
 //!
+//! From `~inv(f)` one can prove `~f` and vice versa (`inv_qu` and `inv_rev_qu`).
+//!
 //! It means that one uses path semantical quality instead of equality for inverses.
 //! Path semantical quality `inv(f) ~~ g` also implies `inv(f) == g`,
 //! which is useful in proofs.
