@@ -454,6 +454,8 @@ pub fn comp_assoc<F: Prop, G: Prop, H: Prop>() -> Eq<Comp<H, Comp<G, F>>, Comp<C
 pub fn comp_id_left<F: Prop>() -> Eq<Comp<FId, F>, F> {unimplemented!()}
 /// `f . id  ==  f`.
 pub fn comp_id_right<F: Prop>() -> Eq<Comp<F, FId>, F> {unimplemented!()}
+/// `~f ⋀ ~g  =>  ~(g . f)`.
+pub fn comp_qu<F: Prop, G: Prop>(_: Qu<F>, _: Qu<G>) -> Qu<Comp<G, F>> {unimplemented!()}
 
 /// `(inv(f) . inv(g)) == inv(g . f)`.
 pub fn comp_inv<F: Prop, G: Prop>() -> Eq<Comp<Inv<F>, Inv<G>>, Inv<Comp<G, F>>> {
