@@ -458,6 +458,10 @@ pub fn comp_id_right<F: Prop>() -> Eq<Comp<F, FId>, F> {unimplemented!()}
 /// `~f ⋀ ~g  =>  ~(g . f)`.
 pub fn comp_qu<F: Prop, G: Prop>(_: Qu<F>, _: Qu<G>) -> Qu<Comp<G, F>> {unimplemented!()}
 
+/// `~inv(f) ⋀ ~inv(g)  =>  ~inv(g . f)`.
+pub fn comp_inv_qu<F: Prop, G: Prop>(x: Qu<Inv<F>>, y: Qu<Inv<G>>) -> Qu<Inv<Comp<G, F>>> {
+    inv_qu(comp_qu(inv_rev_qu(x), inv_rev_qu(y)))
+}
 /// `(inv(f) . inv(g)) == inv(g . f)`.
 pub fn comp_inv<F: Prop, G: Prop>() -> Eq<Comp<Inv<F>, Inv<G>>, Inv<Comp<G, F>>> {
     (hooo::pow_to_imply(comp_inv_to_inv_comp), hooo::pow_to_imply(inv_comp_to_comp_inv))
