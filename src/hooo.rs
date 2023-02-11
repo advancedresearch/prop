@@ -1570,3 +1570,8 @@ pub fn exists_left_refl<A: Prop, B: Prop>(x: Exists<A, B>) -> Exists<A, A> {
 pub fn modus_ponens_to_exists<A: Prop, B: Prop>(pow_ba: Pow<B, A>, a: A) -> Exists<A, B> {
     Rc::new(move |pow_nb_a| hooo_rev_and((pow_ba, pow_nb_a)).trans(and::paradox)(a.clone()))
 }
+
+/// `a  =>  ∃ true { a }`.
+pub fn exists_true<A: Prop>(a: A) -> Exists<True, A> {
+    Rc::new(move |tauto_na| tauto_na(True)(a.clone()))
+}
