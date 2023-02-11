@@ -28,6 +28,14 @@ pub fn fa_is_const() -> IsConst<Fa> {unimplemented!()}
 pub fn bool_values<A: Prop>(_ty_a: Ty<A, Bool>) -> Or<Eq<A, Tr>, Eq<A, Fa>> {unimplemented!()}
 /// True and false are exclusive.
 pub fn para_eq_tr_fa(_: Eq<Tr, Fa>) -> False {unimplemented!()}
+/// `(f : bool -> bool) ⋀ (g : bool -> bool) ⋀
+//  (f(tr) == g(tr))^true ⋀ (f(fa) == g(fa))^true  =>  (f == g)^true`.
+pub fn bool1_fun_ext<F: Prop, G: Prop>(
+    _ty_f: Ty<F, Pow<Bool, Bool>>,
+    _ty_g: Ty<G, Pow<Bool, Bool>>,
+    _case_tr: Tauto<Eq<App<F, Tr>, App<G, Tr>>>,
+    _case_fa: Tauto<Eq<App<F, Fa>, App<G, Fa>>>
+) -> Tauto<Eq<F, G>> {unimplemented!()}
 
 /// False1 function.
 #[derive(Clone, Copy)]
