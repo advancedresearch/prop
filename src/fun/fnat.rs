@@ -133,6 +133,13 @@ pub fn add_succ<N: Prop, M: Prop>(
 pub fn add_succ_plus_one<N: Prop>(_ty_n: Ty<N, Nat>) -> Eq<Inc<N>, Plus<N, One>> {unimplemented!()}
 /// `(n : nat)  =>  add(n, 0) == n`.
 pub fn add_zero_right<N: Prop>(_ty_n: Ty<N, Nat>) -> Eq<Plus<N, Zero>, N> {unimplemented!()}
+/// `(n : nat) ⋀ (m : nat) ⋀ (a : nat) ⋀ (n + a == m + a)  =>  (n == m)`.
+pub fn add_rev_eq_left<N: Prop, M: Prop, A: Prop>(
+    _n_ty: Ty<N, Nat>,
+    _m_ty: Ty<M, Nat>,
+    _a_ty: Ty<A, Nat>,
+    _x: Eq<Plus<N, A>, Plus<M, A>>
+) -> Eq<N, M> {unimplemented!()}
 
 /// `1 : nat`.
 pub fn one_ty() -> Ty<One, Nat> {app_fun_ty(succ_ty(), zero_ty())}
