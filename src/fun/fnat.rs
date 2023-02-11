@@ -68,6 +68,10 @@ pub fn induction_ty<N: Prop, P: Prop>(
     _case_zero: Tauto<App<P, Zero>>,
     _case_n: Pow<App<P, Inc<N>>, Ty<N, Nat>>,
 ) -> Pow<App<P, N>, Ty<N, Nat>> {unimplemented!()}
+/// `x^(n : nat)  =>  (x[n := succ(n)])^(succ(n) : nat)`.
+pub fn subst_induction<N: Prop, X: Prop, M: Prop>(
+    _: Pow<X, Ty<N, Nat>>
+) -> Pow<Subst<X, N, Inc<N>>, Ty<Inc<N>, Nat>> {unimplemented!()}
 
 /// `succ(n)[n := a]  ==  succ(a)`.
 pub fn subst_inc<N: Prop, A: Prop>() -> Eq<Subst<Inc<N>, N, A>, Inc<A>> {
