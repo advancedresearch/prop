@@ -140,6 +140,13 @@ pub fn add_rev_eq_left<N: Prop, M: Prop, A: Prop>(
     _a_ty: Ty<A, Nat>,
     _x: Eq<Plus<N, A>, Plus<M, A>>
 ) -> Eq<N, M> {unimplemented!()}
+/// `(n : nat) ⋀ (m : nat) ⋀ (a : nat) ⋀ (n + a == m + a)  =>  (n == m)`.
+pub fn add_rev_eq_right<N: Prop, M: Prop, A: Prop>(
+    _n_ty: Ty<N, Nat>,
+    _m_ty: Ty<M, Nat>,
+    _a_ty: Ty<A, Nat>,
+    _x: Eq<Plus<A, N>, Plus<A, M>>
+) -> Eq<N, M> {unimplemented!()}
 
 /// `1 : nat`.
 pub fn one_ty() -> Ty<One, Nat> {app_fun_ty(succ_ty(), zero_ty())}
