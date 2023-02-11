@@ -596,6 +596,10 @@ pub fn para_to_eq_qu<A: Prop>(para_a: Para<A>) -> Eq<Qu<A>, A> {
     (Rc::new(move |qu_a| imply::absurd()(para_to_not_qu(para_a)(qu_a))),
      Rc::new(move |a| imply::absurd()(para_a(a))))
 }
+/// `a^b  =>  (~(a^b) == a^b)`.
+pub fn pow_to_eq_qu<A: Prop, B: Prop>(x: Pow<A, B>) -> Eq<Qu<Pow<A, B>>, Pow<A, B>> {
+    tauto_to_eq_qu(x.lift())
+}
 
 /// `is_prop(a) := (~a == a)^true`.
 pub type IsProp<A> = Tauto<Eq<Qu<A>, A>>;
