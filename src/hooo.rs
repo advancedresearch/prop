@@ -1575,3 +1575,8 @@ pub fn modus_ponens_to_exists<A: Prop, B: Prop>(pow_ba: Pow<B, A>, a: A) -> Exis
 pub fn exists_true<A: Prop>(a: A) -> Exists<True, A> {
     Rc::new(move |tauto_na| tauto_na(True)(a.clone()))
 }
+
+/// `∃ a { ¬b }  =>  ¬(b^a)`.
+pub fn exists_not_to_not_pow<A: Prop, B: Prop>(x: Exists<A, Not<B>>) -> Not<Pow<B, A>> {
+    imply::in_left(x, |y: Pow<B, A>| y.trans(not::double))
+}
