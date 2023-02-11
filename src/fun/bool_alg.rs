@@ -26,6 +26,8 @@ pub fn fa_ty() -> Ty<Fa, Bool> {unimplemented!()}
 pub fn fa_is_const() -> IsConst<Fa> {unimplemented!()}
 /// Boolean values.
 pub fn bool_values<A: Prop>(_ty_a: Ty<A, Bool>) -> Or<Eq<A, Tr>, Eq<A, Fa>> {unimplemented!()}
+/// `false^(tr == fa)`.
+///
 /// True and false are exclusive.
 pub fn para_eq_tr_fa(_: Eq<Tr, Fa>) -> False {unimplemented!()}
 /// `∃ tr : bool { x } ⋀ ∃ fa : bool { x }  =>  x`.
