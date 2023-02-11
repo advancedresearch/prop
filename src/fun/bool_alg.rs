@@ -28,14 +28,11 @@ pub fn fa_is_const() -> IsConst<Fa> {unimplemented!()}
 pub fn bool_values<A: Prop>(_ty_a: Ty<A, Bool>) -> Or<Eq<A, Tr>, Eq<A, Fa>> {unimplemented!()}
 /// True and false are exclusive.
 pub fn para_eq_tr_fa(_: Eq<Tr, Fa>) -> False {unimplemented!()}
-/// `(f : bool -> bool) ⋀ (g : bool -> bool) ⋀
-/// ∃ tr : bool { f == g } ⋀ ∃ fa : bool { f == g }  =>  (f == g)`.
-pub fn bool1_exists_fun_ext<F: Prop, G: Prop>(
-    _ty_f: Ty<F, Pow<Bool, Bool>>,
-    _ty_g: Ty<G, Pow<Bool, Bool>>,
-    _case_tr: Exists<Ty<Tr, Bool>, Eq<F, G>>,
-    _case_fa: Exists<Ty<Fa, Bool>, Eq<F, G>>
-) -> Eq<F, G> {unimplemented!()}
+/// `∃ tr : bool { x } ⋀ ∃ fa : bool { x }  =>  x`.
+pub fn bool_exists<X: Prop>(
+    _case_tr: Exists<Ty<Tr, Bool>, X>,
+    _case_fa: Exists<Ty<Fa, Bool>, X>
+) -> X {unimplemented!()}
 
 /// `(f : bool -> bool) ⋀ (g : bool -> bool) ⋀
 //  (f(tr) == g(tr))^true ⋀ (f(fa) == g(fa))^true  =>  (f == g)^true`.
@@ -45,9 +42,8 @@ pub fn bool1_fun_ext<F: Prop, G: Prop>(
     case_tr: Tauto<Eq<App<F, Tr>, App<G, Tr>>>,
     case_fa: Tauto<Eq<App<F, Fa>, App<G, Fa>>>
 ) -> Eq<F, G> {
-    bool1_exists_fun_ext(ty_f.clone(), ty_g.clone(),
-        app_fun_ext(ty_f.clone(), ty_g.clone(), hooo::tr().trans(case_tr)),
-        app_fun_ext(ty_f, ty_g, hooo::tr().trans(case_fa)))
+    bool_exists(app_fun_ext(ty_f.clone(), ty_g.clone(), hooo::tr().trans(case_tr)),
+                app_fun_ext(ty_f, ty_g, hooo::tr().trans(case_fa)))
 }
 
 /// False1 function.
