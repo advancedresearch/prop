@@ -378,6 +378,8 @@ pub fn qu_double<F: Prop>(x: Qu<F>) -> Qu<Inv<Inv<F>>> {
 pub fn qu_rev_double<F: Prop>(x: Qu<Inv<Inv<F>>>) -> Qu<F> {
     qu_tauto_eq_to_q(x, hooo::pow_eq_to_tauto_eq((inv_involve, involve_inv))).1.1
 }
+/// `~inv(f) => ~f`.
+pub fn inv_rev_qu<F: Prop>(x: Qu<Inv<F>>) -> Qu<F> {qu_rev_double(inv_qu(x))}
 /// `~inv(f) ⋀ (f == g)^true  =>  ~inv(g)`.
 pub fn qu_inv_tauto_eq_to_qu_inv<F: Prop, G: Prop>(
     x: Qu<Inv<F>>,
