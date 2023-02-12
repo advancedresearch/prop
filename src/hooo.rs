@@ -1605,3 +1605,8 @@ pub fn exists_fst<A: Prop, B: Prop, X: Prop>(x: Exists<And<A, B>, X>) -> Exists<
 pub fn exists_snd<A: Prop, B: Prop, X: Prop>(x: Exists<And<A, B>, X>) -> Exists<B, X> {
     Rc::new(move |pow_nx_a| x(pow_transitivity(and::snd, pow_nx_a)))
 }
+
+/// `∃ a { x } ⋀ b^a  =>  ∃ b { x }`.
+pub fn exists_pow<A: Prop, B: Prop, X: Prop>(x: Exists<A, X>, pow_ba: Pow<B, A>) -> Exists<B, X> {
+    Rc::new(move |pow_nx_a| x(pow_transitivity(pow_ba, pow_nx_a)))
+}
