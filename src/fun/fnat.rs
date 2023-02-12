@@ -85,6 +85,17 @@ pub fn subst_inc<N: Prop, A: Prop>() -> Eq<Subst<Inc<N>, N, A>, Inc<A>> {
 }
 /// `(0 == 1)  =>  false`.
 pub fn para_eq_zero_one(x: Eq<Zero, One>) -> False {para_eq_inc((zero_ty(), x))}
+/// `f : nat -> nat ⋀ g : nat -> nat ⋀
+/// (f(0) == g(0))^true ⋀ (f(succ(n)) == g(succ(n)))^(succ(n) : nat)  =>  (f == g)`.
+pub fn nat1_fun_ext<N: Prop, F: Prop, G: Prop>(
+    ty_f: Ty<F, Pow<Nat, Nat>>,
+    ty_g: Ty<G, Pow<Nat, Nat>>,
+    case_zero: Tauto<Eq<App<F, Zero>, App<G, Zero>>>,
+    case_succ: Pow<Eq<App<F, Inc<N>>, App<G, Inc<N>>>, Ty<Inc<N>, Nat>>
+) -> Eq<F, G> {
+    nat_exists(app_fun_ext(ty_f.clone(), ty_g.clone(), hooo::tr().trans(case_zero)),
+               app_fun_ext(ty_f, ty_g, case_succ))
+}
 
 /// Zero.
 #[derive(Copy, Clone)]
