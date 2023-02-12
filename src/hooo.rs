@@ -1555,7 +1555,10 @@ pub fn not_not_to_exists<A: Prop>(nna: Not<Not<A>>) -> Exists<A, A> {
 }
 
 /// `∃ false { false }  =>  false`.
-pub fn para_exists_false_false(x: Exists<False, False>) -> False {
+pub fn para_exists_false_false(x: Exists<False, False>) -> False {para_exists_false(x)}
+
+/// `∃ a { false }  =>  false`.
+pub fn para_exists_false<A: Prop>(x: Exists<A, False>) -> False {
     imply::in_left(x, |y| pow_in_left_arg(y, tauto!((
         Rc::new(|_: True| Rc::new(|fa| imply::absurd()(fa))), Rc::new(tr())
     ))))(tr())
