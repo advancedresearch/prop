@@ -1585,3 +1585,8 @@ pub fn exists_not_to_not_pow<A: Prop, B: Prop>(x: Exists<A, Not<B>>) -> Not<Pow<
 pub fn exists_not_to_not_tauto_right<A: Prop, B: Prop>(x: Exists<A, Not<B>>) -> Not<Tauto<B>> {
     imply::in_left(exists_not_to_not_pow(x), |y: Tauto<B>| tr().trans(y))
 }
+
+/// `∃ a { x }   =>  ∃ a ⋁ b { x }`.
+pub fn exists_left<A: Prop, B: Prop, X: Prop>(exists_a_x: Exists<A, X>) -> Exists<Or<A, B>, X> {
+    Rc::new(move |pow_nx_or_ab| exists_a_x(hooo::pow_transitivity(Left, pow_nx_or_ab)))
+}
