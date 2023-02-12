@@ -1595,3 +1595,8 @@ pub fn exists_left<A: Prop, B: Prop, X: Prop>(exists_a_x: Exists<A, X>) -> Exist
 pub fn exists_right<A: Prop, B: Prop, X: Prop>(exists_b_x: Exists<B, X>) -> Exists<Or<A, B>, X> {
     Rc::new(move |pow_nx_or_ab| exists_b_x(pow_transitivity(Right, pow_nx_or_ab)))
 }
+
+/// `∃ a ⋀ b { x }  =>  ∃ a { x }`.
+pub fn exists_fst<A: Prop, B: Prop, X: Prop>(x: Exists<And<A, B>, X>) -> Exists<A, X> {
+    Rc::new(move |pow_nx_a| x(pow_transitivity(and::fst, pow_nx_a)))
+}
