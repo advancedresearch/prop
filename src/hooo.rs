@@ -1613,3 +1613,11 @@ pub fn exists_snd<A: Prop, B: Prop, X: Prop>(x: Exists<And<A, B>, X>) -> Exists<
 pub fn exists_pow<A: Prop, B: Prop, X: Prop>(x: Exists<A, X>, pow_ba: Pow<B, A>) -> Exists<B, X> {
     Rc::new(move |pow_nx_a| x(pow_transitivity(pow_ba, pow_nx_a)))
 }
+
+/// `∃ a { x } ⋀ ∃ b { x }  =>  ∃ a ⋀ b { x }`.
+pub fn exists_join<A: DProp, B: DProp, X: DProp>(
+    a: Exists<A, X>,
+    b: Exists<B, X>
+) -> Exists<And<A, B>, X> {
+    Rc::new(move |x| imply::in_left(and::to_de_morgan((a.clone(), b.clone())), hooo_dual_and)(x))
+}
