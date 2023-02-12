@@ -1590,3 +1590,8 @@ pub fn exists_not_to_not_tauto_right<A: Prop, B: Prop>(x: Exists<A, Not<B>>) -> 
 pub fn exists_left<A: Prop, B: Prop, X: Prop>(exists_a_x: Exists<A, X>) -> Exists<Or<A, B>, X> {
     Rc::new(move |pow_nx_or_ab| exists_a_x(hooo::pow_transitivity(Left, pow_nx_or_ab)))
 }
+
+/// `∃ b { x }   =>  ∃ a ⋁ b { x }`.
+pub fn exists_right<A: Prop, B: Prop, X: Prop>(exists_b_x: Exists<B, X>) -> Exists<Or<A, B>, X> {
+    Rc::new(move |pow_nx_or_ab| exists_b_x(hooo::pow_transitivity(Right, pow_nx_or_ab)))
+}
