@@ -44,10 +44,10 @@ pub fn inc_eq_rev<N: Prop, M: Prop>(
 ///
 /// ```text
 /// (p : nat -> bool)^true ⋀
-/// (p(0) == true)^true ⋀
-/// (p(n + 1) == true)^(n : nat)
+/// (p(0) == tr)^true ⋀
+/// (p(n + 1) == tr)^(n : nat)
 /// ----------------------------
-/// (p(n) == true)^(n : nat)
+/// (p(n) == tr)^(n : nat)
 /// ```
 pub fn induction<N: Prop, P: Prop>(
     _ty_p: Tauto<Ty<P, Pow<Bool, Nat>>>,
