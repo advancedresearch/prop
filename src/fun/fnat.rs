@@ -43,7 +43,7 @@ pub fn inc_eq_rev<N: Prop, M: Prop>(
 /// Induction on natural numbers.
 ///
 /// ```text
-/// (p : nat -> bool)^true ⋀
+/// (p : nat -> bool) ⋀
 /// (p(0) == tr)^true ⋀
 /// (p(n + 1) == tr)^(n : nat)
 /// ----------------------------
@@ -57,14 +57,14 @@ pub fn induction<N: VProp, P: Prop>(
 /// Type induction on natural numbers.
 ///
 /// ```text
-/// (p : nat -> type(0))^true ⋀
+/// (p : nat -> type(0)) ⋀
 /// p(0)^true ⋀
 /// p(n + 1)^(n : nat)
 /// ----------------------------
 /// p(n)^(n : nat)
 /// ```
-pub fn induction_ty<N: Prop, P: Prop>(
-    _ty_p: Tauto<Ty<P, Pow<Type<Z>, Nat>>>,
+pub fn induction_ty<N: VProp, P: Prop>(
+    _ty_p: Ty<P, Pow<Type<Z>, Nat>>,
     _case_zero: Tauto<App<P, Zero>>,
     _case_n: Pow<App<P, Inc<N>>, Ty<N, Nat>>,
 ) -> Pow<App<P, N>, Ty<N, Nat>> {unimplemented!()}
