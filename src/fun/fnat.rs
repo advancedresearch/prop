@@ -26,15 +26,15 @@ pub struct Prev<A>(A);
 pub fn nat_ty() -> Ty<Nat, Type<Z>> {unimplemented!()}
 /// `is_const(nat)`.
 pub fn nat_is_const() -> IsConst<Nat> {unimplemented!()}
-/// `(x : nat)  =>  (x == 0) ⋁ ((prev(x) : nat) ⋀ (x == prev(x) + 1))`.
+/// `(x : nat)  =>  (x == 0) ⋁ (prev(x) : nat ⋀ x == succ(prev(x))`.
 pub fn nat_def<X: Prop>(
     _x_ty: Ty<X, Nat>
 ) -> Either<Eq<X, Zero>, And<Ty<Prev<X>, Nat>, Eq<X, Inc<Prev<X>>>>> {unimplemented!()}
-/// `(n : nat) ⋀ (n == n + 1)  =>  false`.
+/// `(n : nat) ⋀ (n == succ(n))  =>  false`.
 pub fn para_eq_inc<N: Prop>(_: And<Ty<N, Nat>, Eq<N, Inc<N>>>) -> False {unimplemented!()}
-/// `(n : nat) ⋀ (0 == n + 1)  =>  false`.
+/// `(n : nat) ⋀ (0 == succ(n))  =>  false`.
 pub fn para_pre_zero<N: Prop>(_: And<Ty<N, Nat>, Eq<Zero, Inc<N>>>) -> False {unimplemented!()}
-/// `(n : nat) ⋀ (m : nat) ⋀ (n + 1 == m + 1)  =>  n == m`.
+/// `(n : nat) ⋀ (m : nat) ⋀ (succ(n) == succ(m))  =>  n == m`.
 pub fn inc_eq_rev<N: Prop, M: Prop>(
     _ty_n: Ty<N, Nat>,
     _ty_m: Ty<M, Nat>,
@@ -45,7 +45,7 @@ pub fn inc_eq_rev<N: Prop, M: Prop>(
 /// ```text
 /// (p : nat -> bool) ⋀
 /// (p(0) == tr)^true ⋀
-/// (p(n + 1) == tr)^(n : nat)
+/// (p(succ(n)) == tr)^(n : nat)
 /// ----------------------------
 /// (p(n) == tr)^(n : nat)
 /// ```
@@ -59,7 +59,7 @@ pub fn induction<N: VProp, P: Prop>(
 /// ```text
 /// (p : nat -> type(0)) ⋀
 /// p(0)^true ⋀
-/// p(n + 1)^(n : nat)
+/// p(succ(n))^(n : nat)
 /// ----------------------------
 /// p(n)^(n : nat)
 /// ```
