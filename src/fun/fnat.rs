@@ -92,6 +92,13 @@ pub fn nat1_fun_ext<N: VProp, F: Prop, G: Prop>(
     nat_exists(app_fun_ext(ty_f.clone(), ty_g.clone(), hooo::tr().trans(case_zero)),
                app_fun_ext(ty_f, ty_g, case_succ))
 }
+/// `succ(n) : nat  =>  n == prev(succ(n))`.
+pub fn previous<N: Prop>(x: Ty<Inc<N>, Nat>) -> Eq<N, Prev<Inc<N>>> {
+    match nat_def(x) {
+        Left(y) => imply::absurd()(para_pre_zero(eq::symmetry(y))),
+        Right(y) => inc_eq_rev(y.1),
+    }
+}
 
 /// Zero.
 #[derive(Copy, Clone)]
