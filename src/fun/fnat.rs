@@ -110,12 +110,17 @@ pub struct Succ(());
 pub fn succ_ty() -> Ty<Succ, Pow<Nat, Nat>> {unimplemented!()}
 /// `is_const(succ)`.
 pub fn succ_is_const() -> IsConst<Succ> {unimplemented!()}
-/// `succ(n) : nat  =>  n : nat`.
-pub fn succ_rev_ty<N: Prop>(_: Ty<Inc<N>, Nat>) -> Ty<N, Nat> {unimplemented!()}
 
 /// `is_const(n)  =>  is_const(succ(n))`.
 pub fn inc_is_const<N: Prop>(n_is_const: IsConst<N>) -> IsConst<Inc<N>> {
     app_is_const(succ_is_const(), n_is_const)
+}
+/// `succ(n) : nat  =>  n : nat`.
+pub fn succ_rev_ty<N: Prop>(ty_succ_n: Ty<Inc<N>, Nat>) -> Ty<N, Nat> {
+    match nat_def(ty_succ_n) {
+        Left(eq_succ_n_zero) => imply::absurd()(para_pre_zero(eq::symmetry(eq_succ_n_zero))),
+        Right(x) => path_semantics::ty_in_left_arg(x.0, eq::symmetry(inc_eq_rev(x.1))),
+    }
 }
 
 /// Increment.
