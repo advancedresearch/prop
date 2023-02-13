@@ -32,14 +32,14 @@ pub fn nat_def<X: Prop>(
 ) -> Either<Eq<X, Zero>, And<Ty<Prev<X>, Nat>, Eq<X, Inc<Prev<X>>>>> {unimplemented!()}
 /// `(n : nat) ⋀ (n == succ(n))  =>  false`.
 pub fn para_eq_inc<N: Prop>(_: And<Ty<N, Nat>, Eq<N, Inc<N>>>) -> False {unimplemented!()}
-/// `(n : nat) ⋀ (0 == succ(n))  =>  false`.
-pub fn para_pre_zero<N: Prop>(_: And<Ty<N, Nat>, Eq<Zero, Inc<N>>>) -> False {unimplemented!()}
 /// `(n : nat) ⋀ (m : nat) ⋀ (succ(n) == succ(m))  =>  n == m`.
 pub fn inc_eq_rev<N: Prop, M: Prop>(
     _ty_n: Ty<N, Nat>,
     _ty_m: Ty<M, Nat>,
     _: Eq<Inc<N>, Inc<M>>
 ) -> Eq<N, M> {unimplemented!()}
+/// `0 == succ(n)  =>  false`.
+pub fn para_pre_zero<N: Prop>(_: Eq<Zero, Inc<N>>) -> False {unimplemented!()}
 /// Induction on natural numbers.
 ///
 /// ```text
