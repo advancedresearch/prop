@@ -73,6 +73,10 @@ pub fn nat_exists<N: VProp, X: Prop>(
     _exists_zero_x: Exists<Ty<Zero, Nat>, X>,
     _exists_succ_n_x: Exists<Ty<Inc<N>, Nat>, X>
 ) -> X {unimplemented!()}
+/// `n : nat  =>  succ(prev(n)) == prev(succ(n))`.
+pub fn previous_symmetry<N: Prop>(_ty_n: Ty<N, Nat>) -> Eq<Inc<Prev<N>>, Prev<Inc<N>>> {
+    unimplemented!()
+}
 
 /// `succ(n)[n := a]  ==  succ(a)`.
 pub fn subst_inc<N: Prop, A: Prop>() -> Eq<Subst<Inc<N>, N, A>, Inc<A>> {
