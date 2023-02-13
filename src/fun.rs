@@ -876,6 +876,12 @@ pub fn subst_app<F: Prop, A: Prop, B: Prop, C: Prop>() ->
 #[derive(Copy, Clone)]
 pub struct IsConst<A>(A);
 
+/// A proof that some symbol is not a constant.
+///
+/// This is used to prevent collapse of propositions into constants,
+/// e.g. when doing a proof by induction.
+pub type IsVar<A> = Not<IsConst<A>>;
+
 /// `is_const(a) ⋀ is_const(b)  =>  is_const((a, b))`.
 pub fn const_tup<A: Prop, B: Prop>(a: IsConst<A>, b: IsConst<B>) -> IsConst<Tup<A, B>> {
     tup_is_const(a, b)
