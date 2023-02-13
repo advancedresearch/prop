@@ -73,7 +73,7 @@ pub fn subst_induction<N: Prop, X: Prop, M: Prop>(
     _: Pow<X, Ty<N, Nat>>
 ) -> Pow<Subst<X, N, Inc<N>>, Ty<Inc<N>, Nat>> {unimplemented!()}
 /// `∃ 0 : nat { x } ⋀ ∃ succ(n) : nat { x }  =>  x`.
-pub fn nat_exists<N: Prop, X: Prop>(
+pub fn nat_exists<N: VProp, X: Prop>(
     _exists_zero_x: Exists<Ty<Zero, Nat>, X>,
     _exists_succ_n_x: Exists<Ty<Inc<N>, Nat>, X>
 ) -> X {unimplemented!()}
@@ -87,7 +87,7 @@ pub fn subst_inc<N: Prop, A: Prop>() -> Eq<Subst<Inc<N>, N, A>, Inc<A>> {
 pub fn para_eq_zero_one(x: Eq<Zero, One>) -> False {para_eq_inc((zero_ty(), x))}
 /// `f : nat -> nat ⋀ g : nat -> nat ⋀
 /// (f(0) == g(0))^true ⋀ (f(succ(n)) == g(succ(n)))^(succ(n) : nat)  =>  (f == g)`.
-pub fn nat1_fun_ext<N: Prop, F: Prop, G: Prop>(
+pub fn nat1_fun_ext<N: VProp, F: Prop, G: Prop>(
     ty_f: Ty<F, Pow<Nat, Nat>>,
     ty_g: Ty<G, Pow<Nat, Nat>>,
     case_zero: Tauto<Eq<App<F, Zero>, App<G, Zero>>>,
