@@ -882,6 +882,12 @@ pub struct IsConst<A>(A);
 /// e.g. when doing a proof by induction.
 pub type IsVar<A> = Not<IsConst<A>>;
 
+/// Implemented by variable propositions.
+pub trait VProp: Prop {
+    /// Constructs a proof that the proposition is variable.
+    fn is_var() -> IsVar<Self>;
+}
+
 /// `is_const(a) ⋀ is_const(b)  =>  is_const((a, b))`.
 pub fn const_tup<A: Prop, B: Prop>(a: IsConst<A>, b: IsConst<B>) -> IsConst<Tup<A, B>> {
     tup_is_const(a, b)
