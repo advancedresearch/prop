@@ -49,8 +49,8 @@ pub fn inc_eq_rev<N: Prop, M: Prop>(
 /// ----------------------------
 /// (p(n) == tr)^(n : nat)
 /// ```
-pub fn induction<N: Prop, P: Prop>(
-    _ty_p: Tauto<Ty<P, Pow<Bool, Nat>>>,
+pub fn induction<N: VProp, P: Prop>(
+    _ty_p: Ty<P, Pow<Bool, Nat>>,
     _case_zero: Tauto<Eq<App<P, Zero>, Tr>>,
     _case_n: Pow<Eq<App<P, Inc<N>>, Tr>, Ty<N, Nat>>,
 ) -> Pow<Eq<App<P, N>, True>, Ty<N, Nat>> {unimplemented!()}
