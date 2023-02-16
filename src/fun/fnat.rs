@@ -31,7 +31,7 @@ pub fn nat_def<X: Prop>(
     _x_ty: Ty<X, Nat>
 ) -> Either<Eq<X, Zero>, And<Ty<Prev<X>, Nat>, Eq<X, Succ<Prev<X>>>>> {unimplemented!()}
 /// `(n : nat) ⋀ (n == succ(n))  =>  false`.
-pub fn para_eq_inc<N: Prop>(_: And<Ty<N, Nat>, Eq<N, Succ<N>>>) -> False {unimplemented!()}
+pub fn para_eq_succ<N: Prop>(_: And<Ty<N, Nat>, Eq<N, Succ<N>>>) -> False {unimplemented!()}
 /// `0 == succ(n)  =>  false`.
 pub fn para_pre_zero<N: Prop>(_: Eq<Zero, Succ<N>>) -> False {unimplemented!()}
 /// `succ(n) == succ(m)  =>  n == m`.
@@ -79,12 +79,12 @@ pub fn previous_symmetry<N: Prop>(_ty_n: Ty<N, Nat>) -> Eq<Succ<Prev<N>>, Prev<S
 }
 
 /// `succ(n)[n := a]  ==  succ(a)`.
-pub fn subst_inc<N: Prop, A: Prop>() -> Eq<Subst<Succ<N>, N, A>, Succ<A>> {
+pub fn subst_succ<N: Prop, A: Prop>() -> Eq<Subst<Succ<N>, N, A>, Succ<A>> {
     eq::transitivity(eq::transitivity(subst_app(), app_map_eq(subst_const(succ_is_const()))),
         app_eq(subst_trivial()))
 }
 /// `(0 == 1)  =>  false`.
-pub fn para_eq_zero_one(x: Eq<Zero, One>) -> False {para_eq_inc((zero_ty(), x))}
+pub fn para_eq_zero_one(x: Eq<Zero, One>) -> False {para_eq_succ((zero_ty(), x))}
 /// `f : nat -> nat ⋀ g : nat -> nat ⋀
 /// (f(0) == g(0))^true ⋀ (f(succ(n)) == g(succ(n)))^(succ(n) : nat)  =>  (f == g)`.
 pub fn nat1_fun_ext<N: VProp, F: Prop, G: Prop>(
