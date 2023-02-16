@@ -54,11 +54,14 @@
 //!
 //! By using path semantical quality, the `path` axiom makes it possible to get the inverse map:
 //!
-//! `~inv(f) ⋀ (f : x -> y) ⋀ (x -> y)  =>  f ⋀ inv(f)`
+//! `theory(f) ⋀ ~inv(f) ⋀ (f : x -> y) ⋀ (x -> y)  =>  f ⋀ inv(f)`
 //!
 //! Which proves (`path_inv`):
 //!
-//! `~inv(f) ⋀ (f : x -> y) ⋀ (x -> y)  =>  (y -> x)`
+//! `theory(f) ⋀ ~inv(f) ⋀ (f : x -> y) ⋀ (x -> y)  =>  (y -> x)`
+//!
+//! Here, `theory(f)` means the type `f : x -> y` needs to be some definition.
+//! Otherwise, it would be possible to use `~true` to get `y -> x` from all `x -> y`.
 //!
 //! This means, only `~inv(fun_ext(f, g))` needs to be added,
 //! together with declaration of the type of function extensionality:
@@ -130,7 +133,7 @@ use crate::*;
 use path_semantics::{POrdProof, Ty};
 use quality::Q;
 use qubit::Qu;
-use hooo::{Exists, Para, Pow, Tauto};
+use hooo::{Exists, Para, Pow, Tauto, Theory};
 use hooo::pow::PowExt;
 use nat::{Nat, S, Z};
 use univalence::HomEq3;
@@ -219,6 +222,10 @@ pub fn app_fun_ext<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>(
     _ty_g: Ty<G, Pow<Y, X>>,
     _pow_eq_fa_ga_ty_a: Pow<Eq<App<F, A>, App<G, A>>, Ty<A, X>>
 ) -> Exists<Ty<A, X>, Eq<F, G>> {unimplemented!()}
+/// `theory(f(x))`.
+///
+/// This prevents polluting functional values with meta-level truths.
+pub fn app_theory<F: Prop, X: Prop>() -> Theory<App<F, X>> {unimplemented!()}
 
 /// `(f : (x -> y)) ⋀ (a : x)  =>  (f(a) : y)`.
 ///
@@ -334,10 +341,11 @@ pub fn involve_inv<F: Prop>(_: F) -> Inv<Inv<F>> {unimplemented!()}
 pub fn inv_eq<F: Prop, G: Prop>(_: Eq<F, G>) -> Eq<Inv<F>, Inv<G>> {unimplemented!()}
 /// `~f => ~inv(f)`.
 pub fn inv_qu<F: Prop>(_: Qu<F>) -> Qu<Inv<F>> {unimplemented!()}
-/// `~inv(f) ⋀ (f : x -> y) ⋀ (x -> y)  =>  f ⋀ inv(f)`.
+/// `theory(f) ⋀ ~inv(f) ⋀ (f : x -> y) ⋀ (x -> y)  =>  f ⋀ inv(f)`.
 ///
 /// This makes it possible to get inverse map for free.
 pub fn path<F: Prop, X: Prop, Y: Prop>(
+    _: Theory<F>,
     _: Qu<Inv<F>>,
     _: Ty<F, Pow<Y, X>>,
     _: Pow<Y, X>
@@ -365,14 +373,15 @@ pub fn inv_val_other<F: Prop, G: Prop, A: Prop, B: Prop>(
 pub fn involve_eq<F: Prop>() -> Eq<Inv<Inv<F>>, F> {
     hooo::pow_eq_to_tauto_eq((inv_involve, involve_inv))(True)
 }
-/// `~inv(f) ⋀ (f : x -> y) ⋀ (x -> y)  =>  (y -> x)`.
+/// `theory(f) ⋀ ~inv(f) ⋀ (f : x -> y) ⋀ (x -> y)  =>  (y -> x)`.
 pub fn path_inv<F: Prop, X: Prop, Y: Prop>(
+    theory_f: Theory<F>,
     qu_inv_f: Qu<Inv<F>>,
     ty_f: Ty<F, Pow<Y, X>>,
     x: Pow<Y, X>
 ) -> Pow<X, Y> {
     use path_semantics::{ty_triv, ty_true};
-    ty_true(ty_triv(inv_ty(ty_f.clone()), path(qu_inv_f, ty_f, x).1))
+    ty_true(ty_triv(inv_ty(ty_f.clone()), path(theory_f, qu_inv_f, ty_f, x).1))
 }
 /// `~f ⋀ (f == g)^true  =>  f ~~ g`.
 pub fn qu_tauto_eq_to_q<F: Prop, G: Prop>(x: Qu<F>, tauto_eq: Tauto<Eq<F, G>>) -> Q<F, G> {
@@ -526,10 +535,13 @@ pub fn id_ty<A: Prop>() -> Ty<FId, Pow<A, A>> {unimplemented!()}
 /// `is_const(id)`.
 pub fn id_is_const() -> IsConst<FId> {unimplemented!()}
 
-/// `id(a) = a`.
+/// `(x : type(n)) ⋀ (a : x)  =>  id(a) = a`.
 ///
 /// Definition of identity function.
-pub fn id_def<A: Prop>() -> Eq<App<FId, A>, A> {unimplemented!()}
+pub fn id_def<A: Prop, X: Prop, N: Nat>(
+    _ty_x: Ty<X, Type<N>>,
+    _ty_a: Ty<A, X>
+) -> Eq<App<FId, A>, A> {unimplemented!()}
 /// `inv(id) ~~ id`.
 pub fn id_q() -> Q<Inv<FId>, FId> {unimplemented!()}
 /// `(f . inv(f)) => id`.
@@ -541,6 +553,14 @@ pub fn comp_left_inv_to_id<F: Prop>(_: Comp<Inv<F>, F>) -> FId {unimplemented!()
 /// `id => (inv(f). f)`.
 pub fn id_to_comp_left_inv<F: Prop>(_: FId) -> Comp<Inv<F>, F> {unimplemented!()}
 
+/// `a : type(n)  =>  id(a) = a`.
+pub fn id_def_type<A: Prop, N: Nat>(ty_a: Ty<A, Type<N>>) -> Eq<App<FId, A>, A> {
+    id_def(type_ty(), ty_a)
+}
+/// `(a : type(n))^true  =>  theory(a)`.
+pub fn theory<A: Prop, N: Nat>(ty_a: Tauto<Ty<A, Type<N>>>) -> Theory<A> {
+    hooo::theory_in_arg(app_theory(), ty_a.trans(id_def_type))
+}
 /// `(f : A -> B) => ((f ~~ inv(f)) : ((A -> B) ~~ (B -> A)))`.
 pub fn self_inv_ty<F: Prop, A: Prop, B: Prop>(
     ty_f: Ty<F, Pow<B, A>>
@@ -977,9 +997,12 @@ pub fn lam_id_app_ty<A: Prop, B: Prop, X: Prop>(
 ) -> Ty<App<LamId<A, X>, B>, X> {
     app_lam_ty(lam_id_ty(ty_a), ty_b)
 }
-/// `(\(a : x) = a)(b) = b`.
-pub fn lam_id<A: Prop, B: Prop, X: Prop>() -> Eq<App<LamId<A, X>, B>, B> {
-    eq::transitivity(app_map_eq(quality::to_eq(lam_id_q())), id_def())
+/// `(x : type(n)) ⋀ (b : x)  =>  (\(a : x) = a)(b) = b`.
+pub fn lam_id<A: Prop, B: Prop, X: Prop, N: Nat>(
+    ty_x: Ty<X, Type<N>>,
+    ty_b: Ty<B, X>
+) -> Eq<App<LamId<A, X>, B>, B> {
+    eq::transitivity(app_map_eq(quality::to_eq(lam_id_q())), id_def(ty_x, ty_b))
 }
 
 /// `\(a : x) = \(b : y) = a`.
@@ -1338,7 +1361,7 @@ pub fn fun_ext<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>(
 /// `fun_ext_ty(f, g) => (f == g)^true`.
 pub fn fun_rev_ext<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>(
     x: FunExtTy<F, G, X, Y, A>
-) -> Tauto<Eq<F, G>> {path_inv(qu_inv_fun_ext(), fun_ext_ty(), fun_ext)(x)}
+) -> Tauto<Eq<F, G>> {path_inv(app_theory(), qu_inv_fun_ext(), fun_ext_ty(), fun_ext)(x)}
 /// `(a : x)  =>  ((\(a : x) = (f(a) == f(a))) . (snd . snd))((f, f, a))`.
 pub fn fun_ext_app_eq_refl<F: Prop, A: Prop, X: Prop>(
     ty_a: Ty<A, X>
