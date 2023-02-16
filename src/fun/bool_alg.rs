@@ -187,13 +187,13 @@ pub fn imply_is_const() -> IsConst<FImply> {
 
 /// `imply(true, a) = a`.
 pub fn imply_tr<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FImply, Tup<Tr, A>>, A> {
-    eqx!(eq::symmetry(eq::in_left_arg(eq::in_left_arg(eq_app_comp(),
-        app_eq(par_tup_def(not_tr(), id_def()))), or_fa(ty_a))), imply_def, am, l)
+    eqx!(eq::symmetry(eq::in_left_arg(eq::in_left_arg(eq_app_comp(), app_eq(
+        par_tup_def(not_tr(), id_def(bool_ty(), ty_a.clone())))), or_fa(ty_a))), imply_def, am, l)
 }
 /// `imply(false, a) = true`.
 pub fn imply_fa<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FImply, Tup<Fa, A>>, Tr> {
-    eqx!(eq::symmetry(eq::in_left_arg(eq::in_left_arg(eq_app_comp(),
-        app_eq(par_tup_def(not_fa(), id_def()))), or_tr(ty_a))), imply_def, am, l)
+    eqx!(eq::symmetry(eq::in_left_arg(eq::in_left_arg(eq_app_comp(), app_eq(
+        par_tup_def(not_fa(), id_def(bool_ty(), ty_a.clone())))), or_tr(ty_a))), imply_def, am, l)
 }
 
 /// Composable equality.
