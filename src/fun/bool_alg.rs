@@ -85,6 +85,13 @@ pub fn not_q() -> Q<Inv<FNot>, FNot> {unimplemented!()}
 pub fn eq_not_not_id() -> Eq<Comp<FNot, FNot>, FId> {
     self_inv_to_eq_id(quality::to_eq(not_q()))
 }
+/// `not[not] == not`.
+pub fn eq_norm1_not_not() -> Eq<SymNorm1<FNot, FNot>, FNot> {
+    (Rc::new(move |x| comp_id_left().0(comp_in_left_arg(comp_in_right_arg(x.0,
+        quality::to_eq(not_q())), eq_not_not_id()))),
+     Rc::new(move |x| Norm1(comp_in_right_arg(comp_in_left_arg(comp_id_left().1(x),
+        eq::symmetry(eq_not_not_id())), eq::symmetry(quality::to_eq(not_q()))))))
+}
 
 /// True1 function.
 #[derive(Clone, Copy)]
