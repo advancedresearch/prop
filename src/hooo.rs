@@ -1311,6 +1311,11 @@ pub fn uniform_in_arg<A: Prop, B: Prop>(uni: Uniform<A>, eq: Tauto<Eq<A, B>>) ->
     }
 }
 
+/// `theory(a) ⋀ (a == b)^true  =>  theory(b)`.
+pub fn theory_in_arg<A: Prop, B: Prop>(theory_a: Theory<A>, eq: Tauto<Eq<A, B>>) -> Theory<B> {
+    imply::in_left(theory_a, move |x| uniform_in_arg(x, tauto_eq_symmetry(eq)))
+}
+
 /// `uniform(a) ∧ uniform(b) => uniform(a ∧ b)`.
 pub fn uniform_and<A: Prop, B: Prop>(uni_a: Uniform<A>, uni_b: Uniform<B>) -> Uniform<And<A, B>> {
     match (uni_a, uni_b) {
