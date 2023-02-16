@@ -1292,7 +1292,7 @@ pub type FunExtTy<F, G, X, Y, A> = DepFunTy<
 #[derive(Copy, Clone)]
 pub struct FunExt(());
 
-/// `fun_ext(f, g) : (f == g)^true => fun_ext_ty(f, g)`.
+/// `fun_ext(f, g) : (f == g)^true -> fun_ext_ty(f, g)`.
 ///
 /// Type of function extensionality.
 pub fn fun_ext_ty<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>() ->
