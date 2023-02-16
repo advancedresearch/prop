@@ -219,3 +219,58 @@ pub fn add_succ_plus_one<N: Prop>(ty_n: Ty<N, Nat>) -> Eq<Inc<N>, Plus<N, One>> 
         add_succ(zero_ty(), ty_n.clone()), add_symmetry()
     ), app_eq(add_symmetry())), app_eq(add_zero_right(ty_n.clone()))))
 }
+
+/// Multiplication.
+#[derive(Copy, Clone)]
+pub struct Multiply(());
+
+/// `a * b`.
+pub type Mul<A, B> = App<Multiply, Tup<A, B>>;
+
+/// `mul : (nat, nat) -> nat`.
+pub fn mul_ty() -> Ty<Multiply, Pow<Nat, Tup<Nat, Nat>>> {unimplemented!()}
+/// `is_const(mul)`.
+pub fn mul_is_const() -> IsConst<Multiply> {unimplemented!()}
+/// `(n : nat)  =>  mul(0, n) = 0`.
+pub fn mul_zero<N: Prop>(_ty_n: Ty<N, Nat>) -> Eq<Mul<Zero, N>, Zero> {unimplemented!()}
+/// `(n : nat) ⋀ (m : nat)  =>  mul(succ(n), m) == add(m, mul(n, m))`.
+pub fn mul_succ<N: Prop, M: Prop>(
+    _ty_n: Ty<N, Nat>,
+    _ty_m: Ty<M, Nat>
+) -> Eq<Mul<Inc<N>, M>, Plus<M, Mul<N, M>>> {unimplemented!()}
+/// `mul(n, m) == mul(m, n)`.
+pub fn mul_symmetry<N: Prop, M: Prop>() -> Eq<Mul<N, M>, Mul<M, N>> {unimplemented!()}
+/// `mul(mul(a, b), c) == mul(a, mul(b, c))`.
+pub fn mul_assoc<A: Prop, B: Prop, C: Prop>() -> Eq<Mul<Mul<A, B>, C>, Mul<A, Mul<B, C>>> {
+    unimplemented!()
+}
+/// `(n : nat) ⋀ (m : nat) ⋀ (a : nat) ⋀ (n * a == m * a) ⋀ ¬(a == 0)  =>  (n == m)`.
+pub fn mul_rev_eq_left<N: Prop, M: Prop, A: Prop>(
+    _n_ty: Ty<N, Nat>,
+    _m_ty: Ty<M, Nat>,
+    _a_ty: Ty<A, Nat>,
+    _x: Eq<Mul<N, A>, Mul<M, A>>,
+    _neq_a_zero: Not<Eq<A, Zero>>,
+) -> Eq<N, M> {unimplemented!()}
+/// `(n : nat) ⋀ (m : nat) ⋀ (a : nat) ⋀ (a * n == a * m) ⋀ ¬(a == 0)  =>  (n == m)`.
+pub fn mul_rev_eq_right<N: Prop, M: Prop, A: Prop>(
+    _n_ty: Ty<N, Nat>,
+    _m_ty: Ty<M, Nat>,
+    _a_ty: Ty<A, Nat>,
+    _x: Eq<Mul<A, N>, Mul<A, M>>,
+    _neq_a_zero: Not<Eq<A, Zero>>,
+) -> Eq<N, M> {unimplemented!()}
+
+/// `(n : nat)  =>  mul(1, n) = n`.
+pub fn mul_one<N: Prop>(ty_n: Ty<N, Nat>) -> Eq<Mul<One, N>, N> {
+    eq::transitivity(eq::transitivity(mul_succ(zero_ty(), ty_n.clone()),
+        add_eq_right(mul_zero(ty_n.clone()))), eq::in_left_arg(add_zero(ty_n), add_symmetry()))
+}
+/// `(a == b)  =>  (a + c == b + c)`.
+pub fn mul_eq_left<A: Prop, B: Prop, C: Prop>(x: Eq<A, B>) -> Eq<Mul<A, C>, Mul<B, C>> {
+    app_eq(tup_eq_fst(x))
+}
+/// `(a == b)  =>  (c + a == c + b)`.
+pub fn mul_eq_right<A: Prop, B: Prop, C: Prop>(x: Eq<A, B>) -> Eq<Mul<C, A>, Mul<C, B>> {
+    app_eq(tup_eq_snd(x))
+}
