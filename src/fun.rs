@@ -561,6 +561,11 @@ pub fn id_def_type<A: Prop, N: Nat>(ty_a: Ty<A, Type<N>>) -> Eq<App<FId, A>, A> 
 pub fn theory<A: Prop, N: Nat>(ty_a: Tauto<Ty<A, Type<N>>>) -> Theory<A> {
     hooo::theory_in_arg(app_theory(), ty_a.trans(id_def_type))
 }
+/// `(a == b) ⋀ ((a == b) : type(n))^true  =>  (a ~~ b)`.
+pub fn type_eq_to_q<A: Prop, B: Prop, N: Nat>(
+    eq_ab: Eq<A, B>,
+    ty_eq_ab: Tauto<Ty<Eq<A, B>, Type<N>>>,
+) -> Q<A, B> {hooo::lift_q(eq_ab, theory(ty_eq_ab))}
 /// `(f : A -> B) => ((f ~~ inv(f)) : ((A -> B) ~~ (B -> A)))`.
 pub fn self_inv_ty<F: Prop, A: Prop, B: Prop>(
     ty_f: Ty<F, Pow<B, A>>
