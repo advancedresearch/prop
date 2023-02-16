@@ -102,7 +102,7 @@
 //! - Composition: `Comp<G, F>` is the composition `g . f`
 //! - Inverse: `Inv<F>` is the imaginary inverse `inv(f)`
 //!
-//! The imaginary inverse makes adds an inverse for every morphism in the category,
+//! The imaginary inverse adds an inverse for every morphism in the category,
 //! which results in a groupoid. However, since the inverse is imaginary,
 //! [the groupoid is category realizable](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip/category-realizable-groupoids.pdf).
 //!
