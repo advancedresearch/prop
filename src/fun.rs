@@ -1243,6 +1243,18 @@ pub fn norm1_ty<F: Prop, G1: Prop, G2: Prop, A: Prop, B: Prop, C: Prop, D: Prop>
     let y2 = comp_ty(inv_ty(ty_g1), comp_ty(ty_f, ty_g2));
     eqx!(y2, norm1_def, tyl)
 }
+/// `(f : (a1, a2) -> b) ⋀ (g1 : a1 -> c1) ⋀ (g2 : a2 -> c2) ⋀ (g3 : b -> d)  =>
+///   f[g1 x g2 -> g3] : (c1, c2) -> d`.
+pub fn norm2_ty<F: Prop, G1: Prop, G2: Prop, G3: Prop,
+    A1: Prop, A2: Prop, B: Prop, C1: Prop, C2: Prop, D: Prop> (
+    ty_f: Ty<F, Pow<B, Tup<A1, A2>>>,
+    ty_g1: Ty<G1, Pow<C1, A1>>,
+    ty_g2: Ty<G2, Pow<C2, A2>>,
+    ty_g3: Ty<G3, Pow<D, B>>
+) -> Ty<Norm2<F, G1, G2, G3>, Pow<D, Tup<C1, C2>>> {
+    path_semantics::ty_in_left_arg(norm1_ty(ty_f, par_tup_fun_ty(ty_g1, ty_g2), ty_g3),
+        eq::symmetry(eq_norm2_norm1()))
+}
 /// `f[g1 -> g2]  ==  (g2 . f) . inv(g1)`.
 pub fn norm1_def<F: Prop, G1: Prop, G2: Prop>() ->
     Eq<Norm1<F, G1, G2>, Comp<Comp<G2, F>, Inv<G1>>> {eqx!(def Norm1)}
