@@ -143,26 +143,26 @@ pub type Two = Inc<One>;
 
 /// Addition.
 #[derive(Copy, Clone)]
-pub struct Add(());
+pub struct FAdd(());
 
 /// `a + b`.
-pub type Plus<A, B> = App<Add, Tup<A, B>>;
+pub type Add<A, B> = App<FAdd, Tup<A, B>>;
 
 /// `add : (nat, nat) -> nat`.
-pub fn add_ty() -> Ty<Add, Pow<Nat, Tup<Nat, Nat>>> {unimplemented!()}
+pub fn add_ty() -> Ty<FAdd, Pow<Nat, Tup<Nat, Nat>>> {unimplemented!()}
 /// `is_const(add)`.
-pub fn add_is_const() -> IsConst<Add> {unimplemented!()}
+pub fn add_is_const() -> IsConst<FAdd> {unimplemented!()}
 /// `(n : nat)  =>  add(0, n) = n`.
-pub fn add_zero<N: Prop>(_n_ty: Ty<N, Nat>) -> Eq<Plus<Zero, N>, N> {unimplemented!()}
+pub fn add_zero<N: Prop>(_n_ty: Ty<N, Nat>) -> Eq<Add<Zero, N>, N> {unimplemented!()}
 /// `(n : nat) ⋀ (m : nat)  =>  add(succ(n), m) = succ(add(n, m))`.
 pub fn add_succ<N: Prop, M: Prop>(
     _ty_n: Ty<N, Nat>,
     _ty_m: Ty<M, Nat>
-) -> Eq<Plus<Inc<N>, M>, Inc<Plus<N, M>>> {unimplemented!()}
+) -> Eq<Add<Inc<N>, M>, Inc<Add<N, M>>> {unimplemented!()}
 /// `add(n, m) == add(m, n)`.
-pub fn add_symmetry<N: Prop, M: Prop>() -> Eq<Plus<N, M>, Plus<M, N>> {unimplemented!()}
+pub fn add_symmetry<N: Prop, M: Prop>() -> Eq<Add<N, M>, Add<M, N>> {unimplemented!()}
 /// `add(add(a, b), c) == add(a, add(b, c))`.
-pub fn add_assoc<A: Prop, B: Prop, C: Prop>() -> Eq<Plus<Plus<A, B>, C>, Plus<A, Plus<B, C>>> {
+pub fn add_assoc<A: Prop, B: Prop, C: Prop>() -> Eq<Add<Add<A, B>, C>, Add<A, Add<B, C>>> {
     unimplemented!()
 }
 /// `(n : nat) ⋀ (m : nat) ⋀ (a : nat) ⋀ (n + a == m + a)  =>  (n == m)`.
@@ -170,14 +170,14 @@ pub fn add_rev_eq_left<N: Prop, M: Prop, A: Prop>(
     _n_ty: Ty<N, Nat>,
     _m_ty: Ty<M, Nat>,
     _a_ty: Ty<A, Nat>,
-    _x: Eq<Plus<N, A>, Plus<M, A>>
+    _x: Eq<Add<N, A>, Add<M, A>>
 ) -> Eq<N, M> {unimplemented!()}
 /// `(n : nat) ⋀ (m : nat) ⋀ (a : nat) ⋀ (a + n == a + m)  =>  (n == m)`.
 pub fn add_rev_eq_right<N: Prop, M: Prop, A: Prop>(
     _n_ty: Ty<N, Nat>,
     _m_ty: Ty<M, Nat>,
     _a_ty: Ty<A, Nat>,
-    _x: Eq<Plus<A, N>, Plus<A, M>>
+    _x: Eq<Add<A, N>, Add<A, M>>
 ) -> Eq<N, M> {unimplemented!()}
 
 /// `1 : nat`.
@@ -185,36 +185,36 @@ pub fn one_ty() -> Ty<One, Nat> {app_fun_ty(succ_ty(), zero_ty())}
 /// `2 : nat`.
 pub fn two_ty() -> Ty<Two, Nat> {app_fun_ty(succ_ty(), one_ty())}
 /// `1 + 1 == 2`.
-pub fn eq_plus_one_one_two() -> Eq<Plus<One, One>, Two> {
+pub fn eq_plus_one_one_two() -> Eq<Add<One, One>, Two> {
     eq::transitivity(add_succ(zero_ty(), one_ty()), app_eq(add_zero(one_ty())))
 }
 /// `(n : nat)  =>  add(n, 0) == n`.
-pub fn add_zero_right<N: Prop>(ty_n: Ty<N, Nat>) -> Eq<Plus<N, Zero>, N> {
+pub fn add_zero_right<N: Prop>(ty_n: Ty<N, Nat>) -> Eq<Add<N, Zero>, N> {
     eq::in_left_arg(add_zero(ty_n), add_symmetry())
 }
 /// `(a == b)  =>  (a + c == b + c)`.
-pub fn add_eq_left<A: Prop, B: Prop, C: Prop>(x: Eq<A, B>) -> Eq<Plus<A, C>, Plus<B, C>> {
+pub fn add_eq_left<A: Prop, B: Prop, C: Prop>(x: Eq<A, B>) -> Eq<Add<A, C>, Add<B, C>> {
     app_eq(tup_eq_fst(x))
 }
 /// `(a == b)  =>  (c + a == c + b)`.
-pub fn add_eq_right<A: Prop, B: Prop, C: Prop>(x: Eq<A, B>) -> Eq<Plus<C, A>, Plus<C, B>> {
+pub fn add_eq_right<A: Prop, B: Prop, C: Prop>(x: Eq<A, B>) -> Eq<Add<C, A>, Add<C, B>> {
     app_eq(tup_eq_snd(x))
 }
 /// `(n == 0)  =>  (n + 0 == n)`.
-pub fn add_eq_zero_to_add_zero_right<N: Prop>(eq_n_zero: Eq<N, Zero>) -> Eq<Plus<N, Zero>, N> {
+pub fn add_eq_zero_to_add_zero_right<N: Prop>(eq_n_zero: Eq<N, Zero>) -> Eq<Add<N, Zero>, N> {
     eq::transitivity(eq::transitivity(add_eq_left(eq_n_zero.clone()),
         add_zero(zero_ty())), eq::symmetry(eq_n_zero))
 }
 /// `is_const(k)  =>  ((n + k)[n := m]  ==  m + k)`.
 pub fn add_subst_const_right<N: Prop, M: Prop, K: Prop>(
     k_is_const: IsConst<K>
-) -> Eq<Subst<Plus<N, K>, N, M>, Plus<M, K>> {
+) -> Eq<Subst<Add<N, K>, N, M>, Add<M, K>> {
     eq::transitivity(eq::transitivity(subst_app(), app_map_eq(subst_const(add_is_const()))),
         app_eq(eq::transitivity(eq::transitivity(subst_tup(),
         tup_eq_snd(subst_const(k_is_const))), tup_eq_fst(subst_trivial()))))
 }
 /// `(n : nat)  =>  succ(n) == n + 1`.
-pub fn add_succ_plus_one<N: Prop>(ty_n: Ty<N, Nat>) -> Eq<Inc<N>, Plus<N, One>> {
+pub fn add_succ_plus_one<N: Prop>(ty_n: Ty<N, Nat>) -> Eq<Inc<N>, Add<N, One>> {
     eq::symmetry(eq::in_right_arg(eq::in_right_arg(eq::in_left_arg(
         add_succ(zero_ty(), ty_n.clone()), add_symmetry()
     ), app_eq(add_symmetry())), app_eq(add_zero_right(ty_n.clone()))))
@@ -237,7 +237,7 @@ pub fn mul_zero<N: Prop>(_ty_n: Ty<N, Nat>) -> Eq<Mul<Zero, N>, Zero> {unimpleme
 pub fn mul_succ<N: Prop, M: Prop>(
     _ty_n: Ty<N, Nat>,
     _ty_m: Ty<M, Nat>
-) -> Eq<Mul<Inc<N>, M>, Plus<M, Mul<N, M>>> {unimplemented!()}
+) -> Eq<Mul<Inc<N>, M>, Add<M, Mul<N, M>>> {unimplemented!()}
 /// `mul(n, m) == mul(m, n)`.
 pub fn mul_symmetry<N: Prop, M: Prop>() -> Eq<Mul<N, M>, Mul<M, N>> {unimplemented!()}
 /// `mul(mul(a, b), c) == mul(a, mul(b, c))`.
