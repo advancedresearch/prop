@@ -172,7 +172,7 @@ pub fn add_rev_eq_left<N: Prop, M: Prop, A: Prop>(
     _a_ty: Ty<A, Nat>,
     _x: Eq<Plus<N, A>, Plus<M, A>>
 ) -> Eq<N, M> {unimplemented!()}
-/// `(n : nat) ⋀ (m : nat) ⋀ (a : nat) ⋀ (n + a == m + a)  =>  (n == m)`.
+/// `(n : nat) ⋀ (m : nat) ⋀ (a : nat) ⋀ (a + n == a + m)  =>  (n == m)`.
 pub fn add_rev_eq_right<N: Prop, M: Prop, A: Prop>(
     _n_ty: Ty<N, Nat>,
     _m_ty: Ty<M, Nat>,
