@@ -1349,6 +1349,22 @@ pub fn eq_app_norm2<F: Prop, G1: Prop, G2: Prop, G3: Prop, X: Prop>() ->
 Eq<App<G3, App<F, App<Inv<Par<G1, G2>>, X>>>, App<Norm2<F, G1, G2, G3>, X>> {
     eq::in_right_arg(eq_app_norm1(), app_map_eq(eq::symmetry(eq_norm2_norm1())))
 }
+/// `(inv(g1) ~~ h1) ⋀ (inv(g1) ~~ h2) ⋀
+///  (g1(b1) = a1) ⋀ (g2(b2) = a2) ⋀ (f(b1, b2) = c) ⋀ (g3(c) = d)  =>
+///  f[g1 x g2 -> g3](a1, a2) = d`.
+pub fn norm2_app<F: Prop, G1: Prop, G2: Prop, G3: Prop, H1: Prop, H2: Prop,
+A1: Prop, A2: Prop, B1: Prop, B2: Prop, C: Prop, D: Prop>(
+    q_inv_g1_h1: Q<Inv<G1>, H1>,
+    q_inv_g2_h2: Q<Inv<G2>, H2>,
+    eq_g1b1_a1: Eq<App<G1, B1>, A1>,
+    eq_g2b2_a2: Eq<App<G2, B2>, A2>,
+    eq_fb1b2_c: Eq<App<F, Tup<B1, B2>>, C>,
+    eq_g3c_d: Eq<App<G3, C>, D>
+) -> Eq<App<Norm2<F, G1, G2, G3>, Tup<A1, A2>>, D> {
+    eq::in_left_arg(eq::transitivity(app_eq(eq::transitivity(app_eq(eq::in_left_arg(
+        par_tup_def(inv_val(q_inv_g1_h1, eq_g1b1_a1), inv_val(q_inv_g2_h2, eq_g2b2_a2)),
+        app_map_eq(eq::symmetry(par_tup_inv())))), eq_fb1b2_c)), eq_g3c_d), eq_app_norm2())
+}
 
 /// `(\(a : x) = (f(a) == g(a))) . (snd . snd)`.
 pub type FunExtAppEq<F, G, A, X> = Comp<Lam<Ty<A, X>, Eq<App<F, A>, App<G, A>>>, Comp<Snd, Snd>>;
