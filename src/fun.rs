@@ -1344,6 +1344,11 @@ Eq<App<G2, App<F, App<Inv<G1>, X>>>, App<Norm1<F, G1, G2>, X>> {
     let x = eq::transitivity(eq_app_comp(), eq_app_comp());
     eqx!(x, norm1_def, am, r)
 }
+/// `g3(f(inv(g1 x g2)(x))) == f[g1 x g2 -> g3](x)`.
+pub fn eq_app_norm2<F: Prop, G1: Prop, G2: Prop, G3: Prop, X: Prop>() ->
+Eq<App<G3, App<F, App<Inv<Par<G1, G2>>, X>>>, App<Norm2<F, G1, G2, G3>, X>> {
+    eq::in_right_arg(eq_app_norm1(), app_map_eq(eq::symmetry(eq_norm2_norm1())))
+}
 
 /// `(\(a : x) = (f(a) == g(a))) . (snd . snd)`.
 pub type FunExtAppEq<F, G, A, X> = Comp<Lam<Ty<A, X>, Eq<App<F, A>, App<G, A>>>, Comp<Snd, Snd>>;
