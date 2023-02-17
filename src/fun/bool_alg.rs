@@ -35,6 +35,16 @@ pub fn bool_exists<X: Prop>(
     _case_tr: Exists<Ty<Tr, Bool>, X>,
     _case_fa: Exists<Ty<Fa, Bool>, X>
 ) -> X {unimplemented!()}
+/// `∃ (fa, fa) : (bool, bool) { x } ⋀
+///  ∃ (fa, tr) : (bool, bool) { x } ⋀
+///  ∃ (tr, fa) : (bool, bool) { x } ⋀
+///  ∃ (tr, tr) : (bool, bool) { x }`.
+pub fn bool2_exists<X: Prop>(
+    _case_fa_fa: Exists<Ty<Tup<Fa, Fa>, Tup<Bool, Bool>>, X>,
+    _case_fa_tr: Exists<Ty<Tup<Fa, Tr>, Tup<Bool, Bool>>, X>,
+    _case_tr_fa: Exists<Ty<Tup<Tr, Fa>, Tup<Bool, Bool>>, X>,
+    _case_tr_tr: Exists<Ty<Tup<Tr, Tr>, Tup<Bool, Bool>>, X>,
+) -> X {unimplemented!()}
 
 /// `(f : bool -> bool) ⋀ (g : bool -> bool) ⋀
 //  (f(tr) == g(tr))^true ⋀ (f(fa) == g(fa))^true  =>  (f == g)^true`.
