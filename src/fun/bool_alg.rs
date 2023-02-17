@@ -66,7 +66,9 @@ pub fn para_inv_false1<F: Prop>(x: Q<Inv<FFalse1>, F>) -> False {
     para_eq_tr_fa(eq::transitivity(eq::symmetry(y1), y0))
 }
 /// `f : bool -> bool  =>  f[false1] == false1`.
-pub fn eq_norm1_by_false1<F: Prop>(ty_f: Tauto<Ty<F, Pow<Bool, Bool>>>) -> Eq<SymNorm1<F, FFalse1>, FFalse1> {
+pub fn eq_norm1_by_false1<F: Prop>(
+    ty_f: Tauto<Ty<F, Pow<Bool, Bool>>>
+) -> Eq<SymNorm1<F, FFalse1>, FFalse1> {
     fn case<F: Prop, A: Prop>((ty_f, ty_a): And<Ty<F, Pow<Bool, Bool>>, Ty<A, Bool>>) ->
     Eq<App<SymNorm1<F, FFalse1>, A>, App<FFalse1, A>> {
         eq::in_right_arg(eq::in_left_arg(false1_def(app_fun_ty(ty_f, app_fun_ty(inv_ty(false1_ty()),
@@ -125,7 +127,9 @@ pub fn para_inv_true1<F: Prop>(x: Q<Inv<FTrue1>, F>) -> False {
     para_eq_tr_fa(eq::transitivity(eq::symmetry(y1), y0))
 }
 /// `f : bool -> bool  =>  f[true1] == true1`.
-pub fn eq_norm1_by_true1<F: Prop>(ty_f: Tauto<Ty<F, Pow<Bool, Bool>>>) -> Eq<SymNorm1<F, FTrue1>, FTrue1> {
+pub fn eq_norm1_by_true1<F: Prop>(
+    ty_f: Tauto<Ty<F, Pow<Bool, Bool>>>
+) -> Eq<SymNorm1<F, FTrue1>, FTrue1> {
     fn case<F: Prop, A: Prop>((ty_f, ty_a): And<Ty<F, Pow<Bool, Bool>>, Ty<A, Bool>>) ->
     Eq<App<SymNorm1<F, FTrue1>, A>, App<FTrue1, A>> {
         eq::in_right_arg(eq::in_left_arg(true1_def(app_fun_ty(ty_f, app_fun_ty(inv_ty(true1_ty()),
