@@ -238,6 +238,33 @@ pub fn para_inv_or<F: Prop>(x: Q<Inv<FOr>, F>) -> False {
     let y1 = inv_val(x.clone(), or_tr(fa_ty()));
     para_eq_tr_fa(tup_rev_eq_snd(tr_ty(), eq::transitivity(eq::symmetry(y0), y1)))
 }
+/// `or[not] == and`.
+pub fn eq_norm2_or_not_and() -> Eq<SymNorm2<FOr, FNot>, FAnd> {
+    fn bridge<A: Prop, B: Prop, C: Prop, D: Prop, E: Prop>(
+        eq_a_c: Eq<A, C>, eq_b_d: Eq<B, D>,
+        x: Eq<App<SymNorm2<FOr, FNot>, Tup<C, D>>, E>, or_c_d: Eq<App<FAnd, Tup<C, D>>, E>,
+    ) -> Eq<App<SymNorm2<FOr, FNot>, Tup<A, B>>, App<FAnd, Tup<A, B>>> {
+        let y: Eq<Tup<A, B>, Tup<C, D>> = tup_eq(eq_a_c, eq_b_d);
+        eq::in_right_arg(eq::in_right_arg(app_eq(y.clone()),
+            eq::in_right_arg(x, eq::symmetry(or_c_d))), eq::symmetry(app_eq(y)))
+    }
+    fn case<A: Prop, B: Prop>(ty_a: Ty<A, Bool>, ty_b: Ty<B, Bool>) ->
+    Eq<App<SymNorm2<FOr, FNot>, Tup<A, B>>, App<FAnd, Tup<A, B>>> {
+        match (bool_values(ty_a), bool_values(ty_b)) {
+            (Right(eq_a_fa), Right(eq_b_fa)) => bridge(eq_a_fa, eq_b_fa, sym_norm2_app(
+                not_q(), not_tr(), not_tr(), or_tr(tr_ty()), not_tr()), and_fa(fa_ty())),
+            (Right(eq_a_fa), Left(eq_b_tr)) => bridge(eq_a_fa, eq_b_tr, sym_norm2_app(
+                not_q(), not_tr(), not_fa(), or_tr(fa_ty()), not_tr()), and_fa(tr_ty())),
+            (Left(eq_a_tr), Right(eq_b_fa)) => bridge(eq_a_tr, eq_b_fa, sym_norm2_app(
+                not_q(), not_fa(), not_tr(), or_fa(tr_ty()), not_tr()), and_tr(fa_ty())),
+            (Left(eq_a_tr), Left(eq_b_tr)) => bridge(eq_a_tr, eq_b_tr, sym_norm2_app(
+                not_q(), not_fa(), not_fa(), or_fa(fa_ty()), not_fa()), and_tr(tr_ty())),
+        }
+    }
+    bool2_fun_ext(sym_norm2_ty(or_ty(), not_ty()), and_ty(),
+        tauto!(case(fa_ty(), fa_ty())), tauto!(case(fa_ty(), tr_ty())),
+        tauto!(case(tr_ty(), fa_ty())), tauto!(case(tr_ty(), tr_ty())))
+}
 
 /// Nand function.
 #[derive(Copy, Clone)]
