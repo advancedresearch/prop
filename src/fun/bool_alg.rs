@@ -57,6 +57,24 @@ pub fn bool1_fun_ext<F: Prop, G: Prop>(
     bool_exists(app_fun_ext(ty_f.clone(), ty_g.clone(), hooo::tr().trans(case_tr)),
                 app_fun_ext(ty_f, ty_g, hooo::tr().trans(case_fa)))
 }
+/// `(f : (bool, bool) -> bool) ⋀ (g : (bool, bool) -> bool) ⋀
+/// (f(fa, fa) == g(fa, fa))^true ⋀
+/// (f(fa, tr) == g(fa, tr))^true ⋀
+/// (f(tr, fa) == g(tr, fa))^true ⋀
+/// (f(tr, tr) == g(tr, tr))^true`.
+pub fn bool2_fun_ext<F: Prop, G: Prop>(
+    ty_f: Ty<F, Pow<Bool, Tup<Bool, Bool>>>,
+    ty_g: Ty<G, Pow<Bool, Tup<Bool, Bool>>>,
+    case_fa_fa: Tauto<Eq<App<F, Tup<Fa, Fa>>, App<G, Tup<Fa, Fa>>>>,
+    case_fa_tr: Tauto<Eq<App<F, Tup<Fa, Tr>>, App<G, Tup<Fa, Tr>>>>,
+    case_tr_fa: Tauto<Eq<App<F, Tup<Tr, Fa>>, App<G, Tup<Tr, Fa>>>>,
+    case_tr_tr: Tauto<Eq<App<F, Tup<Tr, Tr>>, App<G, Tup<Tr, Tr>>>>,
+) -> Eq<F, G> {
+    bool2_exists(app_fun_ext(ty_f.clone(), ty_g.clone(), hooo::tr().trans(case_fa_fa)),
+                 app_fun_ext(ty_f.clone(), ty_g.clone(), hooo::tr().trans(case_fa_tr)),
+                 app_fun_ext(ty_f.clone(), ty_g.clone(), hooo::tr().trans(case_tr_fa)),
+                 app_fun_ext(ty_f, ty_g, hooo::tr().trans(case_tr_tr)))
+}
 
 /// False1 function.
 #[derive(Clone, Copy)]
