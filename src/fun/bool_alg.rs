@@ -65,6 +65,20 @@ pub fn para_inv_false1<F: Prop>(x: Q<Inv<FFalse1>, F>) -> False {
     let y1 = inv_val(x, false1_def(tr_ty()));
     para_eq_tr_fa(eq::transitivity(eq::symmetry(y1), y0))
 }
+/// `f : bool -> bool  =>  f[false1] == false1`.
+pub fn eq_norm1_false1<F: Prop>(ty_f: Tauto<Ty<F, Pow<Bool, Bool>>>) -> Eq<SymNorm1<F, FFalse1>, FFalse1> {
+    fn case<F: Prop, A: Prop>((ty_f, ty_a): And<Ty<F, Pow<Bool, Bool>>, Ty<A, Bool>>) ->
+    Eq<App<SymNorm1<F, FFalse1>, A>, App<FFalse1, A>> {
+        eq::in_right_arg(eq::in_left_arg(false1_def(app_fun_ty(ty_f, app_fun_ty(inv_ty(false1_ty()),
+            ty_a.clone()))), eq_app_norm1()), eq::symmetry(false1_def(ty_a)))
+    }
+    bool1_fun_ext(
+        sym_norm1_ty(ty_f(True), false1_ty()),
+        false1_ty(),
+        hooo::hooo_rev_and((ty_f, tauto!(tr_ty()))).trans(case),
+        hooo::hooo_rev_and((ty_f, tauto!(fa_ty()))).trans(case),
+    )
+}
 
 /// Not function.
 #[derive(Clone, Copy)]
