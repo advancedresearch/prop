@@ -31,9 +31,9 @@ pub fn bool_values<A: Prop>(_ty_a: Ty<A, Bool>) -> Or<Eq<A, Tr>, Eq<A, Fa>> {uni
 /// True and false are exclusive.
 pub fn para_eq_tr_fa(_: Eq<Tr, Fa>) -> False {unimplemented!()}
 /// `∃ tr : bool { x } ⋀ ∃ fa : bool { x }  =>  x`.
-pub fn bool_exists<X: Prop>(
+pub fn bool1_exists<X: Prop>(
+    _case_fa: Exists<Ty<Fa, Bool>, X>,
     _case_tr: Exists<Ty<Tr, Bool>, X>,
-    _case_fa: Exists<Ty<Fa, Bool>, X>
 ) -> X {unimplemented!()}
 /// `∃ (fa, fa) : (bool, bool) { x } ⋀
 ///  ∃ (fa, tr) : (bool, bool) { x } ⋀
@@ -54,8 +54,8 @@ pub fn bool1_fun_ext<F: Prop, G: Prop>(
     case_tr: Tauto<Eq<App<F, Tr>, App<G, Tr>>>,
     case_fa: Tauto<Eq<App<F, Fa>, App<G, Fa>>>
 ) -> Eq<F, G> {
-    bool_exists(app_fun_ext(ty_f.clone(), ty_g.clone(), hooo::tr().trans(case_tr)),
-                app_fun_ext(ty_f, ty_g, hooo::tr().trans(case_fa)))
+    bool1_exists(app_fun_ext(ty_f.clone(), ty_g.clone(), hooo::tr().trans(case_fa)),
+                app_fun_ext(ty_f, ty_g, hooo::tr().trans(case_tr)))
 }
 /// `(f : (bool, bool) -> bool) ⋀ (g : (bool, bool) -> bool) ⋀
 /// (f(fa, fa) == g(fa, fa))^true ⋀
