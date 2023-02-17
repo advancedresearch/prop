@@ -1255,6 +1255,11 @@ pub fn norm2_ty<F: Prop, G1: Prop, G2: Prop, G3: Prop,
     path_semantics::ty_in_left_arg(norm1_ty(ty_f, par_tup_fun_ty(ty_g1, ty_g2), ty_g3),
         eq::symmetry(eq_norm2_norm1()))
 }
+/// `(f : a -> a) ⋀ (g : a -> b)  =>  f[g] : b -> b`.
+pub fn sym_norm1_ty<F: Prop, G: Prop, A: Prop, B: Prop>(
+    ty_f: Ty<F, Pow<A, A>>,
+    ty_g: Ty<G, Pow<B, A>>,
+) -> Ty<SymNorm1<F, G>, Pow<B, B>> {norm1_ty(ty_f, ty_g.clone(), ty_g)}
 /// `f[g1 -> g2]  ==  (g2 . f) . inv(g1)`.
 pub fn norm1_def<F: Prop, G1: Prop, G2: Prop>() ->
     Eq<Norm1<F, G1, G2>, Comp<Comp<G2, F>, Inv<G1>>> {eqx!(def Norm1)}
