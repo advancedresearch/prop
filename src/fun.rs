@@ -1365,6 +1365,19 @@ A1: Prop, A2: Prop, B1: Prop, B2: Prop, C: Prop, D: Prop>(
         par_tup_def(inv_val(q_inv_g1_h1, eq_g1b1_a1), inv_val(q_inv_g2_h2, eq_g2b2_a2)),
         app_map_eq(eq::symmetry(par_tup_inv())))), eq_fb1b2_c)), eq_g3c_d), eq_app_norm2())
 }
+/// `(inv(g) ~~ h) ⋀
+///  (g1(b1) = a1) ⋀ (g2(b2) = a2) ⋀ (f(b1, b2) = c) ⋀ (g3(c) = d)  =>
+///  f[g1 x g2 -> g3](a1, a2) = d`.
+pub fn sym_norm2_app<F: Prop, G: Prop, H: Prop,
+A1: Prop, A2: Prop, B1: Prop, B2: Prop, C: Prop, D: Prop>(
+    q_inv_g_h: Q<Inv<G>, H>,
+    eq_g1b1_a1: Eq<App<G, B1>, A1>,
+    eq_g2b2_a2: Eq<App<G, B2>, A2>,
+    eq_fb1b2_c: Eq<App<F, Tup<B1, B2>>, C>,
+    eq_g3c_d: Eq<App<G, C>, D>
+) -> Eq<App<SymNorm2<F, G>, Tup<A1, A2>>, D> {
+    norm2_app(q_inv_g_h.clone(), q_inv_g_h, eq_g1b1_a1, eq_g2b2_a2, eq_fb1b2_c, eq_g3c_d)
+}
 
 /// `(\(a : x) = (f(a) == g(a))) . (snd . snd)`.
 pub type FunExtAppEq<F, G, A, X> = Comp<Lam<Ty<A, X>, Eq<App<F, A>, App<G, A>>>, Comp<Snd, Snd>>;
