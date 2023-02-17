@@ -1336,6 +1336,12 @@ pub fn sym_norm2_id<F: Prop>() -> Eq<SymNorm2<F, FId>, F> {
 pub fn norm1_inv<F: Prop>() -> Eq<Norm1<FId, F, FId>, Inv<F>> {
     eqx!(eq::transitivity(comp_eq_left(comp_id_left()), comp_id_left()), norm1_def, l)
 }
+/// `g2(f(inv(g1)(x))) == f[g1 -> g2](x)`.
+pub fn eq_app_norm1<F: Prop, G1: Prop, G2: Prop, X: Prop>() ->
+Eq<App<G2, App<F, App<Inv<G1>, X>>>, App<Norm1<F, G1, G2>, X>> {
+    let x = eq::transitivity(eq_app_comp(), eq_app_comp());
+    eqx!(x, norm1_def, am, r)
+}
 
 /// `(\(a : x) = (f(a) == g(a))) . (snd . snd)`.
 pub type FunExtAppEq<F, G, A, X> = Comp<Lam<Ty<A, X>, Eq<App<F, A>, App<G, A>>>, Comp<Snd, Snd>>;
