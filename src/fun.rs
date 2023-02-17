@@ -1197,14 +1197,6 @@ pub fn par_tup_lam_ty<F: Prop, G: Prop, X1: Prop, X2: Prop, Y1: Prop, Y2: Prop>(
 pub fn par_tup_is_const() -> IsConst<ParTup> {unimplemented!()}
 /// `(id x id) == id`.
 pub fn par_tup_id() -> Eq<Par<FId, FId>, FId> {unimplemented!()}
-
-/// `is_const(f) ⋀ is_const(g)  =>  is_const(f x g)`.
-pub fn par_tup_app_is_const<F: Prop, G: Prop>(
-    f: IsConst<F>,
-    g: IsConst<G>
-) -> IsConst<Par<F, G>> {
-    app_is_const(par_tup_is_const(), tup_is_const(f, g))
-}
 /// `(g1 x g2) . (f1 x f2)  ==  ((g1 . f1) x (g2 . f2))`.
 pub fn par_tup_comp<F1: Prop, F2: Prop, G1: Prop, G2: Prop>() ->
     Eq<Comp<Par<G1, G2>, Par<F1, F2>>, Par<Comp<G1, F1>, Comp<G2, F2>>>
@@ -1212,12 +1204,17 @@ pub fn par_tup_comp<F1: Prop, F2: Prop, G1: Prop, G2: Prop>() ->
 /// `inv(f x g)  ==  inv(f) x inv(g)`.
 pub fn par_tup_inv<F: Prop, G: Prop>() -> Eq<Inv<Par<F, G>>, ParInv<F, G>>
 {unimplemented!()}
-
 /// `(f(i0) == o0) ⋀ (g(i1) == o1)  =>  (f x g)(i0, i1) == (o0, o1)`.
 pub fn par_tup_def<F: Prop, G: Prop, I0: Prop, I1: Prop, O0: Prop, O1: Prop>(
     _eq0: Eq<App<F, I0>, O0>,
     _eq1: Eq<App<G, I1>, O1>,
 ) -> Eq<App<Par<F, G>, Tup<I0, I1>>, Tup<O0, O1>> {unimplemented!()}
+
+/// `is_const(f) ⋀ is_const(g)  =>  is_const(f x g)`.
+pub fn par_tup_app_is_const<F: Prop, G: Prop>(
+    f: IsConst<F>,
+    g: IsConst<G>
+) -> IsConst<Par<F, G>> {app_is_const(par_tup_is_const(), tup_is_const(f, g))}
 
 /// `f[g1 -> g2]`.
 ///
