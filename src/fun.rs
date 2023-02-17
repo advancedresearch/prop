@@ -763,6 +763,11 @@ pub fn tup_in_right_arg<A: Prop, B: Prop, C: Prop>(x: Tup<A, B>, y: Eq<B, C>) ->
 pub fn tup_eq_fst_snd<A: Prop, B: Prop>() ->
     Eq<Tup<A, B>, Tup<App<Fst, Tup<A, B>>, App<Snd, Tup<A, B>>>>
 {eq::transitivity(eq::symmetry(tup_eq_fst(fst_def())), tup_eq_snd(eq::symmetry(snd_def())))}
+/// `(a == b) ⋀ (c == d)  =>  (a, c) == (b, d)`.
+pub fn tup_eq<A: Prop, B: Prop, C: Prop, D: Prop>(
+    eq_ab: Eq<A, B>,
+    eq_cd: Eq<C, D>
+) -> Eq<Tup<A, C>, Tup<B, D>> {eq::transitivity(tup_eq_fst(eq_ab), tup_eq_snd(eq_cd))}
 
 /// Tuple of 3 elements.
 pub type Tup3<A, B, C> = Tup<A, Tup<B, C>>;
