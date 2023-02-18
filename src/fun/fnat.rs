@@ -62,7 +62,7 @@ pub fn induction<N: VProp, P: Prop>(
 pub fn induction_ty<N: VProp, P: Prop>(
     _ty_p: Ty<P, Pow<Type<Z>, Nat>>,
     _case_zero: Tauto<App<P, Zero>>,
-    _case_n: Pow<App<P, Succ<N>>, Ty<N, Nat>>,
+    _case_n: Pow<App<P, Succ<N>>, Ty<Succ<N>, Nat>>,
 ) -> Pow<App<P, N>, Ty<N, Nat>> {unimplemented!()}
 /// `x^(n : nat)  =>  (x[n := succ(n)])^(succ(n) : nat)`.
 pub fn subst_induction<N: Prop, X: Prop, M: Prop>(
