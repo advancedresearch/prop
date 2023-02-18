@@ -133,6 +133,8 @@ pub fn succ_rev_ty<N: Prop>(ty_succ_n: Ty<Succ<N>, Nat>) -> Ty<N, Nat> {
         Right(x) => path_semantics::ty_in_left_arg(x.0, eq::symmetry(inc_eq_rev(x.1))),
     }
 }
+/// `(a == b)  =>  (succ(a) == succ(b))`.
+pub fn succ_eq<A: Prop, B: Prop>(x: Eq<A, B>) -> Eq<Succ<A>, Succ<B>> {app_eq(x)}
 
 /// Apply successor to argument.
 pub type Succ<N> = App<FSucc, N>;
