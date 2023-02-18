@@ -59,8 +59,8 @@ pub fn induction<N: VProp, P: Prop>(
 /// ----------------------------
 /// p(n)^(n : nat)
 /// ```
-pub fn induction_ty<N: VProp, P: Prop>(
-    _ty_p: Ty<P, Pow<Type<Z>, Nat>>,
+pub fn induction_ty<N: VProp, P: Prop, L: nat::Nat>(
+    _ty_p: Ty<P, Pow<Type<L>, Nat>>,
     _case_zero: Tauto<App<P, Zero>>,
     _case_n: Pow<App<P, Succ<N>>, Ty<Succ<N>, Nat>>,
 ) -> Pow<App<P, N>, Ty<N, Nat>> {unimplemented!()}
