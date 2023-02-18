@@ -48,7 +48,7 @@ pub fn inc_eq_rev<N: Prop, M: Prop>(_: Eq<Succ<N>, Succ<M>>) -> Eq<N, M> {unimpl
 pub fn induction<N: VProp, P: Prop>(
     _ty_p: Ty<P, Pow<Bool, Nat>>,
     _case_zero: Tauto<Eq<App<P, Zero>, Tr>>,
-    _case_n: Pow<Eq<App<P, Succ<N>>, Tr>, Ty<N, Nat>>,
+    _case_n: Pow<Eq<App<P, Succ<N>>, Tr>, Ty<Succ<N>, Nat>>,
 ) -> Pow<Eq<App<P, N>, True>, Ty<N, Nat>> {unimplemented!()}
 /// Type induction on natural numbers.
 ///
