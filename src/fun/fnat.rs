@@ -41,8 +41,8 @@ pub fn inc_eq_rev<N: Prop, M: Prop>(_: Eq<Succ<N>, Succ<M>>) -> Eq<N, M> {unimpl
 /// ```text
 /// (p : nat -> bool) ⋀
 /// (p(0) == tr)^true ⋀
-/// (p(succ(n)) == tr)^(n : nat)
-/// ----------------------------
+/// (p(succ(n)) == tr)^(succ(n) : nat)
+/// ----------------------------------
 /// (p(n) == tr)^(n : nat)
 /// ```
 pub fn induction<N: VProp, P: Prop>(
@@ -55,8 +55,8 @@ pub fn induction<N: VProp, P: Prop>(
 /// ```text
 /// (p : nat -> type(0)) ⋀
 /// p(0)^true ⋀
-/// p(succ(n))^(n : nat)
-/// ----------------------------
+/// p(succ(n))^(succ(n) : nat)
+/// --------------------------
 /// p(n)^(n : nat)
 /// ```
 pub fn induction_ty<N: VProp, P: Prop, L: nat::Nat>(
