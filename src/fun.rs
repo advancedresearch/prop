@@ -540,6 +540,9 @@ pub fn dup_def<A: Prop>() -> Eq<App<Dup, A>, Tup<A, A>> {unimplemented!()}
 #[derive(Clone, Copy)]
 pub struct FId(());
 
+/// `id(a)`.
+pub type Id<A> = App<FId, A>;
+
 /// `id{a} : a -> a`.
 ///
 /// Type of Id.
@@ -553,7 +556,7 @@ pub fn id_is_const() -> IsConst<FId> {unimplemented!()}
 pub fn id_def<A: Prop, X: Prop, N: Nat>(
     _ty_x: Ty<X, Type<N>>,
     _ty_a: Ty<A, X>
-) -> Eq<App<FId, A>, A> {unimplemented!()}
+) -> Eq<Id<A>, A> {unimplemented!()}
 /// `inv(id) ~~ id`.
 pub fn id_q() -> Q<Inv<FId>, FId> {unimplemented!()}
 /// `(f . inv(f)) => id`.
@@ -566,7 +569,7 @@ pub fn comp_left_inv_to_id<F: Prop>(_: Comp<Inv<F>, F>) -> FId {unimplemented!()
 pub fn id_to_comp_left_inv<F: Prop>(_: FId) -> Comp<Inv<F>, F> {unimplemented!()}
 
 /// `a : type(n)  =>  id(a) = a`.
-pub fn id_def_type<A: Prop, N: Nat>(ty_a: Ty<A, Type<N>>) -> Eq<App<FId, A>, A> {
+pub fn id_def_type<A: Prop, N: Nat>(ty_a: Ty<A, Type<N>>) -> Eq<Id<A>, A> {
     id_def(type_ty(), ty_a)
 }
 /// `(a : type(n))^true  =>  theory(a)`.
