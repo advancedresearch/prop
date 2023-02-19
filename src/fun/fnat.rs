@@ -246,6 +246,10 @@ pub fn mul_symmetry<N: Prop, M: Prop>() -> Eq<Mul<N, M>, Mul<M, N>> {unimplement
 pub fn mul_assoc<A: Prop, B: Prop, C: Prop>() -> Eq<Mul<Mul<A, B>, C>, Mul<A, Mul<B, C>>> {
     unimplemented!()
 }
+/// `mul(a, add(b, c)) == add(mul(a, b), mul(a, c))`.
+pub fn mul_distr<A: Prop, B: Prop, C: Prop>() -> Eq<Mul<A, Add<A, B>>, Add<Mul<A, B>, Add<B, C>>> {
+    unimplemented!()
+}
 /// `(n : nat) ⋀ (m : nat) ⋀ (a : nat) ⋀ (n * a == m * a) ⋀ ¬(a == 0)  =>  (n == m)`.
 pub fn mul_rev_eq_left<N: Prop, M: Prop, A: Prop>(
     _n_ty: Ty<N, Nat>,
