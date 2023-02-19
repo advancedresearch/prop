@@ -437,6 +437,9 @@ pub fn qu_to_app_eq<A: Prop, B: Prop, F: Prop>(
 #[derive(Copy, Clone)]
 pub struct FComp(());
 
+/// `is_const(comp)`.
+pub fn fcomp_is_const() -> IsConst<FComp> {unimplemented!()}
+
 /// `f . g`.
 pub type Comp<F, G> = App<FComp, Tup<F, G>>;
 
@@ -447,10 +450,6 @@ pub fn comp_ty<F: Prop, G: Prop, X: Prop, Y: Prop, Z: Prop>(
     _ty_f: Ty<F, Pow<Y, X>>,
     _ty_g: Ty<G, Pow<Z, Y>>
 ) -> Ty<Comp<G, F>, Pow<Z, X>> {unimplemented!()}
-/// `is_const(f) ⋀ is_const(g)  =>  is_const(g . f)`.
-pub fn comp_is_const<F: Prop, G: Prop>(_a: IsConst<F>, _b: IsConst<G>) -> IsConst<Comp<G, F>> {
-    unimplemented!()
-}
 /// `inv(g . f) => (inv(f) . inv(g))`.
 pub fn inv_comp_to_comp_inv<F: Prop, G: Prop>(_: Inv<Comp<G, F>>) -> Comp<Inv<F>, Inv<G>> {
     unimplemented!()
@@ -478,6 +477,10 @@ pub fn comp_id_right<F: Prop>() -> Eq<Comp<F, FId>, F> {unimplemented!()}
 /// `~f ⋀ ~g  =>  ~(g . f)`.
 pub fn comp_qu<F: Prop, G: Prop>(_: Qu<F>, _: Qu<G>) -> Qu<Comp<G, F>> {unimplemented!()}
 
+/// `is_const(f) ⋀ is_const(g)  =>  is_const(g . f)`.
+pub fn comp_is_const<F: Prop, G: Prop>(a: IsConst<F>, b: IsConst<G>) -> IsConst<Comp<G, F>> {
+    app_is_const(fcomp_is_const(), tup_is_const(b, a))
+}
 /// `~inv(f) ⋀ ~inv(g)  =>  ~inv(g . f)`.
 pub fn comp_inv_qu<F: Prop, G: Prop>(x: Qu<Inv<F>>, y: Qu<Inv<G>>) -> Qu<Inv<Comp<G, F>>> {
     inv_qu(comp_qu(inv_rev_qu(x), inv_rev_qu(y)))
