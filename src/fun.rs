@@ -318,14 +318,18 @@ pub fn app_fun_swap_tauto_ty<F: Prop, Y: Prop, A: Prop, B: Prop>() ->
 
 /// Imaginary inverse.
 #[derive(Copy, Clone)]
-pub struct Inv<F>(F);
+pub struct FInv(());
+
+/// `is_const(inv)`.
+pub fn finv_is_const() -> IsConst<FInv> {unimplemented!()}
+
+/// `inv(f)`.
+pub type Inv<F> = App<FInv, F>;
 
 /// Inverse type `(f : x -> y) => (inv(f) : y -> x)`.
 pub fn inv_ty<F: Prop, X: Prop, Y: Prop>(
     _ty_f: Ty<F, Pow<Y, X>>
 ) -> Ty<Inv<F>, Pow<X, Y>> {unimplemented!()}
-/// `is_const(f) => is_const(inv(f))`.
-pub fn inv_is_const<F: Prop>(_a: IsConst<F>) -> IsConst<Inv<F>> {unimplemented!()}
 /// `~inv(f) ⋀ (f(a) == b)  =>  (inv(f)(b) == a)`.
 ///
 /// Get inverse map of `f` if there exists a proof `~inv(f)`.
@@ -351,6 +355,8 @@ pub fn path<F: Prop, X: Prop, Y: Prop>(
     _: Pow<Y, X>
 ) -> And<F, Inv<F>> {unimplemented!()}
 
+/// `is_const(f) => is_const(inv(f))`.
+pub fn inv_is_const<F: Prop>(a: IsConst<F>) -> IsConst<Inv<F>> {app_is_const(finv_is_const(), a)}
 /// `(f ~~ g) ⋀ (f(a) == b)  =>  (inv(f)(b) == a)`.
 ///
 /// Get inverse map of `f` if there exists a proof `g`.
