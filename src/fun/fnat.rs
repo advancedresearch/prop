@@ -224,15 +224,15 @@ pub fn add_succ_plus_one<N: Prop>(ty_n: Ty<N, Nat>) -> Eq<Succ<N>, Add<N, One>> 
 
 /// Multiplication.
 #[derive(Copy, Clone)]
-pub struct Multiply(());
+pub struct FMul(());
 
 /// `a * b`.
-pub type Mul<A, B> = App<Multiply, Tup<A, B>>;
+pub type Mul<A, B> = App<FMul, Tup<A, B>>;
 
 /// `mul : (nat, nat) -> nat`.
-pub fn mul_ty() -> Ty<Multiply, Pow<Nat, Tup<Nat, Nat>>> {unimplemented!()}
+pub fn mul_ty() -> Ty<FMul, Pow<Nat, Tup<Nat, Nat>>> {unimplemented!()}
 /// `is_const(mul)`.
-pub fn mul_is_const() -> IsConst<Multiply> {unimplemented!()}
+pub fn mul_is_const() -> IsConst<FMul> {unimplemented!()}
 /// `(n : nat)  =>  mul(0, n) = 0`.
 pub fn mul_zero<N: Prop>(_ty_n: Ty<N, Nat>) -> Eq<Mul<Zero, N>, Zero> {unimplemented!()}
 /// `(n : nat) ⋀ (m : nat)  =>  mul(succ(n), m) == add(m, mul(n, m))`.
