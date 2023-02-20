@@ -96,6 +96,9 @@ pub fn ty_true_true() -> Ty<True, True> {
     ty_in_right_arg(x, eq::symmetry(eq_true_ltrue::<S<Z>>()))
 }
 
+/// `a : true`.
+pub fn ty_tr<A: Prop>() -> Ty<A, True> {ty_imply_left(ty_true_true(), True.map_any())}
+
 /// `(x : a) ⋀ (y : b)  =>  ((x ⋀ y) : (a ⋀ b))`.
 pub fn ty_and<X: Prop, Y: Prop, A: Prop, B: Prop>(
     (xa, pord_xa): Ty<X, A>,
