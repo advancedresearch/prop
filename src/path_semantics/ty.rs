@@ -33,6 +33,11 @@ pub fn ty_eq_right<A: Prop, B: Prop, C: Prop>(x: Eq<B, C>) -> Eq<Ty<A, B>, Ty<A,
      Rc::new(move |ty_a| ty_in_right_arg(ty_a, x2.clone())))
 }
 
+/// `(a : b) ⋀ (c => a)  =>  (c : b)`
+pub fn ty_imply_left<A: Prop, B: Prop, C: Prop>(x: Ty<A, B>, y: Imply<C, A>) -> Ty<C, B> {
+    (imply::transitivity(y.clone(), x.0), x.1.by_imply_left(y))
+}
+
 /// `(x : false) => ¬x`.
 pub fn ty_false<X: Prop>(ty_x_false: Ty<X, False>) -> Not<X> {ty_x_false.0}
 
