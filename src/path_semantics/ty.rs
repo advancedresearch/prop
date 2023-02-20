@@ -38,6 +38,11 @@ pub fn ty_imply_left<A: Prop, B: Prop, C: Prop>(x: Ty<A, B>, y: Imply<C, A>) -> 
     (imply::transitivity(y.clone(), x.0), x.1.by_imply_left(y))
 }
 
+/// `(a : b) ⋀ (b => c)  =>  (a : c)`.
+pub fn ty_imply_right<A: Prop, B: Prop, C: Prop>(x: Ty<A, B>, y: Imply<B, C>) -> Ty<A, C> {
+    (imply::transitivity(x.0, y.clone()), x.1.by_imply_right(y))
+}
+
 /// `(x : false) => ¬x`.
 pub fn ty_false<X: Prop>(ty_x_false: Ty<X, False>) -> Not<X> {ty_x_false.0}
 
