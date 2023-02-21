@@ -676,6 +676,13 @@ pub fn is_contr_to_tauto_eq_true<A: Prop>(x: IsContr<A>) -> Tauto<Eq<A, True>> {
     }
     x.trans(f)
 }
+/// `(a == true)^true  =>  is_contr(a)`.
+pub fn tauto_eq_true_to_is_contr<A: Prop>(x: Tauto<Eq<A, True>>) -> IsContr<A> {
+    fn f<A: Prop>(x: Eq<A, True>) -> Eq<Qubit<Z, A>, True> {
+        (True.map_any(), Qubit::<Z, A>::from(x.1(True)).map_any())
+    }
+    x.trans(f)
+}
 /// `is_contr(a)  =>  is_prop(a)`.
 pub fn is_contr_to_is_prop<A: Prop>(x: IsContr<A>) -> IsProp<A> {
     use hooo::{tauto_qu_eq, tauto_eq_symmetry, tauto_eq_transitivity as trans};
