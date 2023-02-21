@@ -676,6 +676,13 @@ pub fn is_contr_to_tauto_eq_true<A: Prop>(x: IsContr<A>) -> Tauto<Eq<A, True>> {
     }
     x.trans(f)
 }
+/// `is_contr(a)  =>  is_prop(a)`.
+pub fn is_contr_to_is_prop<A: Prop>(x: IsContr<A>) -> IsProp<A> {
+    use hooo::{tauto_qu_eq, tauto_eq_symmetry, tauto_eq_transitivity as trans};
+
+    let y = is_contr_to_tauto_eq_true(x);
+    trans(trans(tauto_qu_eq(y), is_prop_true()), tauto_eq_symmetry(y))
+}
 /// `is_prop(a)  =>  is_set(a)`.
 pub fn is_prop_to_is_set<A: Prop>(x: IsProp<A>) -> IsSet<A> {
     fn f<A: Prop>(x: IsProp<A>) -> Eq<Qu<Qu<A>>, Qu<A>> {
