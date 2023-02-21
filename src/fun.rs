@@ -669,6 +669,13 @@ pub fn pow_to_is_prop<A: Prop, B: Prop>(x: Pow<A, B>) -> IsProp<Pow<A, B>> {
 pub fn is_set_id() -> IsSet<FId> {collapse_to_set_right(tauto!(id_q()))}
 /// `is_set(not)`.
 pub fn is_set_not() -> IsSet<bool_alg::FNot> {collapse_to_set_right(tauto!(bool_alg::not_q()))}
+/// `is_contr(a)  =>  (a == true)^true`.
+pub fn is_contr_to_tauto_eq_true<A: Prop>(x: IsContr<A>) -> Tauto<Eq<A, True>> {
+    fn f<A: Prop>(x: Eq<Qubit<Z, A>, True>) -> Eq<A, True> {
+        (True.map_any(), Qubit::<Z, A>::to(x.1(True)).map_any())
+    }
+    x.trans(f)
+}
 /// `is_prop(a)  =>  is_set(a)`.
 pub fn is_prop_to_is_set<A: Prop>(x: IsProp<A>) -> IsSet<A> {
     fn f<A: Prop>(x: IsProp<A>) -> Eq<Qu<Qu<A>>, Qu<A>> {
