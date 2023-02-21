@@ -132,7 +132,7 @@
 use crate::*;
 use path_semantics::{POrdProof, Ty};
 use quality::Q;
-use qubit::Qu;
+use qubit::{Qu, Qubit};
 use hooo::{Exists, Para, Pow, Tauto, Theory};
 use hooo::pow::PowExt;
 use nat::{Nat, S, Z};
@@ -637,6 +637,17 @@ pub type IsSet<A> = IsProp<Qu<A>>;
 ///
 /// This is the same as `(~~~a == ~~a)^true`.
 pub type IsGroupoid<A> = IsSet<Qu<A>>;
+/// `is_hprop(n, a) := (qubit^n(a) == qubit^(n-1)(a))^true` where `qubit^(-1)(a) == true`.
+pub type IsHProp<N, A> = Tauto<Eq<<S<N> as QuHLev>::Out<A>, <N as QuHLev>::Out<A>>>;
+
+/// Used to get repeated application of qubit `~` corresponding to homotopy levels.
+pub trait QuHLev {
+    /// The resulting type.
+    type Out<A: Prop>: Prop;
+}
+
+impl QuHLev for Z {type Out<A: Prop> = True;}
+impl<N: Nat> QuHLev for S<N> {type Out<A: Prop> = Qubit<N, A>;}
 
 /// `is_prop(true)`.
 pub fn is_prop_true() -> IsProp<True> {tauto!(eq_qu_true_true())}
@@ -689,7 +700,7 @@ pub fn collapse_to_eq_qu_2<F: Prop, G: Prop>(
 }
 /// `(f ~~ g)^true  =>  hom_eq(3, f, g)^true`.
 pub fn collapse_to_hom_eq_3<F: Prop, G: Prop>(x: Tauto<Q<F, G>>) -> Tauto<HomEq3<F, G>> {
-    use qubit::{Qubit, normalize, rev_normalize};
+    use qubit::{normalize, rev_normalize};
     use nat::Two;
     fn h<F: Prop, G: Prop>((a, b): Eq<Qu<Qu<F>>, Qu<Qu<G>>>) -> Eq<Qubit<Two, F>, Qubit<Two, G>> {
         (Rc::new(move |x| normalize(a(rev_normalize(x)))),
