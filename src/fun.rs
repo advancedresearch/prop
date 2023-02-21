@@ -630,8 +630,12 @@ pub fn pow_to_eq_qu<A: Prop, B: Prop>(x: Pow<A, B>) -> Eq<Qu<Pow<A, B>>, Pow<A, 
 /// `is_prop(a) := (~a == a)^true`.
 pub type IsProp<A> = Tauto<Eq<Qu<A>, A>>;
 /// `is_set(a) := is_prop(~a)`.
+///
+/// This is the same as `(~~a == ~a)^true`.
 pub type IsSet<A> = IsProp<Qu<A>>;
 /// `is_groupoid(a) := is_set(~a)`.
+///
+/// This is the same as `(~~~a == ~~a)^true`.
 pub type IsGroupoid<A> = IsSet<Qu<A>>;
 
 /// `is_prop(true)`.
