@@ -627,6 +627,8 @@ pub fn pow_to_eq_qu<A: Prop, B: Prop>(x: Pow<A, B>) -> Eq<Qu<Pow<A, B>>, Pow<A, 
     tauto_to_eq_qu(x.lift())
 }
 
+/// `is_contr(a) := is_hprop(0, a)`.
+pub type IsContr<A> = IsHProp<Z, A>;
 /// `is_prop(a) := (~a == a)^true`.
 pub type IsProp<A> = Tauto<Eq<Qu<A>, A>>;
 /// `is_set(a) := is_prop(~a)`.
