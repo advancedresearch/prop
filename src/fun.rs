@@ -704,6 +704,10 @@ pub fn is_set_to_is_groupoid<A: Prop>(x: IsSet<A>) -> IsGroupoid<A> {is_prop_to_
 pub fn is_prop_to_is_groupoid<A: Prop>(x: IsProp<A>) -> IsGroupoid<A> {
     is_set_to_is_groupoid(is_prop_to_is_set(x))
 }
+/// `a^true  =>  is_contr(a)`.
+pub fn tauto_to_is_contr<A: Prop>(tauto_a: Tauto<A>) -> IsContr<A> {
+    tauto_eq_true_to_is_contr(hooo::pow_eq_to_tauto_eq((hooo::tr(), tauto_a)))
+}
 /// `a^true  =>  is_prop(a)`.
 pub fn tauto_to_is_prop<A: Prop>(tauto_a: Tauto<A>) -> IsProp<A> {
     tauto_a.lift().trans(tauto_to_eq_qu)
