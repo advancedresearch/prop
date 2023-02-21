@@ -686,6 +686,15 @@ pub fn lift_q<A: Prop, B: Prop>(_: Eq<A, B>, _: Theory<Eq<A, B>>) -> Q<A, B> {un
 /// `~a ∧ (a == b)^true  =>  ~b`.
 pub fn qu_in_arg<A: Prop, B: Prop>(x: Qu<A>, y: Tauto<Eq<A, B>>) -> Qu<B> {qubit::in_arg(x, y)}
 
+/// `(a == b)^true  =>  (~a == ~b)^true`.
+pub fn tauto_qu_eq<A: Prop, B: Prop>(x: Tauto<Eq<A, B>>) -> Tauto<Eq<Qu<A>, Qu<B>>> {
+    fn f<A: Prop, B: Prop>(x: Tauto<Eq<A, B>>) -> Eq<Qu<A>, Qu<B>> {
+        let x2 = tauto_eq_symmetry(x);
+        (Rc::new(move |qu_a| qubit::in_arg(qu_a, x)), Rc::new(move |qu_b| qubit::in_arg(qu_b, x2)))
+    }
+    x.lift().trans(f)
+}
+
 /// `(a ~~ b) ∧ (a == c)^true  =>  (c ~~ b)`.
 pub fn q_in_left_arg<A: Prop, B: Prop, C: Prop>(
     (eq_ab, (qu_a, qu_b)): Q<A, B>,
