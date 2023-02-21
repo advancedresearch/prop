@@ -42,7 +42,7 @@
 //! This solves the problem such that axioms can be added,
 //! only for functions that have inverses.
 //!
-//! If a function `f` has no inverse, it is useful to prove `false^(inv(f) ~~ g)`.
+//! If a function `f` has no inverse, then it is useful to prove `false^(inv(f) ~~ g)`.
 //!
 //! ### Function Extensionality
 //!
