@@ -639,6 +639,8 @@ pub type IsSet<A> = IsProp<Qu<A>>;
 pub type IsGroupoid<A> = IsSet<Qu<A>>;
 /// `is_hprop(n, a) := (qubit^n(a) == qubit^(n-1)(a))^true` where `qubit^(-1)(a) == true`.
 pub type IsHProp<N, A> = Tauto<Eq<<S<N> as QuHLev>::Out<A>, <N as QuHLev>::Out<A>>>;
+/// `is_ngroupoid(n, a) := is_hprop(n+2, a)`.
+pub type IsNGroupoid<N, A> = IsHProp<S<S<N>>, A>;
 
 /// Used to get repeated application of qubit `~` corresponding to homotopy levels.
 pub trait QuHLev {
