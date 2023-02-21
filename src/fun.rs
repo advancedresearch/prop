@@ -653,6 +653,10 @@ pub trait QuHLev {
 impl QuHLev for Z {type Out<A: Prop> = True;}
 impl<N: Nat> QuHLev for S<N> {type Out<A: Prop> = Qubit<N, A>;}
 
+/// `is_contr(true)`.
+pub fn is_contr_true() -> IsContr<True> {
+    tauto!((True.map_any(), Qubit::<Z, True>::from(True).map_any()))
+}
 /// `is_prop(true)`.
 pub fn is_prop_true() -> IsProp<True> {tauto!(eq_qu_true_true())}
 /// `is_prop(false)`.
