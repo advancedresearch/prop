@@ -33,11 +33,6 @@ pub fn ty_eq_right<A: Prop, B: Prop, C: Prop>(x: Eq<B, C>) -> Eq<Ty<A, B>, Ty<A,
      Rc::new(move |ty_a| ty_in_right_arg(ty_a, x2.clone())))
 }
 
-/// `(a : b) ⋀ (c => a)  =>  (c : b)`
-pub fn ty_imply_left<A: Prop, B: Prop, C: Prop>(x: Ty<A, B>, y: Imply<C, A>) -> Ty<C, B> {
-    (imply::transitivity(y.clone(), x.0), x.1.by_imply_left(y))
-}
-
 /// `(a : b) ⋀ (b => c)  =>  (a : c)`.
 pub fn ty_imply_right<A: Prop, B: Prop, C: Prop>(x: Ty<A, B>, y: Imply<B, C>) -> Ty<A, C> {
     (imply::transitivity(x.0, y.clone()), x.1.by_imply_right(y))
@@ -69,22 +64,6 @@ pub fn ty_non_triv<X: Prop, A: Prop>(
     ty_in_right_arg(ty_x_a, eq_a_false)
 }
 
-/// `(true : x)  =>  (a : x)`.
-pub fn ty_inhabit<A: Prop, X: Prop>(tr_x: Ty<True, X>) -> Ty<A, X> {
-    (imply::transitivity(True.map_any(), tr_x.0), tr_x.1.by_imply_left(True.map_any()))
-}
-
-/// `((a : b) : x)  =>  (b : x)`.
-pub fn ty_instance<A: Prop, B: Prop, X: Prop>((ab_x, pord_ab_x): Ty<Ty<A, B>, X>) -> Ty<B, X> {
-    (Rc::new(move |b| ab_x(ty_inhabit(ty_rev_true(b)))),
-     pord_ab_x.by_imply_left(Rc::new(move |b| ty_inhabit(ty_rev_true(b)))))
-}
-
-/// `((a : b) : x)  =>  (a : (b : x))`.
-pub fn ty_assoc_right<A: Prop, B: Prop, X: Prop>(x: Ty<Ty<A, B>, X>) -> Ty<A, Ty<B, X>> {
-    ty_inhabit(ty_rev_true(ty_instance(x)))
-}
-
 /// `true == ltrue`.
 pub fn eq_true_ltrue<N: Nat>() -> Eq<True, LTrue<N>> {
     (LTrue(Default::default()).map_any(), True.map_any())
@@ -95,9 +74,6 @@ pub fn ty_true_true() -> Ty<True, True> {
     let x = ty_in_left_arg(ty_ltrue(), eq::symmetry(eq_true_ltrue::<Z>()));
     ty_in_right_arg(x, eq::symmetry(eq_true_ltrue::<S<Z>>()))
 }
-
-/// `a : true`.
-pub fn ty_tr<A: Prop>() -> Ty<A, True> {ty_imply_left(ty_true_true(), True.map_any())}
 
 /// `(x : a) ⋀ (y : b)  =>  ((x ⋀ y) : (a ⋀ b))`.
 pub fn ty_and<X: Prop, Y: Prop, A: Prop, B: Prop>(
