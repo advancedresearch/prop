@@ -1,7 +1,7 @@
 //! Natural numbers.
 
 use super::*;
-use bool_alg::{Bool, Tr};
+use bool_alg::{Bool, FNot, Tr};
 
 /// The type of natural numbers.
 #[derive(Copy, Clone)]
@@ -279,4 +279,20 @@ pub fn mul_eq_left<A: Prop, B: Prop, C: Prop>(x: Eq<A, B>) -> Eq<Mul<A, C>, Mul<
 /// `(a == b)  =>  (c + a == c + b)`.
 pub fn mul_eq_right<A: Prop, B: Prop, C: Prop>(x: Eq<A, B>) -> Eq<Mul<C, A>, Mul<C, B>> {
     app_eq(tup_eq_snd(x))
+}
+
+/// Even.
+#[derive(Copy, Clone)]
+pub struct FEven(());
+
+/// `even(a)`.
+pub type Even<A> = App<FEven, A>;
+
+/// `even : nat -> bool`.
+pub fn even_ty() -> Ty<FEven, Pow<Bool, Nat>> {unimplemented!()}
+/// `even(0) = tr`.
+pub fn even_zero() -> Eq<Even<Zero>, Tr> {unimplemented!()}
+/// `n : nat  =>  even(succ(n)) = not(even(n))`.
+pub fn even_succ<N: Prop>(_ty_n: Ty<N, Nat>) -> Eq<Even<Succ<N>>, App<FNot, Even<N>>> {
+    unimplemented!()
 }
