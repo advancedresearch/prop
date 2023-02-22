@@ -113,6 +113,9 @@ pub fn eq_norm1_by_false1<F: Prop>(
 /// `idb := id{bool}`.
 pub type FIdb = App<FId, Bool>;
 
+/// `idb : bool -> bool`.
+pub fn idb_ty() -> Ty<FIdb, Pow<Bool, Bool>> {id_ty()}
+
 /// Not function.
 #[derive(Clone, Copy)]
 pub struct FNot(());
