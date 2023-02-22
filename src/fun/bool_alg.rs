@@ -110,6 +110,9 @@ pub fn eq_norm1_by_false1<F: Prop>(
     )
 }
 
+/// `idb := id{bool}`.
+pub type FIdb = App<FId, Bool>;
+
 /// Not function.
 #[derive(Clone, Copy)]
 pub struct FNot(());
@@ -126,14 +129,14 @@ pub fn not_tr() -> Eq<App<FNot, Tr>, Fa> {unimplemented!()}
 pub fn not_q() -> Q<Inv<FNot>, FNot> {unimplemented!()}
 
 /// `(not . not) == id`.
-pub fn eq_not_not_id() -> Eq<Comp<FNot, FNot>, FId> {
-    self_inv_to_eq_id(quality::to_eq(not_q()))
+pub fn eq_not_not_id() -> Eq<Comp<FNot, FNot>, FIdb> {
+    self_inv_to_eq_id(not_ty(), quality::to_eq(not_q()))
 }
 /// `not[not] == not`.
 pub fn eq_norm1_not_not() -> Eq<SymNorm1<FNot, FNot>, FNot> {
-    (Rc::new(move |x| comp_id_left().0(comp_in_left_arg(comp_in_right_arg(x.0,
+    (Rc::new(move |x| comp_id_left(not_ty()).0(comp_in_left_arg(comp_in_right_arg(x.0,
         quality::to_eq(not_q())), eq_not_not_id()))),
-     Rc::new(move |x| Norm1(comp_in_right_arg(comp_in_left_arg(comp_id_left().1(x),
+     Rc::new(move |x| Norm1(comp_in_right_arg(comp_in_left_arg(comp_id_left(not_ty()).1(x),
         eq::symmetry(eq_not_not_id())), eq::symmetry(quality::to_eq(not_q()))))))
 }
 
@@ -292,10 +295,10 @@ pub fn nand_fa<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FNand, Tup<Fa, A>>, Tr> {
 
 /// Imply function.
 #[derive(Copy, Clone)]
-pub struct FImply(pub Comp<FOr, Par<FNot, FId>>);
+pub struct FImply(pub Comp<FOr, Par<FNot, FIdb>>);
 
 /// `imply  ==  or . (not x id)`.
-pub fn imply_def() -> Eq<FImply, Comp<FOr, Par<FNot, FId>>> {eqx!(def FImply)}
+pub fn imply_def() -> Eq<FImply, Comp<FOr, Par<FNot, FIdb>>> {eqx!(def FImply)}
 /// Type of Imply.
 pub fn imply_ty() -> Ty<FImply, Pow<Bool, Tup<Bool, Bool>>> {
     eqx!(comp_ty(par_tup_fun_ty(not_ty(), id_ty()), or_ty()), imply_def, tyl)
@@ -305,7 +308,6 @@ pub fn imply_is_const() -> IsConst<FImply> {
     let x = comp_is_const(par_tup_app_is_const(not_is_const(), id_is_const()), or_is_const());
     eqx!(x, imply_def, co)
 }
-
 /// `imply(true, a) = a`.
 pub fn imply_tr<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FImply, Tup<Tr, A>>, A> {
     eqx!(eq::symmetry(eq::in_left_arg(eq::in_left_arg(eq_app_comp(), app_eq(

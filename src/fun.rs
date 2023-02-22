@@ -464,10 +464,14 @@ pub fn comp_to_app<F: Prop, G: Prop, X: Prop>(_: App<Comp<G, F>, X>) -> App<G, A
 pub fn comp_assoc<F: Prop, G: Prop, H: Prop>() -> Eq<Comp<H, Comp<G, F>>, Comp<Comp<H, G>, F>> {
     unimplemented!()
 }
-/// `id . f  ==  f`.
-pub fn comp_id_left<F: Prop>() -> Eq<Comp<FId, F>, F> {unimplemented!()}
-/// `f . id  ==  f`.
-pub fn comp_id_right<F: Prop>() -> Eq<Comp<F, FId>, F> {unimplemented!()}
+/// `(f : a -> b)  =>  (id{b} . f == f)`.
+pub fn comp_id_left<F: Prop, A: Prop, B: Prop>(
+    _ty_f: Ty<F, Pow<B, A>>
+) -> Eq<Comp<App<FId, B>, F>, F> {unimplemented!()}
+/// `(f : a -> b)  =>  (f . id{a} == f)`.
+pub fn comp_id_right<F: Prop, A: Prop, B: Prop>(
+    _ty_f: Ty<F, Pow<B, A>>
+) -> Eq<Comp<F, App<FId, A>>, F> {unimplemented!()}
 /// `~f ⋀ ~g  =>  ~(g . f)`.
 pub fn comp_qu<F: Prop, G: Prop>(_: Qu<F>, _: Qu<G>) -> Qu<Comp<G, F>> {unimplemented!()}
 
@@ -525,7 +529,7 @@ pub fn dup_is_const() -> IsConst<Dup> {unimplemented!()}
 pub fn dup_def<A: Prop>() -> Eq<App<Dup, A>, Tup<A, A>> {unimplemented!()}
 
 /// `a : type(n)  =>  id(a) = a`.
-pub fn id_def_type<A: Prop, N: Nat>(ty_a: Ty<A, Type<N>>) -> Eq<Id<A>, A> {
+pub fn id_def_type<A: Prop, N: Nat>(ty_a: Ty<A, Type<N>>) -> Eq<Id<Type<N>, A>, A> {
     id_def(type_ty(), ty_a)
 }
 /// `(a : type(n))^true  =>  theory(a)`.
@@ -544,18 +548,22 @@ pub fn self_inv_ty<F: Prop, A: Prop, B: Prop>(
     path_semantics::ty_q_formation(ty_f.clone(), inv_ty(ty_f))
 }
 /// `(inv(f) == f) => ((f . f) == id)`.
-pub fn self_inv_to_eq_id<F: Prop>(eq_f: Eq<Inv<F>, F>) -> Eq<Comp<F, F>, FId> {
+pub fn self_inv_to_eq_id<F: Prop, A: Prop>(
+    ty_f: Ty<F, Pow<A, A>>,
+    eq_f: Eq<Inv<F>, F>
+) -> Eq<Comp<F, F>, App<FId, A>> {
+    let ty_f_2 = ty_f.clone();
     let eq_f_2 = eq_f.clone();
     (
-        Rc::new(move |x| comp_right_inv_to_id(
+        Rc::new(move |x| comp_right_inv_to_id(ty_f_2.clone(),
             comp_in_right_arg(x, eq::symmetry(eq_f_2.clone())))),
-        Rc::new(move |x| comp_in_right_arg(id_to_comp_right_inv(x), eq_f.clone())),
+        Rc::new(move |x| comp_in_right_arg(id_to_comp_right_inv(ty_f.clone(), x), eq_f.clone())),
     )
 }
 /// `~id{a} : ~(a -> a)`.
-pub fn id_qu_ty<A: Prop>() -> Ty<Qu<FId>, Qu<Pow<A, A>>> {path_semantics::ty_qu_formation(id_ty())}
-/// `~id`.
-pub fn id_qu() -> Qu<FId> {Qu::from_q(quality::right(id_q()))}
+pub fn id_qu_ty<A: Prop>() -> Ty<Qu<App<FId, A>>, Qu<Pow<A, A>>> {path_semantics::ty_qu_formation(id_ty())}
+/// `~id{a}`.
+pub fn id_qu<A: Prop>() -> Qu<App<FId, A>> {Qu::from_q(quality::right(id_q()))}
 /// `~true`.
 pub fn true_qu() -> Qu<True> {
     use path_semantics::{ty_triv, ty_true};
@@ -635,8 +643,8 @@ pub fn is_prop_false() -> IsProp<False> {tauto!(eq_qu_false_false())}
 pub fn pow_to_is_prop<A: Prop, B: Prop>(x: Pow<A, B>) -> IsProp<Pow<A, B>> {
     x.lift().trans(pow_to_eq_qu)
 }
-/// `is_set(id)`.
-pub fn is_set_id() -> IsSet<FId> {collapse_to_set_right(tauto!(id_q()))}
+/// `is_set(id{a})`.
+pub fn is_set_id<A: Prop>() -> IsSet<App<FId, A>> {collapse_to_set_right(tauto!(id_q()))}
 /// `is_set(not)`.
 pub fn is_set_not() -> IsSet<bool_alg::FNot> {collapse_to_set_right(tauto!(bool_alg::not_q()))}
 /// `is_contr(a)  =>  (a == true)^true`.
@@ -1008,11 +1016,11 @@ pub fn lam_app_nop<A: Prop, B: Prop, X: Prop>(ty_a: Ty<A, X>) -> Eq<App<Lam<Ty<A
 /// `\(a : x) = a`.
 pub type LamId<A, X> = Lam<Ty<A, X>, A>;
 
-/// `(\(a : x) = a) == id`.
-pub fn lam_id_eq<A: Prop, X: Prop>() -> Eq<LamId<A, X>, FId> {unimplemented!()}
+/// `(\(a : x) = a) == id{a}`.
+pub fn lam_id_eq<A: Prop, X: Prop>() -> Eq<LamId<A, X>, App<FId, X>> {unimplemented!()}
 
-/// `(\(a : x) = a) ~~ id`.
-pub fn lam_id_q<A: Prop, X: Prop>() -> Q<LamId<A, X>, FId> {
+/// `(\(a : x) = a) ~~ id{x}`.
+pub fn lam_id_q<A: Prop, X: Prop>() -> Q<LamId<A, X>, App<FId, X>> {
     hooo::q_in_left_arg(quality::right(id_q()), hooo::tauto_eq_symmetry(tauto!(lam_id_eq())))
 }
 /// `(a : x)  =>  (\(a : x) = a) : (x => x)`.
@@ -1219,8 +1227,10 @@ pub fn par_tup_lam_ty<F: Prop, G: Prop, X1: Prop, X2: Prop, Y1: Prop, Y2: Prop>(
 }
 /// `is_const(par_tup)`.
 pub fn par_tup_is_const() -> IsConst<ParTup> {unimplemented!()}
-/// `(id x id) == id`.
-pub fn par_tup_id() -> Eq<Par<FId, FId>, FId> {unimplemented!()}
+/// `(id{a} x id{b}) == id{(a, b)}`.
+pub fn par_tup_id<A: Prop, B: Prop>() -> Eq<Par<App<FId, A>, App<FId, B>>, App<FId, Tup<A, B>>> {
+    unimplemented!()
+}
 /// `(g1 x g2) . (f1 x f2)  ==  ((g1 . f1) x (g2 . f2))`.
 pub fn par_tup_comp<F1: Prop, F2: Prop, G1: Prop, G2: Prop>() ->
     Eq<Comp<Par<G1, G2>, Par<F1, F2>>, Par<Comp<G1, F1>, Comp<G2, F2>>>
@@ -1342,20 +1352,33 @@ pub fn norm2_comp<F: Prop, G1: Prop, G2: Prop, G3: Prop, G4: Prop, G5: Prop, G6:
 pub fn sym_norm2_comp<F: Prop, G1: Prop, G2: Prop>() ->
     Eq<SymNorm2<SymNorm2<F, G1>, G2>, SymNorm2<F, Comp<G2, G1>>>
 {norm2_comp()}
-/// `f[id]  == f` for 1 argument.
-pub fn sym_norm1_id<F: Prop>() -> Eq<SymNorm1<F, FId>, F> {
-    let x = quality::to_eq(id_q());
-    let x = eq::transitivity(eq::transitivity(comp_eq_right(x), comp_id_right()), comp_id_left());
+/// `(f : a -> a)  =>  (f[id{a}] == f)` for 1 argument.
+pub fn sym_norm1_id<F: Prop, A: Prop>(ty_f: Ty<F, Pow<A, A>>) -> Eq<SymNorm1<F, App<FId, A>>, F> {
+    let x = eq::transitivity(eq::transitivity(comp_eq_right(quality::to_eq(id_q())),
+        comp_id_right(comp_ty(ty_f.clone(), id_ty()))), comp_id_left(ty_f));
     eqx!(x, norm1_def, l)
 }
-/// `f[id] == f` for 2 arguments.
-pub fn sym_norm2_id<F: Prop>() -> Eq<SymNorm2<F, FId>, F> {
-    let x = eqx!(comp_eq_right(inv_eq(par_tup_id())), norm1_def, eq);
-    eq::transitivity(eq::transitivity(eq_norm2_norm1(), x), sym_norm1_id())
+/// `(f : a -> b)  =>  (f[id{a} -> id{b}] == f)` for 1 argument.
+pub fn norm1_id<F: Prop, A: Prop, B: Prop>(
+    ty_f: Ty<F, Pow<B, A>>
+) -> Eq<Norm1<F, App<FId, A>, App<FId, B>>, F> {
+    let x = eq::transitivity(eq::transitivity(comp_eq_right(quality::to_eq(id_q())),
+        comp_id_right(comp_ty(ty_f.clone(), id_ty()))), comp_id_left(ty_f));
+    eqx!(x, norm1_def, l)
 }
-/// `id[f -> id] == inv(f)`.
-pub fn norm1_inv<F: Prop>() -> Eq<Norm1<FId, F, FId>, Inv<F>> {
-    eqx!(eq::transitivity(comp_eq_left(comp_id_left()), comp_id_left()), norm1_def, l)
+/// `(f : (a, a) -> a)  =>  f[id{a}] == f` for 2 arguments.
+pub fn sym_norm2_id<F: Prop, A: Prop, B: Prop>(
+    ty_f: Ty<F, Pow<A, Tup<A, A>>>
+) -> Eq<SymNorm2<F, App<FId, A>>, F> {
+    let x: Eq<Norm1<F, Par<App<FId, A>, App<FId, A>>, App<FId, A>>, _> = eqx!(comp_eq_right(inv_eq(par_tup_id())), norm1_def, eq);
+    eq::transitivity(eq::transitivity(eq_norm2_norm1(), x), norm1_id(ty_f))
+}
+/// `(f : a -> a)  =>  id{a}[f -> id{a}] == inv(f)`.
+pub fn norm1_inv<F: Prop, A: Prop>(
+    ty_f: Ty<F, Pow<A, A>>
+) -> Eq<Norm1<App<FId, A>, F, App<FId, A>>, Inv<F>> {
+    let x = eq::transitivity(comp_eq_left(comp_id_left(id_ty())), comp_id_left(inv_ty(ty_f)));
+    eqx!(x, norm1_def, l)
 }
 /// `g2(f(inv(g1)(x))) == f[g1 -> g2](x)`.
 pub fn eq_app_norm1<F: Prop, G1: Prop, G2: Prop, X: Prop>() ->
