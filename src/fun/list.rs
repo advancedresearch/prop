@@ -3,18 +3,21 @@
 use super::*;
 
 /// A list.
+#[derive(Copy, Clone)]
 pub struct List(());
 
 /// `(a : type(0))  =>  (list : a -> type(0))`.
 pub fn list_ty<A: Prop>(_a_ty: Ty<A, Type<Z>>) -> Ty<List, Pow<Type<Z>, A>> {unimplemented!()}
 
 /// An empty list.
+#[derive(Copy, Clone)]
 pub struct Nil(());
 
 /// `(a : type(0))  =>  (nil : list(a))`.
 pub fn nil_ty<A: Prop>(_a_ty: Ty<A, Type<Z>>) -> Ty<Nil, App<List, A>> {unimplemented!()}
 
 /// List concatenation.
+#[derive(Copy, Clone)]
 pub struct Concat(());
 
 /// `(a : type(0))  =>  (concat : (list(a), list(a)) -> list(a))`.
