@@ -115,6 +115,8 @@ pub type FIdb = App<FId, Bool>;
 
 /// `idb : bool -> bool`.
 pub fn idb_ty() -> Ty<FIdb, Pow<Bool, Bool>> {id_ty()}
+/// `is_const(idb)`.
+pub fn idb_is_const() -> IsConst<FIdb> {id_is_const(bool_is_const())}
 
 /// Not function.
 #[derive(Clone, Copy)]
@@ -308,7 +310,7 @@ pub fn imply_ty() -> Ty<FImply, Pow<Bool, Tup<Bool, Bool>>> {
 }
 /// `is_const(imply)`.
 pub fn imply_is_const() -> IsConst<FImply> {
-    let x = comp_is_const(par_tup_app_is_const(not_is_const(), id_is_const()), or_is_const());
+    let x = comp_is_const(par_tup_app_is_const(not_is_const(), idb_is_const()), or_is_const());
     eqx!(x, imply_def, co)
 }
 /// `imply(true, a) = a`.
