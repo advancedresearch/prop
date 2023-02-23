@@ -136,16 +136,16 @@ pub fn not_tr() -> Eq<App<FNot, Tr>, Fa> {unimplemented!()}
 /// `inv(not) ~~ not`.
 pub fn not_q() -> Q<Inv<FNot>, FNot> {unimplemented!()}
 
-/// `(not . not) == id`.
-pub fn eq_not_not_id() -> Eq<Comp<FNot, FNot>, FIdb> {
+/// `(not . not) == idb`.
+pub fn eq_not_not_idb() -> Eq<Comp<FNot, FNot>, FIdb> {
     self_inv_to_eq_id(not_ty(), quality::to_eq(not_q()))
 }
 /// `not[not] == not`.
 pub fn eq_norm1_not_not() -> Eq<SymNorm1<FNot, FNot>, FNot> {
     (Rc::new(move |x| comp_id_left(not_ty()).0(comp_in_left_arg(comp_in_right_arg(x.0,
-        quality::to_eq(not_q())), eq_not_not_id()))),
+        quality::to_eq(not_q())), eq_not_not_idb()))),
      Rc::new(move |x| Norm1(comp_in_right_arg(comp_in_left_arg(comp_id_left(not_ty()).1(x),
-        eq::symmetry(eq_not_not_id())), eq::symmetry(quality::to_eq(not_q()))))))
+        eq::symmetry(eq_not_not_idb())), eq::symmetry(quality::to_eq(not_q()))))))
 }
 
 /// True1 function.
