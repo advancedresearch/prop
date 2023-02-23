@@ -49,3 +49,13 @@ pub fn equal_fa_lower<X: Prop, A: Prop, B: Prop>(
     Rc::new(move |eq_ab| para_eq_tr_fa(eq::in_left_arg(x.clone(),
         equal_lift(ty_a.clone(), eq_ab))))
 }
+/// `(a : x)^true ⋀ (a == b)^true  =>  (eq{x}(a, b) = tr)^true`.
+pub fn tauto_eq_to_tauto_equal<X: Prop, A: Prop, B: Prop>(
+    ty_a: Tauto<Ty<A, X>>,
+    tauto_eq_ab: Tauto<Eq<A, B>>
+) -> Tauto<Eq<Equal<X, A, B>, Tr>> {
+    fn f<X: Prop, A: Prop, B: Prop>(
+        (ty_a, eq_ab): And<Ty<A, X>, Eq<A, B>>
+    ) -> Eq<Equal<X, A, B>, Tr> {equal_lift(ty_a, eq_ab)}
+    hooo::hooo_rev_and((ty_a, tauto_eq_ab)).trans(f)
+}
