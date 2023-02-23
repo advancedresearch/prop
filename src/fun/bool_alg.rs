@@ -113,6 +113,9 @@ pub fn eq_norm1_by_false1<F: Prop>(
 /// `idb := id{bool}`.
 pub type FIdb = App<FId, Bool>;
 
+/// `idb(a)`.
+pub type Idb<A> = App<FIdb, A>;
+
 /// `idb : bool -> bool`.
 pub fn idb_ty() -> Ty<FIdb, Pow<Bool, Bool>> {id_ty()}
 /// `is_const(idb)`.
