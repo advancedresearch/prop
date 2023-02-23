@@ -701,6 +701,10 @@ pub fn is_prop_to_is_groupoid<A: Prop>(x: IsProp<A>) -> IsGroupoid<A> {
 pub fn tauto_to_is_contr<A: Prop>(tauto_a: Tauto<A>) -> IsContr<A> {
     tauto_eq_true_to_is_contr(hooo::tauto_to_eq_true(tauto_a))
 }
+/// `is_contr(a)  =>  a^true`.
+pub fn is_contr_to_tauto<A: Prop>(is_contr_a: IsContr<A>) -> Tauto<A> {
+    hooo::tauto_from_eq_true(is_contr_to_tauto_eq_true(is_contr_a))
+}
 /// `a^true  =>  is_prop(a)`.
 pub fn tauto_to_is_prop<A: Prop>(tauto_a: Tauto<A>) -> IsProp<A> {
     tauto_a.lift().trans(tauto_to_eq_qu)
