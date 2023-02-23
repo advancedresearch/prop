@@ -16,13 +16,13 @@ pub fn equal_ty<T: Prop>(_ty_t: Ty<T, Type<Z>>) -> Ty<App<FEq, T>, Pow<Bool, Tup
 pub fn implicit_equal_is_const() -> IsConst<FEq> {unimplemented!()}
 /// `is_const(eq{t})`.
 pub fn equal_is_const<T: Prop>(_: IsConst<T>) -> IsConst<App<FEq, T>> {unimplemented!()}
-/// `a : x  =>  eq{x}(a, a) = true`.
+/// `a : x  =>  eq{x}(a, a) = tr`.
 pub fn equal_refl<X: Prop, A: Prop>(_ty_a: Ty<A, X>) -> Eq<Equal<X, A, A>, Tr> {unimplemented!()}
-/// `eq{x}(a, b) = true  =>  eq{x}(b, a) = true`.
+/// `eq{x}(a, b) = tr  =>  eq{x}(b, a) = tr`.
 pub fn equal_symmetry<X: Prop, A: Prop, B: Prop>(_: Equal<X, A, B>) -> Equal<X, B, A> {
     unimplemented!()
 }
-/// `(eq{x}(a, b) = true) ⋀ (eq{x}(b, c) = true)  =>  (eq{x}(a, c) = true)`.
+/// `(eq{x}(a, b) = tr) ⋀ (eq{x}(b, c) = tr)  =>  (eq{x}(a, c) = tr)`.
 pub fn equal_transitivity<X: Prop, A: Prop, B: Prop, C: Prop>(
     _: Equal<X, A, B>,
     _: Equal<X, B, C>
@@ -34,14 +34,14 @@ pub fn equal_from_para_eq<X: Prop, A: Prop, B: Prop>(
     _: Para<Eq<A, B>>
 ) -> Eq<Equal<X, A, B>, Fa> {unimplemented!()}
 
-/// `(a : x) ⋀ (a == b)  =>  eq{x}(a, b) = true`.
+/// `(a : x) ⋀ (a == b)  =>  eq{x}(a, b) = tr`.
 pub fn equal_lift<X: Prop, A: Prop, B: Prop>(
     ty_a: Ty<A, X>,
     x: Eq<A, B>
 ) -> Eq<Equal<X, A, B>, Tr> {
     eq::eq_left(app_eq(tup_eq_snd(x))).0(equal_refl(ty_a))
 }
-/// `eq{x}(a, b) = false  =>  ¬(a == b)`.
+/// `eq{x}(a, b) = fa  =>  ¬(a == b)`.
 pub fn equal_fa_lower<X: Prop, A: Prop, B: Prop>(
     ty_a: Ty<A, X>,
     x: Eq<Equal<X, A, B>, Fa>
