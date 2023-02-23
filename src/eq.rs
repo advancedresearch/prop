@@ -9,6 +9,15 @@ pub fn transitivity<A: Prop, B: Prop, C: Prop>((f0, f1): Eq<A, B>, (g0, g1): Eq<
     (Rc::new(move |x| g0(f0(x))), Rc::new(move |x| f1(g1(x))))
 }
 
+/// `(a == b) ∧ (b == c) ∧ (c == d)  =>  (a == d)`.
+pub fn trans3<A: Prop, B: Prop, C: Prop, D: Prop>(
+    ab: Eq<A, B>,
+    bc: Eq<B, C>,
+    cd: Eq<C, D>
+) -> Eq<A, D> {
+    transitivity(ab, transitivity(bc, cd))
+}
+
 /// `a => (a == ¬¬a)`.
 pub fn double_neg<A: Prop>(a: A) -> Eq<A, Not<Not<A>>> {
     let double_neg = a.double_neg();
