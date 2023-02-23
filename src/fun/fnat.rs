@@ -123,7 +123,7 @@ pub fn succ_ty() -> Ty<FSucc, Pow<Nat, Nat>> {unimplemented!()}
 pub fn succ_is_const() -> IsConst<FSucc> {unimplemented!()}
 
 /// `is_const(n)  =>  is_const(succ(n))`.
-pub fn inc_is_const<N: Prop>(n_is_const: IsConst<N>) -> IsConst<Succ<N>> {
+pub fn succ_app_is_const<N: Prop>(n_is_const: IsConst<N>) -> IsConst<Succ<N>> {
     app_is_const(succ_is_const(), n_is_const)
 }
 /// `succ(n) : nat  =>  n : nat`.
