@@ -306,7 +306,7 @@ pub fn eq_even_succ_succ<N: Prop>(ty_n: Ty<N, Nat>) -> Eq<Even<Succ<Succ<N>>>, E
         bool_alg::eq_not_not(app_fun_ty(even_ty(), ty_n))))
 }
 /// `even . (succ . succ) == even`.
-pub fn eq_comp_even_succ_succ<N: VProp>() -> Eq<Comp<FEven, Comp<FSucc, FSucc>>, FEven> {
+pub fn eq_comp_even_succ_succ_proof<N: VProp>() -> Eq<Comp<FEven, Comp<FSucc, FSucc>>, FEven> {
     fn f<N: Prop>(x: Eq<Even<Succ<Succ<N>>>, Even<N>>) ->
     Eq<App<Comp<FEven, Comp<FSucc, FSucc>>, N>, Even<N>> {
         eq::in_left_arg(x, eq::transitivity(app_eq(eq_app_comp()), eq_app_comp()))
@@ -317,4 +317,10 @@ pub fn eq_comp_even_succ_succ<N: VProp>() -> Eq<Comp<FEven, Comp<FSucc, FSucc>>,
         hooo::pow_transitivity(tauto!(eq_even_succ_succ(zero_ty())), f),
         hooo::pow_transitivity(eq_even_succ_succ::<Succ<N>>, f),
     )
+}
+/// `even . (succ . succ) == even`.
+///
+/// This is the same as `eq_comp_even_succ_succ_proof` but without variable argument.
+pub fn eq_comp_even_succ_succ() -> Eq<Comp<FEven, Comp<FSucc, FSucc>>, FEven> {
+    unimplemented!()
 }
