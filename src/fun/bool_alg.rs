@@ -283,6 +283,25 @@ pub fn eq_norm2_or_not_and() -> Eq<SymNorm2<FOr, FNot>, FAnd> {
         tauto!(case(tr_ty(), fa_ty())), tauto!(case(tr_ty(), tr_ty())))
 }
 
+/// `eqb`.
+pub type FEqb = App<FEq, Bool>;
+
+/// `eqb(a, b)`.
+pub type Eqb<A, B> = App<FEqb, Tup<A, B>>;
+
+/// `eqb : (bool, bool) -> bool`.
+pub fn eqb_ty() -> Ty<FEqb, Pow<Bool, Tup<Bool, Bool>>> {equal_ty(bool_ty())}
+/// `eqb(fa, fa) == tr`.
+pub fn eqb_fa_fa() -> Eq<Eqb<Fa, Fa>, Tr> {equal_refl(fa_ty())}
+/// `eqb(tr, fa) == fa`.
+pub fn eqb_tr_fa() -> Eq<Eqb<Tr, Fa>, Fa> {equal_from_para_eq(tr_ty(), fa_ty(), para_eq_tr_fa)}
+/// `eqb(fa, tr) == fa`.
+pub fn eqb_fa_tr() -> Eq<Eqb<Fa, Tr>, Fa> {
+    equal_from_para_eq(fa_ty(), tr_ty(), hooo::pow_transitivity(eq::symmetry, para_eq_tr_fa))
+}
+/// `eqb(tr, tr) == tr`.
+pub fn eqb_tr_tr() -> Eq<Eqb<Tr, Tr>, Tr> {equal_refl(tr_ty())}
+
 /// Nand function.
 #[derive(Copy, Clone)]
 pub struct FNand(pub Comp<FNot, FAnd>);
