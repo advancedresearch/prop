@@ -511,6 +511,11 @@ pub fn comp_eq_right<F: Prop, G: Prop, H: Prop>(x: Eq<G, H>) -> Eq<Comp<F, G>, C
     (Rc::new(move |fg| comp_in_right_arg(fg, x.clone())),
      Rc::new(move |fh| comp_in_right_arg(fh, x2.clone())))
 }
+/// `(f(a) == b) ⋀ (g(b) == c)  =>  g(f(a)) == c`.
+pub fn comp_app<F: Prop, G: Prop, A: Prop, B: Prop, C: Prop>(
+    x: Eq<App<F, A>, B>,
+    y: Eq<App<G, B>, C>
+) -> Eq<App<G, App<F, A>>, C> {eq::transitivity(app_eq(x), y)}
 
 /// Duplicate function.
 #[derive(Clone, Copy)]
