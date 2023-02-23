@@ -348,3 +348,13 @@ pub fn odd_succ<N: Prop>(ty_n: Ty<N, Nat>) -> Eq<Odd<Succ<N>>, App<FNot, Odd<N>>
         app_eq(even_succ(ty_n))), app_eq(eq_app_comp())),
         app_eq(app_map_eq(eq::symmetry(odd_def())))))
 }
+/// `(n : nat) ⋀ (even(n) == odd(n))  =>  false`.
+pub fn para_eq_even_odd<N: Prop>(ty_n: Ty<N, Nat>, x: Eq<Even<N>, Odd<N>>) -> False {
+    let y = eq::trans3(x, app_map_eq(odd_def()), eq::symmetry(eq_app_comp()));
+    bool_alg::para_eq_tr_fa(match bool_alg::bool_values(app_fun_ty(even_ty(), ty_n)) {
+        Left(eq_even_n_tr) => eq::in_left_arg(eq::trans3(y, app_eq(eq_even_n_tr.clone()),
+            bool_alg::not_tr()), eq_even_n_tr),
+        Right(eq_even_n_fa) => eq::in_left_arg(eq_even_n_fa.clone(), eq::trans3(y,
+            app_eq(eq_even_n_fa), bool_alg::not_fa())),
+    })
+}
