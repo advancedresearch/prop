@@ -1,7 +1,7 @@
 //! Natural numbers.
 
 use super::*;
-use bool_alg::{Bool, FNot, Tr};
+use bool_alg::{Bool, Fa, FNot, Tr};
 
 /// The type of natural numbers.
 #[derive(Copy, Clone)]
@@ -338,3 +338,5 @@ pub fn odd_def() -> Eq<FOdd, Comp<FNot, FEven>> {eqx!(def FOdd)}
 pub fn odd_ty() -> Ty<FOdd, Pow<Bool, Nat>> {
     eqx!(comp_ty(even_ty(), bool_alg::not_ty()), odd_def, tyl)
 }
+/// `odd(0) = fa`.
+pub fn odd_zero() -> Eq<Odd<Zero>, Fa> {comp_app_def(even_zero(), bool_alg::not_tr(), odd_def())}
