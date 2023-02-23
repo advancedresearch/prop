@@ -516,6 +516,14 @@ pub fn comp_app<F: Prop, G: Prop, A: Prop, B: Prop, C: Prop>(
     x: Eq<App<F, A>, B>,
     y: Eq<App<G, B>, C>
 ) -> Eq<App<G, App<F, A>>, C> {eq::transitivity(app_eq(x), y)}
+/// `(f(a) == b) ⋀ (g(b) == c) ⋀ (h == (g . f))  =>  h(a) == c`.
+pub fn comp_app_def<F: Prop, G: Prop, H: Prop, A: Prop, B: Prop, C: Prop>(
+    x: Eq<App<F, A>, B>,
+    y: Eq<App<G, B>, C>,
+    z: Eq<H, Comp<G, F>>
+) -> Eq<App<H, A>, C> {
+    eq::transitivity(app_map_eq(z), eq::in_left_arg(comp_app(x, y), eq_app_comp()))
+}
 
 /// Duplicate function.
 #[derive(Clone, Copy)]
