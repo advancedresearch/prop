@@ -35,7 +35,7 @@ pub fn para_eq_succ<N: Prop>(_: And<Ty<N, Nat>, Eq<N, Succ<N>>>) -> False {unimp
 /// `0 == succ(n)  =>  false`.
 pub fn para_pre_zero<N: Prop>(_: Eq<Zero, Succ<N>>) -> False {unimplemented!()}
 /// `succ(n) == succ(m)  =>  n == m`.
-pub fn inc_eq_rev<N: Prop, M: Prop>(_: Eq<Succ<N>, Succ<M>>) -> Eq<N, M> {unimplemented!()}
+pub fn succ_eq_rev<N: Prop, M: Prop>(_: Eq<Succ<N>, Succ<M>>) -> Eq<N, M> {unimplemented!()}
 /// Induction on natural numbers.
 ///
 /// ```text
@@ -100,7 +100,7 @@ pub fn nat1_fun_ext<N: VProp, F: Prop, G: Prop>(
 pub fn previous<N: Prop>(x: Ty<Succ<N>, Nat>) -> Eq<N, Prev<Succ<N>>> {
     match nat_def(x) {
         Left(y) => imply::absurd()(para_pre_zero(eq::symmetry(y))),
-        Right(y) => inc_eq_rev(y.1),
+        Right(y) => succ_eq_rev(y.1),
     }
 }
 
@@ -130,7 +130,7 @@ pub fn inc_is_const<N: Prop>(n_is_const: IsConst<N>) -> IsConst<Succ<N>> {
 pub fn succ_rev_ty<N: Prop>(ty_succ_n: Ty<Succ<N>, Nat>) -> Ty<N, Nat> {
     match nat_def(ty_succ_n) {
         Left(eq_succ_n_zero) => imply::absurd()(para_pre_zero(eq::symmetry(eq_succ_n_zero))),
-        Right(x) => path_semantics::ty_in_left_arg(x.0, eq::symmetry(inc_eq_rev(x.1))),
+        Right(x) => path_semantics::ty_in_left_arg(x.0, eq::symmetry(succ_eq_rev(x.1))),
     }
 }
 /// `(a == b)  =>  (succ(a) == succ(b))`.
