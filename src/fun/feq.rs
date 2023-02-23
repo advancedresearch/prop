@@ -17,9 +17,16 @@ pub fn implicit_equal_is_const() -> IsConst<FEq> {unimplemented!()}
 /// `is_const(eq{t})`.
 pub fn equal_is_const<T: Prop>(_: IsConst<T>) -> IsConst<App<FEq, T>> {unimplemented!()}
 /// `a : x  =>  eq{x}(a, a) = true`.
-pub fn equal_refl<X: Prop, A: Prop>(
-    _ty_a: Ty<A, X>
-) -> Eq<Equal<X, A, A>, Tr> {unimplemented!()}
+pub fn equal_refl<X: Prop, A: Prop>(_ty_a: Ty<A, X>) -> Eq<Equal<X, A, A>, Tr> {unimplemented!()}
+/// `eq{x}(a, b) = true  =>  eq{x}(b, a) = true`.
+pub fn equal_symmetry<X: Prop, A: Prop, B: Prop>(_: Equal<X, A, B>) -> Equal<X, B, A> {
+    unimplemented!()
+}
+/// `(eq{x}(a, b) = true) ⋀ (eq{x}(b, c) = true)  =>  (eq{x}(a, c) = true)`.
+pub fn equal_transitivity<X: Prop, A: Prop, B: Prop, C: Prop>(
+    _: Equal<X, A, B>,
+    _: Equal<X, B, C>
+) -> Equal<X, A, C> {unimplemented!()}
 
 /// `(a : x) ⋀ (a == b)  =>  eq{x}(a, b) = true`.
 pub fn equal_lift<X: Prop, A: Prop, B: Prop>(
