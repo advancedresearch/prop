@@ -324,3 +324,17 @@ pub fn eq_comp_even_succ_succ_proof<N: VProp>() -> Eq<Comp<FEven, Comp<FSucc, FS
 pub fn eq_comp_even_succ_succ() -> Eq<Comp<FEven, Comp<FSucc, FSucc>>, FEven> {
     unimplemented!()
 }
+
+/// Odd.
+#[derive(Copy, Clone)]
+pub struct FOdd(pub Comp<FNot, FEven>);
+
+/// `odd(a)`.
+pub type Odd<A> = App<FOdd, A>;
+
+/// `odd  ==  not . even`.
+pub fn odd_def() -> Eq<FOdd, Comp<FNot, FEven>> {eqx!(def FOdd)}
+/// `odd : nat -> bool`.
+pub fn odd_ty() -> Ty<FOdd, Pow<Bool, Nat>> {
+    eqx!(comp_ty(even_ty(), bool_alg::not_ty()), odd_def, tyl)
+}
