@@ -5,8 +5,8 @@ use crate::quality::*;
 use path_semantics::Ty;
 use crate::nat::Z;
 use crate::hooo::Pow;
-use crate::fun::{App, Tup, Type};
-use crate::fun::bool_alg::{Bool, Fa, FEq};
+use crate::fun::{App, Tup, Type, FEq};
+use crate::fun::bool_alg::{Bool, Fa};
 
 /// Prevents other qualities of `A` from excluding `B`.
 pub trait NoOtherQ<A, B>: 'static + Clone {

@@ -137,11 +137,13 @@ use hooo::{Exists, Para, Pow, Tauto, Theory};
 use hooo::pow::PowExt;
 use nat::{Nat, S, Z};
 use univalence::HomEq3;
-pub use tup::*;
+pub use feq::*;
 pub use id::*;
+pub use tup::*;
 
-mod tup;
+mod feq;
 mod id;
+mod tup;
 
 pub mod bool_alg;
 pub mod hott;
