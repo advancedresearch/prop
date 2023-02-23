@@ -27,6 +27,12 @@ pub fn equal_transitivity<X: Prop, A: Prop, B: Prop, C: Prop>(
     _: Equal<X, A, B>,
     _: Equal<X, B, C>
 ) -> Equal<X, A, C> {unimplemented!()}
+/// `(a : x) ⋀ (b : x) ⋀ false^(a == b)  =>  eq{x}(a, b) = fa`.
+pub fn equal_from_para_eq<X: Prop, A: Prop, B: Prop>(
+    _: Ty<A, X>,
+    _: Ty<B, X>,
+    _: Para<Eq<A, B>>
+) -> Eq<Equal<X, A, B>, Fa> {unimplemented!()}
 
 /// `(a : x) ⋀ (a == b)  =>  eq{x}(a, b) = true`.
 pub fn equal_lift<X: Prop, A: Prop, B: Prop>(
