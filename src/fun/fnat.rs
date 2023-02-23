@@ -85,11 +85,11 @@ pub fn subst_succ<N: Prop, A: Prop>() -> Eq<Subst<Succ<N>, N, A>, Succ<A>> {
 }
 /// `(0 == 1)  =>  false`.
 pub fn para_eq_zero_one(x: Eq<Zero, One>) -> False {para_eq_succ((zero_ty(), x))}
-/// `f : nat -> nat ⋀ g : nat -> nat ⋀
+/// `f : nat -> a ⋀ g : nat -> a ⋀
 /// (f(0) == g(0))^true ⋀ (f(succ(n)) == g(succ(n)))^(succ(n) : nat)  =>  (f == g)`.
-pub fn nat1_fun_ext<N: VProp, F: Prop, G: Prop>(
-    ty_f: Ty<F, Pow<Nat, Nat>>,
-    ty_g: Ty<G, Pow<Nat, Nat>>,
+pub fn nat1_fun_ext<N: VProp, F: Prop, G: Prop, A: Prop>(
+    ty_f: Ty<F, Pow<A, Nat>>,
+    ty_g: Ty<G, Pow<A, Nat>>,
     case_zero: Tauto<Eq<App<F, Zero>, App<G, Zero>>>,
     case_succ: Pow<Eq<App<F, Succ<N>>, App<G, Succ<N>>>, Ty<Succ<N>, Nat>>
 ) -> Eq<F, G> {
