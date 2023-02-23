@@ -129,7 +129,7 @@ pub fn succ_app_is_const<N: Prop>(n_is_const: IsConst<N>) -> IsConst<Succ<N>> {
 /// `n : nat  =>  succ(n) : nat`.
 pub fn succ_app_ty<N: Prop>(ty_n: Ty<N, Nat>) -> Ty<Succ<N>, Nat> {app_fun_ty(succ_ty(), ty_n)}
 /// `succ(n) : nat  =>  n : nat`.
-pub fn succ_rev_ty<N: Prop>(ty_succ_n: Ty<Succ<N>, Nat>) -> Ty<N, Nat> {
+pub fn succ_rev_app_ty<N: Prop>(ty_succ_n: Ty<Succ<N>, Nat>) -> Ty<N, Nat> {
     match nat_def(ty_succ_n) {
         Left(eq_succ_n_zero) => imply::absurd()(para_pre_zero(eq::symmetry(eq_succ_n_zero))),
         Right(x) => path_semantics::ty_in_left_arg(x.0, eq::symmetry(succ_eq_rev(x.1))),
