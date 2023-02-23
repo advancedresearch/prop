@@ -340,3 +340,11 @@ pub fn odd_ty() -> Ty<FOdd, Pow<Bool, Nat>> {
 }
 /// `odd(0) = fa`.
 pub fn odd_zero() -> Eq<Odd<Zero>, Fa> {comp_app_def(even_zero(), bool_alg::not_tr(), odd_def())}
+/// `n : nat  =>  odd(succ(n)) = not(odd(n))`.
+pub fn odd_succ<N: Prop>(ty_n: Ty<N, Nat>) -> Eq<Odd<Succ<N>>, App<FNot, Odd<N>>> {
+    use eq::transitivity as trans;
+
+    trans(app_map_eq(odd_def()), trans(trans(trans(eq::symmetry(eq_app_comp()),
+        app_eq(even_succ(ty_n))), app_eq(eq_app_comp())),
+        app_eq(app_map_eq(eq::symmetry(odd_def())))))
+}
