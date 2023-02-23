@@ -296,3 +296,10 @@ pub fn even_zero() -> Eq<Even<Zero>, Tr> {unimplemented!()}
 pub fn even_succ<N: Prop>(_ty_n: Ty<N, Nat>) -> Eq<Even<Succ<N>>, App<FNot, Even<N>>> {
     unimplemented!()
 }
+
+/// `n : nat  =>  even(succ(succ(n))) == even(n)`.
+pub fn eq_even_succ_succ<N: Prop>(ty_n: Ty<N, Nat>) -> Eq<Even<Succ<Succ<N>>>, Even<N>> {
+    eq::transitivity(even_succ(app_fun_ty(succ_ty(), ty_n.clone())),
+        eq::transitivity(app_eq(even_succ(ty_n.clone())),
+        bool_alg::eq_not_not(app_fun_ty(even_ty(), ty_n))))
+}
