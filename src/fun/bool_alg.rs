@@ -147,6 +147,12 @@ pub fn eq_norm1_not_not() -> Eq<SymNorm1<FNot, FNot>, FNot> {
      Rc::new(move |x| Norm1(comp_in_right_arg(comp_in_left_arg(comp_id_left(not_ty()).1(x),
         eq::symmetry(eq_not_not_idb())), eq::symmetry(quality::to_eq(not_q()))))))
 }
+/// `x : bool  =>  not(not(x)) == x`.
+pub fn eq_not_not<X: Prop>(ty_x: Ty<X, Bool>) -> Eq<App<FNot, App<FNot, X>>, X> {
+    use eq::transitivity as trans;
+
+    trans(eq_app_comp(), trans(app_map_eq(eq_not_not_idb()), id_def(bool_ty(), ty_x)))
+}
 
 /// True1 function.
 #[derive(Clone, Copy)]
