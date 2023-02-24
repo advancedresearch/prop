@@ -1,5 +1,8 @@
 //! # Propositional Homotopy Type Theory
 //!
+//! If you are looking for a version of Homotopy Type Theory that is similar to the one in the
+//! standard HoTT book, see the `hott` module.
+//!
 //! This version of Homotopy Type Theory lends itself toward foundational Path Semantics.
 //! Since foundational Path Semantics is propositional, it is natural to call this version
 //! "Propositional Homotopy Type Theory" (PHoTT).
@@ -24,7 +27,7 @@
 //!
 //! This means, if one has `~~a` or higher, one can contract this to `~a`.
 //!
-//! ### Interpration of qubit `~`
+//! ### Interpretation of qubit `~`
 //!
 //! The normal interpretation of homotopy levels in Homotopy Type Theory is to consider paths
 //! between paths in some space, which is called a "homotopy".
@@ -34,7 +37,26 @@
 //!
 //! However, in Path Semantics it is more common to think about homotopy as a propositional
 //! equivalence of hypertoruses. Instead of constructing two paths `p, q` from `a` to `b`,
-//! one constructs two loops `~a` and `~b` which are then made equal `~a == ~b`.
+//! one constructs two loops `~a` and `~b` which are then made equal `~a == ~b` to form homotopy.
+//!
+//! Notice that this constrains `~a == ~b` to talk about at most one homotopy at a time.
+//! However, this problem can be solved using `h1 : ~a == ~b` and `h2 : ~a == ~b` to talk about
+//! two different homotopy proofs `h1` and `h2`.
+//!
+//! Alternatively, you can use the `hott` module with Martin-Löf identity types.
+//!
+//! ### Computational Equality
+//!
+//! Computation equality is an equality function that is defined for all types.
+//! It is similar to Martin-Löf identity types, except that instead of a proof of an identity type,
+//! one uses boolean algebra to "compute" the answer:
+//!
+//! ```text
+//! a : x  =>  refl{a} : id{x}(a, a)       reflexivity as Martin-Löf identity type
+//! a : x  =>  eq{x}(a, a) = tr            reflexivity as computational equality
+//! ```
+//!
+//! For more information about computational equality, see the `fun::feq` module.
 
 use super::*;
 
