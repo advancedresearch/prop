@@ -1,4 +1,40 @@
 //! # Propositional Homotopy Type Theory
+//!
+//! This version of Homotopy Type Theory lends itself toward foundational Path Semantics.
+//! Since foundational Path Semantics is propositional, it is natural to call this version
+//! "Propositional Homotopy Type Theory" (PHoTT).
+//!
+//! ### Homotopy Proposition
+//!
+//! A homotopy proposition is defined as following (using the path semantical qubit operator `~`):
+//!
+//! ```text
+//! is_hprop(0, a) := true
+//! is_hprop(succ(n), a) := (qubit^succ(n)(a) == qubit^n(a))^true
+//! ```
+//!
+//! For example, `is_prop(a) := is_hprop(1, a)` which equals `(~a == a)^true`.
+//!
+//! One can prove `is_prop(true)` and `is_prop(false)`.
+//!
+//! The homotopy level `n` of `is_hprop(n, a)` tells at which level applying the qubit operator
+//! `~` contracts to a lower homotopy level.
+//!
+//! For example, `is_set(a) := is_hprop(2, a)` which equals `(~~a == ~a)^true`.
+//!
+//! This means, if one has `~~a` or higher, one can contract this to `~a`.
+//!
+//! ### Interpration of qubit `~`
+//!
+//! The normal interpretation of homotopy levels in Homotopy Type Theory is to consider paths
+//! between paths in some space, which is called a "homotopy".
+//!
+//! For example, if `p : id{x}(a, b)` and `q : id{x}(a, b)`,
+//! then a homotopy `h` is `h : id{id{x}(a, b)}(p, q)`.
+//!
+//! However, in Path Semantics it is more common to think about homotopy as a propositional
+//! equivalence of hypertoruses. Instead of constructing two paths `p, q` from `a` to `b`,
+//! one constructs two loops `~a` and `~b` which are then made equal `~a == ~b`.
 
 use super::*;
 
