@@ -132,7 +132,6 @@ mod subst;
 mod tup;
 
 pub mod bool_alg;
-pub mod hott;
 pub mod real;
 pub mod eqx;
 pub mod fnat;
