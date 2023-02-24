@@ -543,6 +543,10 @@ pub fn dup_is_const() -> IsConst<Dup> {unimplemented!()}
 /// Definition of Dup function.
 pub fn dup_def<A: Prop>() -> Eq<App<Dup, A>, Tup<A, A>> {unimplemented!()}
 
+/// `is_const(a)  =>  is_const(id{a})`.
+pub fn id_is_const<A: Prop>(a_is_const: IsConst<A>) -> IsConst<App<FId, A>> {
+    app_is_const(implicit_id_is_const(), a_is_const)
+}
 /// `a : type(n)  =>  id(a) = a`.
 pub fn id_def_type<A: Prop, N: Nat>(ty_a: Ty<A, Type<N>>) -> Eq<Id<Type<N>, A>, A> {
     id_def(type_ty(), ty_a)

@@ -15,11 +15,6 @@ pub type Id<T, A> = App<App<FId, T>, A>;
 pub fn id_ty<A: Prop>() -> Ty<App<FId, A>, Pow<A, A>> {unimplemented!()}
 /// `is_const(id)`.
 pub fn implicit_id_is_const() -> IsConst<FId> {unimplemented!()}
-/// `is_const(a)  =>  is_const(id{a})`.
-pub fn id_is_const<A: Prop>(a_is_const: IsConst<A>) -> IsConst<App<FId, A>> {
-    app_is_const(implicit_id_is_const(), a_is_const)
-}
-
 /// `(x : type(n)) ⋀ (a : x)  =>  id{x}(a) = a`.
 ///
 /// Definition of identity function.
