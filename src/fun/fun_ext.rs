@@ -41,16 +41,19 @@ pub type FunExtTy<F, G, X, Y, A> = DepFunTy<
 >;
 /// Function extensionality.
 #[derive(Copy, Clone)]
-pub struct FunExt(());
+pub struct FFunExt(());
+
+/// `fun_ext(f, g)`.
+pub type FunExt<F, G> = App<FFunExt, Tup<F, G>>;
 
 /// `fun_ext(f, g) : (f == g)^true -> fun_ext_ty(f, g)`.
 ///
 /// Type of function extensionality.
 pub fn fun_ext_ty<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>() ->
-    Ty<App<FunExt, Tup<F, G>>, Pow<FunExtTy<F, G, X, Y, A>, Tauto<Eq<F, G>>>>
+    Ty<FunExt<F, G>, Pow<FunExtTy<F, G, X, Y, A>, Tauto<Eq<F, G>>>>
 {unimplemented!()}
 /// `~inv(fun_ext(f, g))`.
-pub fn qu_inv_fun_ext<F: Prop, G: Prop>() -> Qu<Inv<App<FunExt, Tup<F, G>>>> {unimplemented!()}
+pub fn qu_inv_fun_ext<F: Prop, G: Prop>() -> Qu<Inv<FunExt<F, G>>> {unimplemented!()}
 
 /// `(a : x) ⋀ (f == g)  =>  ((\(a : x) = (f(a) == g(a))) . (snd . snd))((f, g, a))`.
 pub fn fun_ext_app_eq_from_eq<F: Prop, G: Prop, A: Prop, X: Prop>(
