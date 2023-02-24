@@ -24,8 +24,8 @@ pub fn id_def<A: Prop, X: Prop, N: Nat>(
 ) -> Eq<Id<X, A>, A> {unimplemented!()}
 /// `(inv(f) == f)  =>  (inv(f) ~~ f)`.
 pub fn self_inv_to_q<F: Prop>(_: Eq<Inv<F>, F>) -> Q<Inv<F>, F> {unimplemented!()}
-/// `inv(id{a}) ~~ id{a}`.
-pub fn id_q<A: Prop>() -> Q<Inv<App<FId, A>>, App<FId, A>> {unimplemented!()}
+/// `inv(id{x}) == id{x}`.
+pub fn id_inv<X: Prop>() -> Eq<Inv<App<FId, X>>, App<FId, X>> {unimplemented!()}
 /// `(f : a -> b) ⋀ (f . inv(f))  =>  id{b}`.
 pub fn comp_right_inv_to_id<F: Prop, A: Prop, B: Prop>(
     _: Ty<F, Pow<B, A>>,
@@ -83,6 +83,8 @@ pub fn self_inv_to_eq_id<F: Prop, A: Prop>(
         Rc::new(move |x| comp_in_right_arg(id_to_comp_right_inv(ty_f.clone(), x), eq_f.clone())),
     )
 }
+/// `inv(id{a}) ~~ id{a}`.
+pub fn id_q<A: Prop>() -> Q<Inv<App<FId, A>>, App<FId, A>> {self_inv_to_q(id_inv())}
 /// `~id{a} : ~(a -> a)`.
 pub fn id_qu_ty<A: Prop>() -> Ty<Qu<App<FId, A>>, Qu<Pow<A, A>>> {path_semantics::ty_qu_formation(id_ty())}
 /// `~id{a}`.
