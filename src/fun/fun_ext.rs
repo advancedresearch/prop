@@ -71,14 +71,11 @@ pub fn fun_ext<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>(
     use path_semantics::ty_eq_left;
     use hooo::{hooo_eq, hooo_imply, pow_eq_right, pow_transitivity, tauto_eq_symmetry, tr};
 
-    fn g<F: Prop, G: Prop>(x: Eq<F, G>) -> Eq<Eq<F, F>, Eq<F, G>> {
-        (x.map_any(), eq::refl().map_any())
-    }
     fn h<A: Prop, B: Prop, C: Prop, X: Prop>(ty_a: Ty<A, X>) ->
         Imply<Eq<B, C>, Eq<Lam<Ty<A, X>, B>, Lam<Ty<A, X>, C>>>
     {Rc::new(move |x| lam_eq_lift(ty_a.clone(), x))}
 
-    let x = hooo_imply(h)(hooo::tr().trans(tauto_eq_fg.trans(app_map_eq).trans(g)))
+    let x = hooo_imply(h)(hooo::tr().trans(tauto_eq_fg.trans(app_map_eq).trans(eq::eq_right)))
         .trans(comp_eq_left).trans(app_map_eq);
     let y = {
         let x = tauto_eq_symmetry(tauto_eq_fg).trans(tup3_eq_snd);
