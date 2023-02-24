@@ -115,6 +115,7 @@ use univalence::HomEq3;
 
 pub use app::*;
 pub use comp::*;
+pub use dup::*;
 pub use feq::*;
 pub use id::*;
 pub use inv::*;
@@ -124,6 +125,7 @@ pub use tup::*;
 
 mod app;
 mod comp;
+mod dup;
 mod feq;
 mod id;
 mod inv;
@@ -163,22 +165,6 @@ pub fn pord_is_const<A: Prop, B: Prop>(
 pub fn ty_is_const<A: Prop, B: Prop>(a: IsConst<A>, b: IsConst<B>) -> IsConst<Ty<A, B>> {
     and_is_const(imply_is_const(a.clone(), b.clone()), pord_is_const(a, b))
 }
-
-/// Duplicate function.
-#[derive(Clone, Copy)]
-pub struct Dup(());
-
-/// `dup : a -> (a, a)`.
-///
-/// Type of Dup.
-pub fn dup_ty<A: Prop>() -> Ty<Dup, Pow<Tup<A, A>, A>> {unimplemented!()}
-/// `is_const(dup)`.
-pub fn dup_is_const() -> IsConst<Dup> {unimplemented!()}
-
-/// `dup(a) = (a, a)`.
-///
-/// Definition of Dup function.
-pub fn dup_def<A: Prop>() -> Eq<App<Dup, A>, Tup<A, A>> {unimplemented!()}
 
 /// `is_contr(a) := is_hprop(0, a)`.
 pub type IsContr<A> = IsHProp<Z, A>;
