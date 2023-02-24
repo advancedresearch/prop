@@ -1,5 +1,6 @@
 use super::*;
 use bool_alg::*;
+use phott::*;
 
 /// Composable equality.
 #[derive(Copy, Clone)]
