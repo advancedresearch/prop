@@ -562,7 +562,7 @@ pub fn self_inv_ty<F: Prop, A: Prop, B: Prop>(
 ) -> Ty<Q<F, Inv<F>>, Q<Pow<B, A>, Pow<A, B>>> {
     path_semantics::ty_q_formation(ty_f.clone(), inv_ty(ty_f))
 }
-/// `(inv(f) == f) => ((f . f) == id)`.
+/// `(f : a -> a) ⋀ (inv(f) == f) => ((f . f) == id{a})`.
 pub fn self_inv_to_eq_id<F: Prop, A: Prop>(
     ty_f: Ty<F, Pow<A, A>>,
     eq_f: Eq<Inv<F>, F>
