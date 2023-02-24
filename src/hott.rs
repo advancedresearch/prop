@@ -1,6 +1,13 @@
-//! Homotopy Type Theory
+//! # Homotopy Type Theory
+//!
+//! This is a model of Homotopy Type Theory that attempts to be similar to the version in
+//! the [standard HoTT book](https://homotopytypetheory.org/book/).
 
-use super::*;
+use crate::*;
+use fun::App;
+use hooo::Pow;
+use path_semantics::Ty;
+use nat::{Nat, S, Z};
 
 /// Whether some type is a homotopy proposition.
 #[derive(Copy, Clone)]

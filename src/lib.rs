@@ -128,6 +128,7 @@ pub mod existence;
 pub mod con_qubit;
 pub mod hooo;
 pub mod hooo_traits;
+pub mod hott;
 pub mod modal;
 pub mod ava_modal;
 pub mod mid;
