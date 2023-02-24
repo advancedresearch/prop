@@ -751,55 +751,6 @@ pub fn dep_tup_elim<T: Prop, X: Prop, A: Prop, B: Prop>(
      tauto_in_arg(ty_t.trans(snd), tauto_eq_symmetry(x.trans(app_eq).trans(ty_eq_right))))
 }
 
-/// Parallel tuple.
-#[derive(Copy, Clone)]
-pub struct ParTup(());
-
-/// Apply parallel tuple to two functions.
-pub type Par<F, G> = App<ParTup, Tup<F, G>>;
-
-/// Apply parallel tuple to two inverted functions.
-pub type ParInv<F, G> = Par<Inv<F>, Inv<G>>;
-
-/// `(f : (x1 -> y1)) ⋀ (g : (x2 -> y2))  =>  (f x g) : ((x1, x2) -> (y1, y2))`.
-pub fn par_tup_fun_ty<F: Prop, G: Prop, X1: Prop, X2: Prop, Y1: Prop, Y2: Prop>(
-    _ty_f: Ty<F, Pow<Y1, X1>>,
-    _ty_g: Ty<G, Pow<Y2, X2>>,
-) -> Ty<Par<F, G>, Pow<Tup<Y1, Y2>, Tup<X1, X2>>> {
-    unimplemented!()
-}
-/// `(f : (x1 => y1)) ⋀ (g : (x2 => y2))  =>  (f x g) : ((x1, x2) => (y1, y2))`.
-pub fn par_tup_lam_ty<F: Prop, G: Prop, X1: Prop, X2: Prop, Y1: Prop, Y2: Prop>(
-    _ty_f: Ty<F, Imply<X1, Y1>>,
-    _ty_g: Ty<G, Imply<X2, Y2>>,
-) -> Ty<Par<F, G>, Imply<Tup<X1, X2>, Tup<Y1, Y2>>> {
-    unimplemented!()
-}
-/// `is_const(par_tup)`.
-pub fn par_tup_is_const() -> IsConst<ParTup> {unimplemented!()}
-/// `(id{a} x id{b}) == id{(a, b)}`.
-pub fn par_tup_id<A: Prop, B: Prop>() -> Eq<Par<App<FId, A>, App<FId, B>>, App<FId, Tup<A, B>>> {
-    unimplemented!()
-}
-/// `(g1 x g2) . (f1 x f2)  ==  ((g1 . f1) x (g2 . f2))`.
-pub fn par_tup_comp<F1: Prop, F2: Prop, G1: Prop, G2: Prop>() ->
-    Eq<Comp<Par<G1, G2>, Par<F1, F2>>, Par<Comp<G1, F1>, Comp<G2, F2>>>
-{unimplemented!()}
-/// `inv(f x g)  ==  inv(f) x inv(g)`.
-pub fn par_tup_inv<F: Prop, G: Prop>() -> Eq<Inv<Par<F, G>>, ParInv<F, G>>
-{unimplemented!()}
-/// `(f(i0) == o0) ⋀ (g(i1) == o1)  =>  (f x g)(i0, i1) == (o0, o1)`.
-pub fn par_tup_def<F: Prop, G: Prop, I0: Prop, I1: Prop, O0: Prop, O1: Prop>(
-    _eq0: Eq<App<F, I0>, O0>,
-    _eq1: Eq<App<G, I1>, O1>,
-) -> Eq<App<Par<F, G>, Tup<I0, I1>>, Tup<O0, O1>> {unimplemented!()}
-
-/// `is_const(f) ⋀ is_const(g)  =>  is_const(f x g)`.
-pub fn par_tup_app_is_const<F: Prop, G: Prop>(
-    f: IsConst<F>,
-    g: IsConst<G>
-) -> IsConst<Par<F, G>> {app_is_const(par_tup_is_const(), tup_is_const(f, g))}
-
 /// `f[g1 -> g2]`.
 ///
 /// Normal path of 1 argument.
