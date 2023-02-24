@@ -1,3 +1,7 @@
+//! # Equality
+//!
+//! This equality is defined for all types such that equality for specific types can be derived.
+
 use super::*;
 use bool_alg::*;
 use phott::*;
