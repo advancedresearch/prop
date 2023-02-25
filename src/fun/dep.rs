@@ -68,7 +68,7 @@ pub fn dep_fun_intro<A: Prop, B: Prop, X: Prop, Y: Prop, P: Prop>(
 ) -> Tauto<DepFun<Pow<App<P, A>, A>, A, X, Y>> {
     use hooo::{pow_transitivity, tauto_hooo_ty};
 
-    tauto_hooo_ty(pow_transitivity(path_semantics::ty_lower, x.clone())).trans(dep_fun_swap_app_ty)
+    tauto_hooo_ty(pow_transitivity(path_semantics::ty_lower, x)).trans(dep_fun_swap_app_ty)
 }
 /// `(f : (a : x) -> p(a))^true ⋀ (b : x)^true  =>  (f(b) : p(b))^true`
 pub fn dep_fun_elim<F: Prop, X: Prop, P: Prop, A: Prop, B: Prop>(
