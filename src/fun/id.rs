@@ -107,7 +107,7 @@ pub fn pow_qu<A: Prop, B: Prop>(x: Pow<A, B>) -> Qu<Pow<A, B>> {tauto_to_qu(hooo
 /// `¬~false`.
 pub fn not_qu_false() -> Not<Qu<False>> {
     imply::in_left(quality::q_inv_to_sesh(Qu::to_q(qubit::in_arg(true_qu(),
-        tauto!((imply::id().map_any(), True.map_any()))))), |y| Qu::to_q(y))
+        tauto!((imply::id().map_any(), True.map_any()))))), Qu::to_q)
 }
 /// `~false == false`.
 pub fn eq_qu_false_false() -> Eq<Qu<False>, False> {and::to_eq_neg((not_qu_false(), imply::id()))}

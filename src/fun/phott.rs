@@ -126,7 +126,7 @@ pub fn is_contr_to_is_prop<A: Prop>(x: IsContr<A>) -> IsProp<A> {
 /// `is_prop(a)  =>  is_set(a)`.
 pub fn is_prop_to_is_set<A: Prop>(x: IsProp<A>) -> IsSet<A> {
     fn f<A: Prop>(x: IsProp<A>) -> Eq<Qu<Qu<A>>, Qu<A>> {
-        let x2 = hooo::tauto_eq_symmetry(x.clone());
+        let x2 = hooo::tauto_eq_symmetry(x);
         (Rc::new(move |y| qubit::in_arg(y, x)), Rc::new(move |y| qubit::in_arg(y, x2)))
     }
     x.lift().trans(f)
@@ -169,7 +169,7 @@ pub fn collapse_to_eq_qu_2<F: Prop, G: Prop>(
 ) -> Tauto<Eq<Qu<Qu<F>>, Qu<Qu<G>>>> {
     fn h<F: Prop, G: Prop>(q: Q<F, G>) -> Eq<Qu<F>, Qu<G>> {and::to_eq_pos(q.1)}
     hooo::tauto_eq_transitivity(
-        hooo::tauto_eq_transitivity(collapse_to_set_left(x.clone()), x.trans(h)),
+        hooo::tauto_eq_transitivity(collapse_to_set_left(x), x.trans(h)),
         hooo::tauto_eq_symmetry(collapse_to_set_right(x)))
 }
 /// `(f ~~ g)^true  =>  hom_eq(3, f, g)^true`.

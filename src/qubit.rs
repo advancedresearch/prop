@@ -7,7 +7,7 @@ use nat::{Nat, Z, S};
 use quality::{Aq, Q};
 
 /// Represents a recursive qubit proposition.
-#[derive(Clone)]
+#[derive(Copy, Clone)]
 pub struct Qubit<N, A>(N, A);
 
 /// The qubit proposition `~a`.
