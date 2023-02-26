@@ -29,6 +29,8 @@ pub fn involve_inv<F: Prop>(_: F) -> Inv<Inv<F>> {unimplemented!()}
 pub fn inv_eq<F: Prop, G: Prop>(_: Eq<F, G>) -> Eq<Inv<F>, Inv<G>> {unimplemented!()}
 /// `~f => ~inv(f)`.
 pub fn inv_qu<F: Prop>(_: Qu<F>) -> Qu<Inv<F>> {unimplemented!()}
+/// `(inv(f) == f)  =>  (inv(f) ~~ f)`.
+pub fn self_inv_to_q<F: Prop>(_: Eq<Inv<F>, F>) -> Q<Inv<F>, F> {unimplemented!()}
 /// `theory(f) ⋀ ~inv(f) ⋀ (f : x -> y) ⋀ (x -> y)  =>  f ⋀ inv(f)`.
 ///
 /// This makes it possible to get inverse map for free.
