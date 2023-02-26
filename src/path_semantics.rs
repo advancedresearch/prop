@@ -14,6 +14,21 @@
 //! there are new theorems that are provable that point to deeper insights in mathematics.
 //! For this reason, the core axiom is considered relevant for high dimensional mathematics.
 //!
+//! Other areas, such as [Continental Philosophy](https://en.wikipedia.org/wiki/Continental_philosophy),
+//! might find the core axiom relevant in many applications. This is because the core axiom is
+//! about propagating a partial equivalence relation, which has no analogue in normal logic,
+//! but which structure is found in philosophical thinking e.g. about symbols, symbiosis, time,
+//! Platonism, Seshatism (dual-Platonism) etc. There are big portions of Continental Philosophy
+//! that might benefit from a perspective of Path Semantics. One area is the distinction between
+//! Analytic and Continental Philosophy, which can be studied directly since Path Semantics extends
+//! normal logic in a similar way that Continental Philosophy might be seen as an extension of
+//! Analytic Philosophy. Path Semantics does not fully bridge this grap,
+//! but blurs the boundary between Analytic and Continental Philosophy.
+//!
+//! It takes years to master Path Semantics, so if you do not understand everything immediately,
+//! do not panic! Think about it as a logical instrument that requires practice to perform well.
+//! Path Semantics is to normal logic what quantum mechanics is to classical mechanics.
+//!
 //! ### About This Module
 //!
 //! This module formalizes the core axiom and models types as propositions.
@@ -21,24 +36,42 @@
 //! PSI = Path Semantical Intuitionistic Propositional Logic
 //!
 //! PSI is a generalization of IPL where propositions can be organized in path semantical levels.
+//! A path semantical level is like a local IPL, or a kind of "moment in time" where IPL holds.
+//! Just like time, each level is related to the next level, using the core axiom.
+//! The core axiom might be thought of as a way to relate moments in time, or type hierarchies,
+//! depending on how path semantical levels are interpreted.
+//!
 //! The corresponding generalization of PL is PSL. Just like adding the axiom of excluded
-//! middle to IPL gets you PL, one gets PSL from PSI. PSI can be thought of as IPL plus the core
-//! axiom of Path Semantics.
+//! middle to IPL gets you PL, one gets PSL from PSI by adding the axiom of excluded middle.
+//! PSI can be thought of as IPL plus the core axiom of Path Semantics.
 //!
 //! - `PL = IPL + excluded middle`
 //! - `PSI = IPL + core axiom`
 //! - `PSL = PL + core axiom = PSI + excluded middle`
 //!
+//! Compared to the axiom of exluded middle, the core axiom is a much more complex extension.
+//! It is common to say "+ core axiom" to mean everything that comes with it,
+//! including path semantical quality and path semantical levels.
+//!
 //! The core axiom does not make sense for a single level of propositions like in normal logic.
 //! It requires extending propositions such that they have an associated level (a natural number).
 //! In addition, one needs to add a quality operator `~~` to solve the problem of reflexivity.
+//! However, not all logical languages with the core axiom requires the quality operator `~~`.
 //! PSL can avoid adding the quality operator `~~` by using brute force theorem proving.
+//! In this sense, Path Semantics is a whole sub-field of logic,
+//! focused around the core axiom.
 //!
-//! PSL has a famous "Creation Theorem" (see `creation`) that makes it not entirely trustworthy
-//! as a language for reasoning. PSI avoids the Creation Theorem by being constructive.
-//! However, since PSL proves every theorem that PSI proves and has exponential speedup in brute
-//! force theorem proving, it is beneficial to check PSL first to see whether something is not
-//! false in PSI, before trying to find the constructive proof.
+//! ### PSI vs PSL
+//!
+//! PSL has a famous "Creation Theorem" (see [creation]) that makes it not entirely trustworthy
+//! as a language for reasoning. It means that there are some edge cases where theorems might not
+//! make sense. PSI avoids the Creation Theorem by being constructive. Thus, PSI is considered the
+//! "correct" logical language in Path Semantics.
+//!
+//! Although PSL can be problematic to use in some edge cases, it has a pragmatic purpose.
+//! PSL proves every theorem that PSI proves and has exponential speedup in brute
+//! force theorem proving! Therefore, to save time, it is beneficial to check PSL first to see
+//! whether something is not false in PSI, before trying to find the constructive proof.
 //!
 //! ### Modelling Types as Propositions
 //!
@@ -46,16 +79,108 @@
 //! It means, there are two parts, one where `a` implies `T` and one where there is a proof that
 //! `a` is at a less propositional level than `T`. Together, these two parts model types.
 //!
+//! ```text
+//! (a : T) := (a => T) ⋀ (a < T)
+//! ```
+//!
 //! Since there are levels of propositions, one must think about what `true` and `false` means.
 //! The level of `false` is `nan` (not a number) and the level of `true` can be any level (`ltrue`).
-//! To get `true` to any level, one converts back and forth using `eq_true_ltrue`.
+//! To get `true` to any level, one converts back and forth using [eq_true_ltrue].
+//!
+//! ### Symbolic Distinction
+//!
+//! One of the important insights in foundational Path Semantics, is that symbolic distinction is
+//! safe to use, while knowledge about symbolic indistinction is unsafe. When two symbols are
+//! symbolic indistinct but unequal, it leads to soundness problems. However, it is safe to reason
+//! about symbolic distinction and this presents an opportunity in modern mathematics.
+//!
+//! In normal logic, there is no way to talk about symbolic distinction.
+//! Yet, in most implementations of logical languages, symbolic distinction is possible.
+//! All that is required, is adding a little bit of code.
+//! Normal logic can be extended with symbolic distinction in practice and theory.
+//!
+//! For example, in [Avalog](https://github.com/advancedresearch/avalog) one can write the following rule:
+//!
+//! ```text
+//! (X, q'(Y)) :- (X, Y), (Y, X), X != Y.
+//! ```
+//!
+//! Here, `X != Y` matches only when `X` and `Y` are symbolic distinct.
+//! When `X` and `Y` are symbolic indistinct, the rule does not terminate.
+//! This works well in practice and allows more powerful theorem proving.
+//!
+//! At first, it might seem unclear how adding symbolic distinction can produce anything of value.
+//! An argument in favour of symbolic distinction is that a lot of practical mathematics deal with
+//! sets that have some extra structure. In some sense, a set models objects that have something
+//! in common. In another sense, all objects of a set must be different. So, a set encodes how
+//! objects are similar yet not completely identical. When this idea is purified, one gets a kind
+//! of set where all objects are equal yet symbolic distinct. One can think about this as an idea
+//! of sets as a limit, where the idea is pushed to the extreme. At this extreme limit, one loses
+//! the clear definition of a set and all that remains is what a set ought to be. As if sets were
+//! trying to be like this idealised symbolic distinction. This abstracts over the differences
+//! between objects, such that they can be treated as the same in one way, while at the same time
+//! tell whether one objects belong to the set or not.
+//!
+//! In modern mathematics, is common to move away from sets as models for mathematical objects.
+//! One application is symbolic manipulation of expressions, where the intermediate expressions
+//! between start and the goal are not important, as long one arrives at the correct answer.
+//! This kind of freedom or creativity, is an important insight to understand mathematics well.
+//!
+//! The motivation for reasoning with symbolic distinction is to have a quality operator `~~` which
+//! behaves like equality but that is not reflexive. In Path Semantics, the quality operator is
+//! super important. The quality operator says when two objects are intentionally made equal,
+//! as a kind of action, instead of just reasoning about logical equivalence of objects.
+//! This notion of intentionality behind quality is the key to high dimensional mathematics.
+//! This adds meaning to propositions that are neither `true` nor `false`, but has a richer,
+//! well defined meaning on their own. With other words, Path Semantics does not only treat
+//! constructive logic as merely an improved version of classical logic for proofs,
+//! but as a language that has interesting structure on its own, worth studying for its own sake.
+//!
+//! It can be difficult to wrap your head around symbolic distinction. To some people, it seems
+//! like something you would consider as "alien mathematics", since there is no obvious example
+//! that can be understood with little background knowledge. Apparently, this style of doing
+//! mathematics leads to profound, yet deep insights. A such insight is that to e.g. compute
+//! backwards, one only needs the forward definition `f` with a proof that this definition has an
+//! inverse `~inv(f)`. With other words, 50% of reversible code can be removed!
+//! This is a *huge* improvement, but the road to this insight is far from easy.
+//! However, it is worth to keep in mind that this journey toward improvements involve stuff like
+//! symbolic distinction, as weird it might seem.
+//!
+//! Now, assuming you have the motivation to reason about symbolic distinction, one still faces
+//! a problem: Symbolic distinction is not supported in most logical languages.
+//! Yet, do not despair, just because your favourite language has no support for this!
+//! It turns out that there are very clever tricks one can use, that produces satisfying results.
+//! Although not all logical languages support symbolic distinction, there are ways to cheat.
+//!
+//! For example, `(inv(f) == f)  =>  (inv(f) ~~ f)` ([fun::inv::self_inv_to_q]).
+//!
+//! Here, one exploits that `(inv(f) == f)^true` is not provable in general, hence
+//! `inv(f)` is symbolic distinct from `f`. Therefore, if one says `inv(f) == f`, then it must
+//! be said intentionally and therefore one can lift `==` into `~~`.
+//! This knowledge is impossible to express within normal logic, so one just adds an axiom!
+//! There is no way to prove that this is correct, yet it is indeed safe to do so.
+//! Take a moment to appreciate how deep and insightful this is:
+//! Not everything in Path Semantics can be explained or justified formally in normal logic,
+//! because this requires some logical language capable of expressing the ideas that one wants to
+//! communicate. Since normal logic can not express symbolic distinction, there is no way for it
+//! to express the ideas that goes behind designing such axioms.
+//! In philosophy of mathematics, one says that this demonstrates Seshatic knowledge, which is
+//! different from Platonic knowledge.
+//!
+//! In normal logic, there is no general way to prove that two symbols are distinct.
+//! However, in some cases, due to deep knowledge of mathematics, one can create workarounds.
+//! These workarounds hold for some cases, but not all.
+//!
+//! For more information, see [paper](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip2/symbolic-distinction.pdf).
 //!
 //! ### Path Semantical Quality & Qubit
 //!
-//! Since equality is reflexive, it does not make sense to use the core axiom for all pairs of
-//! propositions in a level, since the core axiom would be triggered by `a == a`.
+//! The core axiom of Path Semantics can not use equality, since equality is reflexive `a == a`.
+//! When using equality, the core axiom would be triggered by `a == a` and propagate relations
+//! that are undesirable.
+//!
 //! To fix this problem, `a == b` is lifted into `a ~~ b` when `¬((a == b)^true ⋁ false^(a == b))`
-//! (See `hooo::lift_q`).
+//! (See [hooo::lift_q]).
 //! It means, `a == b` must have been made equal intensionally, by assuming something, and also
 //! without accident, e.g. by proving `false`.
 //!
@@ -100,8 +225,11 @@
 //! logics. Such logics can be modelled using binary logic, but when using propositional equaliy
 //! `==` alone, the result is always finite. It means, one can not construct a many-valued logic
 //! that has infinite dimensions. This is like a computer memory that can not be extended.
-//! In normal logic we extend the memory externally, but in infinite many-valued logic, the memory
-//! can be extended internally.
+//! In normal logic we extend the memory externally, by defining new operators using more bits,
+//! e.g. `and` in 4-value logic requires a new definition.
+//! In infinite many-valued logic, the memory can be extended internally, meaning that one can
+//! keep the existing operators without needing new definitions.
+//! This means, `and` in 4-value logic has partial undefined behavior, but in a safe way.
 //!
 //! To get to higher dimensional mathematics, one requires a path operator `~~`.
 //! This `~~` operator is called "quality" as in "equality" without the "e".
@@ -109,6 +237,8 @@
 //! Unlike equality, one can not prove `a ~~ a` (a path from `a` to itself).
 //! Path semantical quality is simpler than paths in Homotopy Type Theory, but allows modelling
 //! types as propositions, which in turns allows modelling dependent types and Homotopy Type Theory.
+//! This approach to mathematics is called "bootstrapping", where one builds a simpler language to
+//! model more complex languages which in turn are better equipped to prove advanced theorems.
 //!
 //! Path Semantics is the framework that tells how `~~` is functioning over levels of propositions.
 //! Basically, it allows, for example, doing type theoretic stuff in classical propositional logic.
@@ -117,26 +247,28 @@
 //! Path Semantics is not "about" some easy to understand model in particular.
 //! Instead, it can be thought of as a logical language, or system of rules, that can be used in
 //! combinations with other languages like building blocks to construct mathematical theories.
+//!
 //! For example, in physics, time might be thought of as path semantical levels, where each level
 //! corresponds to a "moment" where local reasoning can take place as if time was frozen.
-//! Since there are infinite levels and each level is just as complex as normal logic,
-//! the combination of the core axiom and path semantical quality makes the complexity enormous.
+//!
+//! There are infinite levels and each level is just as complex as normal logic.
+//! The combination of the core axiom and path semantical quality makes the complexity enormous.
 //! Just like chess, which has simple rules but the amount of options grow very large during play,
 //! Path Semantics gets enormously complex very quickly. It dwarfs chess in complexity.
 //!
 //! To get a feeling of how complex Path Semantics is, consider the number of binary operators:
 //!
 //! - Level 1: Normal logic, `2^4` in PL, `3^9` in IPL.
-//! - Level 2: Max qubit^1, `4^16` in PL, 9^81` in IPL.
+//! - Level 2: Max qubit^1, `4^16` in PL, `9^81` in IPL.
 //! - Level 3: Max qubit^2, `8^64` in PL, `27^729` in IPL.
 //! - Level 4: Max qubit^3, `16^256` in PL, `81^6561` in IPL.
 //!
 //! This is how many ways there are to write `f(a, b)` where `f` is some binary operator.
 //! Even with just putting two objects `a` and `b` together, it gets immensily complex very fast.
 //!
-//! This continues toward infinity. The complexity never stops increasing and it goes
-//! super-exponentially faster and faster. At level 4, if you listed every binary operator,
-//! space would collapse into a super-massive black hole long before you finished.
+//! This complexity continues toward infinity. The complexity never stops increasing and it goes
+//! super-exponentially faster and faster. At level 4, if you listed every binary operator in 1 sec,
+//! space would collapse into a super-massive black hole before you finished.
 //!
 //! Now, why should we bother extending mathematics this way, when it gets so complex?
 //! The motivation is to express operators over ideas such as "you are impressively wrong" concisely.
