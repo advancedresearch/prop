@@ -12,37 +12,7 @@
 //!
 //! ### Imaginary Inverse
 //!
-//! The syntax `~x` uses `Qu<X>` from the [qubit] module,
-//! and the syntax `x ~~ y` uses `Q<X, Y>` from the [quality] module.
-//!
-//! This model uses [imaginary inverse](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip/imaginary-inverse.pdf)
-//! `inv(f)` with `~inv(f)` or `~f` as a proof of bijective inverse of `f`.
-//! Here, `~` means the path semantical qubit operator, such that:
-//!
-//! ```text
-//! (inv(f) ~~ g) => ~inv(f)
-//! ```
-//!
-//! From `~inv(f)` one can prove `~f` and vice versa ([inv_qu] and [inv_rev_qu]).
-//!
-//! It means that one uses path semantical quality instead of equality for inverses.
-//! Path semantical quality `inv(f) ~~ g` also implies `inv(f) == g`,
-//! which is useful in proofs ([quality::to_eq]).
-//!
-//! The [inv_val_qu] axiom makes it possible to compute using the inverse:
-//!
-//! `(~inv(f) ⋀ (f(x) == y)) => (inv(f)(y) == x)`
-//!
-//! The reason for this design is that `inv(f) == inv(f)` is a tautology,
-//! and Rust's type system can't pattern match on 1-avatars with inequality in rules like in
-//! [Avatar Logic](https://github.com/advancedresearch/avalog).
-//!
-//! By using a partial equivalence operator `~~` instead of `==`,
-//! one can not prove `inv(f) ~~ inv(f)` without any assumptions.
-//! This solves the problem such that axioms can be added,
-//! only for functions that have inverses.
-//!
-//! If a function `f` has no inverse, then it is useful to prove `false^(inv(f) ~~ g)`.
+//! For information about the imaginary inverse, see the [fun::inv] module.
 //!
 //! ### Function Extensionality
 //!
@@ -113,7 +83,6 @@ mod app;
 mod comp;
 mod dup;
 mod id;
-mod inv;
 mod is_const;
 mod lam;
 mod norm;
@@ -128,6 +97,7 @@ pub mod feq;
 pub mod fin;
 pub mod fnat;
 pub mod fun_ext;
+pub mod inv;
 pub mod list;
 pub mod phott;
 pub mod real;
