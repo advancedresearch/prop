@@ -158,9 +158,9 @@ pub fn add_ty() -> Ty<FAdd, Pow<Nat, Tup<Nat, Nat>>> {unimplemented!()}
 pub fn add_is_const() -> IsConst<FAdd> {unimplemented!()}
 /// `(n : nat)  =>  add(0, n) = n`.
 pub fn add_zero<N: Prop>(_n_ty: Ty<N, Nat>) -> Eq<Add<Zero, N>, N> {unimplemented!()}
-/// `(n : nat) ⋀ (m : nat)  =>  add(succ(n), m) = succ(add(n, m))`.
+/// `(succ(n) : nat) ⋀ (m : nat)  =>  add(succ(n), m) = succ(add(n, m))`.
 pub fn add_succ<N: Prop, M: Prop>(
-    _ty_n: Ty<N, Nat>,
+    _ty_succ_n: Ty<Succ<N>, Nat>,
     _ty_m: Ty<M, Nat>
 ) -> Eq<Add<Succ<N>, M>, Succ<Add<N, M>>> {unimplemented!()}
 /// `add(n, m) == add(m, n)`.
@@ -190,7 +190,7 @@ pub fn one_ty() -> Ty<One, Nat> {app_fun_ty(succ_ty(), zero_ty())}
 pub fn two_ty() -> Ty<Two, Nat> {app_fun_ty(succ_ty(), one_ty())}
 /// `1 + 1 == 2`.
 pub fn eq_plus_one_one_two() -> Eq<Add<One, One>, Two> {
-    eq::transitivity(add_succ(zero_ty(), one_ty()), app_eq(add_zero(one_ty())))
+    eq::transitivity(add_succ(one_ty(), one_ty()), app_eq(add_zero(one_ty())))
 }
 /// `(n : nat)  =>  add(n, 0) == n`.
 pub fn add_zero_right<N: Prop>(ty_n: Ty<N, Nat>) -> Eq<Add<N, Zero>, N> {
@@ -220,7 +220,7 @@ pub fn add_subst_const_right<N: Prop, M: Prop, K: Prop>(
 /// `(n : nat)  =>  succ(n) == n + 1`.
 pub fn add_succ_plus_one<N: Prop>(ty_n: Ty<N, Nat>) -> Eq<Succ<N>, Add<N, One>> {
     eq::symmetry(eq::in_right_arg(eq::in_right_arg(eq::in_left_arg(
-        add_succ(zero_ty(), ty_n.clone()), add_symmetry()
+        add_succ(one_ty(), ty_n.clone()), add_symmetry()
     ), app_eq(add_symmetry())), app_eq(add_zero_right(ty_n.clone()))))
 }
 
