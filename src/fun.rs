@@ -28,7 +28,7 @@
 //!
 //! - Object: `A: Prop` as generic argument is an object `A` in the ∞-groupoid
 //! - Morphism: `Ty<F, Pow<B, A>>` is a morphism `F` from `A` to `B`, `f : A -> B`
-//! - Identity: `FId` is the identity morphism `id` from any object `A` to `A`
+//! - Identity: `Id<A>` is the identity morphism `id{A} : A -> A`
 //! - Composition: `Comp<G, F>` is the composition `g . f`
 //! - Inverse: `Inv<F>` is the imaginary inverse `inv(f)`
 //!
