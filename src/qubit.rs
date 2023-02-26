@@ -64,6 +64,10 @@ pub fn rev_normalize<A: Prop, N: Nat>(x: Qubit<S<N>, A>) -> Qubit<S<Z>, Qubit<N,
 pub fn sesh_to_inv<A: Prop>(_: Not<Qu<A>>) -> Qu<Not<A>> {unimplemented!()}
 /// `~¬a => ¬~a`.
 pub fn inv_to_sesh<A: Prop>(_: Qu<Not<A>>) -> Not<Qu<A>> {unimplemented!()}
+/// `¬~a == ~¬a`.
+pub fn eq_sesh_inv<A: Prop>() -> Eq<Not<Qu<A>>, Qu<Not<A>>> {
+    (Rc::new(sesh_to_inv), Rc::new(inv_to_sesh))
+}
 
 /// Convert to equality.
 pub fn to_eq<A: Prop, B: Prop>(x: Eq<Qubit<Z, A>, Qubit<Z, B>>) -> Eq<A, B> {
