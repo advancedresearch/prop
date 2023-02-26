@@ -80,11 +80,11 @@ pub fn concat_nil<X: Prop, A: Prop>(
     _ty_a: Ty<A, List<X>>
 ) -> Eq<Concat<X, Nil<X>, A>, A> {unimplemented!()}
 /// `(cons{x}(a, b) : list(x)) ⋀ (c : list(x))  =>
-///  concat{x}(cons{x}(a, b), c) == concat{x}(a, concat{x}(b, c))`.
+///  concat{x}(cons{x}(a, b), c) == cons{x}(a, concat{x}(b, c))`.
 pub fn concat_cons<X: Prop, A: Prop, B: Prop, C: Prop>(
     _ty_cons: Ty<Cons<X, A, B>, List<X>>,
     _ty_c: Ty<C, List<X>>
-) -> Eq<Concat<X, Cons<X, A, B>, C>, Concat<X, A, Concat<X, B, C>>> {unimplemented!()}
+) -> Eq<Concat<X, Cons<X, A, B>, C>, Cons<X, A, Concat<X, B, C>>> {unimplemented!()}
 /// `concat{x}[len{x}]  == add`.
 pub fn norm1_concat_len<X: Prop>() -> Eq<SymNorm2<App<FConcat, X>, App<FLen, X>>, FAdd> {
     unimplemented!()
