@@ -16,7 +16,7 @@ pub fn inv_ty<F: Prop, X: Prop, Y: Prop>(
 ) -> Ty<Inv<F>, Pow<X, Y>> {unimplemented!()}
 /// `~inv(f) ⋀ (f(a) == b)  =>  (inv(f)(b) == a)`.
 ///
-/// Get inverse map of `f` if there exists a proof `~inv(f)`.
+/// Get inverse application of `f` if there exists a proof `~inv(f)`.
 pub fn inv_val_qu<F: Prop, A: Prop, B: Prop>(
     _: Qu<Inv<F>>,
     _: Eq<App<F, A>, B>
