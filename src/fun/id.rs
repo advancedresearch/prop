@@ -22,8 +22,6 @@ pub fn id_def<A: Prop, X: Prop, N: Nat>(
     _ty_x: Ty<X, Type<N>>,
     _ty_a: Ty<A, X>
 ) -> Eq<Id<X, A>, A> {unimplemented!()}
-/// `(inv(f) == f)  =>  (inv(f) ~~ f)`.
-pub fn self_inv_to_q<F: Prop>(_: Eq<Inv<F>, F>) -> Q<Inv<F>, F> {unimplemented!()}
 /// `inv(id{x}) == id{x}`.
 pub fn id_inv<X: Prop>() -> Eq<Inv<App<FId, X>>, App<FId, X>> {unimplemented!()}
 /// `(f : a -> b) ⋀ (f . inv(f))  =>  id{b}`.
