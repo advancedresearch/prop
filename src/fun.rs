@@ -46,29 +46,11 @@
 //!
 //! ### Function Extensionality
 //!
-//! For more information about function extensionality, see the `fun::fun_ext` module.
+//! For information about function extensionality, see the `fun::fun_ext` module.
 //!
 //! ### Dependent Types
 //!
-//! [Dependent type theory in nLab](https://ncatlab.org/nlab/show/dependent+type+theory)
-//!
-//! Dependent types is heavily used in software verification.
-//! It is also used as a foundation of mathematics in terms of Homotopy Type Theory.
-//!
-//! There are two objects that are important for dependent types:
-//!
-//! - Dependent sum/tuple: `(a, b) : (a : x, p(a))` as `DepTup<A, X, B, P>`
-//!     - Formation: `dep_tup_ty_formation`
-//!     - Introduction: `dep_tup_intro`
-//!     - Elimination: `dep_tup_elim`
-//!     - Computation: `fst_def, snd_def`
-//! - Dependent product/function: `f : (a : x) -> p(a)` as `DepFun<F, A, X, P>`
-//!     - Formation: `dep_fun_ty_formation`
-//!     - Introduction: `dep_fun_intro`
-//!     - Elimination: `dep_fun_elim`
-//!     - Computation: `dep_fun_app`
-//!
-//! This allows `p(a)` to produce a type depending on previous arguments, hence "dependent type".
+//! For information about dependent types, see the `fun::dep` module.
 //!
 //! ### Category Theory Perspective
 //!
@@ -129,7 +111,6 @@ pub use ty::*;
 
 mod app;
 mod comp;
-mod dep;
 mod dup;
 mod id;
 mod inv;
@@ -141,11 +122,12 @@ mod tup;
 mod ty;
 
 pub mod bool_alg;
-pub mod real;
+pub mod dep;
 pub mod eqx;
 pub mod feq;
-pub mod fnat;
 pub mod fin;
+pub mod fnat;
 pub mod fun_ext;
 pub mod list;
 pub mod phott;
+pub mod real;
