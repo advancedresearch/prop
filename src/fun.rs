@@ -4,16 +4,16 @@
 //!
 //! ### Types
 //!
-//! A type `x : T` uses `Ty<X, T>` from the `path_semantics` module (PSI).
+//! A type `x : T` uses `Ty<X, T>` from the [path_semantics] module (PSI).
 //!
-//! A function type `f : X -> Y` uses `Ty<F, Pow<Y, X>>` from the `hooo` module (HOOO EP).
+//! A function type `f : X -> Y` uses `Ty<F, Pow<Y, X>>` from the [hooo] module (HOOO EP).
 //!
 //! A lambda/closure type `f : X => Y` uses `Ty<F, Imply<X, Y>>`.
 //!
 //! ### Imaginary Inverse
 //!
-//! The syntax `~x` uses `Qu<X>` from the `qubit` module,
-//! and the syntax `x ~~ y` uses `Q<X, Y>` from the `quality` module.
+//! The syntax `~x` uses `Qu<X>` from the [qubit] module,
+//! and the syntax `x ~~ y` uses `Q<X, Y>` from the [quality] module.
 //!
 //! This model uses [imaginary inverse](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip/imaginary-inverse.pdf)
 //! `inv(f)` with `~inv(f)` or `~f` as a proof of bijective inverse of `f`.
@@ -23,13 +23,13 @@
 //! (inv(f) ~~ g) => ~inv(f)
 //! ```
 //!
-//! From `~inv(f)` one can prove `~f` and vice versa (`inv_qu` and `inv_rev_qu`).
+//! From `~inv(f)` one can prove `~f` and vice versa ([inv_qu] and [inv_rev_qu]).
 //!
 //! It means that one uses path semantical quality instead of equality for inverses.
 //! Path semantical quality `inv(f) ~~ g` also implies `inv(f) == g`,
-//! which is useful in proofs.
+//! which is useful in proofs ([quality::to_eq]).
 //!
-//! The `inv_val_qu` axiom makes it possible to compute using the inverse:
+//! The [inv_val_qu] axiom makes it possible to compute using the inverse:
 //!
 //! `(~inv(f) ⋀ (f(x) == y)) => (inv(f)(y) == x)`
 //!
@@ -46,11 +46,11 @@
 //!
 //! ### Function Extensionality
 //!
-//! For information about function extensionality, see the `fun::fun_ext` module.
+//! For information about function extensionality, see the [fun::fun_ext] module.
 //!
 //! ### Dependent Types
 //!
-//! For information about dependent types, see the `fun::dep` module.
+//! For information about dependent types, see the [fun::dep] module.
 //!
 //! ### Category Theory Perspective
 //!
@@ -77,8 +77,8 @@
 //! Now, it turns out that the proposition `A -> A`, or `A^A`, for any `A` is tautologically true.
 //! Therefore, one can prove `~true` (`true_qu`) and as consequence:
 //!
-//! - `~true == true` (`eq_qu_true_true`)
-//! - `~false == false` (`eq_qu_false_false`)
+//! - `~true == true` ([eq_qu_true_true])
+//! - `~false == false` ([eq_qu_false_false])
 //!
 //! This is amazing because it is a sophisticated result of Path Semantics using
 //! PSI/PSQ/HOOO EP and Category Theory. One might expect that fundamental Path Semantics can
