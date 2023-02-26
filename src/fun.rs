@@ -2,6 +2,38 @@
 //!
 //! Model is derived from PSQ, PSI and HOOO EP.
 //!
+//! ### Introduction to Functional Programming
+//!
+//! In computer science, functional programming is a programming paradigm where programs are
+//! constructed by applying and composing functions. For more information,
+//! see [wikipedia article](https://en.wikipedia.org/wiki/Functional_programming).
+//!
+//! Foundational Path Semantics (PSI/PSQ/HOOO EP) is lower level than functional programming.
+//!
+//! For example, `a : T` in functional programming is a primitive notion, which can not be reduced
+//! to something else. However, in foundational Path Semantics, `a : T` might be modelled as
+//! `(a => T) ⋀ (a < T)` where `<` is path semantical order.
+//!
+//! Notice that in Rust, `a : T` is built into the language itself.
+//! The problem is that Rust does not support e.g. dependent types.
+//! This is why foundational Path Semantics is needed,
+//! to prove properties of higher level languages with more complex type systems than Rust.
+//! The motivation is to use a small set of axioms, powerful enough to develop some intuition
+//! in isolation, but also can be used as a starting point for more advanced logical frameworks.
+//!
+//! There are many theorems that are provable in foundational Path Semantics,
+//! which are not provable in normal functional programming. Therefore, one should think about
+//! foundational Path Semantics as a more general model of mathematics.
+//!
+//! Normal functional programming can be thought of as a "library" written in foundational
+//! Path Semantics. New operators and definitions are made using new axioms.
+//! However, these new axioms work in harmony with existing axioms.
+//!
+//! For example, function composition `g . f` is not a primitive notion that is built into
+//! foundational Path Semantics. This operator needs to be defined and axioms introduced that
+//! describe mathematical properties of function composition. When these new axioms are defined,
+//! one can use them to prove theorems about function composition.
+//!
 //! ### Types
 //!
 //! A type `x : T` uses `Ty<X, T>` from the [path_semantics] module (PSI).
