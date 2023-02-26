@@ -4,27 +4,34 @@
 //! with symbolic distinction.
 //! See [paper](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip2/path-semantical-quality.pdf).
 //!
+//! If this is your first time, then you might want to check out the [path_semantics] module first.
+//!
 //! For a different implementation of quality, see [PSI in Avalog](https://github.com/advancedresearch/avalog/blob/master/source/psi.txt).
 //!
 //! There is also an implementation in [Pocket-Prover](https://github.com/advancedresearch/pocket_prover).
+//!
+//! Path semantical quality is written `~~`, e.g. `a ~~ b` (see [Q]).
 //!
 //! ### Work-around for symbolic distinction
 //!
 //! IPL does not support symbolic distinction, so quality must be assumed explicitly.
 //!
+//! There are some ways to cheat though, e.g. using [hooo::lift_q] or [fun::inv::self_inv_to_q].
+//!
+//! For more information about symbolic distinction, see the [path_semantics] module.
+//!
 //! ### Lifting equality into quality
 //!
-//! `EqQ<A, B>`
-//!
-//! This implementation lifts equality directly to quality.
-//! Since this is unsound without symbolic distinction,
-//! it is not possible to assume this directly.
+//! `EqQ<A, B>` (see [EqQ])
 //!
 //! Although IPL does not support symbolic distinction,
 //! one can use `EqQ<A, B>` (`(a == b) => (a ~~ b)`) to model symbolic distinction.
 //! This means `EqQ<A, B>` can be used as an assumption that `A` and `B` are symbolic distinct.
 //!
 //! ### Seshatism vs Platonism
+//!
+//! In philosophy of mathematics, path semantical quality can be used to talk about the distinction
+//! between bias of Seshatic (dual-Platonic) languages and Platonic langauges.
 //!
 //! [Seshatism](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip2/seshatism.pdf)
 //! is a way to reject two forms of Platonism:
@@ -35,62 +42,33 @@
 //!
 //! Since `a ~~ b` implies `a ~~ a`, both Loop and Product Witness are rejected by Seshatism.
 //!
+//! For more information, see [Seshatism vs Platonism](https://advancedresearch.github.io/avatar-extensions/summary.html#seshatism-vs-platonism).
+//!
 //! ### Seshatic Relations
 //!
-//! `Seshatic<A, B>`
+//! `Seshatic<A, B>` (see [Seshatic])
 //!
 //! When a relation `p(a, b)` is Seshatic,
 //! it means that it implies Seshatism of either `a` or `b`:
 //!
 //! `p(a, b) => ¬(a ~~ a) ⋁ ¬(b ~~ b)`
 //!
-//! ### Pure Platonism
-//!
-//! `PurePlatonism<A, B>` (feature flag is not needed)
-//!
-//! Feature flag: "pure_platonism" (for convenience functions)
-//!
-//! Pure Platonism is not strong enough to prove quality,
-//! but can prove `False` from Seshatism (`Not<Q<A, A>>`).
-//! Can be used when reasoning about Seshatism is not needed.
-//!
-//! This implementation uses a 2-avatar of equality
-//! to model quality within IPL,
-//! by exploiting the property `(a == b) => ( (a ~~ b) ⋁ ¬¬(a ~~ b) )`.
-//!
-//! IPL does not have symbolic distinction,
-//! so equality `a == b` can not be lifted properly into `a ~~ b`.
-//! However, since quality is not decidable within IPL,
-//! one can not prove `a ~~ b` from `¬¬(a ~~ b)`.
-//! This means that the 2-avatar can hide reflexivity,
-//! by lifting `a == b` to `(a ~~ b) ⋁ ¬¬(a ~~ b)`.
-//!
-//! Notice that this implementation does not support reasoning about Seshatism,
-//! because `¬(a ~~ a)` (Seshatism) is absurd in this model (it proves anything).
-//! Proper Seshatism requires quality to use symbolic distinction instead of the trick above.
-//!
-//! Interpreted as an [Avatar Graph](https://advancedresearch.github.io/avatar-extensions/summary.html#avatar-graphs),
-//! the core is `a == b` and there are two 1-avatars:
-//!
-//! - `(a ~~ b)`
-//! - `¬¬(a ~~ b)`
-//!
-//! The 2-avatar integrates `(a ~~ b)` and `¬¬(a ~~ b)` using `⋁`.
-//!
 //! ### Aquality
 //!
-//! Aquality is a Seshatic relation that is symmetric to quality.
+//! Aquality is a Seshatic relation that is symmetric to quality ([Aq]).
+//! It means, when substituting quality with aquality and vice versa,
+//! one can prove the same theorems.
 //!
 //! One can think about aquality vs quality as a perspective
-//! where Seshatism and Platonism becomes mirror images of each other.
+//! where Seshatism and Platonism become mirror images of each other.
 //!
 //! The core axiom biases mathematics toward Platonism,
-//! but this choice is arbitrary since `¬~x == ~¬x`.
+//! but this choice is arbitrary since `¬~x == ~¬x` (see [qubit::eq_sesh_inv]).
 //! Therefore, "Platonism" is whatever theory/philosophy
 //! that is associated with the quality/aquality used in a core axiom.
 //! The dual theory/philosophy is Seshatism.
 //!
-//! Dualities of this form is common in mathematics,
+//! Dualities of this form are common in mathematics,
 //! so Seshatism vs Platonism is often used to talk about analogues of other dualities as well.
 
 use crate::*;
@@ -99,7 +77,7 @@ use univalence::HomEq2;
 use qubit::Qu;
 use hooo::Theory;
 
-/// Lifts equality into quality.
+/// Lifts equality into quality `(a == b) => (a ~~ b)`.
 pub type EqQ<A, B> = Imply<Eq<A, B>, Q<A, B>>;
 /// Lifts equality into aquality.
 pub type EqAq<A, B> = Imply<Eq<A, B>, Aq<A, B>>;
