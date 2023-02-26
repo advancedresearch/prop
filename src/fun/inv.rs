@@ -158,3 +158,7 @@ pub fn qu_to_app_eq<A: Prop, B: Prop, F: Prop>(
      Rc::new(move |y|
         eq::in_left_arg(inv_val_qu(qu_inv_inv_f.clone(), y), app_map_eq(involve_eq()))))
 }
+/// `inv(f) == g  =>  inv(g) == f`.
+pub fn inv_swap_eq<F: Prop, G: Prop>(x: Eq<Inv<F>, G>) -> Eq<Inv<G>, F> {
+    eq::symmetry(eq::in_left_arg(inv_eq(x), involve_eq()))
+}
