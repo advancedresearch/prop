@@ -162,3 +162,7 @@ pub fn qu_to_app_eq<A: Prop, B: Prop, F: Prop>(
 pub fn inv_swap_eq<F: Prop, G: Prop>(x: Eq<Inv<F>, G>) -> Eq<Inv<G>, F> {
     eq::symmetry(eq::in_left_arg(inv_eq(x), involve_eq()))
 }
+/// `inv(f) ~~ g  =>  inv(g) ~~ f`.
+pub fn inv_swap_q<F: Prop, G: Prop>(x: Q<Inv<F>, G>) -> Q<Inv<G>, F> {
+    quality::symmetry(q_adjoint_left(x))
+}
