@@ -35,8 +35,8 @@ pub fn tail_ty<A: Prop, B: Prop>(
 ) -> Ty<Tail<A>, List<B>> {
     unimplemented!()
 }
-/// `∃ nil{a} : list(a) { x } ⋀ ∃ cons{a}(b, nil{x}) : list(a) { x }  =>  x`.
-pub fn list_exists<A: Prop, B: VProp, X: Prop>(
+/// `∃ nil{a} : list(a) { x } ⋀ ∃ cons{a}(b, c) : list(a) { x }  =>  x`.
+pub fn list_exists<A: Prop, B: VProp, C: VProp, X: Prop>(
     _: Exists<Ty<Nil<A>, List<A>>, X>,
     _: Exists<Ty<Cons<A, B, Nil<A>>, List<A>>, X>
 ) -> X {unimplemented!()}
