@@ -1,6 +1,7 @@
 //! List.
 
 use super::*;
+use fnat::{FAdd, Nat, Succ, Zero};
 
 /// A list.
 #[derive(Copy, Clone)]
@@ -49,7 +50,7 @@ pub fn nil_ty<A: Prop>(_a_ty: Ty<A, Type<Z>>) -> Ty<Nil<A>, List<A>> {unimplemen
 #[derive(Copy, Clone)]
 pub struct FCons(());
 
-/// `const{x}(a, b)`.
+/// `cons{x}(a, b)`.
 pub type Cons<X, A, B> = App<App<FCons, X>, Tup<A, B>>;
 
 /// `a : type(0)  =>  cons{a} : (a, list(a)) -> list(a)`.
@@ -68,3 +69,38 @@ pub type Concat<X, A, B> = App<App<FConcat, X>, Tup<A, B>>;
 pub fn concat_ty<A: Prop>(
     _a_ty: Ty<A, Type<Z>>
 ) -> Ty<App<FConcat, A>, Pow<List<A>, Tup<List<A>, List<A>>>> {unimplemented!()}
+/// `(nil{x} : list(x)) ⋀ (a : list(x))  =>  concat{x}(nil{x}, a) == a`.
+pub fn concat_nil<X: Prop, A: Prop>(
+    _ty_nil: Ty<Nil<X>, List<X>>,
+    _ty_a: Ty<A, List<X>>
+) -> Eq<Concat<X, Nil<X>, A>, A> {unimplemented!()}
+/// `(cons{x}(a, b) : list(x)) ⋀ (c : list(x))  =>
+///  concat{x}(cons{x}(a, b), c) == concat{x}(a, concat{x}(b, c))`.
+pub fn concat_cons<X: Prop, A: Prop, B: Prop, C: Prop>(
+    _ty_cons: Ty<Cons<X, A, B>, List<X>>,
+    _ty_c: Ty<C, List<X>>
+) -> Eq<Concat<X, Cons<X, A, B>, C>, Concat<X, A, Concat<X, B, C>>> {unimplemented!()}
+/// `concat{x}[len{x}]  == add`.
+pub fn norm1_concat_len<X: Prop>() -> Eq<SymNorm2<App<FConcat, X>, App<FLen, X>>, FAdd> {
+    unimplemented!()
+}
+
+/// Length of list.
+#[derive(Copy, Clone)]
+pub struct FLen(());
+
+/// `len{x}(a)`.
+pub type Len<X, A> = App<App<FLen, X>, A>;
+
+/// `(a : type(0))  =>  (len{a} : list(a) -> nat)`.
+pub fn len_ty<A: Prop>(_a: Ty<A, Type<Z>>) -> Ty<App<FLen, A>, Pow<Nat, List<A>>> {
+    unimplemented!()
+}
+/// `nil{a} : list(a)  =>  len(nil{a}) == 0`.
+pub fn len_nil<A: Prop>(_: Ty<Nil<A>, List<A>>) -> Eq<Len<A, Nil<A>>, Zero> {unimplemented!()}
+/// `cons{x}(a, b) : list(a)  =>  len{x}(cons{x}(a, b)) == succ(len{x}(b))`.
+pub fn len_cons<X: Prop, A: Prop, B: Prop>(
+    _: Ty<Cons<X, A, B>, List<A>>
+) -> Eq<Len<X, Cons<X, A, B>>, Succ<Len<X, B>>> {
+    unimplemented!()
+}
