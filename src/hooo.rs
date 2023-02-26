@@ -41,19 +41,19 @@ use pow::PowExt;
 pub mod tauto;
 pub mod pow;
 
-/// A tautological proposition `a^true`.
+/// A tautological proposition `tauto(a) := a^true`.
 pub type Tauto<A> = fn(True) -> A;
 
-/// A paradoxical proposition `false^a`.
+/// A paradoxical proposition `para(a) := false^a`.
 pub type Para<A> = fn(A) -> False;
 
-/// A uniform proposition `a^true ⋁ false^a`.
+/// A uniform proposition `uniform(a) := a^true ⋁ false^a`.
 pub type Uniform<A> = Or<Tauto<A>, Para<A>>;
 
-/// A proposition is a theory when non-uniform `¬(a^true ⋁ false^a)`.
+/// A proposition is a theory when non-uniform `theory(a) := ¬(a^true ⋁ false^a)`.
 pub type Theory<A> = Not<Uniform<A>>;
 
-/// There exists statement `∃ a { b }`.
+/// There exists statement `∃ a { b } := ¬((¬b)^a)`.
 ///
 /// This can be used as "there exists" `∃` in First Order Logic by using:
 /// `Exists<Ty<X, T>, ...>` as `∃ x : t { ... }`.
