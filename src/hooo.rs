@@ -1588,6 +1588,12 @@ pub fn exists_true<A: Prop>(a: A) -> Exists<True, A> {
     Rc::new(move |tauto_na| tauto_na(True)(a.clone()))
 }
 
+/// `a^true  =>  ∃ a { true }`.
+pub fn exists_tauto<A: Prop>(tauto_a: Tauto<A>) -> Exists<A, True> {
+    Rc::new(move |pow_not_true_a|
+        consistency()(hooo_rev_and((tr(), tauto_a.trans(pow_not_true_a))).trans(and::paradox)))
+}
+
 /// `∃ a { ¬b }  =>  ¬(b^a)`.
 pub fn exists_not_to_not_pow<A: Prop, B: Prop>(x: Exists<A, Not<B>>) -> Not<Pow<B, A>> {
     imply::in_left(x, |y: Pow<B, A>| y.trans(not::double))
