@@ -3,6 +3,7 @@
 //! For an implementation, see the [Pocket-Prover](https://github.com/advancedresearch/pocket_prover) library.
 
 use crate::*;
+use hooo::Tauto;
 use nat::{Nat, Z, S};
 use quality::{Aq, Q};
 
@@ -12,6 +13,8 @@ pub struct Qubit<N, A>(N, A);
 
 /// The qubit proposition `~a`.
 pub type Qu<A> = Qubit<S<Z>, A>;
+
+impl<A: DProp> Decidable for Qu<A> {fn decide() -> ExcM<Qu<A>> {decide()}}
 
 impl<A: Prop> Qubit<Z, A> {
     /// Get proposition.
@@ -32,6 +35,20 @@ impl<A: Prop> Qubit<S<Z>, Not<A>> {
     pub fn to_aq(self) -> Aq<A, A> {(eq::refl(), (self.clone(), self))}
     /// Convert from self-quality.
     pub fn from_aq((_, (x, _)): Aq<A, A>) -> Self {x}
+}
+
+/// `~a ⋁ ¬~a`.
+pub fn decide<A: DProp>() -> ExcM<Qu<A>> {decide_tauto_excm(tauto!(A::decide()))}
+
+/// `(a ⋁ ¬a)^true  =>  (~a ⋁ ¬~a)`.
+pub fn decide_tauto_excm<A: Prop>(x: Tauto<ExcM<A>>) -> ExcM<Qu<A>> {
+    use hooo::{tr, pow_eq_to_tauto_eq, hooo_or};
+    use fun::true_qu;
+
+    match hooo_or(x) {
+        Left(x) => Left(in_arg(true_qu(), pow_eq_to_tauto_eq((x, tr())))),
+        Right(x) => Right(inv_to_sesh(in_arg(true_qu(), pow_eq_to_tauto_eq((x, tr()))))),
+    }
 }
 
 /// `~qubit^n(a)  =>  qubit^(n+1)(a)`.
@@ -101,6 +118,6 @@ pub fn eq_to_eq_inv<A: Prop, B: Prop>(eq_q: Eq<Qu<A>, Qu<B>>) -> Eq<Qu<Not<A>>, 
 /// `~a ∧ (a == b)^true  =>  ~b`.
 ///
 /// This requires `(a == b)^true` to make reasoning about randomness properly.
-pub fn in_arg<A: Prop, B: Prop, N>(x: Qubit<N, A>, y: hooo::Tauto<Eq<A, B>>) -> Qubit<N, B> {
+pub fn in_arg<A: Prop, B: Prop, N>(x: Qubit<N, A>, y: Tauto<Eq<A, B>>) -> Qubit<N, B> {
     Qubit(x.0, y(True).0(x.1))
 }
