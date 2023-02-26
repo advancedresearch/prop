@@ -18,7 +18,7 @@ pub struct Tail<A>(A);
 
 /// `(a : type(0))  =>  (list : a -> type(0))`.
 pub fn list_ty<A: Prop>(_a_ty: Ty<A, Type<Z>>) -> Ty<FList, Pow<Type<Z>, A>> {unimplemented!()}
-/// `a : list(b)  =>  (a == nil{b}) ⋁ (a == (head(a) :: tail(a)))`
+/// `a : list(b)  =>  (a == nil{b}) ⋁ (a == cons{b}(head(a), tail(a)))`.
 pub fn list_def<A: Prop, B: Prop>(
     _: Ty<A, List<B>>
 ) -> Or<Eq<A, Nil<B>>, Eq<A, Cons<B, Head<A>, Tail<A>>>> {
