@@ -2,6 +2,20 @@
 //!
 //! Path Semantics has a core axiom which is used to model mathematics.
 //!
+//! The core axiom does not "define" all mathematics, but functions as a natural starting point
+//! to build more advanced logical frameworks that in turn model mathematics.
+//!
+//! A logical framework is a set of axioms that are assumed to hold univerally.
+//! New frameworks must not be able to prove `false` relative to the core axiom.
+//! In most of mathematics, there is no need to talk about the things that the core axiom proves.
+//! For this reason, it might seem like the core axiom is obscure and irrelevant.
+//!
+//! However, when new logical frameworks are modelled in harmony with the core axiom,
+//! there are new theorems that are provable that point to deeper insights in mathematics.
+//! For this reason, the core axiom is considered relevant for high dimensional mathematics.
+//!
+//! ### About This Module
+//!
 //! This module formalizes the core axiom and models types as propositions.
 //!
 //! PSI = Path Semantical Intuitionistic Propositional Logic
