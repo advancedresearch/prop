@@ -103,6 +103,20 @@ pub fn previous<N: Prop>(x: Ty<Succ<N>, Nat>) -> Eq<N, Prev<Succ<N>>> {
         Right(y) => succ_eq_rev(y.1),
     }
 }
+/// `(a : nat) ⋀ x^(a == 0) ⋀ x^(a == succ(prev(a))  =>  x`.
+pub fn nat_cover<A: Prop, X: Prop>(
+    ty_a: Ty<A, Nat>,
+    pow_x_eq_a_zero: Pow<X, Eq<A, Zero>>,
+    y: Pow<X, Eq<A, Succ<Prev<A>>>>
+) -> X {
+    fn f<A: Prop>(ty_a: Ty<A, Nat>) -> Or<Eq<A, Zero>, Eq<A, Succ<Prev<A>>>> {
+        match nat_def(ty_a) {
+            Left(x) => Left(x),
+            Right((_, x)) => Right(x),
+        }
+    }
+    cover(ty_a, f, pow_x_eq_a_zero, y)
+}
 
 /// Zero.
 #[derive(Copy, Clone)]
