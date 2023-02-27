@@ -358,6 +358,20 @@ pub fn imply_fa<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FImply, Tup<Fa, A>>, Tr> {
         par_tup_def(not_fa(), id_def(bool_ty(), ty_a.clone())))), or_tr(ty_a))), imply_def, am, l)
 }
 
+/// Xor function.
+#[derive(Copy, Clone)]
+pub struct FXor(pub Comp<FNot, FEqb>);
+
+/// `xor(a, b)`.
+pub type Xor<A, B> = App<FXor, Tup<A, B>>;
+
+/// `xor  ==  not . eqb`.
+pub fn xor_def() -> Eq<FXor, Comp<FNot, FEqb>> {eqx!(def FXor)}
+/// `xor : (bool, bool) -> bool`.
+pub fn xor_ty() -> Ty<FXor, Pow<Bool, Tup<Bool, Bool>>> {
+    eqx!(comp_ty(eqb_ty(), not_ty()), xor_def, tyl)
+}
+
 /// `and . ((f x (not . eq)) . dup)`.
 ///
 /// For any `a, b`, this is `f((a, b)) & !eq((a, b))`.
