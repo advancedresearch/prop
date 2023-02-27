@@ -7,6 +7,9 @@ use bool_alg::{Bool, Fa, FNot, Tr};
 #[derive(Copy, Clone)]
 pub struct Nat(());
 
+/// `n == 0`.
+pub type IsZero<N> = Eq<N, Zero>;
+
 /// The number `prev(a)` is the number right before `a`, if it exists.
 ///
 /// This not an operation, but a reference to some natural number depending on `a`.
@@ -29,11 +32,11 @@ pub fn nat_is_const() -> IsConst<Nat> {unimplemented!()}
 /// `(x : nat)  =>  (x == 0) ⋁ ((prev(x) : nat) ⋀ (x == succ(prev(x)))`.
 pub fn nat_def<X: Prop>(
     _x_ty: Ty<X, Nat>
-) -> Or<Eq<X, Zero>, And<Ty<Prev<X>, Nat>, Eq<X, Succ<Prev<X>>>>> {unimplemented!()}
+) -> Or<IsZero<X>, And<Ty<Prev<X>, Nat>, Eq<X, Succ<Prev<X>>>>> {unimplemented!()}
 /// `(n : nat) ⋀ (n == succ(n))  =>  false`.
 pub fn para_eq_succ<N: Prop>(_: And<Ty<N, Nat>, Eq<N, Succ<N>>>) -> False {unimplemented!()}
 /// `0 == succ(n)  =>  false`.
-pub fn para_pre_zero<N: Prop>(_: Eq<Zero, Succ<N>>) -> False {unimplemented!()}
+pub fn para_pre_zero<N: Prop>(_: IsZero<Succ<N>>) -> False {unimplemented!()}
 /// `succ(n) == succ(m)  =>  n == m`.
 pub fn succ_eq_rev<N: Prop, M: Prop>(_: Eq<Succ<N>, Succ<M>>) -> Eq<N, M> {unimplemented!()}
 /// Induction on natural numbers.
@@ -99,17 +102,17 @@ pub fn nat1_fun_ext<N: VProp, F: Prop, G: Prop, A: Prop>(
 /// `succ(n) : nat  =>  n == prev(succ(n))`.
 pub fn previous<N: Prop>(x: Ty<Succ<N>, Nat>) -> Eq<N, Prev<Succ<N>>> {
     match nat_def(x) {
-        Left(y) => imply::absurd()(para_pre_zero(eq::symmetry(y))),
+        Left(y) => imply::absurd()(para_pre_zero(y)),
         Right(y) => succ_eq_rev(y.1),
     }
 }
 /// `(a : nat) ⋀ x^(a == 0) ⋀ x^(a == succ(prev(a))  =>  x`.
 pub fn nat_cover<A: Prop, X: Prop>(
     ty_a: Ty<A, Nat>,
-    pow_x_eq_a_zero: Pow<X, Eq<A, Zero>>,
+    pow_x_eq_a_zero: Pow<X, IsZero<A>>,
     y: Pow<X, Eq<A, Succ<Prev<A>>>>
 ) -> X {
-    fn f<A: Prop>(ty_a: Ty<A, Nat>) -> Or<Eq<A, Zero>, Eq<A, Succ<Prev<A>>>> {
+    fn f<A: Prop>(ty_a: Ty<A, Nat>) -> Or<IsZero<A>, Eq<A, Succ<Prev<A>>>> {
         match nat_def(ty_a) {
             Left(x) => Left(x),
             Right((_, x)) => Right(x),
@@ -145,7 +148,7 @@ pub fn succ_app_ty<N: Prop>(ty_n: Ty<N, Nat>) -> Ty<Succ<N>, Nat> {app_fun_ty(su
 /// `succ(n) : nat  =>  n : nat`.
 pub fn succ_rev_app_ty<N: Prop>(ty_succ_n: Ty<Succ<N>, Nat>) -> Ty<N, Nat> {
     match nat_def(ty_succ_n) {
-        Left(eq_succ_n_zero) => imply::absurd()(para_pre_zero(eq::symmetry(eq_succ_n_zero))),
+        Left(eq_succ_n_zero) => imply::absurd()(para_pre_zero(eq_succ_n_zero)),
         Right(x) => path_semantics::ty_in_left_arg(x.0, eq::symmetry(succ_eq_rev(x.1))),
     }
 }
@@ -219,7 +222,7 @@ pub fn add_eq_right<A: Prop, B: Prop, C: Prop>(x: Eq<A, B>) -> Eq<Add<C, A>, Add
     app_eq(tup_eq_snd(x))
 }
 /// `(n == 0)  =>  (n + 0 == n)`.
-pub fn add_eq_zero_to_add_zero_right<N: Prop>(eq_n_zero: Eq<N, Zero>) -> Eq<Add<N, Zero>, N> {
+pub fn add_eq_zero_to_add_zero_right<N: Prop>(eq_n_zero: IsZero<N>) -> Eq<Add<N, Zero>, N> {
     eq::transitivity(eq::transitivity(add_eq_left(eq_n_zero.clone()),
         add_zero(zero_ty())), eq::symmetry(eq_n_zero))
 }
@@ -250,7 +253,7 @@ pub fn mul_ty() -> Ty<FMul, Pow<Nat, Tup<Nat, Nat>>> {unimplemented!()}
 /// `is_const(mul)`.
 pub fn mul_is_const() -> IsConst<FMul> {unimplemented!()}
 /// `(n : nat)  =>  mul(0, n) = 0`.
-pub fn mul_zero<N: Prop>(_ty_n: Ty<N, Nat>) -> Eq<Mul<Zero, N>, Zero> {unimplemented!()}
+pub fn mul_zero<N: Prop>(_ty_n: Ty<N, Nat>) -> IsZero<Mul<Zero, N>> {unimplemented!()}
 /// `(n : nat) ⋀ (m : nat)  =>  mul(succ(n), m) == add(m, mul(n, m))`.
 pub fn mul_succ<N: Prop, M: Prop>(
     _ty_n: Ty<N, Nat>,
@@ -272,7 +275,7 @@ pub fn mul_rev_eq_left<N: Prop, M: Prop, A: Prop>(
     _m_ty: Ty<M, Nat>,
     _a_ty: Ty<A, Nat>,
     _x: Eq<Mul<N, A>, Mul<M, A>>,
-    _neq_a_zero: Not<Eq<A, Zero>>,
+    _neq_a_zero: Not<IsZero<A>>,
 ) -> Eq<N, M> {unimplemented!()}
 /// `(n : nat) ⋀ (m : nat) ⋀ (a : nat) ⋀ (a * n == a * m) ⋀ ¬(a == 0)  =>  (n == m)`.
 pub fn mul_rev_eq_right<N: Prop, M: Prop, A: Prop>(
@@ -280,7 +283,7 @@ pub fn mul_rev_eq_right<N: Prop, M: Prop, A: Prop>(
     _m_ty: Ty<M, Nat>,
     _a_ty: Ty<A, Nat>,
     _x: Eq<Mul<A, N>, Mul<A, M>>,
-    _neq_a_zero: Not<Eq<A, Zero>>,
+    _neq_a_zero: Not<IsZero<A>>,
 ) -> Eq<N, M> {unimplemented!()}
 
 /// `(n : nat)  =>  mul(1, n) = n`.
