@@ -155,11 +155,11 @@ pub fn succ_rev_app_ty<N: Prop>(ty_succ_n: Ty<Succ<N>, Nat>) -> Ty<N, Nat> {
 /// `(a == b)  =>  (succ(a) == succ(b))`.
 pub fn succ_eq<A: Prop, B: Prop>(x: Eq<A, B>) -> Eq<Succ<A>, Succ<B>> {app_eq(x)}
 
-/// Apply successor to argument.
+/// Apply successor to argument `succ(n)`.
 pub type Succ<N> = App<FSucc, N>;
-/// One.
+/// One `1 := succ(0)`.
 pub type One = Succ<Zero>;
-/// Two.
+/// Two `2 := succ(1)`.
 pub type Two = Succ<One>;
 
 /// Addition.
