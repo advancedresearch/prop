@@ -49,3 +49,15 @@ pub fn q_inv_ty<F: Prop, G: Prop, A: Prop, B: Prop>(
     );
     path_semantics::ty_in_left_arg(y, x)
 }
+/// `(a : b) ⋀ ((a == x) ⋁ (a == y))^(a : b) ⋀ c^(a == x) ⋀ c^(a == y)  =>  c`.
+pub fn cover<A: Prop, B: Prop, C: Prop, X: Prop, Y: Prop>(
+    ty_a: Ty<A, B>,
+    def: Pow<Or<Eq<A, X>, Eq<A, Y>>, Ty<A, B>>,
+    pow_c_eq_a_x: Pow<C, Eq<A, X>>,
+    pow_c_eq_a_y: Pow<C, Eq<A, Y>>,
+) -> C {
+    match def(ty_a) {
+        Left(eq_a_x) => pow_c_eq_a_x(eq_a_x),
+        Right(eq_a_y) => pow_c_eq_a_y(eq_a_y),
+    }
+}

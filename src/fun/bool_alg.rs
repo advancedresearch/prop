@@ -80,11 +80,7 @@ pub fn bool1_cover<A: Prop, X: Prop>(
     ty_a: Ty<A, Bool>,
     pow_x_eq_a_tr: Pow<X, Eq<A, Tr>>,
     pow_x_eq_a_fa: Pow<X, Eq<A, Fa>>,
-) -> X {
-    use hooo::{pow_transitivity, hooo_dual_rev_or};
-
-    pow_transitivity(bool_values, hooo_dual_rev_or((pow_x_eq_a_tr, pow_x_eq_a_fa)))(ty_a)
-}
+) -> X {cover(ty_a, bool_values, pow_x_eq_a_tr, pow_x_eq_a_fa)}
 
 /// False1 function.
 #[derive(Clone, Copy)]
