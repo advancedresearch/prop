@@ -1636,3 +1636,11 @@ pub fn exists_join<A: DProp, B: DProp, X: DProp>(
 ) -> Exists<And<A, B>, X> {
     Rc::new(move |x| imply::in_left(and::to_de_morgan((a.clone(), b.clone())), hooo_dual_and)(x))
 }
+
+/// `b^a  =>  (∃ a { b })^a`.
+pub fn pow_to_pow_exists<A: Prop, B: Prop>(x: Pow<B, A>) -> Pow<Exists<A, B>, A> {
+    fn f<A: Prop, B: Prop>((x, y): And<Pow<B, A>, A>) -> Exists<A, B> {
+        modus_ponens_to_exists(x, y)
+    }
+    hooo_rev_and((x.lift(), pow_refl)).trans(f)
+}
