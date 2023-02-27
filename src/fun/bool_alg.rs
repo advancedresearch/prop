@@ -75,6 +75,16 @@ pub fn bool2_fun_ext<F: Prop, G: Prop>(
                  app_fun_ext(ty_f.clone(), ty_g.clone(), hooo::tr().trans(case_tr_fa)),
                  app_fun_ext(ty_f, ty_g, hooo::tr().trans(case_tr_tr)))
 }
+/// `(a : bool) ⋀ x^(a == tr) ⋀ x^(a == fa)  =>  x`.
+pub fn bool1_cover<A: Prop, X: Prop>(
+    ty_a: Ty<A, Bool>,
+    pow_x_eq_a_tr: Pow<X, Eq<A, Tr>>,
+    pow_x_eq_a_fa: Pow<X, Eq<A, Fa>>,
+) -> X {
+    use hooo::{pow_transitivity, hooo_dual_rev_or};
+
+    pow_transitivity(bool_values, hooo_dual_rev_or((pow_x_eq_a_tr, pow_x_eq_a_fa)))(ty_a)
+}
 
 /// False1 function.
 #[derive(Clone, Copy)]
