@@ -26,10 +26,10 @@ pub struct Prev<A>(A);
 pub fn nat_ty() -> Ty<Nat, Type<Z>> {unimplemented!()}
 /// `is_const(nat)`.
 pub fn nat_is_const() -> IsConst<Nat> {unimplemented!()}
-/// `(x : nat)  =>  (x == 0) ⋁ (prev(x) : nat ⋀ x == succ(prev(x))`.
+/// `(x : nat)  =>  (x == 0) ⋁ ((prev(x) : nat) ⋀ (x == succ(prev(x)))`.
 pub fn nat_def<X: Prop>(
     _x_ty: Ty<X, Nat>
-) -> Either<Eq<X, Zero>, And<Ty<Prev<X>, Nat>, Eq<X, Succ<Prev<X>>>>> {unimplemented!()}
+) -> Or<Eq<X, Zero>, And<Ty<Prev<X>, Nat>, Eq<X, Succ<Prev<X>>>>> {unimplemented!()}
 /// `(n : nat) ⋀ (n == succ(n))  =>  false`.
 pub fn para_eq_succ<N: Prop>(_: And<Ty<N, Nat>, Eq<N, Succ<N>>>) -> False {unimplemented!()}
 /// `0 == succ(n)  =>  false`.
