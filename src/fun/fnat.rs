@@ -1,7 +1,7 @@
 //! Natural numbers.
 
 use super::*;
-use bool_alg::{Bool, Fa, FNot, Tr};
+use bool_alg::{Bool, Fa, FEqb, FNot, Tr};
 
 /// The type of natural numbers.
 #[derive(Copy, Clone)]
@@ -200,6 +200,8 @@ pub fn add_rev_eq_right<N: Prop, M: Prop, A: Prop>(
     _a_ty: Ty<A, Nat>,
     _x: Eq<Add<A, N>, Add<A, M>>
 ) -> Eq<N, M> {unimplemented!()}
+/// `add[even] == eqb`.
+pub fn norm2_add_even() -> Eq<SymNorm2<FAdd, FEven>, FEqb> {unimplemented!()}
 
 /// `1 : nat`.
 pub fn one_ty() -> Ty<One, Nat> {app_fun_ty(succ_ty(), zero_ty())}
