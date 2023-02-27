@@ -162,6 +162,36 @@ pub type One = Succ<Zero>;
 /// Two `2 := succ(1)`.
 pub type Two = Succ<One>;
 
+/// Non-zero successor.
+#[derive(Copy, Clone)]
+pub struct FNonZeroSucc(());
+
+/// `succ{(¬= 0)}(n)`.
+pub type NonZeroSucc<N> = App<FNonZeroSucc, N>;
+/// `inv(succ{(¬= 0)})(n)`.
+pub type InvNonZeroSucc<N> = App<Inv<FNonZeroSucc>, N>;
+
+/// `(n : nat) ⋀ ¬(n == 0)  =>  succ{(¬= 0)}(n) == succ(n)`.
+pub fn non_zero_succ_def<N: Prop>(
+    _: Ty<N, Nat>,
+    _: Not<IsZero<N>>
+) -> Eq<NonZeroSucc<N>, Succ<N>> {unimplemented!()}
+/// `(n : nat)  =>  ¬(inv(succ{(¬= 0)})(n) == 0)`.
+pub fn eq_inv_non_zero_succ_zero<N: Prop>(_: Ty<N, Nat>) -> Not<IsZero<InvNonZeroSucc<N>>> {
+    unimplemented!()
+}
+/// `~inv(succ{(¬= 0)})`.
+pub fn non_zero_succ_qu() -> Qu<Inv<FNonZeroSucc>> {unimplemented!()}
+
+/// `succ{(¬= 0)} : nat -> nat`.
+pub fn non_zero_succ_ty() -> Ty<FNonZeroSucc, Pow<Nat, Nat>> {
+    fn f(x: Ty<One, Nat>) -> Ty<NonZeroSucc<One>, Nat> {
+        path_semantics::ty_eq_left(non_zero_succ_def(x.clone(),
+            hooo::pow_to_imply(hooo::para_eq_symmetry(para_eq_zero_one)))).1(succ_app_ty(x))
+    }
+    app_rev_fun_ty(f)
+}
+
 /// Addition.
 #[derive(Copy, Clone)]
 pub struct FAdd(());
