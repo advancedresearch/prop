@@ -338,7 +338,7 @@ pub struct FImply(pub Comp<FOr, Par<FNot, FIdb>>);
 
 /// `imply  ==  or . (not x id)`.
 pub fn imply_def() -> Eq<FImply, Comp<FOr, Par<FNot, FIdb>>> {eqx!(def FImply)}
-/// Type of Imply.
+/// `imply : (bool, bool) -> bool`.
 pub fn imply_ty() -> Ty<FImply, Pow<Bool, Tup<Bool, Bool>>> {
     eqx!(comp_ty(par_tup_fun_ty(not_ty(), id_ty()), or_ty()), imply_def, tyl)
 }
@@ -347,12 +347,12 @@ pub fn imply_is_const() -> IsConst<FImply> {
     let x = comp_is_const(par_tup_app_is_const(not_is_const(), idb_is_const()), or_is_const());
     eqx!(x, imply_def, co)
 }
-/// `imply(true, a) = a`.
+/// `a : bool  =>  imply(true, a) = a`.
 pub fn imply_tr<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FImply, Tup<Tr, A>>, A> {
     eqx!(eq::symmetry(eq::in_left_arg(eq::in_left_arg(eq_app_comp(), app_eq(
         par_tup_def(not_tr(), id_def(bool_ty(), ty_a.clone())))), or_fa(ty_a))), imply_def, am, l)
 }
-/// `imply(false, a) = true`.
+/// `a : bool  =>  imply(false, a) = true`.
 pub fn imply_fa<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<App<FImply, Tup<Fa, A>>, Tr> {
     eqx!(eq::symmetry(eq::in_left_arg(eq::in_left_arg(eq_app_comp(), app_eq(
         par_tup_def(not_fa(), id_def(bool_ty(), ty_a.clone())))), or_tr(ty_a))), imply_def, am, l)
