@@ -938,17 +938,11 @@ pub fn tauto_eq_in_left_arg<A: Prop, B: Prop, C: Prop>(
     g: Tauto<Eq<A, C>>,
 ) -> Tauto<Eq<C, B>> {tauto_eq_transitivity(tauto_eq_symmetry(g), f)}
 
-/// `uniform(a) ⋁ false^uniform(a)`.
-pub fn program<A: DProp>() -> Or<Uniform<A>, Para<Uniform<A>>> {
-    match para_decide::<A>() {
-        Left(para_a) => Left(Right(para_a)),
-        Right(npara_a) => {
-            let nntauto_a = para_not_to_not_not_tauto(pow_not(npara_a));
-            match tauto_decide::<A>() {
-                Left(tauto_a) => Left(Left(tauto_a)),
-                Right(ntauto_a) => not::absurd(nntauto_a, ntauto_a),
-            }
-        }
+/// `uniform(a)`.
+pub fn uniform<A: DProp>() -> Uniform<A> {
+    match hooo_or(tauto!(A::decide())) {
+        Left(tauto_a) => Left(tauto_a),
+        Right(tauto_na) => Right(tauto_not_to_para(tauto_na))
     }
 }
 
@@ -1293,15 +1287,9 @@ pub fn tauto_from_para_transitivity<A: DProp, B: DProp, C: DProp>(
         (Right(npara_a), _, Right(npara_c)) => {
             let y: Eq<Para<A>, Para<C>> = eq_not_para_to_eq_para((npara_c.map_any(), npara_a.map_any()));
             let y: Para<Not<Eq<A, C>>> = hooo_dual_rev_neq(y);
-            match program::<Eq<A, C>>() {
-                Left(Left(tauto_eq_ac)) => tauto_eq_ac,
-                Left(Right(para_eq_ac)) => imply::absurd()(para_rev_not(y)(para_eq_ac)),
-                Right(para_uni_eq_ac) => {
-                    let nuni_eq_ac = Rc::new(para_uni_eq_ac);
-                    let (x, _): And<Not<Tauto<Eq<A, C>>>, Not<Para<Eq<A, C>>>> = and::from_de_morgan(nuni_eq_ac);
-                    let x: Tauto<Not<Eq<A, C>>> = hooo_rev_not(x);
-                    imply::absurd()(y(x(True)))
-                }
+            match tauto_excm_to_uniform(tauto!(Eq::<A, C>::decide())) {
+                Left(tauto_eq_ac) => tauto_eq_ac,
+                Right(para_eq_ac) => imply::absurd()(para_rev_not(y)(para_eq_ac)),
             }
         }
     }
