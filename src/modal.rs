@@ -35,10 +35,9 @@ pub fn nec_not_godel() -> Nec<Not<Imply<Not<Nec<False>>, Not<Nec<Not<Nec<False>>
 
 /// `¬(false^a) => ◇a`.
 pub fn npara_to_pos<A: DProp>(npara: Not<Para<A>>) -> Pos<A> {
-    match program::<A>() {
-        Left(Left(tauto_a)) => Left(tauto_a),
-        Left(Right(para_a)) => not::absurd(npara, para_a),
-        Right(para_uni_a) => Right(Rc::new(para_uni_a)),
+    match uniform::<A>() {
+        Left(tauto_a) => Left(tauto_a),
+        Right(para_a) => not::absurd(npara, para_a),
     }
 }
 
@@ -106,14 +105,9 @@ pub fn nec_to_nposn<A: DProp>(tauto_a: Nec<A>) -> Not<Pos<Not<A>>> {
 
 /// `¬◇¬a => □a`.
 pub fn nposn_to_nec<A: DProp>(npos_na: Not<Pos<Not<A>>>) -> Nec<A> {
-    match program::<A>() {
-        Left(Left(tauto_a)) => tauto_a,
-        Left(Right(para_a)) => not::absurd(npos_na, npos_to_posn(para_to_npos(para_a))),
-        Right(para_uni_a) => {
-            let x: Not<Uniform<A>> = Rc::new(para_uni_a);
-            let (ntauto_a, _) = and::from_de_morgan(x);
-            not::absurd(npos_na, Left(hooo_rev_not(ntauto_a)))
-        }
+    match uniform::<A>() {
+        Left(tauto_a) => tauto_a,
+        Right(para_a) => not::absurd(npos_na, npos_to_posn(para_to_npos(para_a))),
     }
 }
 
@@ -127,15 +121,10 @@ pub fn pos_to_nnecn<A: Prop>(pos_a: Pos<A>) -> Not<Nec<Not<A>>> {
 
 /// `¬□¬a => ◇a`.
 pub fn nnecn_to_pos<A: DProp>(ntauto_na: Not<Nec<Not<A>>>) -> Pos<A> {
-    match program::<A>() {
-        Left(Left(tauto_a)) => Left(tauto_a),
-        Left(Right(para_a)) => {
+    match uniform::<A>() {
+        Left(tauto_a) => Left(tauto_a),
+        Right(para_a) => {
             not::absurd(imply::in_left(ntauto_na, |x| para_to_tauto_not(x)), para_a)
-        }
-        Right(para_uni_a) => {
-            let x: Not<Uniform<A>> = Rc::new(para_uni_a);
-            let (ntauto_a, _) = and::from_de_morgan(x);
-            not::absurd(ntauto_na, hooo_rev_not(ntauto_a))
         }
     }
 }
@@ -157,24 +146,11 @@ pub fn t<A: Prop>(x: Nec<A>) -> A {x(True)}
 
 /// `a => □◇a`.
 pub fn b<A: DProp>(a: A) -> Nec<Pos<A>> {
-    match program::<Pos<A>>() {
-        Left(Left(tauto_pos_a)) => tauto_pos_a,
-        Left(Right(para_pos_a)) => {
+    match uniform::<Pos<A>>() {
+        Left(tauto_pos_a) => tauto_pos_a,
+        Right(para_pos_a) => {
             let x: Not<Pos<A>> = Rc::new(para_pos_a);
             imply::absurd()(npos_to_para(x)(a))
-        }
-        Right(para_uni_pos_a) => {
-            let x: Not<Uniform<Pos<A>>> = Rc::new(para_uni_pos_a);
-            let (ntauto_pos_a, _) = and::from_de_morgan(x);
-            let x: Not<Pos<A>> = hooo_rev_not(ntauto_pos_a)(True);
-            match npos_to_posn(x.clone()) {
-                Left(tauto_na) => not::absurd(tauto_na(True), a),
-                Right(theory_na) => {
-                    let (y, _) = and::from_de_morgan(theory_na);
-                    let y: Not<Para<A>> = imply::in_left(y, |x| para_to_tauto_not(x));
-                    not::absurd(x, npara_to_pos(y))
-                }
-            }
         }
     }
 }
@@ -184,13 +160,8 @@ pub fn four<A: Prop>(nec_a: Nec<A>) -> Nec<Nec<A>> {pow_lift(nec_a)}
 
 /// `◇a => □◇a`.
 pub fn five<A: DProp>(pos_a: Pos<A>) -> Nec<Pos<A>> {
-    match program::<Pos<A>>() {
-        Left(Left(tauto_pos_a)) => tauto_pos_a,
-        Left(Right(para_pos_a)) => imply::absurd()(para_pos_a(pos_a)),
-        Right(para_uni_pos_a) => {
-            let x: Not<Uniform<Pos<A>>> = Rc::new(para_uni_pos_a);
-            let (ntauto_pos_a, _) = and::from_de_morgan(x);
-            not::absurd(hooo_rev_not(ntauto_pos_a)(True), pos_a)
-        }
+    match uniform::<Pos<A>>() {
+        Left(tauto_pos_a) => tauto_pos_a,
+        Right(para_pos_a) => imply::absurd()(para_pos_a(pos_a)),
     }
 }
