@@ -380,6 +380,10 @@ pub fn xor_def() -> Eq<FXor, Comp<FNot, FEqb>> {eqx!(def FXor)}
 pub fn xor_ty() -> Ty<FXor, Pow<Bool, Tup<Bool, Bool>>> {
     eqx!(comp_ty(eqb_ty(), not_ty()), xor_def, tyl)
 }
+/// `a : bool  =>  xor(tr, a) = not(a)`.
+pub fn xor_tr<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<Xor<Tr, A>, App<FNot, A>> {
+    eqx!(eq::transitivity(eq::symmetry(eq_app_comp()), app_eq(eqb_tr(ty_a))), xor_def, am, l)
+}
 
 /// `and . ((f x (not . eq)) . dup)`.
 ///
