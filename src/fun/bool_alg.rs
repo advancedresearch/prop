@@ -316,6 +316,15 @@ pub fn eqb_tr<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<Eqb<Tr, A>, A> {
             eq::trans3(app_eq(tup_eq_snd(eq_a_fa.clone())), eqb_tr_fa(), eq::symmetry(eq_a_fa)),
     }
 }
+/// `a : bool  =>  eqb(fa, a) == not(a)`.
+pub fn eqb_fa<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<Eqb<Fa, A>, App<FNot, A>> {
+    match bool_values(ty_a) {
+        Left(eq_a_tr) => eq::trans4(app_eq(tup_eq_snd(eq_a_tr.clone())), eqb_fa_tr(),
+            eq::symmetry(not_tr()), app_eq(eq::symmetry(eq_a_tr))),
+        Right(eq_a_fa) => eq::trans4(app_eq(tup_eq_snd(eq_a_fa.clone())), eqb_fa_fa(),
+            eq::symmetry(not_fa()), app_eq(eq::symmetry(eq_a_fa))),
+    }
+}
 
 /// Nand function.
 #[derive(Copy, Clone)]
