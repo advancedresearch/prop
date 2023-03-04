@@ -397,6 +397,11 @@ pub fn xor_ty() -> Ty<FXor, Pow<Bool, Tup<Bool, Bool>>> {
 pub fn xor_tr<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<Xor<Tr, A>, App<FNot, A>> {
     eqx!(eq::transitivity(eq::symmetry(eq_app_comp()), app_eq(eqb_tr(ty_a))), xor_def, am, l)
 }
+/// `a : bool  =>  xor(fa, a) = a`.
+pub fn xor_fa<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<Xor<Fa, A>, A> {
+    eqx!(eq::trans5(eq::symmetry(eq_app_comp()), app_eq(eqb_fa(ty_a.clone())), eq_app_comp(),
+        app_map_eq(eq_not_not_idb()), idb_def(ty_a)), xor_def, am, l)
+}
 
 /// `and . ((f x (not . eq)) . dup)`.
 ///
