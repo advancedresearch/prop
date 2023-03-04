@@ -307,6 +307,15 @@ pub fn eqb_fa_tr() -> Eq<Eqb<Fa, Tr>, Fa> {
 }
 /// `eqb(tr, tr) == tr`.
 pub fn eqb_tr_tr() -> Eq<Eqb<Tr, Tr>, Tr> {equal_refl(tr_ty())}
+/// `a : bool  =>  eqb(tr, a) == a`.
+pub fn eqb_tr<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<Eqb<Tr, A>, A> {
+    match bool_values(ty_a) {
+        Left(eq_a_tr) =>
+            eq::trans3(app_eq(tup_eq_snd(eq_a_tr.clone())), eqb_tr_tr(), eq::symmetry(eq_a_tr)),
+        Right(eq_a_fa) =>
+            eq::trans3(app_eq(tup_eq_snd(eq_a_fa.clone())), eqb_tr_fa(), eq::symmetry(eq_a_fa)),
+    }
+}
 
 /// Nand function.
 #[derive(Copy, Clone)]
