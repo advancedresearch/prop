@@ -24,6 +24,15 @@ pub fn trans4<A: Prop, B: Prop, C: Prop, D: Prop, E: Prop>(
     de: Eq<D, E>
 ) -> Eq<A, E> {transitivity(trans3(ab, bc, cd), de)}
 
+/// `(a == b) ∧ (b == c) ∧ (c == d) ∧ (d == e) ∧ (e == f)  =>  (a == f)`.
+pub fn trans5<A: Prop, B: Prop, C: Prop, D: Prop, E: Prop, F: Prop>(
+    ab: Eq<A, B>,
+    bc: Eq<B, C>,
+    cd: Eq<C, D>,
+    de: Eq<D, E>,
+    ef: Eq<E, F>,
+) -> Eq<A, F> {transitivity(trans4(ab, bc, cd, de), ef)}
+
 /// `a => (a == ¬¬a)`.
 pub fn double_neg<A: Prop>(a: A) -> Eq<A, Not<Not<A>>> {
     let double_neg = a.double_neg();
