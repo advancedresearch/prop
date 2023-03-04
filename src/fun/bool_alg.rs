@@ -126,6 +126,10 @@ pub type Idb<A> = App<FIdb, A>;
 pub fn idb_ty() -> Ty<FIdb, Pow<Bool, Bool>> {id_ty()}
 /// `is_const(idb)`.
 pub fn idb_is_const() -> IsConst<FIdb> {id_is_const(bool_is_const())}
+/// `a : bool  =>  idb(a) = a`.
+pub fn idb_def<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<Idb<A>, A> {
+    id_def(bool_ty(), ty_a)
+}
 
 /// Not function.
 #[derive(Clone, Copy)]
