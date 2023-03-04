@@ -14,9 +14,15 @@ pub fn trans3<A: Prop, B: Prop, C: Prop, D: Prop>(
     ab: Eq<A, B>,
     bc: Eq<B, C>,
     cd: Eq<C, D>
-) -> Eq<A, D> {
-    transitivity(ab, transitivity(bc, cd))
-}
+) -> Eq<A, D> {transitivity(ab, transitivity(bc, cd))}
+
+/// `(a == b) ∧ (b == c) ∧ (c == d) ∧ (d == e)  =>  (a == e)`.
+pub fn trans4<A: Prop, B: Prop, C: Prop, D: Prop, E: Prop>(
+    ab: Eq<A, B>,
+    bc: Eq<B, C>,
+    cd: Eq<C, D>,
+    de: Eq<D, E>
+) -> Eq<A, E> {transitivity(trans3(ab, bc, cd), de)}
 
 /// `a => (a == ¬¬a)`.
 pub fn double_neg<A: Prop>(a: A) -> Eq<A, Not<Not<A>>> {
