@@ -215,6 +215,11 @@ pub fn pow_right_and_symmetry<A: Prop, B: Prop, C: Prop>(
     x: Pow<A, And<B, C>>
 ) -> Pow<A, And<C, B>> {pow_transitivity(and::symmetry, x)}
 
+/// `¬a ⋀ ¬¬b  =>  ¬(a^b)`.
+pub fn to_not_pow<A: Prop, B: Prop>(x: Not<A>, y: Not<Not<B>>) -> Not<Pow<A, B>> {
+    Rc::new(move |pow_ab| pow_modus_tollens(pow_modus_tollens(pow_ab))(y.clone())(x.clone()))
+}
+
 /// `¬(a^b) => a^(¬b)`.
 pub fn pow_not<A: Prop, B: DProp>(x: Not<Pow<A, B>>) -> Pow<A, Not<B>> {
     match para_and_to_or(and::paradox) {
