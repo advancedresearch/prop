@@ -81,6 +81,14 @@ pub fn bool1_cover<A: Prop, X: Prop>(
     pow_x_eq_a_tr: Pow<X, Eq<A, Tr>>,
     pow_x_eq_a_fa: Pow<X, Eq<A, Fa>>,
 ) -> X {cover(ty_a, bool_values, pow_x_eq_a_tr, pow_x_eq_a_fa)}
+/// `a : bool  =>  (a == tr) ⋁ ¬(a == tr)`.
+pub fn bool_eq_tr_excm<A: Prop>(ty_a: Ty<A, Bool>) -> ExcM<Eq<A, Tr>> {
+    match bool_values(ty_a) {
+        Left(x) => Left(x),
+        Right(x) =>
+            Right(Rc::new(move |y| para_eq_tr_fa(eq::transitivity(eq::symmetry(y), x.clone()))))
+    }
+}
 
 /// False1 function.
 #[derive(Clone, Copy)]
