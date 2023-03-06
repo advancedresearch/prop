@@ -408,3 +408,8 @@ pub fn xor_fa<A: Prop>(ty_a: Ty<A, Bool>) -> Eq<Xor<Fa, A>, A> {
 /// For any `a, b`, this is `f((a, b)) & !eq((a, b))`.
 #[derive(Copy, Clone)]
 pub struct AndNotEq<F: Prop>(pub Comp<FAnd, Comp<Par<F, Comp<FNot, FEq>>, Dup>>);
+
+/// `all(f) := true1 . f == f`.
+///
+/// This is a point-free version of a for-all quantifier.
+pub type All<F> = Eq<Comp<FTrue1, F>, F>;
