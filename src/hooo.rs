@@ -1632,3 +1632,11 @@ pub fn pow_to_pow_exists<A: Prop, B: Prop>(x: Pow<B, A>) -> Pow<Exists<A, B>, A>
     }
     hooo_rev_and((x.lift(), pow_refl)).trans(f)
 }
+
+/// `∃ a { b } ⋀ (b ⋁ ¬b)^a  =>  b^a`.
+pub fn exists_excm_to_pow<A: Prop, B: Prop>(x: Exists<A, B>, p: Pow<ExcM<B>, A>) -> Pow<B, A> {
+    match hooo_or(p) {
+        Left(y) => y,
+        Right(y) => not::absurd(x, y)
+    }
+}
