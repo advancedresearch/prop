@@ -1551,6 +1551,11 @@ pub fn not_not_to_exists<A: Prop>(nna: Not<Not<A>>) -> Exists<A, A> {
         not_not_to_not_para(nna.clone())(hooo_rev_and((pow_refl, pow_na_a)).trans(and::paradox)))
 }
 
+/// `¬¬a  =>  ∃ true { a }`.
+pub fn not_not_to_exists_true<A: Prop>(nna: Not<Not<A>>) -> Exists<True, A> {
+    Rc::new(move |tauto_na| not::absurd(nna.clone(), tauto_na(True)))
+}
+
 /// `∃ false { false }  =>  false`.
 pub fn para_exists_false_false(x: Exists<False, False>) -> False {para_exists_false(x)}
 
