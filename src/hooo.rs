@@ -1655,3 +1655,9 @@ pub fn exists_excm_to_pow<A: Prop, B: Prop>(x: Exists<A, B>, p: Pow<ExcM<B>, A>)
         Right(y) => not::absurd(x, y)
     }
 }
+
+/// `¬¬a ⋀ ¬¬b  =>  ∃ a { b }`.
+pub fn not_not_both_to_exists<A: Prop, B: Prop>(
+    nna: Not<Not<A>>,
+    nnb: Not<Not<B>>
+) -> Exists<A, B> {to_not_pow(nnb, nna)}
