@@ -47,6 +47,12 @@ pub type Inv<F> = App<FInv, F>;
 /// `injective(f, a, b) := (f(a) == f(b)) => (a == b)`.
 pub type Injective<F, A, B> = Imply<Eq<App<F, A>, App<F, B>>, Eq<A, B>>;
 
+/// `surjective(f, x, y, b, a) := (f : x -> y) ⋀ (b : y) => ∃ a : x { f(a) == b }`.
+pub type Surjective<F, X, Y, B, A> = Imply<
+    And<Ty<F, Pow<X, Y>>, Ty<B, Y>>,
+    Exists<Ty<A, X>, Eq<App<F, A>, B>>
+>;
+
 /// Inverse type `(f : x -> y) => (inv(f) : y -> x)`.
 pub fn inv_ty<F: Prop, X: Prop, Y: Prop>(
     _ty_f: Ty<F, Pow<Y, X>>
