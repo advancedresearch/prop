@@ -89,6 +89,10 @@ pub fn bool_eq_tr_excm<A: Prop>(ty_a: Ty<A, Bool>) -> ExcM<Eq<A, Tr>> {
             Right(Rc::new(move |y| para_eq_tr_fa(eq::transitivity(eq::symmetry(y), x.clone()))))
     }
 }
+/// `∃ a : bool { a == tr }  =>  (a == tr)^(a : bool)`.
+pub fn bool_exists_to_pow_eq_tr<A: Prop>(
+    x: Exists<Ty<A, Bool>, Eq<A, Tr>>
+) -> Pow<Eq<A, Tr>, Ty<A, Bool>> {hooo::exists_excm_to_pow(x, bool_eq_tr_excm)}
 
 /// False1 function.
 #[derive(Clone, Copy)]
