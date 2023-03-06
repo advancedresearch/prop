@@ -20,7 +20,7 @@ pub fn app_is_const<F: Prop, X: Prop>(_f: IsConst<F>, _x: IsConst<X>) -> IsConst
 pub fn app_eq<F: Prop, X: Prop, Y: Prop>(
     _eq_xy: Eq<X, Y>
 ) -> Eq<App<F, X>, App<F, Y>> {unimplemented!()}
-/// `(f == g)  =>  (f(x) == f(y))`.
+/// `(f == g)  =>  (f(x) == g(y))`.
 ///
 /// Lift equality of maps to application.
 pub fn app_map_eq<F: Prop, G: Prop, X: Prop>(
