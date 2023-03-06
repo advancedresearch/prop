@@ -413,3 +413,8 @@ pub struct AndNotEq<F: Prop>(pub Comp<FAnd, Comp<Par<F, Comp<FNot, FEq>>, Dup>>)
 ///
 /// This is a point-free version of a for-all quantifier.
 pub type All<F> = Eq<Comp<FTrue1, F>, F>;
+
+/// `any(f) := ¬all(not . f)`.
+///
+/// This is a point-free version of a there-exists quantifier.
+pub type Any<F> = Not<All<Comp<FNot, F>>>;
