@@ -101,7 +101,7 @@ pub fn bool_excm_eq_fa<A: Prop>(ty_a: Ty<A, Bool>) -> ExcM<Eq<A, Fa>> {
 pub fn bool_exists_to_pow_eq_tr<A: Prop>(
     x: Exists<Ty<A, Bool>, Eq<A, Tr>>
 ) -> Pow<Eq<A, Tr>, Ty<A, Bool>> {hooo::exists_excm_to_pow(x, bool_excm_eq_tr)}
-/// `∃ a : bool { a == tr }  =>  (a == fa)^(a : bool)`.
+/// `∃ a : bool { a == fa }  =>  (a == fa)^(a : bool)`.
 pub fn bool_exists_to_pow_eq_fa<A: Prop>(
     x: Exists<Ty<A, Bool>, Eq<A, Fa>>
 ) -> Pow<Eq<A, Fa>, Ty<A, Bool>> {hooo::exists_excm_to_pow(x, bool_excm_eq_fa)}
