@@ -132,6 +132,11 @@ type NEq<A, B> = Not<Eq<A, B>>;
 /// `a^b => (a^b)^c`.
 pub fn pow_lift<A: Prop, B: Prop, C: Prop>(_: Pow<A, B>) -> Pow<Pow<A, B>, C> {unimplemented!()}
 
+/// `a^b  =>  (¬b)^(¬a)`.
+pub fn pow_modus_tollens<A: Prop, B: Prop>(pow_ab: Pow<A, B>) -> Pow<Not<B>, Not<A>> {
+    tauto_imply_to_pow(pow_ab.lift().trans(pow_to_imply).trans(imply::modus_tollens))
+}
+
 /// `(a^b)^b => a^b`.
 pub fn pow_rev_lift_refl<A: Prop, B: Prop>(x: Pow<Pow<A, B>, B>) -> Pow<A, B> {
     fn f<A: Prop, B: Prop>(b: B) -> Imply<Pow<A, B>, A> {Rc::new(move |pow_ab| pow_ab(b.clone()))}
