@@ -82,7 +82,7 @@ pub fn bool1_cover<A: Prop, X: Prop>(
     pow_x_eq_a_fa: Pow<X, Eq<A, Fa>>,
 ) -> X {cover(ty_a, bool_values, pow_x_eq_a_tr, pow_x_eq_a_fa)}
 /// `a : bool  =>  (a == tr) ⋁ ¬(a == tr)`.
-pub fn bool_eq_tr_excm<A: Prop>(ty_a: Ty<A, Bool>) -> ExcM<Eq<A, Tr>> {
+pub fn bool_excm_eq_tr<A: Prop>(ty_a: Ty<A, Bool>) -> ExcM<Eq<A, Tr>> {
     match bool_values(ty_a) {
         Left(x) => Left(x),
         Right(x) =>
@@ -90,7 +90,7 @@ pub fn bool_eq_tr_excm<A: Prop>(ty_a: Ty<A, Bool>) -> ExcM<Eq<A, Tr>> {
     }
 }
 /// `a : bool  =>  (a == fa) ⋁ ¬(a == fa)`.
-pub fn bool_eq_fa_excm<A: Prop>(ty_a: Ty<A, Bool>) -> ExcM<Eq<A, Fa>> {
+pub fn bool_excm_eq_fa<A: Prop>(ty_a: Ty<A, Bool>) -> ExcM<Eq<A, Fa>> {
     match bool_values(ty_a) {
         Left(x) =>
             Right(Rc::new(move |y| para_eq_tr_fa(eq::transitivity(eq::symmetry(x.clone()), y)))),
@@ -100,11 +100,11 @@ pub fn bool_eq_fa_excm<A: Prop>(ty_a: Ty<A, Bool>) -> ExcM<Eq<A, Fa>> {
 /// `∃ a : bool { a == tr }  =>  (a == tr)^(a : bool)`.
 pub fn bool_exists_to_pow_eq_tr<A: Prop>(
     x: Exists<Ty<A, Bool>, Eq<A, Tr>>
-) -> Pow<Eq<A, Tr>, Ty<A, Bool>> {hooo::exists_excm_to_pow(x, bool_eq_tr_excm)}
+) -> Pow<Eq<A, Tr>, Ty<A, Bool>> {hooo::exists_excm_to_pow(x, bool_excm_eq_tr)}
 /// `∃ a : bool { a == tr }  =>  (a == fa)^(a : bool)`.
 pub fn bool_exists_to_pow_eq_fa<A: Prop>(
     x: Exists<Ty<A, Bool>, Eq<A, Fa>>
-) -> Pow<Eq<A, Fa>, Ty<A, Bool>> {hooo::exists_excm_to_pow(x, bool_eq_fa_excm)}
+) -> Pow<Eq<A, Fa>, Ty<A, Bool>> {hooo::exists_excm_to_pow(x, bool_excm_eq_fa)}
 
 /// False1 function.
 #[derive(Clone, Copy)]
