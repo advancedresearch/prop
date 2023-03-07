@@ -125,3 +125,9 @@ pub fn eq_to_eq_inv<A: Prop, B: Prop>(eq_q: Eq<Qu<A>, Qu<B>>) -> Eq<Qu<Not<A>>, 
 pub fn in_arg<A: Prop, B: Prop, N>(x: Qubit<N, A>, y: Tauto<Eq<A, B>>) -> Qubit<N, B> {
     Qubit(x.0, y(True).0(x.1))
 }
+
+/// `~a  ==  (a ~~ a)`.
+pub fn eq_qu_q<A: Prop>() -> Eq<Qu<A>, Q<A, A>> {(Rc::new(Qu::to_q), Rc::new(Qu::from_q))}
+
+/// `(a ~~ a)  == ~a`.
+pub fn eq_q_qu<A: Prop>() -> Eq<Q<A, A>, Qu<A>> {eq::symmetry(eq_qu_q())}
