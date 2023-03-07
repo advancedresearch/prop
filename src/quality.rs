@@ -95,6 +95,11 @@ pub fn symmetry<A: Prop, B: Prop>((eq, and_qu): Q<A, B>) -> Q<B, A> {
     (eq::symmetry(eq), and::symmetry(and_qu))
 }
 
+/// `(a ~~ b) == (b ~~ a)`.
+pub fn eq_q_symmetry<A: Prop, B: Prop>() -> Eq<Q<A, B>, Q<B, A>> {
+    (Rc::new(symmetry), Rc::new(symmetry))
+}
+
 /// Symmetry `(a ~¬~ b) => (b ~¬~ a)`.
 pub fn aq_symmetry<A: Prop, B: Prop>((eq, and_qu): Aq<A, B>) -> Aq<B, A> {
     (eq::symmetry(eq), and::symmetry(and_qu))
