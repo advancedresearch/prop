@@ -41,7 +41,7 @@ impl<A: Prop> Qubit<S<Z>, Not<A>> {
 pub fn decide<A: DProp>() -> ExcM<Qu<A>> {decide_tauto_excm(tauto!(A::decide()))}
 
 /// `(a ⋁ ¬a)^true  =>  (~a ⋁ ¬~a)`.
-pub fn decide_tauto_excm<A: Prop>(x: Tauto<ExcM<A>>) -> ExcM<Qu<A>> {unimplemented!()}
+pub fn decide_tauto_excm<A: Prop>(_: Tauto<ExcM<A>>) -> ExcM<Qu<A>> {unimplemented!()}
 
 /// `~qubit^n(a)  =>  qubit^(n+1)(a)`.
 pub fn normalize<A: Prop, N: Nat>(x: Qubit<S<Z>, Qubit<N, A>>) -> Qubit<S<N>, A> {
