@@ -98,6 +98,12 @@ pub fn true_qu() -> Qu<True> {
 pub fn inv_true_qu() -> Qu<Inv<True>> {inv_qu(true_qu())}
 /// `~true == true`.
 pub fn eq_qu_true_true() -> Eq<Qu<True>, True> {(True.map_any(), true_qu().map_any())}
+/// `a  =>  ~a`.
+pub fn to_qu<A: Prop>(a: A) -> Qu<A> {
+    use path_semantics::{ty_rev_true, ty_qu_formation, ty_in_left_arg, ty_true};
+
+    ty_true(ty_in_left_arg(ty_qu_formation(ty_rev_true(a)), eq_qu_true_true()))
+}
 /// `a^true  =>  ~a`.
 pub fn tauto_to_qu<A: Prop>(tauto_a: Tauto<A>) -> Qu<A> {
     qubit::in_arg(true_qu(), hooo::pow_eq_to_tauto_eq((tauto_a, hooo::tr())))
