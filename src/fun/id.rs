@@ -9,10 +9,12 @@ pub struct FId(());
 /// `id`.
 pub type Id<T, A> = App<App<FId, T>, A>;
 
-/// `id{a} : a -> a`.
+/// `a : type(n)  =>  id{a} : a -> a`.
 ///
 /// Type of Id.
-pub fn id_ty<A: Prop>() -> Ty<App<FId, A>, Pow<A, A>> {unimplemented!()}
+pub fn id_ty<A: Prop, N: Nat>(_ty_a: Ty<A, Type<N>>) -> Ty<App<FId, A>, Pow<A, A>> {
+    unimplemented!()
+}
 /// `is_const(id)`.
 pub fn implicit_id_is_const() -> IsConst<FId> {unimplemented!()}
 /// `(x : type(n)) ⋀ (a : x)  =>  id{x}(a) = a`.
@@ -83,52 +85,64 @@ pub fn self_inv_to_eq_id<F: Prop, A: Prop>(
 }
 /// `inv(id{a}) ~~ id{a}`.
 pub fn id_q<A: Prop>() -> Q<Inv<App<FId, A>>, App<FId, A>> {self_inv_to_q(id_inv())}
-/// `~id{a} : ~(a -> a)`.
-pub fn id_qu_ty<A: Prop>() -> Ty<Qu<App<FId, A>>, Qu<Pow<A, A>>> {path_semantics::ty_qu_formation(id_ty())}
+/// `a : type(n)  =>  ~id{a} : ~(a -> a)`.
+pub fn id_qu_ty<A: Prop, N: Nat>(ty_a: Ty<A, Type<N>>) -> Ty<Qu<App<FId, A>>, Qu<Pow<A, A>>> {
+    path_semantics::ty_qu_formation(id_ty(ty_a))
+}
 /// `~id{a}`.
 pub fn id_qu<A: Prop>() -> Qu<App<FId, A>> {Qu::from_q(quality::right(id_q()))}
-/// `~true`.
-pub fn true_qu() -> Qu<True> {
+/// `true : type(n)  =>  ~true`.
+pub fn true_qu<N: Nat>(ty_t: Ty<True, Type<N>>) -> Qu<True> {
     use path_semantics::{ty_triv, ty_true};
 
-    qubit::in_arg(ty_true(ty_triv(id_qu_ty(), id_qu())),
+    qubit::in_arg(ty_true(ty_triv(id_qu_ty(ty_t), id_qu())),
         tauto!((True.map_any(), Rc::new(|_| hooo::pow_refl::<True>))))
 }
-/// `~inv(true)`.
-pub fn inv_true_qu() -> Qu<Inv<True>> {inv_qu(true_qu())}
+/// `true : type(n)  =>  ~inv(true)`.
+pub fn inv_true_qu<N: Nat>(ty_t: Ty<True, Type<N>>) -> Qu<Inv<True>> {inv_qu(true_qu(ty_t))}
 /// `~true == true`.
-pub fn eq_qu_true_true() -> Eq<Qu<True>, True> {(True.map_any(), true_qu().map_any())}
-/// `a  =>  ~a`.
-pub fn to_qu<A: Prop>(a: A) -> Qu<A> {
+pub fn eq_qu_true_true<N: Nat>(ty_t: Ty<True, Type<N>>) -> Eq<Qu<True>, True> {
+    (True.map_any(), true_qu(ty_t).map_any())
+}
+/// `true : type(n) ⋀ a  =>  ~a`.
+pub fn to_qu<A: Prop, N: Nat>(ty_t: Ty<True, Type<N>>, a: A) -> Qu<A> {
     use path_semantics::{ty_rev_true, ty_qu_formation, ty_in_left_arg, ty_true};
 
-    ty_true(ty_in_left_arg(ty_qu_formation(ty_rev_true(a)), eq_qu_true_true()))
+    ty_true(ty_in_left_arg(ty_qu_formation(ty_rev_true(a)), eq_qu_true_true(ty_t)))
 }
-/// `a^true  =>  ~a`.
-pub fn tauto_to_qu<A: Prop>(tauto_a: Tauto<A>) -> Qu<A> {
-    qubit::in_arg(true_qu(), hooo::pow_eq_to_tauto_eq((tauto_a, hooo::tr())))
+/// `true : type(n) ⋀ a^true  =>  ~a`.
+pub fn tauto_to_qu<A: Prop, N: Nat>(ty_t: Ty<True, Type<N>>, tauto_a: Tauto<A>) -> Qu<A> {
+    qubit::in_arg(true_qu(ty_t), hooo::pow_eq_to_tauto_eq((tauto_a, hooo::tr())))
 }
-/// `a^b  =>  ~(a^b)`.
-pub fn pow_qu<A: Prop, B: Prop>(x: Pow<A, B>) -> Qu<Pow<A, B>> {tauto_to_qu(hooo::pow_lift(x))}
-/// `¬~false`.
-pub fn not_qu_false() -> Not<Qu<False>> {
-    imply::in_left(quality::q_inv_to_sesh(Qu::to_q(qubit::in_arg(true_qu(),
+/// `true : type(n) ⋀ a^b  =>  ~(a^b)`.
+pub fn pow_qu<A: Prop, B: Prop, N: Nat>(
+    ty_t: Ty<True, Type<N>>,
+    x: Pow<A, B>
+) -> Qu<Pow<A, B>> {tauto_to_qu(ty_t, hooo::pow_lift(x))}
+/// `true : type(n)  =>  ¬~false`.
+pub fn not_qu_false<N: Nat>(ty_t: Ty<True, Type<N>>) -> Not<Qu<False>> {
+    imply::in_left(quality::q_inv_to_sesh(Qu::to_q(qubit::in_arg(true_qu(ty_t),
         tauto!((imply::id().map_any(), True.map_any()))))), Qu::to_q)
 }
-/// `~false == false`.
-pub fn eq_qu_false_false() -> Eq<Qu<False>, False> {and::to_eq_neg((not_qu_false(), imply::id()))}
-/// `false^a  =>  ¬~a`.
-pub fn para_to_not_qu<A: Prop>(para_a: Para<A>) -> Not<Qu<A>> {
-    imply::in_left(not_qu_false(),
+/// `true : type(n)  =>  ~false == false`.
+pub fn eq_qu_false_false<N: Nat>(ty_t: Ty<True, Type<N>>) -> Eq<Qu<False>, False> {
+    and::to_eq_neg((not_qu_false(ty_t), imply::id()))
+}
+/// `true : type(n) ⋀ false^a  =>  ¬~a`.
+pub fn para_to_not_qu<A: Prop, N: Nat>(ty_t: Ty<True, Type<N>>, para_a: Para<A>) -> Not<Qu<A>> {
+    imply::in_left(not_qu_false(ty_t),
         move |y| qubit::in_arg(y, hooo::pow_eq_to_tauto_eq((para_a, hooo::fa()))))
 }
-/// `a^true  =>  (~a == a)`.
-pub fn tauto_to_eq_qu<A: Prop>(tauto_a: Tauto<A>) -> Eq<Qu<A>, A> {
-    (tauto_a(True).map_any(), tauto_to_qu(tauto_a).map_any())
+/// `true : type(n) ⋀ a^true  =>  (~a == a)`.
+pub fn tauto_to_eq_qu<A: Prop, N: Nat>(
+    ty_t: Ty<True, Type<N>>,
+    tauto_a: Tauto<A>
+) -> Eq<Qu<A>, A> {
+    (tauto_a(True).map_any(), tauto_to_qu(ty_t, tauto_a).map_any())
 }
-/// `false^a  =>  (~a == a)`.
-pub fn para_to_eq_qu<A: Prop>(para_a: Para<A>) -> Eq<Qu<A>, A> {
-    (Rc::new(move |qu_a| imply::absurd()(para_to_not_qu(para_a)(qu_a))),
+/// `true : type(n) ⋀ false^a  =>  (~a == a)`.
+pub fn para_to_eq_qu<A: Prop, N: Nat>(ty_t: Ty<True, Type<N>>, para_a: Para<A>) -> Eq<Qu<A>, A> {
+    (Rc::new(move |qu_a| imply::absurd()(para_to_not_qu(ty_t.clone(), para_a)(qu_a))),
      Rc::new(move |a| imply::absurd()(para_a(a))))
 }
 /// `a^b  =>  (~(a^b) == a^b)`.
