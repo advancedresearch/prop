@@ -4,7 +4,6 @@
 
 use super::*;
 use bool_alg::*;
-use phott::*;
 
 /// Composable equality.
 #[derive(Copy, Clone)]
@@ -63,11 +62,4 @@ pub fn tauto_eq_to_tauto_equal<X: Prop, A: Prop, B: Prop>(
         (ty_a, eq_ab): And<Ty<A, X>, Eq<A, B>>
     ) -> Eq<Equal<X, A, B>, Tr> {equal_lift(ty_a, eq_ab)}
     hooo::hooo_rev_and((ty_a, tauto_eq_ab)).trans(f)
-}
-/// `(a : x)^true ⋀ is_contr(a == b)  =>  is_contr(eq{x}(a, b) = tr)`.
-pub fn is_contr_eq_to_is_contr_equal<X: Prop, A: Prop, B: Prop>(
-    ty_a: Tauto<Ty<A, X>>,
-    is_contr_eq_ab: IsContr<Eq<A, B>>
-) -> IsContr<Eq<Equal<X, A, B>, Tr>> {
-    tauto_to_is_contr(tauto_eq_to_tauto_equal(ty_a, is_contr_to_tauto(is_contr_eq_ab)))
 }

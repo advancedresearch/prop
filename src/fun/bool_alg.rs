@@ -147,7 +147,7 @@ pub type FIdb = App<FId, Bool>;
 pub type Idb<A> = App<FIdb, A>;
 
 /// `idb : bool -> bool`.
-pub fn idb_ty() -> Ty<FIdb, Pow<Bool, Bool>> {id_ty()}
+pub fn idb_ty() -> Ty<FIdb, Pow<Bool, Bool>> {id_ty(bool_ty())}
 /// `is_const(idb)`.
 pub fn idb_is_const() -> IsConst<FIdb> {id_is_const(bool_is_const())}
 /// `a : bool  =>  idb(a) = a`.
@@ -386,7 +386,7 @@ pub struct FImply(pub Comp<FOr, Par<FNot, FIdb>>);
 pub fn imply_def() -> Eq<FImply, Comp<FOr, Par<FNot, FIdb>>> {eqx!(def FImply)}
 /// `imply : (bool, bool) -> bool`.
 pub fn imply_ty() -> Ty<FImply, Pow<Bool, Tup<Bool, Bool>>> {
-    eqx!(comp_ty(par_tup_fun_ty(not_ty(), id_ty()), or_ty()), imply_def, tyl)
+    eqx!(comp_ty(par_tup_fun_ty(not_ty(), id_ty(bool_ty())), or_ty()), imply_def, tyl)
 }
 /// `is_const(imply)`.
 pub fn imply_is_const() -> IsConst<FImply> {

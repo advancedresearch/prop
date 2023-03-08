@@ -103,31 +103,37 @@ pub fn sym_norm2_comp<F: Prop, G1: Prop, G2: Prop>() ->
     Eq<SymNorm2<SymNorm2<F, G1>, G2>, SymNorm2<F, Comp<G2, G1>>>
 {norm2_comp()}
 /// `(f : a -> a)  =>  (f[id{a}] == f)` for 1 argument.
-pub fn sym_norm1_id<F: Prop, A: Prop>(ty_f: Ty<F, Pow<A, A>>) -> Eq<SymNorm1<F, App<FId, A>>, F> {
+pub fn sym_norm1_id<F: Prop, A: Prop, N: Nat>(
+    ty_a: Ty<A, Type<N>>,
+    ty_f: Ty<F, Pow<A, A>>
+) -> Eq<SymNorm1<F, App<FId, A>>, F> {
     let x = eq::transitivity(eq::transitivity(comp_eq_right(quality::to_eq(id_q())),
-        comp_id_right(comp_ty(ty_f.clone(), id_ty()))), comp_id_left(ty_f));
+        comp_id_right(comp_ty(ty_f.clone(), id_ty(ty_a)))), comp_id_left(ty_f));
     eqx!(x, norm1_def, l)
 }
 /// `(f : a -> b)  =>  (f[id{a} -> id{b}] == f)` for 1 argument.
-pub fn norm1_id<F: Prop, A: Prop, B: Prop>(
+pub fn norm1_id<F: Prop, A: Prop, B: Prop, N: Nat>(
+    ty_b: Ty<B, Type<N>>,
     ty_f: Ty<F, Pow<B, A>>
 ) -> Eq<Norm1<F, App<FId, A>, App<FId, B>>, F> {
     let x = eq::transitivity(eq::transitivity(comp_eq_right(quality::to_eq(id_q())),
-        comp_id_right(comp_ty(ty_f.clone(), id_ty()))), comp_id_left(ty_f));
+        comp_id_right(comp_ty(ty_f.clone(), id_ty(ty_b)))), comp_id_left(ty_f));
     eqx!(x, norm1_def, l)
 }
 /// `(f : (a, a) -> a)  =>  f[id{a}] == f` for 2 arguments.
-pub fn sym_norm2_id<F: Prop, A: Prop, B: Prop>(
+pub fn sym_norm2_id<F: Prop, A: Prop, N: Nat>(
+    ty_a: Ty<A, Type<N>>,
     ty_f: Ty<F, Pow<A, Tup<A, A>>>
 ) -> Eq<SymNorm2<F, App<FId, A>>, F> {
     let x: Eq<Norm1<F, Par<App<FId, A>, App<FId, A>>, App<FId, A>>, _> = eqx!(comp_eq_right(inv_eq(par_tup_id())), norm1_def, eq);
-    eq::transitivity(eq::transitivity(eq_norm2_norm1(), x), norm1_id(ty_f))
+    eq::transitivity(eq::transitivity(eq_norm2_norm1(), x), norm1_id(ty_a, ty_f))
 }
 /// `(f : a -> a)  =>  id{a}[f -> id{a}] == inv(f)`.
-pub fn norm1_inv<F: Prop, A: Prop>(
+pub fn norm1_inv<F: Prop, A: Prop, N: Nat>(
+    ty_a: Ty<A, Type<N>>,
     ty_f: Ty<F, Pow<A, A>>
 ) -> Eq<Norm1<App<FId, A>, F, App<FId, A>>, Inv<F>> {
-    let x = eq::transitivity(comp_eq_left(comp_id_left(id_ty())), comp_id_left(inv_ty(ty_f)));
+    let x = eq::transitivity(comp_eq_left(comp_id_left(id_ty(ty_a))), comp_id_left(inv_ty(ty_f)));
     eqx!(x, norm1_def, l)
 }
 /// `g2(f(inv(g1)(x))) == f[g1 -> g2](x)`.
