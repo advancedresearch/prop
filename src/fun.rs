@@ -91,11 +91,10 @@
 use crate::*;
 use path_semantics::{POrdProof, Ty};
 use quality::Q;
-use qubit::{Qu, Qubit};
+use qubit::Qu;
 use hooo::{Exists, Para, Pow, Tauto, Theory};
 use hooo::pow::PowExt;
 use nat::{Nat, S, Z};
-use univalence::HomEq3;
 
 pub use app::*;
 pub use comp::*;
@@ -131,5 +130,4 @@ pub mod fnat;
 pub mod fun_ext;
 pub mod inv;
 pub mod list;
-pub mod phott;
 pub mod real;

@@ -145,7 +145,8 @@ pub fn para_to_eq_qu<A: Prop, N: Nat>(ty_t: Ty<True, Type<N>>, para_a: Para<A>) 
     (Rc::new(move |qu_a| imply::absurd()(para_to_not_qu(ty_t.clone(), para_a)(qu_a))),
      Rc::new(move |a| imply::absurd()(para_a(a))))
 }
-/// `a^b  =>  (~(a^b) == a^b)`.
-pub fn pow_to_eq_qu<A: Prop, B: Prop>(x: Pow<A, B>) -> Eq<Qu<Pow<A, B>>, Pow<A, B>> {
-    tauto_to_eq_qu(x.lift())
-}
+/// `true : type(n) ⋀ a^b  =>  (~(a^b) == a^b)`.
+pub fn pow_to_eq_qu<A: Prop, B: Prop, N: Nat>(
+    ty_t: Ty<True, Type<N>>,
+    x: Pow<A, B>
+) -> Eq<Qu<Pow<A, B>>, Pow<A, B>> {tauto_to_eq_qu(ty_t, x.lift())}
