@@ -1,7 +1,7 @@
 //! # Propositional Homotopy Type Theory
 //!
 //! If you are looking for a version of Homotopy Type Theory that is similar to the one in the
-//! standard HoTT book, see the `hott` module.
+//! standard HoTT book, see the [hott] module.
 //!
 //! This version of Homotopy Type Theory lends itself toward foundational Path Semantics.
 //! Since foundational Path Semantics is propositional, it is natural to call this version
