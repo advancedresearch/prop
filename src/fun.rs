@@ -108,7 +108,7 @@ pub use lam::*;
 pub use norm::*;
 pub use subst::*;
 pub use tup::*;
-pub use ty::*;
+pub use typ::*;
 
 mod app;
 mod comp;
@@ -119,7 +119,7 @@ mod lam;
 mod norm;
 mod subst;
 mod tup;
-mod ty;
+mod typ;
 
 pub mod bool_alg;
 pub mod dep;
