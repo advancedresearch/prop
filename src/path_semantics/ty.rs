@@ -3,7 +3,7 @@ use super::*;
 /// Models a type relation `a : t`.
 pub type Ty<A, T> = And<Imply<A, T>, POrdProof<A, T>>;
 
-/// `x : ltrue`.
+/// `x_{n} : ltrue{n+1}`.
 pub fn ty_ltrue<X: LProp>() -> Ty<X, LTrue<S<X::N>>>
     where X::N: Lt<S<X::N>> + Default
 {
@@ -66,7 +66,7 @@ pub unsafe fn ty_non_triv<X: Prop, A: Prop>(
     ty_in_right_arg(ty_x_a, eq_a_false)
 }
 
-/// `true == ltrue`.
+/// `true == ltrue{n}`.
 pub fn eq_true_ltrue<N: Nat>() -> Eq<True, LTrue<N>> {
     (LTrue(Default::default()).map_any(), True.map_any())
 }
