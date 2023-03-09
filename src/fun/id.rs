@@ -16,6 +16,9 @@
 //! provide useful mathematical language design, but it is surprising that useful design can
 //! provide insights/theorems into fundamental Path Semantics. The theorems above are not provable
 //! using PSI/PSQ/HOOO EP alone.
+//!
+//! The philosophical consequences of the proof of `~true` ([true_qu]) are possibly profound,
+//! as discussed in [this blog post](https://advancedresearch.github.io/blog/2023-02-12-the-proof-of-true).
 
 use super::*;
 
