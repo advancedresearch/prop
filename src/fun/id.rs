@@ -1,4 +1,21 @@
-//! Identity function.
+//! # Identity function.
+//!
+//! ### Qubit Truths
+//!
+//! The identity `id{a}` ([Id]) has itself as an inverse `inv(id{a}) ~~ id{a}`.
+//! From this, one can prove `~id{a}`. Using `~id{A} : ~(A -> A)` it is possible to prove `~(A -> A)`.
+//!
+//! Now, it turns out that the proposition `A -> A`, or `A^A`, for any `A` is tautologically true.
+//! Therefore, one can prove `~true` ([true_qu]) and as consequence:
+//!
+//! - `~true == true` ([eq_qu_true_true])
+//! - `~false == false` ([eq_qu_false_false])
+//!
+//! This is amazing because it is a sophisticated result of Path Semantics using
+//! PSI/PSQ/HOOO EP and Category Theory. One might expect that fundamental Path Semantics can
+//! provide useful mathematical language design, but it is surprising that useful design can
+//! provide insights/theorems into fundamental Path Semantics. The theorems above are not provable
+//! using PSI/PSQ/HOOO EP alone.
 
 use super::*;
 
