@@ -33,7 +33,7 @@ pub fn norm2_ty<F: Prop, G1: Prop, G2: Prop, G3: Prop,
     ty_g2: Ty<G2, Pow<C2, A2>>,
     ty_g3: Ty<G3, Pow<D, B>>
 ) -> Ty<Norm2<F, G1, G2, G3>, Pow<D, Tup<C1, C2>>> {
-    path_semantics::ty::in_left_arg(norm1_ty(ty_f, par_tup_fun_ty(ty_g1, ty_g2), ty_g3),
+    ty::in_left_arg(norm1_ty(ty_f, par_tup_fun_ty(ty_g1, ty_g2), ty_g3),
         eq::symmetry(eq_norm2_norm1()))
 }
 /// `(f : a -> a) ⋀ (g : a -> b)  =>  f[g] : b -> b`.

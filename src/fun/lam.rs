@@ -36,7 +36,7 @@ pub fn lam_app_ty_trivial<A: Prop, B: Prop, X: Prop>(
     ty_b: Ty<B, X>,
     b_is_const: IsConst<B>,
 ) -> Ty<App<Lam<Ty<A, X>, B>, B>, X> {
-    path_semantics::ty::eq_left(lam_app_trivial(ty_b.clone(), b_is_const)).1(ty_b)
+    ty::eq_left(lam_app_trivial(ty_b.clone(), b_is_const)).1(ty_b)
 }
 /// `(b : x) => ((\(a : x) = b)(b) == b`.
 pub fn lam_app_trivial<A: Prop, B: Prop, X: Prop>(

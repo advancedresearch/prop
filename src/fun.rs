@@ -89,7 +89,7 @@
 //! using PSI/PSQ/HOOO EP alone.
 
 use crate::*;
-use path_semantics::{POrdProof, Ty};
+use path_semantics::{ty, POrdProof, Ty};
 use quality::Q;
 use qubit::Qu;
 use hooo::{Exists, Para, Pow, Tauto, Theory};

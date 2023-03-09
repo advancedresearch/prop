@@ -2,7 +2,7 @@
 
 use crate::*;
 use crate::quality::*;
-use path_semantics::Ty;
+use path_semantics::{ty, Ty};
 use crate::nat::Z;
 use crate::hooo::Pow;
 use crate::fun::{App, Tup, Type, FEq};
@@ -89,6 +89,6 @@ pub trait SeshNeq {
         ty_b: Ty<B, Y>,
         x: Not<Eq<X, Y>>
     ) -> Eq<App<FEq, Tup<A, B>>, Fa> {
-        self.sesh_neq()(path_semantics::ty::neq_to_sesh(ty_a, ty_b, x))
+        self.sesh_neq()(ty::neq_to_sesh(ty_a, ty_b, x))
     }
 }

@@ -33,7 +33,7 @@ pub fn type_ty<N: Nat>() -> Ty<Type<N>, Type<S<N>>> {
 pub fn fun_type0<A: Prop, B: Prop, N: Nat, M: Nat>(
     ty_a: Ty<A, Type<N>>,
     ty_b: Ty<B, Type<M>>
-) -> Ty<Pow<B, A>, Type<Z>> {path_semantics::ty::transitivity(fun_ty(ty_a, ty_b), fun_type_ty())}
+) -> Ty<Pow<B, A>, Type<Z>> {ty::transitivity(fun_ty(ty_a, ty_b), fun_type_ty())}
 /// `(f : A -> B) ⋀ (inv(f) ~~ g) => ((f ~~ g) : ((A -> B) ~~ (B -> A)))`.
 pub fn q_inv_ty<F: Prop, G: Prop, A: Prop, B: Prop>(
     ty_f: Ty<F, Pow<B, A>>,
@@ -47,7 +47,7 @@ pub fn q_inv_ty<F: Prop, G: Prop, A: Prop, B: Prop>(
         Rc::new(move |x| trans(x, q2.clone())),
         Rc::new(move |x| trans(x, quality::symmetry(q.clone())))
     );
-    path_semantics::ty::in_left_arg(y, x)
+    ty::in_left_arg(y, x)
 }
 /// `(a : b) ⋀ ((a == x) ⋁ (a == y))^(a : b) ⋀ c^(a == x) ⋀ c^(a == y)  =>  c`.
 pub fn cover<A: Prop, B: Prop, C: Prop, X: Prop, Y: Prop>(
