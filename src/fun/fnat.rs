@@ -149,7 +149,7 @@ pub fn succ_app_ty<N: Prop>(ty_n: Ty<N, Nat>) -> Ty<Succ<N>, Nat> {app_fun_ty(su
 pub fn succ_rev_app_ty<N: Prop>(ty_succ_n: Ty<Succ<N>, Nat>) -> Ty<N, Nat> {
     match nat_def(ty_succ_n) {
         Left(eq_succ_n_zero) => imply::absurd()(para_pre_zero(eq_succ_n_zero)),
-        Right(x) => path_semantics::ty::in_left_arg(x.0, eq::symmetry(succ_eq_rev(x.1))),
+        Right(x) => ty::in_left_arg(x.0, eq::symmetry(succ_eq_rev(x.1))),
     }
 }
 /// `(a == b)  =>  (succ(a) == succ(b))`.

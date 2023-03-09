@@ -67,9 +67,7 @@ pub fn type_eq_to_q<A: Prop, B: Prop, N: Nat>(
 /// `(f : A -> B) => ((f ~~ inv(f)) : ((A -> B) ~~ (B -> A)))`.
 pub fn self_inv_ty<F: Prop, A: Prop, B: Prop>(
     ty_f: Ty<F, Pow<B, A>>
-) -> Ty<Q<F, Inv<F>>, Q<Pow<B, A>, Pow<A, B>>> {
-    path_semantics::ty::q_formation(ty_f.clone(), inv_ty(ty_f))
-}
+) -> Ty<Q<F, Inv<F>>, Q<Pow<B, A>, Pow<A, B>>> {ty::q_formation(ty_f.clone(), inv_ty(ty_f))}
 /// `(f : a -> a) ⋀ (inv(f) == f) => ((f . f) == id{a})`.
 pub fn self_inv_to_eq_id<F: Prop, A: Prop>(
     ty_f: Ty<F, Pow<A, A>>,
@@ -88,7 +86,7 @@ pub fn id_q<A: Prop>() -> Q<Inv<App<FId, A>>, App<FId, A>> {self_inv_to_q(id_inv
 /// `a : type(n)  =>  ~id{a} : ~(a -> a)`.
 pub fn id_qu_ty<A: Prop, N: Nat>(
     ty_a: Ty<A, Type<N>>
-) -> Ty<Qu<App<FId, A>>, Qu<Pow<A, A>>> {path_semantics::ty::qu_formation(id_ty(ty_a))}
+) -> Ty<Qu<App<FId, A>>, Qu<Pow<A, A>>> {ty::qu_formation(id_ty(ty_a))}
 /// `~id{a}`.
 pub fn id_qu<A: Prop>() -> Qu<App<FId, A>> {Qu::from_q(quality::right(id_q()))}
 /// `~true`.
@@ -99,7 +97,7 @@ pub fn true_qu() -> Qu<True> {
     let x: Ty<App<FId, Bool>, Pow<Bool, Bool>> = id_ty(bool_alg::bool_ty());
 
     // ~id{bool} : ~(bool -> bool)
-    let x = path_semantics::ty::qu_formation(x.clone());
+    let x = ty::qu_formation(x.clone());
 
     // ~(bool -> bool)
     let x: Qu<Pow<Bool, Bool>> = x.0(id_qu());

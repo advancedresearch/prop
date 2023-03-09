@@ -656,7 +656,7 @@ pub fn pand_both_eq<A: Prop, B: Prop, C: Prop, D: Prop>(
     p_a: PAndFst<A, B, D, C>,
     p_b: PAndSnd<A, B, D, C>,
 ) -> Q<A, B> {
-    let (eq_a_c, eq_b_c) = path_semantics::use_pand_both(f, g, p_a, p_b);
+    let (eq_a_c, eq_b_c) = use_pand_both(f, g, p_a, p_b);
     quality::transitivity(eq_a_c, quality::symmetry(eq_b_c))
 }
 
