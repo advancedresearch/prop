@@ -115,7 +115,7 @@ pub fn path_inv<F: Prop, X: Prop, Y: Prop>(
     ty_f: Ty<F, Pow<Y, X>>,
     x: Pow<Y, X>
 ) -> Pow<X, Y> {
-    use path_semantics::{triv, ty_true};
+    use path_semantics::ty::{triv, ty_true};
     ty_true(triv(inv_ty(ty_f.clone()), path(theory_f, qu_inv_f, ty_f, x).1))
 }
 /// `~f ⋀ (f == g)^true  =>  f ~~ g`.
