@@ -89,7 +89,7 @@ pub fn app_lift_ty_lam<F: Prop, A: Prop, B: Prop, X: Prop, Y: Prop>(
     ty_a: Ty<A, X>,
     ty_b: Ty<B, Y>,
 ) -> Ty<Lam<Ty<A, X>, App<F, A>>, Imply<X, Y>> {
-    lam_ty(ty_a, path_semantics::ty_in_left_arg(ty_b, eq::symmetry(x)))
+    lam_ty(ty_a, path_semantics::ty::in_left_arg(ty_b, eq::symmetry(x)))
 }
 /// `f : x -> y  =>  f : x => y`.
 pub unsafe fn fun_to_lam_ty<F: Prop, X: Prop, Y: Prop>(ty_f: Ty<F, Pow<Y, X>>) -> Ty<F, Imply<X, Y>> {
@@ -116,7 +116,7 @@ pub unsafe fn app_tauto_lam_to_tauto_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
     use hooo::pow_lift;
 
     let x = hooo::pow_tauto_to_pow_tauto_tauto(|x| unsafe {tauto_lam_to_tauto_fun_ty(x)})(ty_f);
-    let y = tauto!(path_semantics::ty_eq_left((Rc::new(|x: Tauto<_>| x(True)), Rc::new(pow_lift))));
+    let y = tauto!(path_semantics::ty::eq_left((Rc::new(|x: Tauto<_>| x(True)), Rc::new(pow_lift))));
     let x = hooo::tauto_in_arg(x, y);
     app_fun_unfold(x)
 }

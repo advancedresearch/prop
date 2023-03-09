@@ -71,7 +71,7 @@ pub fn fun_ext_app_eq_from_eq<F: Prop, G: Prop, A: Prop, X: Prop>(
 pub fn fun_ext<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>(
     tauto_eq_fg: Tauto<Eq<F, G>>
 ) -> FunExtTy<F, G, X, Y, A> {
-    use path_semantics::ty_eq_left;
+    use path_semantics::ty::eq_left;
     use hooo::{hooo_eq, hooo_imply, pow_eq_right, pow_transitivity, tauto_eq_symmetry, tr};
 
     fn h<A: Prop, B: Prop, C: Prop, X: Prop>(ty_a: Ty<A, X>) ->
@@ -82,7 +82,7 @@ pub fn fun_ext<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>(
         .trans(comp_eq_left).trans(app_map_eq);
     let y = {
         let x = tauto_eq_symmetry(tauto_eq_fg).trans(tup3_eq_snd);
-        eq::transitivity(hooo_eq(tr().trans(x.trans(app_eq))), pow_eq_right(x.trans(ty_eq_left)))
+        eq::transitivity(hooo_eq(tr().trans(x.trans(app_eq))), pow_eq_right(x.trans(eq_left)))
     };
     eq::in_left_arg(hooo_eq(pow_transitivity(tup3_trd, x)), y).0(fun_ext_refl())
 }

@@ -45,11 +45,11 @@ pub fn tup_rev_eq_snd<A: Prop, B: Prop, C: Prop, D: Prop>(
 /// `(a, b) : (x, y)  =>  (a : x)`.
 pub fn tup_fst<A: Prop, B: Prop, X: Prop, Y: Prop>(
     ty_tup_ab: Ty<Tup<A, B>, Tup<X, Y>>
-) -> Ty<A, X> {path_semantics::ty_in_left_arg(app_fun_ty(fst_ty(), ty_tup_ab), fst_def())}
+) -> Ty<A, X> {path_semantics::ty::in_left_arg(app_fun_ty(fst_ty(), ty_tup_ab), fst_def())}
 /// `(a, b) : (x, y)  =>  (b : y)`.
 pub fn tup_snd<A: Prop, B: Prop, X: Prop, Y: Prop>(
     ty_tup_ab: Ty<Tup<A, B>, Tup<X, Y>>
-) -> Ty<B, Y> {path_semantics::ty_in_left_arg(app_fun_ty(snd_ty(), ty_tup_ab), snd_def())}
+) -> Ty<B, Y> {path_semantics::ty::in_left_arg(app_fun_ty(snd_ty(), ty_tup_ab), snd_def())}
 /// `(a, b) ⋀ (a == c)  =>  (c, b)`.
 pub fn tup_in_left_arg<A: Prop, B: Prop, C: Prop>(x: Tup<A, B>, y: Eq<A, C>) -> Tup<C, B> {
     tup_eq_fst(y).0(x)

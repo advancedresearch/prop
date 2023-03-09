@@ -381,7 +381,7 @@ pub fn assume<A: Prop, B: Prop, C: Prop, D: Prop>() -> PSem<A, B, C, D> {
 ///
 /// Assumes the core axiom in type representation.
 pub fn ty_core<A: Prop, B: Prop, C: Prop, D: Prop>() -> PSemTy<A, B, C, D> {
-    Rc::new(move |(ty_a, ty_b)| ty_q_formation(ty_a, ty_b))
+    Rc::new(move |(ty_a, ty_b)| ty::q_formation(ty_a, ty_b))
 }
 
 /// Converts to naive core axiom.
@@ -692,7 +692,7 @@ pub fn creation<X: DProp, Y: DProp, A: Prop, B: Prop>(
 ) -> Imply<A, B> {
     let nx2 = nx.clone();
     let ty_x_a: Ty<X, A> = (Rc::new(move |x| not::absurd(nx2.clone(), x)), pord);
-    let xy_ab = ty_eqq_imply(ty_x_a, ty_y_b, eqq_xy);
+    let xy_ab = ty::eqq_imply(ty_x_a, ty_y_b, eqq_xy);
     let xy: Imply<X, Y> = Rc::new(move |x| not::absurd(nx.clone(), x));
     xy_ab.0(xy)
 }
@@ -706,7 +706,7 @@ pub fn creation_hom<X: Prop, Y: Prop, A: Prop, B: Prop>(
 ) -> Imply<A, B> {
     let nx2 = nx.clone();
     let ty_x_a: Ty<X, A> = (Rc::new(move |x| not::absurd(nx2.clone(), x)), pord);
-    let xy_ab = ty_hom_imply(ty_x_a, ty_y_b, hom_xy);
+    let xy_ab = ty::hom_imply(ty_x_a, ty_y_b, hom_xy);
     let xy: Imply<X, Y> = Rc::new(move |x| not::absurd(nx.clone(), x));
     xy_ab.0(xy)
 }
