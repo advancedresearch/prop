@@ -1,3 +1,5 @@
+#![deny(unsafe_op_in_unsafe_fn)]
+
 use super::*;
 
 /// Apply 2 function arguments using function currying.
@@ -92,7 +94,7 @@ pub fn app_lift_ty_lam<F: Prop, A: Prop, B: Prop, X: Prop, Y: Prop>(
 /// `f : x -> y  =>  f : x => y`.
 pub unsafe fn fun_to_lam_ty<F: Prop, X: Prop, Y: Prop>(ty_f: Ty<F, Pow<Y, X>>) -> Ty<F, Imply<X, Y>> {
     let x = hooo::pow_to_imply(hooo::pow_to_imply);
-    (imply::transitivity(ty_f.0, x.clone()), ty_f.1.by_imply_right(x))
+    (imply::transitivity(ty_f.0, x.clone()), unsafe {ty_f.1.by_imply_right(x)})
 }
 /// `(f(a)^a : x -> y)^true  =>  (f : x -> y)`.
 pub fn app_fun_unfold<F: Prop, A: Prop, X: Prop, Y: Prop>(
@@ -105,7 +107,7 @@ pub unsafe fn tauto_lam_to_tauto_fun_ty<F: Prop, X: Prop, Y: Prop>(
     use hooo::{tauto_imply_to_imply_tauto_pow, tauto_imply_to_pow, hooo_pord, pow_to_imply};
 
     (tauto_imply_to_imply_tauto_pow(ty_f.trans(and::fst)),
-     hooo_pord(ty_f.trans(and::snd)).by_imply_right(pow_to_imply(tauto_imply_to_pow)))
+     unsafe {hooo_pord(ty_f.trans(and::snd)).by_imply_right(pow_to_imply(tauto_imply_to_pow))})
 }
 /// `(f(a)^a : x => y)^true  =>  (f : x -> y)`.
 pub unsafe fn app_tauto_lam_to_tauto_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
@@ -113,7 +115,7 @@ pub unsafe fn app_tauto_lam_to_tauto_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
 ) -> Ty<F, Pow<Y, X>> {
     use hooo::pow_lift;
 
-    let x = hooo::pow_tauto_to_pow_tauto_tauto(|x| tauto_lam_to_tauto_fun_ty(x))(ty_f);
+    let x = hooo::pow_tauto_to_pow_tauto_tauto(|x| unsafe {tauto_lam_to_tauto_fun_ty(x)})(ty_f);
     let y = tauto!(path_semantics::ty_eq_left((Rc::new(|x: Tauto<_>| x(True)), Rc::new(pow_lift))));
     let x = hooo::tauto_in_arg(x, y);
     app_fun_unfold(x)
