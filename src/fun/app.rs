@@ -30,6 +30,13 @@ pub fn app_map_eq<F: Prop, G: Prop, X: Prop>(
 pub fn app_rev_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
     _: Pow<Ty<App<F, A>, Y>, Ty<A, X>>
 ) -> Ty<F, Pow<Y, X>> {unimplemented!()}
+/// `(f : (x -> y)) ⋀ (a : x)  =>  (f(a) : y)`.
+///
+/// Get type of applied function.
+pub fn app_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
+    _ty_f: Ty<F, Pow<Y, X>>,
+    _ty_a: Ty<A, X>,
+) -> Ty<App<F, A>, Y> {unimplemented!()}
 /// `(f : (x => y)) ⋀ (a : x)  =>  (f(a) : y)`.
 ///
 /// Get type of applied lambda.
@@ -53,13 +60,6 @@ pub fn app_fun_ext<F: Prop, G: Prop, X: Prop, Y: Prop, A: Prop>(
 /// This prevents polluting functional values with meta-level truths.
 pub fn app_theory<F: Prop, X: Prop>() -> Theory<App<F, X>> {unimplemented!()}
 
-/// `(f : (x -> y)) ⋀ (a : x)  =>  (f(a) : y)`.
-///
-/// Get type of applied function.
-pub fn app_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
-    ty_f: Ty<F, Pow<Y, X>>,
-    ty_a: Ty<A, X>,
-) -> Ty<App<F, A>, Y> {app_lam_ty(fun_to_lam_ty(ty_f), ty_a)}
 /// `(f : x -> y -> z) ⋀ (a : x) ⋀ (b : y)  =>  f(a)(b) : z`.
 ///
 /// Get type of applied binary operator.
@@ -90,7 +90,7 @@ pub fn app_lift_ty_lam<F: Prop, A: Prop, B: Prop, X: Prop, Y: Prop>(
     lam_ty(ty_a, path_semantics::ty_in_left_arg(ty_b, eq::symmetry(x)))
 }
 /// `f : x -> y  =>  f : x => y`.
-pub fn fun_to_lam_ty<F: Prop, X: Prop, Y: Prop>(ty_f: Ty<F, Pow<Y, X>>) -> Ty<F, Imply<X, Y>> {
+pub unsafe fn fun_to_lam_ty<F: Prop, X: Prop, Y: Prop>(ty_f: Ty<F, Pow<Y, X>>) -> Ty<F, Imply<X, Y>> {
     let x = hooo::pow_to_imply(hooo::pow_to_imply);
     (imply::transitivity(ty_f.0, x.clone()), ty_f.1.by_imply_right(x))
 }
@@ -99,7 +99,7 @@ pub fn app_fun_unfold<F: Prop, A: Prop, X: Prop, Y: Prop>(
     ty_f: Tauto<Ty<Pow<App<F, A>, A>, Pow<Y, X>>>,
 ) -> Ty<F, Pow<Y, X>> {app_rev_fun_ty(hooo::tauto_hooo_rev_ty(ty_f))}
 /// `(f : x => y)^true  =>  (f^true : x -> y)`.
-pub fn tauto_lam_to_tauto_fun_ty<F: Prop, X: Prop, Y: Prop>(
+pub unsafe fn tauto_lam_to_tauto_fun_ty<F: Prop, X: Prop, Y: Prop>(
     ty_f: Tauto<Ty<F, Imply<X, Y>>>
 ) -> Ty<Tauto<F>, Pow<Y, X>> {
     use hooo::{tauto_imply_to_imply_tauto_pow, tauto_imply_to_pow, hooo_pord, pow_to_imply};
@@ -108,12 +108,12 @@ pub fn tauto_lam_to_tauto_fun_ty<F: Prop, X: Prop, Y: Prop>(
      hooo_pord(ty_f.trans(and::snd)).by_imply_right(pow_to_imply(tauto_imply_to_pow)))
 }
 /// `(f(a)^a : x => y)^true  =>  (f : x -> y)`.
-pub fn app_tauto_lam_to_tauto_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
+pub unsafe fn app_tauto_lam_to_tauto_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
     ty_f: Tauto<Ty<Pow<App<F, A>, A>, Imply<X, Y>>>
 ) -> Ty<F, Pow<Y, X>> {
     use hooo::pow_lift;
 
-    let x = hooo::pow_tauto_to_pow_tauto_tauto(tauto_lam_to_tauto_fun_ty)(ty_f);
+    let x = hooo::pow_tauto_to_pow_tauto_tauto(|x| tauto_lam_to_tauto_fun_ty(x))(ty_f);
     let y = tauto!(path_semantics::ty_eq_left((Rc::new(|x: Tauto<_>| x(True)), Rc::new(pow_lift))));
     let x = hooo::tauto_in_arg(x, y);
     app_fun_unfold(x)
