@@ -71,6 +71,11 @@ pub fn eq_true_ltrue<N: Nat>() -> Eq<True, LTrue<N>> {
     (LTrue(Default::default()).map_any(), True.map_any())
 }
 
+/// `true : ltrue{n+1}`.
+pub fn ty_true_ltrue<N: Nat>() -> Ty<True, LTrue<S<N>>> {
+    ty_in_left_arg(ty_ltrue(), eq::symmetry(eq_true_ltrue()))
+}
+
 /// `true : true`.
 pub unsafe fn ty_true_true() -> Ty<True, True> {
     let x = ty_in_left_arg(ty_ltrue(), eq::symmetry(eq_true_ltrue::<Z>()));
