@@ -92,6 +92,10 @@ pub fn app_lift_ty_lam<F: Prop, A: Prop, B: Prop, X: Prop, Y: Prop>(
     lam_ty(ty_a, ty::in_left_arg(ty_b, eq::symmetry(x)))
 }
 /// `f : x -> y  =>  f : x => y`.
+///
+/// # Safety
+///
+/// This theorem is unsafe due to [POrdProof::by_imply_right].
 pub unsafe fn fun_to_lam_ty<F: Prop, X: Prop, Y: Prop>(ty_f: Ty<F, Pow<Y, X>>) -> Ty<F, Imply<X, Y>> {
     let x = hooo::pow_to_imply(hooo::pow_to_imply);
     (imply::transitivity(ty_f.0, x.clone()), unsafe {ty_f.1.by_imply_right(x)})
@@ -101,6 +105,10 @@ pub fn app_fun_unfold<F: Prop, A: Prop, X: Prop, Y: Prop>(
     ty_f: Tauto<Ty<Pow<App<F, A>, A>, Pow<Y, X>>>,
 ) -> Ty<F, Pow<Y, X>> {app_rev_fun_ty(hooo::tauto_hooo_rev_ty(ty_f))}
 /// `(f : x => y)^true  =>  (f^true : x -> y)`.
+///
+/// # Safety
+///
+/// This theorem is unsafe due to use of [POrdProof::by_imply_right].
 pub unsafe fn tauto_lam_to_tauto_fun_ty<F: Prop, X: Prop, Y: Prop>(
     ty_f: Tauto<Ty<F, Imply<X, Y>>>
 ) -> Ty<Tauto<F>, Pow<Y, X>> {
@@ -110,6 +118,10 @@ pub unsafe fn tauto_lam_to_tauto_fun_ty<F: Prop, X: Prop, Y: Prop>(
      unsafe {hooo_pord(ty_f.trans(and::snd)).by_imply_right(pow_to_imply(tauto_imply_to_pow))})
 }
 /// `(f(a)^a : x => y)^true  =>  (f : x -> y)`.
+///
+/// # Safety
+///
+/// This theorem is unsafe due to use of [tauto_lam_to_tauto_fun_ty].
 pub unsafe fn app_tauto_lam_to_tauto_fun_ty<F: Prop, X: Prop, Y: Prop, A: Prop>(
     ty_f: Tauto<Ty<Pow<App<F, A>, A>, Imply<X, Y>>>
 ) -> Ty<F, Pow<Y, X>> {

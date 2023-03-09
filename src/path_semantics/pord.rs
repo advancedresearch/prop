@@ -39,11 +39,28 @@ impl<T, U> POrdProof<T, U> {
     }
 
     /// Transform right argument by equivalence.
+    ///
+    /// # Safety
+    ///
+    /// This theorem is unsafe due to use of [POrdProof::by_imply_right].
     pub unsafe fn by_eq_right<V>(self, eq: Eq<U, V>) -> POrdProof<T, V> {
         self.by_imply_right(eq.0)
     }
 
     /// Transform right argument by implication.
+    ///
+    /// # Safety
+    ///
+    /// There are some situations where a type might be coerced into another type,
+    /// e.g. `f : a -> b` (function pointer) gets coerced into `f : a => b` (lambda).
+    ///
+    /// These transformations might depend on the specific model being used.
+    /// What constitutes safety in one model might differ from safety in another model.
+    ///
+    /// Unsafe code is used to reduce the strength of assumptions in axioms for safe invariants.
+    ///
+    /// All such transformations are considered unsafe by default,
+    /// but makes it also possible for derived models to create safe invariants.
     pub unsafe fn by_imply_right<V>(self, _: Imply<U, V>) -> POrdProof<T, V> {
         POrdProof(std::marker::PhantomData)
     }
