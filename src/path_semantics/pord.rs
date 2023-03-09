@@ -39,12 +39,12 @@ impl<T, U> POrdProof<T, U> {
     }
 
     /// Transform right argument by equivalence.
-    pub fn by_eq_right<V>(self, eq: Eq<U, V>) -> POrdProof<T, V> {
+    pub unsafe fn by_eq_right<V>(self, eq: Eq<U, V>) -> POrdProof<T, V> {
         self.by_imply_right(eq.0)
     }
 
     /// Transform right argument by implication.
-    pub fn by_imply_right<V>(self, _: Imply<U, V>) -> POrdProof<T, V> {
+    pub unsafe fn by_imply_right<V>(self, _: Imply<U, V>) -> POrdProof<T, V> {
         POrdProof(std::marker::PhantomData)
     }
 
