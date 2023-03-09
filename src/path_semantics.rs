@@ -87,6 +87,68 @@
 //! The level of `false` is `nan` (not a number) and the level of `true` can be any level (`ltrue`).
 //! To get `true` to any level, one converts back and forth using [ty::eq_true_ltrue].
 //!
+//! #### Logical Power Balance of Path Semantics vs Type Theory
+//!
+//! Path Semantics provides an advanced model of types as propositions.
+//! This model of types, as in `a : T`, is more advanced than the theory of types in Type Theory.
+//! Since Path Semantics is at a lower level in logic than Type Theory,
+//! there are more theorems that can be proved in Path Semantics about types than in Type Theory.
+//! With other words, Path Semantis is considered a more fundamental theory than Type Theory,
+//! since it is a stronger theory about types.
+//!
+//! This does not mean that Type Theory is not fundamental in mathematics.
+//! Although Type Theory is a weaker theory than Path Semantics about types,
+//! Type Theory has other axioms which are not provable in Path Semantics.
+//! There are also many variants of Type Theory, that fits various domains of mathematics.
+//!
+//! For example, in Type Theory there is an identity map `id{a}` ([fun::id::Id]).
+//! Fundamental Path Semantics has no axioms for `id{a}`, or even types of functions in general.
+//! This means, Type Theory can prove theorems that fundamental Path Semantics can not prove.
+//! Likewise, Path Semantics can prove theorems that Type Theory can not prove.
+//! By adding new axioms to Path Semantics that covers Type Theory, one gets a stronger theory
+//! that can prove all theorems in Type Theory plus the theorems in fundamental Path Semantics.
+//!
+//! The reason Path Semantics is a field in logic studied on its own, apart from Type Theory,
+//! is that fundamental Path Semantics might be used to model other mathematical objects than types.
+//! An example of a such research area is Path Semantics in fundamental physics.
+//! One can argue whether Path Semantics or Type Theory is more fundamental in mathematics.
+//! The argument in favor of Path Semantics is that it is closer to Intuitionistic Logic.
+//! An argument in favor of Type Theory is that e.g. simply typed lambda calculus is used to
+//! model fundamental Path Semantics. As such, the relationship between Path Semantics and
+//! Type Theory is non-trivial. Yet, when a mathematician says "type theory" it is usually implied
+//! something like [Martin-Löf Type Theory of Dependent Types](https://en.wikipedia.org/wiki/Dependent_type).
+//! Fundamental Path Semantics is closer to Intuitionistic Logic than Martin-Löf Type Theory.
+//! One can view Martin-Löf Type Theory as a subset of Path Semantics and a model of functional
+//! programming as propositions (see the [fun] module). The utility of Path Semantics in relation
+//! to Type Theory is that of a modular design which new theorems might provide insight into types.
+//!
+//! However, since Path Semantics is a stronger theory than Type Theory,
+//! it is important that it does not prove undesirable theorems as a consequence.
+//! One would like that Path Semantics and Type Theory work together in logical harmony.
+//!
+//! Some important language design constraints are:
+//!
+//! - The core axiom should be safe to use in the model of functional programming
+//! - Type coercions should be possible but not necessarily safe
+//!
+//! The core axiom might be useful for high dimensional Type Theory, while not needed for most
+//! low dimensional theorems. Anyhow, it is important that the core axiom does not lead to
+//! unsoundness for common theorems in functional programming.
+//!
+//! A type coercing is when e.g. `f : a -> b` (a function pointer)
+//! is coerced into `f : a => b` (lambda).
+//!
+//! One alternative design is to add axioms for type coercion directly in the model of functional
+//! programming. However, since Path Semantics is studied on it own in e.g. fundamental physics,
+//! coercing of similar kinds might be common. This means that there must be some kind of logical
+//! "power balance" than enables coercions under some circumstances.
+//! To model this in Rust's type system, the `unsafe` keyword is used on [POrdProof::by_imply_right].
+//! This makes it possible to add unsafe theorems and compare them to safe theorems.
+//!
+//! One can think about this power balance between Path Semantics and Type Theory as ways where
+//! both theories want to evolve in different directions, at the same time they benefit from
+//! working together in logical harmony.
+//!
 //! ### Symbolic Distinction
 //!
 //! One of the important insights in foundational Path Semantics, is that symbolic distinction is
