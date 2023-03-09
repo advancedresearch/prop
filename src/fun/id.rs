@@ -6,8 +6,8 @@ use super::*;
 #[derive(Clone, Copy)]
 pub struct FId(());
 
-/// `id`.
-pub type Id<T, A> = App<App<FId, T>, A>;
+/// `id{t}`.
+pub type Id<T> = App<FId, T>;
 
 /// `a : type(n)  =>  id{a} : a -> a`.
 ///
@@ -23,7 +23,7 @@ pub fn implicit_id_is_const() -> IsConst<FId> {unimplemented!()}
 pub fn id_def<A: Prop, X: Prop, N: Nat>(
     _ty_x: Ty<X, Type<N>>,
     _ty_a: Ty<A, X>
-) -> Eq<Id<X, A>, A> {unimplemented!()}
+) -> Eq<App<Id<X>, A>, A> {unimplemented!()}
 /// `inv(id{x}) == id{x}`.
 pub fn id_inv<X: Prop>() -> Eq<Inv<App<FId, X>>, App<FId, X>> {unimplemented!()}
 /// `(f : a -> b) ⋀ (f . inv(f))  =>  id{b}`.
@@ -51,8 +51,8 @@ pub fn id_to_comp_left_inv<F: Prop, A: Prop, B: Prop>(
 pub fn id_is_const<A: Prop>(a_is_const: IsConst<A>) -> IsConst<App<FId, A>> {
     app_is_const(implicit_id_is_const(), a_is_const)
 }
-/// `a : type(n)  =>  id(a) = a`.
-pub fn id_def_type<A: Prop, N: Nat>(ty_a: Ty<A, Type<N>>) -> Eq<Id<Type<N>, A>, A> {
+/// `a : type(n)  =>  id{type(n)}(a) = a`.
+pub fn id_def_type<A: Prop, N: Nat>(ty_a: Ty<A, Type<N>>) -> Eq<App<Id<Type<N>>, A>, A> {
     id_def(type_ty(), ty_a)
 }
 /// `(a : type(n))^true  =>  theory(a)`.
