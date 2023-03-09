@@ -1,3 +1,5 @@
+#![deny(unsafe_op_in_unsafe_fn)]
+
 use super::*;
 
 /// Models a type relation `a : t`.
@@ -19,7 +21,7 @@ pub fn ty_in_left_arg<A: Prop, B: Prop, C: Prop>((ab, pord): Ty<A, B>, eq: Eq<A,
 pub unsafe fn ty_in_right_arg<A: Prop, B: Prop, C: Prop>(
     (ab, pord): Ty<A, B>, eq: Eq<B, C>
 ) -> Ty<A, C> {
-    (imply::in_right_arg(ab, eq.clone()), pord.by_eq_right(eq))
+    (imply::in_right_arg(ab, eq.clone()), unsafe {pord.by_eq_right(eq)})
 }
 
 /// `(a == b)  =>  (a : c) == (b : c)`.
@@ -31,13 +33,13 @@ pub fn ty_eq_left<A: Prop, B: Prop, C: Prop>(x: Eq<A, B>) -> Eq<Ty<A, C>, Ty<B, 
 /// `(b == c)  =>  (a : b) == (a : c)`.
 pub unsafe fn ty_eq_right<A: Prop, B: Prop, C: Prop>(x: Eq<B, C>) -> Eq<Ty<A, B>, Ty<A, C>> {
     let x2 = eq::symmetry(x.clone());
-    (Rc::new(move |ty_a| ty_in_right_arg(ty_a, x.clone())),
-     Rc::new(move |ty_a| ty_in_right_arg(ty_a, x2.clone())))
+    (Rc::new(move |ty_a| unsafe {ty_in_right_arg(ty_a, x.clone())}),
+     Rc::new(move |ty_a| unsafe {ty_in_right_arg(ty_a, x2.clone())}))
 }
 
 /// `(a : b) ⋀ (b => c)  =>  (a : c)`.
 pub unsafe fn ty_imply_right<A: Prop, B: Prop, C: Prop>(x: Ty<A, B>, y: Imply<B, C>) -> Ty<A, C> {
-    (imply::transitivity(x.0, y.clone()), x.1.by_imply_right(y))
+    (imply::transitivity(x.0, y.clone()), unsafe {x.1.by_imply_right(y)})
 }
 
 /// `(x : false) => ¬x`.
@@ -48,7 +50,7 @@ pub fn ty_true<X: Prop>(ty_true_x: Ty<True, X>) -> X {ty_true_x.0(True)}
 
 /// `a => (true : a)`.
 pub unsafe fn ty_rev_true<A: Prop>(a: A) -> Ty<True, A> {
-    ty_in_right_arg(ty_true_true(), (a.map_any(), True.map_any()))
+    unsafe {ty_in_right_arg(ty_true_true(), (a.map_any(), True.map_any()))}
 }
 
 /// `(a : x) ⋀ a => (true : x)`.
@@ -63,7 +65,7 @@ pub unsafe fn ty_non_triv<X: Prop, A: Prop>(
 ) -> Ty<X, False> {
     let eq_a_false: Eq<A, False> =
         (Rc::new(move |a| na(a)), Rc::new(move |fa| imply::absurd()(fa)));
-    ty_in_right_arg(ty_x_a, eq_a_false)
+    unsafe {ty_in_right_arg(ty_x_a, eq_a_false)}
 }
 
 /// `true == ltrue{n}`.
@@ -79,7 +81,7 @@ pub fn ty_true_ltrue<N: Nat>() -> Ty<True, LTrue<S<N>>> {
 /// `true : true`.
 pub unsafe fn ty_true_true() -> Ty<True, True> {
     let x = ty_in_left_arg(ty_ltrue(), eq::symmetry(eq_true_ltrue::<Z>()));
-    ty_in_right_arg(x, eq::symmetry(eq_true_ltrue::<S<Z>>()))
+    unsafe {ty_in_right_arg(x, eq::symmetry(eq_true_ltrue::<S<Z>>()))}
 }
 
 /// `(x : a) ⋀ (y : b)  =>  ((x ⋀ y) : (a ⋀ b))`.
@@ -238,14 +240,14 @@ pub fn ty_transitivity<A: Prop, B: Prop, C: Prop>(
 
 /// `(a : x) => (a : (a : x))`.
 pub unsafe fn ty_lift<A: Prop, X: Prop>(ty_a: Ty<A, X>) -> Ty<A, Ty<A, X>> {
-    let pord1 = ty_a.1.clone().by_imply_right(Rc::new(|x| x.map_any()));
-    let pord2 = ty_a.1.clone().by_imply_right(ty_a.1.clone().map_any());
+    let pord1 = unsafe {ty_a.1.clone().by_imply_right(Rc::new(|x| x.map_any()))};
+    let pord2 = unsafe {ty_a.1.clone().by_imply_right(ty_a.1.clone().map_any())};
     (ty_a.map_any(), pord1.merge_right(pord2))
 }
 
 /// `(a : (a : x)) => (a : x)`.
 pub unsafe fn ty_lower<A: Prop, X: Prop>((a_ty_a, pord_a_ty_a): Ty<A, Ty<A, X>>) -> Ty<A, X> {
     let ax = imply::reduce(Rc::new(move |a| a_ty_a(a).0));
-    let x: POrdProof<A, Imply<A, X>> = pord_a_ty_a.by_imply_right(ax.clone().map_any());
+    let x: POrdProof<A, Imply<A, X>> = unsafe {pord_a_ty_a.by_imply_right(ax.clone().map_any())};
     (ax, x.imply_reduce())
 }
