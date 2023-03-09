@@ -20,6 +20,10 @@ pub fn in_left_arg<A: Prop, B: Prop, C: Prop>((ab, pord): Ty<A, B>, eq: Eq<A, C>
 }
 
 /// `(a : b) ⋀ (b == c)  =>  (a : c)`.
+///
+/// # Safety
+///
+/// This theorem is unsafe due to use of [POrdProof::by_eq_right].
 pub unsafe fn in_right_arg<A: Prop, B: Prop, C: Prop>(
     (ab, pord): Ty<A, B>, eq: Eq<B, C>
 ) -> Ty<A, C> {
@@ -33,6 +37,10 @@ pub fn eq_left<A: Prop, B: Prop, C: Prop>(x: Eq<A, B>) -> Eq<Ty<A, C>, Ty<B, C>>
      Rc::new(move |ty_b| in_left_arg(ty_b, x2.clone())))
 }
 /// `(b == c)  =>  (a : b) == (a : c)`.
+///
+/// # Safety
+///
+/// This theorem is unsafe due to use oof [in_right_arg].
 pub unsafe fn eq_right<A: Prop, B: Prop, C: Prop>(x: Eq<B, C>) -> Eq<Ty<A, B>, Ty<A, C>> {
     let x2 = eq::symmetry(x.clone());
     (Rc::new(move |ty_a| unsafe {in_right_arg(ty_a, x.clone())}),
@@ -40,6 +48,10 @@ pub unsafe fn eq_right<A: Prop, B: Prop, C: Prop>(x: Eq<B, C>) -> Eq<Ty<A, B>, T
 }
 
 /// `(a : b) ⋀ (b => c)  =>  (a : c)`.
+///
+/// # Safety
+///
+/// This theorem is unsafe due to use of [POrdProof::by_imply_right].
 pub unsafe fn imply_right<A: Prop, B: Prop, C: Prop>(x: Ty<A, B>, y: Imply<B, C>) -> Ty<A, C> {
     (imply::transitivity(x.0, y.clone()), unsafe {x.1.by_imply_right(y)})
 }
@@ -51,6 +63,10 @@ pub fn ty_false<X: Prop>(ty_x_false: Ty<X, False>) -> Not<X> {ty_x_false.0}
 pub fn ty_true<X: Prop>(ty_true_x: Ty<True, X>) -> X {ty_true_x.0(True)}
 
 /// `a => (true : a)`.
+///
+/// # Safety
+///
+/// This theorem is unsafe due to use of [in_right_arg].
 pub unsafe fn ty_rev_true<A: Prop>(a: A) -> Ty<True, A> {
     unsafe {in_right_arg(true_true(), (a.map_any(), True.map_any()))}
 }
@@ -61,6 +77,10 @@ pub fn triv<A: Prop, X: Prop>(ty_a_x: Ty<A, X>, a: A) -> Ty<True, X> {
 }
 
 /// `(x : a) ⋀ ¬a => (x : false)`.
+///
+/// # Safety
+///
+/// This theorem is unsafe due to use of [in_right_arg].
 pub unsafe fn non_triv<X: Prop, A: Prop>(
     ty_x_a: Ty<X, A>,
     na: Not<A>,
@@ -81,6 +101,10 @@ pub fn true_ltrue<N: Nat>() -> Ty<True, LTrue<S<N>>> {
 }
 
 /// `true : true`.
+///
+/// # Safety
+///
+/// This theorem is unsafe due to use of [in_right_arg].
 pub unsafe fn true_true() -> Ty<True, True> {
     let x = in_left_arg(ltrue(), eq::symmetry(eq_true_ltrue::<Z>()));
     unsafe {in_right_arg(x, eq::symmetry(eq_true_ltrue::<S<Z>>()))}
@@ -237,10 +261,14 @@ pub fn transitivity<A: Prop, B: Prop, C: Prop>(
     (ab, pord_ab): Ty<A, B>,
     (bc, pord_bc): Ty<B, C>
 ) -> Ty<A, C> {
-    (imply::transitivity(ab, bc.clone()), pord_ab.transitivity(pord_bc))
+    (imply::transitivity(ab, bc), pord_ab.transitivity(pord_bc))
 }
 
 /// `(a : x) => (a : (a : x))`.
+///
+/// # Safety
+///
+/// This theorem is unsafe due to use of [POrdProof::by_imply_right].
 pub unsafe fn lift<A: Prop, X: Prop>(ty_a: Ty<A, X>) -> Ty<A, Ty<A, X>> {
     let pord1 = unsafe {ty_a.1.clone().by_imply_right(Rc::new(|x| x.map_any()))};
     let pord2 = unsafe {ty_a.1.clone().by_imply_right(ty_a.1.clone().map_any())};
@@ -248,6 +276,10 @@ pub unsafe fn lift<A: Prop, X: Prop>(ty_a: Ty<A, X>) -> Ty<A, Ty<A, X>> {
 }
 
 /// `(a : (a : x)) => (a : x)`.
+///
+/// # Safety
+///
+/// This theorem is unsafe due to use of [POrdProof::by_imply_right].
 pub unsafe fn lower<A: Prop, X: Prop>((a_ty_a, pord_a_ty_a): Ty<A, Ty<A, X>>) -> Ty<A, X> {
     let ax = imply::reduce(Rc::new(move |a| a_ty_a(a).0));
     let x: POrdProof<A, Imply<A, X>> = unsafe {pord_a_ty_a.by_imply_right(ax.clone().map_any())};

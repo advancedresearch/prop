@@ -97,7 +97,7 @@ pub fn true_qu() -> Qu<True> {
     let x: Ty<App<FId, Bool>, Pow<Bool, Bool>> = id_ty(bool_alg::bool_ty());
 
     // ~id{bool} : ~(bool -> bool)
-    let x = ty::qu_formation(x.clone());
+    let x = ty::qu_formation(x);
 
     // ~(bool -> bool)
     let x: Qu<Pow<Bool, Bool>> = x.0(id_qu());
@@ -112,6 +112,10 @@ pub fn inv_true_qu() -> Qu<Inv<True>> {inv_qu(true_qu())}
 /// `~true == true`.
 pub fn eq_qu_true_true() -> Eq<Qu<True>, True> {(True.map_any(), true_qu().map_any())}
 /// `a  =>  ~a`.
+///
+/// # Safety
+///
+/// This theorem is unsafe due to use of [ty::ty_rev_true].
 #[deny(unsafe_op_in_unsafe_fn)]
 pub unsafe fn to_qu<A: Prop>(a: A) -> Qu<A> {
     use path_semantics::ty::{ty_rev_true, qu_formation, in_left_arg, ty_true};
