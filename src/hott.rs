@@ -1,5 +1,7 @@
 //! # Homotopy Type Theory
 //!
+//! *Notice! This module is experimental and in early stages of development.*
+//!
 //! This is a model of Homotopy Type Theory that attempts to be similar to the version in
 //! the [standard HoTT book](https://homotopytypetheory.org/book/).
 
