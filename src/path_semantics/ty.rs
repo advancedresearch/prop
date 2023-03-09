@@ -1,5 +1,7 @@
 #![deny(unsafe_op_in_unsafe_fn)]
 
+//! # Model of Types in Path Semantics
+
 use super::*;
 
 /// Models a type relation `a : t`.

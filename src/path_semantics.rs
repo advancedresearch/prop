@@ -308,7 +308,7 @@ use nat::*;
 
 mod lprop;
 mod pord;
-mod ty;
+pub mod ty;
 
 /// Core axiom of Path Semantics.
 pub type PSem<F1, F2, X1, X2> = Imply<
