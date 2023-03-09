@@ -115,8 +115,8 @@ pub fn path_inv<F: Prop, X: Prop, Y: Prop>(
     ty_f: Ty<F, Pow<Y, X>>,
     x: Pow<Y, X>
 ) -> Pow<X, Y> {
-    use path_semantics::{ty_triv, ty_true};
-    ty_true(ty_triv(inv_ty(ty_f.clone()), path(theory_f, qu_inv_f, ty_f, x).1))
+    use path_semantics::{triv, ty_true};
+    ty_true(triv(inv_ty(ty_f.clone()), path(theory_f, qu_inv_f, ty_f, x).1))
 }
 /// `~f ⋀ (f == g)^true  =>  f ~~ g`.
 pub fn qu_tauto_eq_to_q<F: Prop, G: Prop>(x: Qu<F>, tauto_eq: Tauto<Eq<F, G>>) -> Q<F, G> {

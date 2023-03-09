@@ -89,6 +89,6 @@ pub trait SeshNeq {
         ty_b: Ty<B, Y>,
         x: Not<Eq<X, Y>>
     ) -> Eq<App<FEq, Tup<A, B>>, Fa> {
-        self.sesh_neq()(path_semantics::ty_neq_to_sesh(ty_a, ty_b, x))
+        self.sesh_neq()(path_semantics::ty::neq_to_sesh(ty_a, ty_b, x))
     }
 }

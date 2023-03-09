@@ -43,7 +43,7 @@ macro_rules! eqx(
     ($x:expr, $def:expr, r) => {$crate::eq::in_right_arg($x, $crate::eq::symmetry($def()))};
     ($x:expr, $def:expr, co) => {$crate::fun::const_in_arg($x, $crate::eq::symmetry($def()))};
     ($x:expr, $def:expr, tyl) => {
-        $crate::path_semantics::ty_in_left_arg($x, $crate::eq::symmetry($def()))
+        $crate::path_semantics::ty::in_left_arg($x, $crate::eq::symmetry($def()))
     };
     ($x:expr, $def:expr, tyr) => {
         $crate::path_semantics::ty_in_right_arg($x, $crate::eq::symmetry($def()))

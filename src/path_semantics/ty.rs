@@ -8,39 +8,39 @@ use super::*;
 pub type Ty<A, T> = And<Imply<A, T>, POrdProof<A, T>>;
 
 /// `x_{n} : ltrue{n+1}`.
-pub fn ty_ltrue<X: LProp>() -> Ty<X, LTrue<S<X::N>>>
+pub fn ltrue<X: LProp>() -> Ty<X, LTrue<S<X::N>>>
     where X::N: Lt<S<X::N>> + Default
 {
     (LTrue(Default::default()).map_any(), POrdProof::default())
 }
 
 /// `(a : b) ⋀ (a == c)  =>  (c : b)`.
-pub fn ty_in_left_arg<A: Prop, B: Prop, C: Prop>((ab, pord): Ty<A, B>, eq: Eq<A, C>) -> Ty<C, B> {
+pub fn in_left_arg<A: Prop, B: Prop, C: Prop>((ab, pord): Ty<A, B>, eq: Eq<A, C>) -> Ty<C, B> {
     (imply::in_left_arg(ab, eq.clone()), pord.by_eq_left(eq))
 }
 
 /// `(a : b) ⋀ (b == c)  =>  (a : c)`.
-pub unsafe fn ty_in_right_arg<A: Prop, B: Prop, C: Prop>(
+pub unsafe fn in_right_arg<A: Prop, B: Prop, C: Prop>(
     (ab, pord): Ty<A, B>, eq: Eq<B, C>
 ) -> Ty<A, C> {
     (imply::in_right_arg(ab, eq.clone()), unsafe {pord.by_eq_right(eq)})
 }
 
 /// `(a == b)  =>  (a : c) == (b : c)`.
-pub fn ty_eq_left<A: Prop, B: Prop, C: Prop>(x: Eq<A, B>) -> Eq<Ty<A, C>, Ty<B, C>> {
+pub fn eq_left<A: Prop, B: Prop, C: Prop>(x: Eq<A, B>) -> Eq<Ty<A, C>, Ty<B, C>> {
     let x2 = eq::symmetry(x.clone());
-    (Rc::new(move |ty_a| ty_in_left_arg(ty_a, x.clone())),
-     Rc::new(move |ty_b| ty_in_left_arg(ty_b, x2.clone())))
+    (Rc::new(move |ty_a| in_left_arg(ty_a, x.clone())),
+     Rc::new(move |ty_b| in_left_arg(ty_b, x2.clone())))
 }
 /// `(b == c)  =>  (a : b) == (a : c)`.
-pub unsafe fn ty_eq_right<A: Prop, B: Prop, C: Prop>(x: Eq<B, C>) -> Eq<Ty<A, B>, Ty<A, C>> {
+pub unsafe fn eq_right<A: Prop, B: Prop, C: Prop>(x: Eq<B, C>) -> Eq<Ty<A, B>, Ty<A, C>> {
     let x2 = eq::symmetry(x.clone());
-    (Rc::new(move |ty_a| unsafe {ty_in_right_arg(ty_a, x.clone())}),
-     Rc::new(move |ty_a| unsafe {ty_in_right_arg(ty_a, x2.clone())}))
+    (Rc::new(move |ty_a| unsafe {in_right_arg(ty_a, x.clone())}),
+     Rc::new(move |ty_a| unsafe {in_right_arg(ty_a, x2.clone())}))
 }
 
 /// `(a : b) ⋀ (b => c)  =>  (a : c)`.
-pub unsafe fn ty_imply_right<A: Prop, B: Prop, C: Prop>(x: Ty<A, B>, y: Imply<B, C>) -> Ty<A, C> {
+pub unsafe fn imply_right<A: Prop, B: Prop, C: Prop>(x: Ty<A, B>, y: Imply<B, C>) -> Ty<A, C> {
     (imply::transitivity(x.0, y.clone()), unsafe {x.1.by_imply_right(y)})
 }
 
@@ -52,22 +52,22 @@ pub fn ty_true<X: Prop>(ty_true_x: Ty<True, X>) -> X {ty_true_x.0(True)}
 
 /// `a => (true : a)`.
 pub unsafe fn ty_rev_true<A: Prop>(a: A) -> Ty<True, A> {
-    unsafe {ty_in_right_arg(ty_true_true(), (a.map_any(), True.map_any()))}
+    unsafe {in_right_arg(true_true(), (a.map_any(), True.map_any()))}
 }
 
 /// `(a : x) ⋀ a => (true : x)`.
-pub fn ty_triv<A: Prop, X: Prop>(ty_a_x: Ty<A, X>, a: A) -> Ty<True, X> {
-    ty_in_left_arg(ty_a_x, (True.map_any(), a.map_any()))
+pub fn triv<A: Prop, X: Prop>(ty_a_x: Ty<A, X>, a: A) -> Ty<True, X> {
+    in_left_arg(ty_a_x, (True.map_any(), a.map_any()))
 }
 
 /// `(x : a) ⋀ ¬a => (x : false)`.
-pub unsafe fn ty_non_triv<X: Prop, A: Prop>(
+pub unsafe fn non_triv<X: Prop, A: Prop>(
     ty_x_a: Ty<X, A>,
     na: Not<A>,
 ) -> Ty<X, False> {
     let eq_a_false: Eq<A, False> =
         (Rc::new(move |a| na(a)), Rc::new(move |fa| imply::absurd()(fa)));
-    unsafe {ty_in_right_arg(ty_x_a, eq_a_false)}
+    unsafe {in_right_arg(ty_x_a, eq_a_false)}
 }
 
 /// `true == ltrue{n}`.
@@ -76,18 +76,18 @@ pub fn eq_true_ltrue<N: Nat>() -> Eq<True, LTrue<N>> {
 }
 
 /// `true : ltrue{n+1}`.
-pub fn ty_true_ltrue<N: Nat>() -> Ty<True, LTrue<S<N>>> {
-    ty_in_left_arg(ty_ltrue(), eq::symmetry(eq_true_ltrue()))
+pub fn true_ltrue<N: Nat>() -> Ty<True, LTrue<S<N>>> {
+    in_left_arg(ltrue(), eq::symmetry(eq_true_ltrue()))
 }
 
 /// `true : true`.
-pub unsafe fn ty_true_true() -> Ty<True, True> {
-    let x = ty_in_left_arg(ty_ltrue(), eq::symmetry(eq_true_ltrue::<Z>()));
-    unsafe {ty_in_right_arg(x, eq::symmetry(eq_true_ltrue::<S<Z>>()))}
+pub unsafe fn true_true() -> Ty<True, True> {
+    let x = in_left_arg(ltrue(), eq::symmetry(eq_true_ltrue::<Z>()));
+    unsafe {in_right_arg(x, eq::symmetry(eq_true_ltrue::<S<Z>>()))}
 }
 
 /// `(x : a) ⋀ (y : b)  =>  ((x ⋀ y) : (a ⋀ b))`.
-pub fn ty_and<X: Prop, Y: Prop, A: Prop, B: Prop>(
+pub fn and<X: Prop, Y: Prop, A: Prop, B: Prop>(
     (xa, pord_xa): Ty<X, A>,
     (yb, pord_yb): Ty<Y, B>,
 ) -> Ty<And<X, Y>, And<A, B>> {
@@ -96,7 +96,7 @@ pub fn ty_and<X: Prop, Y: Prop, A: Prop, B: Prop>(
 }
 
 /// `(x : a) ⋀ (y : b)  =>  ((x ⋁ y) : (a ⋁ b))`.
-pub fn ty_or<X: Prop, Y: Prop, A: Prop, B: Prop>(
+pub fn or<X: Prop, Y: Prop, A: Prop, B: Prop>(
     (xa, pord_xa): Ty<X, A>,
     (yb, pord_yb): Ty<Y, B>,
 ) -> Ty<Or<X, Y>, Or<A, B>> {
@@ -110,7 +110,7 @@ pub fn ty_or<X: Prop, Y: Prop, A: Prop, B: Prop>(
 }
 
 /// `(x : a) ⋀ (y : b) ⋀ hom(x, y)  =>  ((x => y) : (a => b))`.
-pub fn ty_hom_imply<X: Prop, Y: Prop, A: Prop, B: Prop>(
+pub fn hom_imply<X: Prop, Y: Prop, A: Prop, B: Prop>(
     (xa, pord_xa): Ty<X, A>,
     (yb, pord_yb): Ty<Y, B>,
     hom: Hom<X, Y>,
@@ -126,7 +126,7 @@ pub fn ty_hom_imply<X: Prop, Y: Prop, A: Prop, B: Prop>(
 }
 
 /// `(x : a) ⋀ (y : b) ⋀ eqq(x, y)  =>  ((x => y) : (a => b))`.
-pub fn ty_eqq_imply<X: DProp, Y: DProp, A: Prop, B: Prop>(
+pub fn eqq_imply<X: DProp, Y: DProp, A: Prop, B: Prop>(
     (xa, pord_xa): Ty<X, A>,
     (yb, pord_yb): Ty<Y, B>,
     eqq_xy: EqQ<X, Y>,
@@ -150,7 +150,7 @@ pub fn ty_eqq_imply<X: DProp, Y: DProp, A: Prop, B: Prop>(
 }
 
 /// `(a : (b ⋁ c)) ⋀ a  =>  (a : b) ⋁ (a : c)`.
-pub fn ty_or_split<A: Prop, B: Prop, C: Prop>(
+pub fn or_split<A: Prop, B: Prop, C: Prop>(
     (ty_a, pord): Ty<A, Or<B, C>>,
     a: A
 ) -> Or<Ty<A, B>, Ty<A, C>> {
@@ -161,7 +161,7 @@ pub fn ty_or_split<A: Prop, B: Prop, C: Prop>(
 }
 
 /// `(a : (b ⋁ c))  =>  (a : b) ⋁ (a : c)`.
-pub fn ty_or_split_da<A: DProp, B: Prop, C: Prop>(
+pub fn or_split_da<A: DProp, B: Prop, C: Prop>(
     (ty_a_or_b_c, pord): Ty<A, Or<B, C>>
 ) -> Or<Ty<A, B>, Ty<A, C>> {
     match imply::or_split_da(ty_a_or_b_c) {
@@ -171,7 +171,7 @@ pub fn ty_or_split_da<A: DProp, B: Prop, C: Prop>(
 }
 
 /// `(a : (b ⋁ c))  =>  (a : b) ⋁ (a : c)`.
-pub fn ty_or_split_db<A: Prop, B: DProp, C: Prop>(
+pub fn or_split_db<A: Prop, B: DProp, C: Prop>(
     (ty_a_or_b_c, pord): Ty<A, Or<B, C>>
 ) -> Or<Ty<A, B>, Ty<A, C>> {
     match imply::or_split_db(ty_a_or_b_c) {
@@ -181,7 +181,7 @@ pub fn ty_or_split_db<A: Prop, B: DProp, C: Prop>(
 }
 
 /// `(a : (b ⋁ c))  =>  (a : b) ⋁ (a : c)`.
-pub fn ty_or_split_dc<A: Prop, B: Prop, C: DProp>(
+pub fn or_split_dc<A: Prop, B: Prop, C: DProp>(
     (ty_a_or_b_c, pord): Ty<A, Or<B, C>>
 ) -> Or<Ty<A, B>, Ty<A, C>> {
     match imply::or_split_dc(ty_a_or_b_c) {
@@ -191,7 +191,7 @@ pub fn ty_or_split_dc<A: Prop, B: Prop, C: DProp>(
 }
 
 /// `(a : T) ⋀ (b : U)  =>  ((a ~~ b) : (T ~~ U))`.
-pub fn ty_q_formation<A: Prop, B: Prop, T: Prop, U: Prop>(
+pub fn q_formation<A: Prop, B: Prop, T: Prop, U: Prop>(
     (a_t, pord_a_t): Ty<A, T>,
     (b_u, pord_b_u): Ty<B, U>,
 ) -> Ty<Q<A, B>, Q<T, U>> {
@@ -206,7 +206,7 @@ pub fn ty_q_formation<A: Prop, B: Prop, T: Prop, U: Prop>(
 }
 
 /// `(a : T)  =>  (~a : ~T)`.
-pub fn ty_qu_formation<A: Prop, T: Prop>((a_t, pord_a_t): Ty<A, T>) -> Ty<Qu<A>, Qu<T>> {
+pub fn qu_formation<A: Prop, T: Prop>((a_t, pord_a_t): Ty<A, T>) -> Ty<Qu<A>, Qu<T>> {
     let pord_a_t_2 = pord_a_t.clone();
     (Rc::new(move |qu_ab| {
         Qu::from_q(assume()(((Qu::to_q(qu_ab), (pord_a_t_2.clone(), pord_a_t_2.clone())),
@@ -217,23 +217,23 @@ pub fn ty_qu_formation<A: Prop, T: Prop>((a_t, pord_a_t): Ty<A, T>) -> Ty<Qu<A>,
 }
 
 /// `(a : T) ⋀ (b : U) ⋀ ¬(T == U)  =>  ¬(a ~~ b)`.
-pub fn ty_neq_to_sesh<A: Prop, B: Prop, T: Prop, U: Prop>(
+pub fn neq_to_sesh<A: Prop, B: Prop, T: Prop, U: Prop>(
     ty_a: Ty<A, T>,
     ty_b: Ty<B, U>,
     neq_tu: Not<Eq<T, U>>,
 ) -> Not<Q<A, B>> {
-    imply::modus_tollens(ty_q_formation(ty_a, ty_b).0)(quality::neq_to_sesh(neq_tu))
+    imply::modus_tollens(q_formation(ty_a, ty_b).0)(quality::neq_to_sesh(neq_tu))
 }
 
 /// `(a : T) ⋀ (a : U) ⋀ ¬(T == U)  =>  ¬~a`.
-pub fn ty_neq_to_not_qu<A: Prop, T: Prop, U: Prop>(
+pub fn neq_to_not_qu<A: Prop, T: Prop, U: Prop>(
     ty_a_t: Ty<A, T>,
     ty_a_u: Ty<A, U>,
     neq_t_u: Not<Eq<T, U>>
-) -> Not<Qu<A>> {imply::in_left(ty_neq_to_sesh(ty_a_t, ty_a_u, neq_t_u), Qu::to_q)}
+) -> Not<Qu<A>> {imply::in_left(neq_to_sesh(ty_a_t, ty_a_u, neq_t_u), Qu::to_q)}
 
 /// `(a : b) ⋀ (b : c) => (a : c)`.
-pub fn ty_transitivity<A: Prop, B: Prop, C: Prop>(
+pub fn transitivity<A: Prop, B: Prop, C: Prop>(
     (ab, pord_ab): Ty<A, B>,
     (bc, pord_bc): Ty<B, C>
 ) -> Ty<A, C> {
@@ -241,14 +241,14 @@ pub fn ty_transitivity<A: Prop, B: Prop, C: Prop>(
 }
 
 /// `(a : x) => (a : (a : x))`.
-pub unsafe fn ty_lift<A: Prop, X: Prop>(ty_a: Ty<A, X>) -> Ty<A, Ty<A, X>> {
+pub unsafe fn lift<A: Prop, X: Prop>(ty_a: Ty<A, X>) -> Ty<A, Ty<A, X>> {
     let pord1 = unsafe {ty_a.1.clone().by_imply_right(Rc::new(|x| x.map_any()))};
     let pord2 = unsafe {ty_a.1.clone().by_imply_right(ty_a.1.clone().map_any())};
     (ty_a.map_any(), pord1.merge_right(pord2))
 }
 
 /// `(a : (a : x)) => (a : x)`.
-pub unsafe fn ty_lower<A: Prop, X: Prop>((a_ty_a, pord_a_ty_a): Ty<A, Ty<A, X>>) -> Ty<A, X> {
+pub unsafe fn lower<A: Prop, X: Prop>((a_ty_a, pord_a_ty_a): Ty<A, Ty<A, X>>) -> Ty<A, X> {
     let ax = imply::reduce(Rc::new(move |a| a_ty_a(a).0));
     let x: POrdProof<A, Imply<A, X>> = unsafe {pord_a_ty_a.by_imply_right(ax.clone().map_any())};
     (ax, x.imply_reduce())
