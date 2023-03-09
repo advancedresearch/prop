@@ -85,7 +85,7 @@
 //!
 //! Since there are levels of propositions, one must think about what `true` and `false` means.
 //! The level of `false` is `nan` (not a number) and the level of `true` can be any level (`ltrue`).
-//! To get `true` to any level, one converts back and forth using [eq_true_ltrue].
+//! To get `true` to any level, one converts back and forth using [ty::eq_true_ltrue].
 //!
 //! ### Symbolic Distinction
 //!
@@ -299,7 +299,7 @@ pub use quality::right as refl_right;
 
 pub use lprop::*;
 pub use pord::*;
-pub use ty::*;
+pub use ty::Ty;
 
 use qubit::Qu;
 use existence::EProp;

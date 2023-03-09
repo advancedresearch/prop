@@ -116,7 +116,7 @@ pub fn eq_qu_true_true() -> Eq<Qu<True>, True> {(True.map_any(), true_qu().map_a
 /// `a  =>  ~a`.
 #[deny(unsafe_op_in_unsafe_fn)]
 pub unsafe fn to_qu<A: Prop>(a: A) -> Qu<A> {
-    use path_semantics::{ty_rev_true, qu_formation, in_left_arg, ty_true};
+    use path_semantics::ty::{ty_rev_true, qu_formation, in_left_arg, ty_true};
 
     ty_true(in_left_arg(qu_formation(unsafe {ty_rev_true(a)}), eq_qu_true_true()))
 }

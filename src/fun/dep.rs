@@ -134,7 +134,7 @@ pub fn dep_tup_elim<T: Prop, X: Prop, A: Prop, B: Prop>(
     ty_t: Tauto<Ty<T, Tup<Ty<X, A>, App<B, X>>>>
 ) -> And<Tauto<Ty<App<Fst, T>, A>>, Tauto<Ty<App<Snd, T>, App<B, App<Fst, T>>>>> {
     use hooo::{tauto_eq_symmetry, tauto_in_arg};
-    use path_semantics::{eq_left, eq_right, lower};
+    use path_semantics::ty::{eq_left, eq_right, lower};
 
     let x = ty_t.trans(fst_lower);
     (tauto_in_arg(ty_t.trans(fst), tauto_eq_symmetry(x.trans(eq_left)
