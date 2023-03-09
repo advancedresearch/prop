@@ -94,25 +94,22 @@ pub unsafe fn id_qu_ty<A: Prop, N: Nat>(
 /// `~id{a}`.
 pub fn id_qu<A: Prop>() -> Qu<App<FId, A>> {Qu::from_q(quality::right(id_q()))}
 /// `~true`.
-pub unsafe fn true_qu() -> Qu<True> {
+pub fn true_qu() -> Qu<True> {
     use bool_alg::Bool;
 
     // id{bool} : bool -> bool
     let x: Ty<App<FId, Bool>, Pow<Bool, Bool>> = id_ty(bool_alg::bool_ty());
 
-    // id{bool} : true
-    let y: Eq<Pow<Bool, Bool>, True> = (True.map_any(), Rc::new(|_| hooo::pow_refl));
-    let x: Ty<App<FId, Bool>, True> = path_semantics::ty_in_right_arg(x, y);
+    // ~id{bool} : ~(bool -> bool)
+    let x = path_semantics::ty_qu_formation(x.clone());
 
-    // ~id{bool} : ~true
-    let x: Ty<Qu<App<FId, Bool>>, Qu<True>> = path_semantics::ty_qu_formation(x);
-
-    // true : ~true
-    let y: Eq<Qu<App<FId, Bool>>, True> = (True.map_any(), id_qu().map_any());
-    let x: Ty<True, Qu<True>> = path_semantics::ty_in_left_arg(x, y);
+    // ~(bool -> bool)
+    let x: Qu<Pow<Bool, Bool>> = x.0(id_qu());
 
     // ~true
-    path_semantics::ty_true(x)
+    let y: Tauto<Eq<Pow<Bool, Bool>, True>> =
+        tauto!((True.map_any(), Rc::new(|_| hooo::pow_refl)));
+    qubit::in_arg(x, y)
 }
 /// `~inv(true)`.
 pub unsafe fn inv_true_qu() -> Qu<Inv<True>> {inv_qu(true_qu())}
