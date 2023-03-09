@@ -202,9 +202,14 @@ pub fn ty_q_formation<A: Prop, B: Prop, T: Prop, U: Prop>(
 }
 
 /// `(a : T)  =>  (~a : ~T)`.
-pub unsafe fn ty_qu_formation<A: Prop, T: Prop>(ty_a: Ty<A, T>) -> Ty<Qu<A>, Qu<T>> {
-    ty_in_right_arg(ty_in_left_arg(ty_q_formation(ty_a.clone(), ty_a),
-        (Rc::new(Qu::from_q), Rc::new(Qu::to_q))), (Rc::new(Qu::from_q), Rc::new(Qu::to_q)))
+pub fn ty_qu_formation<A: Prop, T: Prop>((a_t, pord_a_t): Ty<A, T>) -> Ty<Qu<A>, Qu<T>> {
+    let pord_a_t_2 = pord_a_t.clone();
+    (Rc::new(move |qu_ab| {
+        Qu::from_q(assume()(((Qu::to_q(qu_ab), (pord_a_t_2.clone(), pord_a_t_2.clone())),
+            (a_t.clone(), a_t.clone()))))
+    }), {
+        pord_a_t.qu()
+    })
 }
 
 /// `(a : T) ⋀ (b : U) ⋀ ¬(T == U)  =>  ¬(a ~~ b)`.
