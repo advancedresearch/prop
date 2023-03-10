@@ -90,7 +90,7 @@
 
 use crate::*;
 use modal::Pos;
-use hooo::Para;
+use hooo::{Para, Tauto};
 use quality::{EqQ, Q};
 
 /// `sd(a, b) := ◇(¬(a == b))`.
@@ -112,6 +112,14 @@ pub fn not_sd<A: Prop>() -> Not<Sd<A, A>> {
 /// `false^(a == b)  =>  sd(a, b)`.
 pub fn para_eq_to_sd<A: Prop, B: Prop>(para_eq_ab: Para<Eq<A, B>>) -> Sd<A, B> {
     Left(hooo::para_to_tauto_not(para_eq_ab))
+}
+
+/// `(a == b)^true  =>  ¬sd(a, b)`.
+pub fn tauto_eq_to_nsd<A: Prop, B: Prop>(x: Tauto<Eq<A, B>>) -> Not<Sd<A, B>> {
+    Rc::new(move |sd_ab| match sd_ab {
+        Left(tauto_neq_ab) => tauto_neq_ab(True)(x(True)),
+        Right(theory_neq_ab) => theory_neq_ab(Right(hooo::tauto_to_para_not(x)))
+    })
 }
 
 /// `sd(¬a, a)`.
