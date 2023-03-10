@@ -43,11 +43,12 @@
 //! For more information, see [paper](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip2/symbolic-distinction.pdf).
 //!
 //! In Path Semantics, this is leveraged to lift `a == b` into `a ~~ b` when `a` and `b` are
-//! symbolic distinct ([hooo::lift_q]).
+//! symbolic distinct ([lift_q]).
 
 use crate::*;
 use modal::Pos;
 use hooo::Para;
+use quality::Q;
 
 /// `sd(a, b) := ◇(¬(a == b))`.
 ///
@@ -72,3 +73,20 @@ pub fn para_eq_to_sd<A: Prop, B: Prop>(para_eq_ab: Para<Eq<A, B>>) -> Sd<A, B> {
 
 /// `sd(a, ¬a)`.
 pub fn sd_not<A: Prop>() -> Sd<A, Not<A>> {para_eq_to_sd(eq::anti)}
+
+/// `(a == b) ⋀ sd(a, b)  =>  (a ~~ b)`.
+pub fn lift_q<A: Prop, B: Prop>(eq_ab: Eq<A, B>, sd_ab: Sd<A, B>) -> Q<A, B> {
+    use hooo::Theory;
+
+    match sd_ab {
+        Left(tauto_neq_ab) => not::absurd(tauto_neq_ab(True), eq_ab),
+        Right(theory_neq_ab) => {
+            let theory_neq_ab_2 = theory_neq_ab.clone();
+            let x: Theory<Eq<A, B>> = imply::in_left(theory_neq_ab.clone(), move |x| match x {
+                Left(tauto_eq_ab) => not::absurd(theory_neq_ab_2.clone(), Right(hooo::tauto_to_para_not(tauto_eq_ab))),
+                Right(para_eq_ab) => Left(hooo::para_to_tauto_not(para_eq_ab))
+            });
+            hooo::lift_q(eq_ab, x)
+        }
+    }
+}
