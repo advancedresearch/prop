@@ -122,6 +122,11 @@ pub fn tauto_eq_to_nsd<A: Prop, B: Prop>(x: Tauto<Eq<A, B>>) -> Not<Sd<A, B>> {
     })
 }
 
+/// `sd(a, b)  =>  ¬((a == b)^true)`.
+pub fn to_not_tauto_eq<A: Prop, B: Prop>(x: Sd<A, B>) -> Not<Tauto<Eq<A, B>>> {
+    hooo::pow_modus_tollens(tauto_eq_to_nsd)(not::double(x))
+}
+
 /// `sd(¬a, a)`.
 pub fn not_left<A: Prop>() -> Sd<Not<A>, A> {symmetry(not_right())}
 
