@@ -47,7 +47,15 @@
 //! It is sound to introduce new operators to logic which semantics depend on Symbolic Distinction.
 //!
 //! In Path Semantics, this is leveraged to lift `a == b` into `a ~~ b` when `a` and `b` are
-//! symbolic distinct ([lift_q]).
+//! symbolic distinct ([lift_q]). This proof relies on the axiom [hooo::lift_q] which lifts
+//! `a == b` into `a ~~ b` when there is a `theory(a == b)`.
+//!
+//! A theory of equality means that `a == b` is not provable without making any assumptions
+//! and that one can not prove `false` from `a == b`.
+//! Theory of equality implies symbolic distinction.
+//! This is similar to how `false^(a == b)` implies symbolic distinction,
+//! but here one can prove `false` from `a == b`.
+//! Theory of equality is another way of getting symbolic distinction.
 
 use crate::*;
 use modal::Pos;

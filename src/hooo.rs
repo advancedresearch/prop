@@ -690,7 +690,9 @@ pub fn pow_ty<A: Prop, B: Prop, X: Prop, Y: Prop>(
 
 /// `(a == b) ⋀ theory(a == b)  =>  (a ~~ b)`.
 ///
-/// Lift equality with tautological distinction into quality.
+/// Lift equality with a theory of equality (implies symbolic distinction) into quality.
+///
+/// For more information about symbolic distinction, see the [sd] module.
 pub fn lift_q<A: Prop, B: Prop>(_: Eq<A, B>, _: Theory<Eq<A, B>>) -> Q<A, B> {unimplemented!()}
 
 /// `~a ∧ (a == b)^true  =>  ~b`.
