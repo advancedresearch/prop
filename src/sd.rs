@@ -103,3 +103,14 @@ pub fn lift_q<A: Prop, B: Prop>(eq_ab: Eq<A, B>, sd_ab: Sd<A, B>) -> Q<A, B> {
 pub fn to_eqq<A: Prop, B: Prop>(sd_ab: Sd<A, B>) -> EqQ<A, B> {
     Rc::new(move |eq_ab| lift_q(eq_ab, sd_ab.clone()))
 }
+
+/// `sd(a, b)  =>  sd(b, a)`.
+pub fn symmetry<A: Prop, B: Prop>(sd_ab: Sd<A, B>) -> Sd<B, A> {
+    use hooo::pow::PowExt;
+
+    match sd_ab {
+        Left(tauto_neq_ab) => Left(tauto_neq_ab.trans(eq::neq_symmetry)),
+        Right(theory_neq_ab) => Right(hooo::theory_in_arg(theory_neq_ab,
+            hooo::pow_eq_to_tauto_eq((eq::neq_symmetry, eq::neq_symmetry))))
+    }
+}
