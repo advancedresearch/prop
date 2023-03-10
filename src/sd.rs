@@ -56,6 +56,11 @@
 //! This is similar to how `false^(a == b)` implies symbolic distinction,
 //! but here one can prove `false` from `a == b`.
 //! Theory of equality is another way of getting symbolic distinction.
+//!
+//! Think about `theory(a == b)` as saying that `a == b` is not entirely true, but it is not entirely false either.
+//! It depends on the situation under which circumstances `a == b` is true.
+//! From `theory(a == b)` one can not say which circumstances makes `a == b` true.
+//! One can only deduce that there are some circumstances, but one does not know which circumstances.
 
 use crate::*;
 use modal::Pos;
