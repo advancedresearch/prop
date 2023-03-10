@@ -237,7 +237,7 @@ pub fn pow_not_e<A: Prop, B: EProp>(x: Not<Pow<A, B>>) -> Pow<A, Not<B>> {
     }
 }
 
-/// `¬(a^b) => a^(¬b)`.
+/// `¬(a^b) ⋀ (a ⋁ ¬a)^true  =>  a^(¬b)`.
 pub fn pow_not_tauto_excm<A: Prop, B: Prop>(
     x: Not<Pow<A, B>>,
     tauto_excm_b: Tauto<ExcM<B>>,
