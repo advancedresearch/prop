@@ -88,6 +88,9 @@ pub fn para_eq_to_sd<A: Prop, B: Prop>(para_eq_ab: Para<Eq<A, B>>) -> Sd<A, B> {
     Left(hooo::para_to_tauto_not(para_eq_ab))
 }
 
+/// `sd(¬a, a)`.
+pub fn not_left<A: Prop>() -> Sd<Not<A>, A> {symmetry(not_right())}
+
 /// `sd(a, ¬a)`.
 pub fn not_right<A: Prop>() -> Sd<A, Not<A>> {para_eq_to_sd(eq::anti)}
 
