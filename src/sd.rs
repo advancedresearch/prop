@@ -83,7 +83,8 @@ pub fn lift_q<A: Prop, B: Prop>(eq_ab: Eq<A, B>, sd_ab: Sd<A, B>) -> Q<A, B> {
         Right(theory_neq_ab) => {
             let theory_neq_ab_2 = theory_neq_ab.clone();
             let x: Theory<Eq<A, B>> = imply::in_left(theory_neq_ab.clone(), move |x| match x {
-                Left(tauto_eq_ab) => not::absurd(theory_neq_ab_2.clone(), Right(hooo::tauto_to_para_not(tauto_eq_ab))),
+                Left(tauto_eq_ab) => not::absurd(theory_neq_ab_2.clone(),
+                    Right(hooo::tauto_to_para_not(tauto_eq_ab))),
                 Right(para_eq_ab) => Left(hooo::para_to_tauto_not(para_eq_ab))
             });
             hooo::lift_q(eq_ab, x)
