@@ -42,6 +42,10 @@
 //! Under Symbolic Distiction, however, there is no such case where reasoning is unsound.
 //! For more information, see [paper](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip2/symbolic-distinction.pdf).
 //!
+//! This leads to a case where one can use Symbolic Distinction as a "one sided" theory.
+//! The theory has no "other side", kind of like a Möbius strip.
+//! It is sound to introduce new operators to logic which semantics depend on Symbolic Distinction.
+//!
 //! In Path Semantics, this is leveraged to lift `a == b` into `a ~~ b` when `a` and `b` are
 //! symbolic distinct ([lift_q]).
 
