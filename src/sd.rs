@@ -27,7 +27,7 @@
 //! For example, `a` can never be not equal to `a`, so one can prove `¬sd(a, a)`.
 //!
 //! On the other hand, if we say `a` can never be not equal to `b`, so one can prove `¬sd(a, b)`,
-//! then this is provable if `(a == b)^true`. This is because it is not possible for `a` and `b`
+//! then this is provable if `(a == b)^true` ([tauto_eq_to_nsd]). This is because it is not possible for `a` and `b`
 //! to be not equal to each other. Yet, this is not the same as when reasoning about symbolic
 //! distinction, because everybody can tell `a` is obviously symbolic distinct from `b`.
 //!
