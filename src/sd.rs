@@ -61,6 +61,32 @@
 //! It depends on the situation under which circumstances `a == b` is true.
 //! From `theory(a == b)` one can not say which circumstances makes `a == b` true.
 //! One can only deduce that there are some circumstances, but one does not know which circumstances.
+//!
+//! ### Motivation for Symbolic Distinction
+//!
+//! In Martin-Löf Type Theory for dependent types, there is a formation rule for reflexivity
+//! of the identity type:
+//!
+//! ```text
+//! A : type(n), a : A |- refl{A} : Id{A}(a, a)
+//! ```
+//!
+//! The reflexivity proof is constructive and it requires a well formed type judgement `a : A`.
+//!
+//! Now, one might think that reflexivity is something that is tautologically true, but it is not!
+//! Although one can prove `(a == a)^true` in IPL with HOOO EP, this is not sound as reflexivity
+//! in Martin-Löf Type Theory because one must first prove the left side of the turnstile `|-`.
+//! This is necessary to show that the reflexivity proof of identity types is well formed.
+//!
+//! This means, there are many circumstances in mathematics where one does not wish to have
+//! tautological reflexivity, but more like an intentional equality. An intentional equality is
+//! when one has `a == b`, but they are "made equal" on purpose. This can be expressed in HOOO EP
+//! as `theory(a == b)`. The problem with `theory(a == b)` is that it lacks equivalence properties.
+//! This problem is solved by lifting `a == b` into `a ~~ b` by `theory(a == b)`.
+//! Path semantical quality `a ~~ b` is a partial equivalence operator, which is total locally.
+//! So, once you have `a ~~ b` you can prove `a ~~ a`. As a result, Path Semantics can model loops
+//! around any proposition with the quality operator, by viewing it as a space of paths.
+//! The idea is to bootstrap mathematics from a lower level than Martin-Löf Type Theory.
 
 use crate::*;
 use modal::Pos;
