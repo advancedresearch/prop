@@ -1386,6 +1386,15 @@ pub fn tauto_excm_to_not_theory<A: Prop>(x: Tauto<ExcM<A>>) -> Not<Theory<A>> {
     not::double(tauto_excm_to_uniform(x))
 }
 
+/// `theory(¬a) => theory(a)`.
+pub fn theory_not_to_theory<A: Prop>(x: Theory<Not<A>>) -> Theory<A> {
+    let x2 = x.clone();
+    imply::in_left(x, move |y| match y {
+        Left(tauto_a) => not::absurd(x2.clone(), Right(tauto_to_para_not(tauto_a))),
+        Right(para_a) => Left(para_to_tauto_not(para_a))
+    })
+}
+
 /// `theory(a) => ¬(a^true)`.
 pub fn theory_to_not_tauto<A: Prop>(x: Theory<A>) -> Not<Tauto<A>> {imply::in_left(x, Left)}
 
