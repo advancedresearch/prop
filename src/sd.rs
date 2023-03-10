@@ -179,3 +179,9 @@ pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(
         }
     }
 }
+
+/// `sd(a, b) ⋀ (b == c)^true  =>  sd(a, c)`.
+pub fn in_right_arg<A: Prop, B: Prop, C: Prop>(
+    sd_ab: Sd<A, B>,
+    tauto_eq_bc: Tauto<Eq<B, C>>
+) -> Sd<A, C> {symmetry(in_left_arg(symmetry(sd_ab), tauto_eq_bc))}
