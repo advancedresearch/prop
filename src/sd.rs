@@ -156,3 +156,26 @@ pub fn symmetry<A: Prop, B: Prop>(sd_ab: Sd<A, B>) -> Sd<B, A> {
             hooo::pow_eq_to_tauto_eq((eq::neq_symmetry, eq::neq_symmetry))))
     }
 }
+
+/// `sd(a, b) ⋀ (a == c)^true  =>  sd(c, b)`.
+pub fn in_left_arg<A: Prop, B: Prop, C: Prop>(
+    sd_ab: Sd<A, B>,
+    tauto_eq_ac: Tauto<Eq<A, C>>
+) -> Sd<C, B> {
+    use hooo::pow::PowExt;
+
+    fn f<A: Prop, B: Prop, C: Prop>(
+        (neq_ab, eq_ac): And<Not<Eq<A, B>>, Eq<A, C>>
+    ) -> Not<Eq<C, B>> {imply::in_left_arg(neq_ab, eq::eq_left(eq_ac))}
+    match sd_ab {
+        Left(tauto_neq_ab) => Left(hooo::hooo_rev_and((tauto_neq_ab, tauto_eq_ac)).trans(f)),
+        Right(theory_neq_ab) => {
+            let theory_neq_ab_2 = theory_neq_ab.clone();
+            Right(and::to_de_morgan((
+                Rc::new(move |tauto_neq_cb| theory_neq_ab_2(Left(hooo::hooo_rev_and((tauto_neq_cb,
+                    hooo::tauto_eq_symmetry(tauto_eq_ac))).trans(f)))),
+                Rc::new(move |para_neq_cb| theory_neq_ab(Right(hooo::para_in_arg(para_neq_cb,
+                    tauto_eq_ac.trans(eq::symmetry).trans(eq::eq_left).trans(not::eq))))))))
+        }
+    }
+}
