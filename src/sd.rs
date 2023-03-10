@@ -48,7 +48,7 @@
 use crate::*;
 use modal::Pos;
 use hooo::Para;
-use quality::Q;
+use quality::{EqQ, Q};
 
 /// `sd(a, b) := ◇(¬(a == b))`.
 ///
@@ -90,4 +90,9 @@ pub fn lift_q<A: Prop, B: Prop>(eq_ab: Eq<A, B>, sd_ab: Sd<A, B>) -> Q<A, B> {
             hooo::lift_q(eq_ab, x)
         }
     }
+}
+
+/// `sd(a, b)  =>  ((a == b) => (a ~~ b))`.
+pub fn to_eqq<A: Prop, B: Prop>(sd_ab: Sd<A, B>) -> EqQ<A, B> {
+    Rc::new(move |eq_ab| lift_q(eq_ab, sd_ab.clone()))
 }
