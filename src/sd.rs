@@ -89,7 +89,7 @@ pub fn para_eq_to_sd<A: Prop, B: Prop>(para_eq_ab: Para<Eq<A, B>>) -> Sd<A, B> {
 }
 
 /// `sd(a, ¬a)`.
-pub fn sd_not<A: Prop>() -> Sd<A, Not<A>> {para_eq_to_sd(eq::anti)}
+pub fn not_right<A: Prop>() -> Sd<A, Not<A>> {para_eq_to_sd(eq::anti)}
 
 /// `(a == b) ⋀ sd(a, b)  =>  (a ~~ b)`.
 pub fn lift_q<A: Prop, B: Prop>(eq_ab: Eq<A, B>, sd_ab: Sd<A, B>) -> Q<A, B> {
