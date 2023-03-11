@@ -1,19 +1,23 @@
 //! # Modal Logic
 //!
-//! This modal logic builds upon the `hooo` module using Exponential Propositions.
+//! This modal logic builds upon the [hooo] module using Exponential Propositions (HOOO EP).
 //!
-//! The Modal Logic variant derived is S5 or stronger.
+//! The Modal Logic variant derived is S5 or stronger for decidable propositions.
 //! For more information about variants of Modal Logic, see [wikipedia article](https://en.wikipedia.org/wiki/Modal_logic).
 //!
-//! It is currently known that HOOO Exponential Propositions implies S5,
-//! but it is unknown whether S5 implies HOOO Exponential Propositions.
+//! It is currently known that HOOO EP implies S5,
+//! but it is unknown whether S5 implies HOOO EP.
 
 use crate::*;
 use hooo::*;
 
+/// `◇p := p^true ⋁ theory(p)`.
+///
 /// A proposition is possibly true if it is either a tautology or a theory.
 pub type Pos<A> = Or<Tauto<A>, Theory<A>>;
 
+/// `□p := p^true`.
+///
 /// A proposition is necessarily true if it is a tautology.
 pub type Nec<A> = Tauto<A>;
 
