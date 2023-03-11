@@ -31,6 +31,8 @@ pub fn nec_consistency() -> Nec<Not<Nec<False>>> {
 ///
 /// Shows that the premise of [Löb's theorem](https://en.wikipedia.org/wiki/L%C3%B6b%27s_theorem)
 /// is trivial in this model.
+///
+/// This means Löb's theorem is absurd. See [hooo_traits::Lob].
 pub fn lob_triv<P: Prop>() -> Nec<Imply<Nec<P>, P>> {
     pow_to_tauto_imply(pow_to_pow_tauto(pow_refl))
 }
