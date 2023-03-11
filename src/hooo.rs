@@ -18,6 +18,15 @@
 //! is to allow substitution in quality `~~` and qubit `~` operator
 //! for Path Semantical Quantum Propositional Logic (PSQ).
 //!
+//! ### Vocabulary
+//!
+//! - Tautology `tauto(a) := a^true`
+//! - Paradox `para(a) := false^a`
+//! - Uniform `uniform(a) := a^true ⋁ false^a`
+//! - Theory `theory(a) := ¬uniform(a)`
+//! - Exists `∃ a { b } := ¬((¬b)^a)`
+//! - Decidable `(a ⋁ ¬a)^true`
+//!
 //! ### Comment conventions
 //!
 //! When a function comment says `a => b`, it is actually `(a => b)^true`.
