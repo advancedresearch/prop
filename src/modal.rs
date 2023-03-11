@@ -27,6 +27,14 @@ pub fn nec_consistency() -> Nec<Not<Nec<False>>> {
     f
 }
 
+/// `□(□p => p)`.
+///
+/// Shows that the premise of [Löb's theorem](https://en.wikipedia.org/wiki/L%C3%B6b%27s_theorem)
+/// is trivial in this model.
+pub fn lob_triv<P: Prop>() -> Nec<Imply<Nec<P>, P>> {
+    pow_to_tauto_imply(pow_to_pow_tauto(pow_refl))
+}
+
 /// `⊥^(¬□⊥ => ¬□¬□⊥)`.
 pub fn para_godel(x: Imply<Not<Nec<False>>, Not<Nec<Not<Nec<False>>>>>) -> False {
     x(nec_consistency()(True))(nec_consistency())
