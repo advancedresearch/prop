@@ -27,6 +27,15 @@
 //! - Exists `∃ a { b } := ¬((¬b)^a)`
 //! - Decidable `(a ⋁ ¬a)^true`
 //!
+//! ### Overlap with Modal Logic
+//!
+//! Modal Logic overlaps with HOOO EP:
+//!
+//! - Necessity `□p := p^true`
+//! - Possibility `◇p := p^true ⋁ theory(p)`
+//!
+//! For a derived Modal Logic from HOOO EP, see the [modal] module.
+//!
 //! ### Comment conventions
 //!
 //! When a function comment says `a => b`, it is actually `(a => b)^true`.
