@@ -40,6 +40,11 @@ pub fn lob_triv<P: Prop>() -> Nec<Imply<Nec<P>, P>> {
 /// `⊥^(□(□⊥ => ⊥) => □⊥)`.
 pub fn para_lob(x: Imply<Nec<Imply<Nec<False>, False>>, Nec<False>>) -> False {x(lob_triv())(True)}
 
+/// `□¬(□(□⊥ => ⊥) => □⊥)`.
+pub fn nec_not_lob() -> Nec<Not<Imply<Nec<Imply<Nec<False>, False>>, Nec<False>>>> {
+    hooo::para_to_tauto_not(para_lob)
+}
+
 /// `⊥^(¬□⊥ => ¬□¬□⊥)`.
 pub fn para_godel(x: Imply<Not<Nec<False>>, Not<Nec<Not<Nec<False>>>>>) -> False {
     x(nec_consistency()(True))(nec_consistency())
