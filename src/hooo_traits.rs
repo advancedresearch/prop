@@ -1,7 +1,8 @@
 //! Traits showing what would happen with alternative axioms for HOOO Exponential Propositions.
 
 use crate::*;
-use crate::hooo::*;
+use hooo::*;
+use modal::Nec;
 
 /// Shows that a constructive `hooo_rev_not` would not allow theories.
 pub trait ConstructiveHoooRevNot {
@@ -209,4 +210,13 @@ pub trait HoooDualEq {
     fn absurd(&self) -> False {
         self.hooo_dual_eq::<True, True, True>()(tr())(eq::refl())
     }
+}
+
+/// Shows that Löb's theorem is absurd in the model of Modal Logic derived from HOOO EP.
+pub trait Lob {
+    /// `□(□p => p)  =>  □p`.
+    fn lob<P: Prop>(_: Nec<Imply<Nec<P>, P>>) -> Nec<P>;
+
+    /// `false`.
+    fn absurd() -> False {Self::lob(modal::lob_triv())(True)}
 }
