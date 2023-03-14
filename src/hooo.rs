@@ -1429,16 +1429,13 @@ pub fn not_tauto_not_para_to_theory<A: Prop>(
 
 /// `(false^a)^(a^true) ⋀ (a^true)^(false^a) => false`.
 ///
-/// This is also known as [Liar's paradox](https://en.wikipedia.org/wiki/Liar_paradox).
-pub fn para_liar<A: DProp>(
-    f: And<Pow<Para<A>, Tauto<A>>, Pow<Tauto<A>, Para<A>>>
-) -> False {
-    let f = pow_eq_to_tauto_eq(f);
+/// This is also known as [Liar Paradox](https://en.wikipedia.org/wiki/Liar_paradox).
+pub fn para_liar<A: DProp>(f: And<Pow<Para<A>, Tauto<A>>, Pow<Tauto<A>, Para<A>>>) -> False {
     Para::<A>::nnexcm()(Rc::new(move |excm: ExcM<Para<A>>| {
         match excm {
-            Left(para_a) => para_a(f(True).1(para_a)(True)),
+            Left(para_a) => para_a((f.1)(para_a)(True)),
             Right(npara_a) => {
-                let ntauto_a = eq::modus_tollens(f(True)).0(npara_a.clone());
+                let ntauto_a = imply::in_left(npara_a.clone(), f.0);
                 let tauto_na = hooo_rev_not(ntauto_a);
                 let para_a = tauto_not_to_para(tauto_na);
                 npara_a(para_a)
