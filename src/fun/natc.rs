@@ -10,15 +10,15 @@
 //!
 //! For example, an infinite number `1 + 1 + 1 + 1 + ...` does not change identity by adding `1`
 //! in front of it. Now, it is impossible to construct a such number without any assumptions.
-//! However, one can have a theory that a such number exist and then use [addc_closed] to prove
-//! that this number equals 0.
+//! However, one can assume that a such number exist with `n ~~ s_c(n)` and then
+//! prove that this number equals 0 ([eq_last_zeroc]).
 //!
 //! Closed natural numbers is a [Robinson arithmetic](https://en.wikipedia.org/wiki/Robinson_arithmetic)
-//! minus the first axiom that 0 is not the successor of any number `s(x) == 0  =>  false`,
+//! minus the first axiom that 0 is not the successor of any number `(s(x) == 0)  =>  false`,
 //! plus a new axiom describing the closed property of addition ([addc_closed]):
 //!
 //! ```text
-//! (n : nat_c) ⋀ (m : nat_c) ⋀ theory(n == add_c(s_c(n), m))  =>  (n == m)
+//! (n : nat_c) ⋀ (m : nat_c) ⋀ (n ~~ add_c(s_c(n), m))  =>  (n == m)
 //! ```
 //!
 //! Using symbolic distinction (see [sd]), one can show that it is not possible to construct such
@@ -82,11 +82,11 @@ pub fn addc_sc<N: Prop, M: Prop>(
     _ty_m: Ty<M, Natc>
 ) -> Eq<Addc<N, Sc<M>>, Sc<Addc<N, M>>> {unimplemented!()}
 
-/// `(n : nat_c) ⋀ (m : nat_c) ⋀ theory(n == add_c(s_c(n), m))  =>  (n == m)`.
+/// `(n : nat_c) ⋀ (m : nat_c) ⋀ (n ~~ add_c(s_c(n), m))  =>  (n == m)`.
 pub fn addc_closed<N: Prop, M: Prop>(
     _ty_n: Ty<N, Natc>,
     _ty_m: Ty<M, Natc>,
-    _: Theory<Eq<N, Addc<Sc<N>, M>>>
+    _: Q<N, Addc<Sc<N>, M>>
 ) -> Eq<N, M> {unimplemented!()}
 
 /// Closed multiplication.
@@ -108,14 +108,14 @@ pub fn mulc_sc<N: Prop, M: Prop>(
     _ty_m: Ty<M, Natc>,
 ) -> Eq<Mulc<N, Sc<M>>, Addc<Mulc<N, M>, N>> {unimplemented!()}
 
-/// `(n : nat_c)^true ⋀ theory(n == s_c(n))  =>  (n == 0_c)`.
-pub fn eq_last_zero<N: Prop>(
-    ty_n: Tauto<Ty<N, Natc>>,
-    theory_x: Theory<Eq<N, Sc<N>>>
+/// `(n : nat_c)^true ⋀ (n ~~ s_c(n))  =>  (n == 0_c)`.
+pub fn eq_last_zeroc<N: Prop>(
+    tauto_ty_n: Tauto<Ty<N, Natc>>,
+    theory_x: Q<N, Sc<N>>
 ) -> Eq<N, Zc> {
-    fn f<N: Prop>(ty_n: Ty<N, Natc>) -> Eq<Eq<N, Sc<N>>, Eq<N, Addc<Sc<N>, Zc>>> {
-        eq::eq_right(eq::symmetry(addc_zeroc(sc_def(ty_n))))
+    fn f<N: Prop>(ty_n: Ty<N, Natc>) -> Eq<Sc<N>, Addc<Sc<N>, Zc>> {
+        eq::symmetry(addc_zeroc(sc_def(ty_n)))
     }
-    let theory_x = hooo::theory_in_arg(theory_x, ty_n.trans(f));
-    addc_closed(ty_n(True), zeroc_ty(), theory_x)
+    let theory_x = hooo::q_in_right_arg(theory_x, tauto_ty_n.trans(f));
+    addc_closed(tauto_ty_n(True), zeroc_ty(), theory_x)
 }
