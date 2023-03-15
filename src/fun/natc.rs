@@ -107,3 +107,15 @@ pub fn mulc_sc<N: Prop, M: Prop>(
     _ty_n: Ty<N, Natc>,
     _ty_m: Ty<M, Natc>,
 ) -> Eq<Mulc<N, Sc<M>>, Addc<Mulc<N, M>, N>> {unimplemented!()}
+
+/// `(n : nat_c)^true ⋀ theory(n == s_c(n))  =>  (n == 0_c)`.
+pub fn eq_last_zero<N: Prop>(
+    ty_n: Tauto<Ty<N, Natc>>,
+    theory_x: Theory<Eq<N, Sc<N>>>
+) -> Eq<N, Zc> {
+    fn f<N: Prop>(ty_n: Ty<N, Natc>) -> Eq<Eq<N, Sc<N>>, Eq<N, Addc<Sc<N>, Zc>>> {
+        eq::eq_right(eq::symmetry(addc_zeroc(sc_def(ty_n))))
+    }
+    let theory_x = hooo::theory_in_arg(theory_x, ty_n.trans(f));
+    addc_closed(ty_n(True), zeroc_ty(), theory_x)
+}
