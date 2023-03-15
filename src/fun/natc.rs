@@ -1,4 +1,38 @@
-//! Closed natural numbers.
+//! # Closed natural numbers
+
+//! Closed natural numbers is a theory of natural numbers where 0 is both the first and the last
+//! natural number. For more information, see
+//! [reading sequence about closed natural numbers](https://github.com/advancedresearch/path_semantics/blob/master/sequences.md#closed-natural-numbers).
+//!
+//! Closed natural numbers occur frequently in computer science as modular arithmetic.
+//! The difference between closed natural numbers and modular arithmetic is that in closed natural
+//! numbers, you might have numbers that are infinite.
+//!
+//! For example, an infinite number `1 + 1 + 1 + 1 + ...` does not change identity by adding `1`
+//! in front of it. Now, it is impossible to construct a such number without any assumptions.
+//! However, one can *assume* that a such number exist and then use [addc_closed] to prove that
+//! this number equals zero.
+//!
+//! Closed natural numbers is a [Robinson arithmetic](https://en.wikipedia.org/wiki/Robinson_arithmetic)
+//! minus the first axiom that 0 is not the successor of any number `s(x) == 0  =>  false`,
+//! plus a new axiom describing the closed property of addition ([addc_closed]):
+//!
+//! ```text
+//! (n : nat_c) ⋀ (m : nat_c) ⋀ (n == add_c(s_c(n), m))  =>  n == m
+//! ```
+//!
+//! Using symbolic distinction (see [sd]), one can show that it is not possible to construct such
+//! numbers without making assumptions. Symbolic distinction can be used safely to extend logic,
+//! but symbolic indistinction is not safe. Since this axiom implies symbolic distinction,
+//! it is safe to use when reasoning about infinite series.
+//!
+//! ### Modular arithmetic
+//!
+//! To create a modular arithmetic `mod m + 1`, it suffices to assume `0 == add_c(s_c(0), m)`.
+//!
+//! For example, to get binary arithmetic, one can assume `0 == 2`, or `0 == add_c(s_c(0), s_c(0))`.
+//!
+//! One could also assume `1 == 3` or for any number `n`, `n == n + 2` to get binary arithmetic.
 
 use super::*;
 
