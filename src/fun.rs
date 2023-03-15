@@ -112,6 +112,7 @@ pub mod dep;
 pub mod eqx;
 pub mod feq;
 pub mod fin;
+pub mod natc;
 pub mod natp;
 pub mod fun_ext;
 pub mod id;
