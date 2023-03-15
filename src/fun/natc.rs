@@ -62,3 +62,22 @@ pub fn addc_closed<N: Prop, M: Prop>(
     _ty_m: Ty<M, Natc>,
     _: Eq<N, Addc<Sc<N>, M>>
 ) -> Eq<N, M> {unimplemented!()}
+
+/// Closed multiplication.
+#[derive(Copy, Clone)]
+pub struct FMulc(());
+
+/// `mul_c(a, b)`.
+pub type Mulc<A, B> = App<FMulc, Tup<A, B>>;
+
+/// `mul_c : (nat_c, nat_c) -> nat_c`.
+pub fn mulc_ty() -> Ty<FMulc, Pow<Natc, Tup<Natc, Natc>>> {unimplemented!()}
+
+/// `n : nat_c  =>  mul_c(n, 0_c) = 0_c`.
+pub fn mulc_zc<N: Prop>(_ty_n: Ty<N, Natc>) -> Eq<Mulc<N, Zc>, Zc> {unimplemented!()}
+
+/// `(n : nat_c) ⋀ (m : nat_c) ⋀ mul_c(n, s_c(m)) = add_c(mul_c(n, m), n)`.
+pub fn mulc_sc<N: Prop, M: Prop>(
+    _ty_n: Ty<N, Natc>,
+    _ty_m: Ty<M, Natc>,
+) -> Eq<Mulc<N, Sc<M>>, Addc<Mulc<N, M>, N>> {unimplemented!()}
