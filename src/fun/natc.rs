@@ -9,6 +9,11 @@ pub struct Natc(());
 /// `nat_c : type(0)`.
 pub fn natc_ty() -> Ty<Natc, Type<Z>> {unimplemented!()}
 
+/// `n : nat_c  =>  (n == 0_c) ⋁ ∃ m : nat_c { s_c(m) == n }`.
+pub fn natc_def<N: Prop, M: Prop>(
+    _: Ty<N, Natc>
+) -> Or<Eq<N, Zc>, Exists<Ty<M, Natc>, Eq<Sc<M>, N>>> {unimplemented!()}
+
 /// Closed zero.
 #[derive(Copy, Clone)]
 pub struct Zc(());
