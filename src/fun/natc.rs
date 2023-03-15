@@ -77,7 +77,7 @@ pub fn addc_ty() -> Ty<FAddc, Pow<Natc, Tup<Natc, Natc>>> {unimplemented!()}
 pub fn addc_zeroc<N: Prop>(_ty_n: Ty<N, Natc>) -> Eq<Addc<N, Zc>, N> {unimplemented!()}
 
 /// `(s_c(n) : nat_c) ⋀ (m : nat_c)  =>  add_c(n, s_c(m)) = s_c(add_c(n, m))`.
-pub fn addc_zc<N: Prop, M: Prop>(
+pub fn addc_sc<N: Prop, M: Prop>(
     _ty_sc_n: Ty<Sc<N>, Natc>,
     _ty_m: Ty<M, Natc>
 ) -> Eq<Addc<N, Sc<M>>, Sc<Addc<N, M>>> {unimplemented!()}
