@@ -44,7 +44,7 @@ pub struct FAddc(());
 /// `add_c(a, b)`.
 pub type Addc<A, B> = App<FAddc, Tup<A, B>>;
 
-/// `add_c : (nat_c, nat_c) -> natc`.
+/// `add_c : (nat_c, nat_c) -> nat_c`.
 pub fn addc_ty() -> Ty<FAddc, Pow<Natc, Tup<Natc, Natc>>> {unimplemented!()}
 
 /// `n : nat_c  =>  add_c(n, 0_c) = n`.
