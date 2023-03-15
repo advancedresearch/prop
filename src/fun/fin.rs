@@ -1,7 +1,7 @@
 //! Finite sets.
 
 use super::*;
-use fnat::{Nat, Succ, Zero};
+use natp::{Nat, Succ, Zero};
 
 /// A finite set.
 #[derive(Copy, Clone)]

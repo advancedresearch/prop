@@ -1,7 +1,7 @@
 //! List.
 
 use super::*;
-use fnat::{FAdd, Nat, Succ, Zero};
+use natp::{FAdd, Nat, Succ, Zero};
 
 /// A list.
 #[derive(Copy, Clone)]
