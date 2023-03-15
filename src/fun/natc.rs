@@ -10,29 +10,21 @@
 //!
 //! For example, an infinite number `1 + 1 + 1 + 1 + ...` does not change identity by adding `1`
 //! in front of it. Now, it is impossible to construct a such number without any assumptions.
-//! However, one can *assume* that a such number exist and then use [addc_closed] to prove that
-//! this number equals zero.
+//! However, one can *assume* that a such number exist and then use [addc_closed] to create a
+//! theory that this number equals 0.
 //!
 //! Closed natural numbers is a [Robinson arithmetic](https://en.wikipedia.org/wiki/Robinson_arithmetic)
 //! minus the first axiom that 0 is not the successor of any number `s(x) == 0  =>  false`,
 //! plus a new axiom describing the closed property of addition ([addc_closed]):
 //!
 //! ```text
-//! (n : nat_c) ⋀ (m : nat_c) ⋀ (n == add_c(s_c(n), m))  =>  n == m
+//! (n : nat_c) ⋀ (m : nat_c) ⋀ (n == add_c(s_c(n), m))  =>  theory(n == m)
 //! ```
 //!
 //! Using symbolic distinction (see [sd]), one can show that it is not possible to construct such
 //! numbers without making assumptions. Symbolic distinction can be used safely to extend logic,
 //! but symbolic indistinction is not safe. Since this axiom implies symbolic distinction,
 //! it is safe to use when reasoning about infinite series.
-//!
-//! ### Modular arithmetic
-//!
-//! To create a modular arithmetic `mod m + 1`, it suffices to assume `0 == add_c(s_c(0), m)`.
-//!
-//! For example, to get binary arithmetic, one can assume `0 == 2`, or `0 == add_c(s_c(0), s_c(0))`.
-//!
-//! One could also assume `1 == 3` or for any number `n`, `n == n + 2` to get binary arithmetic.
 
 use super::*;
 
@@ -90,12 +82,12 @@ pub fn addc_zc<N: Prop, M: Prop>(
     _ty_m: Ty<M, Natc>
 ) -> Eq<Addc<N, Sc<M>>, Sc<Addc<N, M>>> {unimplemented!()}
 
-/// `(n : nat_c) ⋀ (m : nat_c) ⋀ (n == add_c(s_c(n), m))  =>  n == m`.
+/// `(n : nat_c) ⋀ (m : nat_c) ⋀ (n == add_c(s_c(n), m))  =>  theory(n == m)`.
 pub fn addc_closed<N: Prop, M: Prop>(
     _ty_n: Ty<N, Natc>,
     _ty_m: Ty<M, Natc>,
     _: Eq<N, Addc<Sc<N>, M>>
-) -> Eq<N, M> {unimplemented!()}
+) -> Theory<Eq<N, M>> {unimplemented!()}
 
 /// Closed multiplication.
 #[derive(Copy, Clone)]
