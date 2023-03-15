@@ -10,15 +10,15 @@
 //!
 //! For example, an infinite number `1 + 1 + 1 + 1 + ...` does not change identity by adding `1`
 //! in front of it. Now, it is impossible to construct a such number without any assumptions.
-//! However, one can *assume* that a such number exist and then use [addc_closed] to create a
-//! theory that this number equals 0.
+//! However, one can have a theory that a such number exist and then use [addc_closed] to prove
+//! that this number equals 0.
 //!
 //! Closed natural numbers is a [Robinson arithmetic](https://en.wikipedia.org/wiki/Robinson_arithmetic)
 //! minus the first axiom that 0 is not the successor of any number `s(x) == 0  =>  false`,
 //! plus a new axiom describing the closed property of addition ([addc_closed]):
 //!
 //! ```text
-//! (n : nat_c) ⋀ (m : nat_c) ⋀ (n == add_c(s_c(n), m))  =>  theory(n == m)
+//! (n : nat_c) ⋀ (m : nat_c) ⋀ theory(n == add_c(s_c(n), m))  =>  (n == m)
 //! ```
 //!
 //! Using symbolic distinction (see [sd]), one can show that it is not possible to construct such
@@ -82,12 +82,12 @@ pub fn addc_zc<N: Prop, M: Prop>(
     _ty_m: Ty<M, Natc>
 ) -> Eq<Addc<N, Sc<M>>, Sc<Addc<N, M>>> {unimplemented!()}
 
-/// `(n : nat_c) ⋀ (m : nat_c) ⋀ (n == add_c(s_c(n), m))  =>  theory(n == m)`.
+/// `(n : nat_c) ⋀ (m : nat_c) ⋀ theory(n == add_c(s_c(n), m))  =>  (n == m)`.
 pub fn addc_closed<N: Prop, M: Prop>(
     _ty_n: Ty<N, Natc>,
     _ty_m: Ty<M, Natc>,
-    _: Eq<N, Addc<Sc<N>, M>>
-) -> Theory<Eq<N, M>> {unimplemented!()}
+    _: Theory<Eq<N, Addc<Sc<N>, M>>>
+) -> Eq<N, M> {unimplemented!()}
 
 /// Closed multiplication.
 #[derive(Copy, Clone)]
