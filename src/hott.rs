@@ -6,7 +6,7 @@
 //! the [standard HoTT book](https://homotopytypetheory.org/book/).
 
 use crate::*;
-use fun::App;
+use fun::{App, Type};
 use hooo::Pow;
 use path_semantics::Ty;
 use nat::{Nat, S, Z};
@@ -34,6 +34,12 @@ pub type IsNGroupoid<N, A> = IsHType<S<S<N>>, A>;
 /// Whether some type is a groupoid.
 pub type IsGroupoid<A> = IsNGroupoid<S<Z>, A>;
 
+/// `(x : type(n)) ⋀ (a : x) ⋀ (b : x)  =>  id{x}(a, b) : type(n)`.
+pub fn id_ty<X: Prop, A: Prop, B: Prop, N: Nat>(
+    _ty_x: Ty<X, Type<N>>,
+    _ty_a: Ty<A, X>,
+    _ty_b: Ty<B, X>
+) -> Ty<Id<X, A, B>, Type<N>> {unimplemented!()}
 /// `(a : x)  =>  refl{x}(a) : id{x}(a, a)`.
 pub fn refl<A: Prop, X: Prop, PathP: Prop>(_ty_a: Ty<A, X>) -> Ty<Refl<X, A>, Id<X, A, A>>{
     unimplemented!()
