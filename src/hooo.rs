@@ -1584,6 +1584,14 @@ pub fn cut<A: Prop, B: Prop, C: Prop, D: Prop, E: Prop>(
     }
 }
 
+/// `a^b ⋀ c^(d ⋀ a)  =>  c^(b ⋀ d)`.
+///
+/// For more information, see [wikipedia article](https://en.wikipedia.org/wiki/Cut-elimination_theorem).
+pub fn cut_elim<A: Prop, B: Prop, C: Prop, D: Prop>(
+    x: Pow<A, B>,
+    y: Pow<C, And<D, A>>
+) -> Pow<C, And<B, D>> {cut(x.trans(Left), y).trans(or::both)}
+
 /// `∃ true { true }`.
 pub fn exists_true_true() -> Exists<True, True> {
     Rc::new(|pow_ntr_tr| pow_ntr_tr(True)(True))
