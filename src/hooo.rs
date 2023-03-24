@@ -1433,7 +1433,7 @@ pub fn not_tauto_not_para_to_theory<A: Prop>(
 pub fn para_liar<A: DProp>(f: And<Pow<Para<A>, Tauto<A>>, Pow<Tauto<A>, Para<A>>>) -> False {
     Para::<A>::nnexcm()(Rc::new(move |excm: ExcM<Para<A>>| {
         match excm {
-            Left(para_a) => para_a((f.1)(para_a)(True)),
+            Left(para_a) => para_a(f.1(para_a)(True)),
             Right(npara_a) => {
                 let ntauto_a = imply::in_left(npara_a.clone(), f.0);
                 let tauto_na = hooo_rev_not(ntauto_a);
