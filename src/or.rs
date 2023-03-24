@@ -108,3 +108,11 @@ pub fn eq_nn<A: Prop, B: Prop>() -> Eq<Not<Not<A>>, Or<A, Not<Not<A>>>> {
         }),
     )
 }
+
+/// `a ∨ a  =>  a`.
+pub fn both<A: Prop>(x: Or<A, A>) -> A {
+    match x {
+        Left(a) => a,
+        Right(a) => a,
+    }
+}
