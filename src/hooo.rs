@@ -1571,6 +1571,19 @@ pub fn pow_excm_nn_to_rev_double<A: Prop>(x: Pow<ExcM<A>, Not<Not<A>>>) -> Pow<A
     }
 }
 
+/// `(a ⋁ b)^c ⋀ d^(e ⋀ a)  =>  (b ⋁ d)^(c ⋀ e)`.
+///
+/// For more information, see [wikipedia article](https://en.wikipedia.org/wiki/Cut-elimination_theorem).
+pub fn cut<A: Prop, B: Prop, C: Prop, D: Prop, E: Prop>(
+    x: Pow<Or<A, B>, C>,
+    y: Pow<D, And<E, A>>
+) -> Pow<Or<B, D>, And<C, E>> {
+    match hooo_or(x) {
+        Left(pow_ac) => hooo_rev_and((and::snd, pow_lower(pow_ac.lift()))).trans(y).trans(Right),
+        Right(pow_bc) => pow_lower(pow_bc.trans(Left).lift()),
+    }
+}
+
 /// `∃ true { true }`.
 pub fn exists_true_true() -> Exists<True, True> {
     Rc::new(|pow_ntr_tr| pow_ntr_tr(True)(True))
