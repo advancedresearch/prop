@@ -172,3 +172,7 @@ pub fn inv_swap_eq<F: Prop, G: Prop>(x: Eq<Inv<F>, G>) -> Eq<Inv<G>, F> {
 pub fn inv_swap_q<F: Prop, G: Prop>(x: Q<Inv<F>, G>) -> Q<Inv<G>, F> {
     quality::symmetry(q_adjoint_left(x))
 }
+/// `inv(f) == inv(g)  =>  f == g`.
+pub fn inv_rev_eq<F: Prop, G: Prop>(x: Eq<Inv<F>, Inv<G>>) -> Eq<F, G> {
+    eq::in_right_arg(eq::in_left_arg(inv_eq(x), involve_eq()), involve_eq())
+}
