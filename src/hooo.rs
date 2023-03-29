@@ -1500,6 +1500,11 @@ pub fn pow_tauto_to_pow_tauto_tauto<A: Prop, B: Prop>(
     tauto_imply_to_pow(hooo_imply(pow_to_imply_lift(pow_tauto_to_imply_tauto))(pow_lift(x)))
 }
 
+/// `a^b  =>  (a^true)^(b^true)`.
+pub fn pow_tauto<A: Prop, B: Prop>(x: Pow<A, B>) -> Pow<Tauto<A>, Tauto<B>> {
+    tauto_imply_to_pow(tauto_hooo_imply(pow_to_tauto_imply(x)))
+}
+
 /// `b^a => b^(a^true)`.
 pub fn pow_to_pow_tauto<A: Prop, B: Prop>(x: Pow<B, A>) -> Pow<B, Tauto<A>> {
     tauto_imply_to_pow_tauto(pow_to_tauto_imply(x))
