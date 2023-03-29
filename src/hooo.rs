@@ -36,6 +36,8 @@
 //!
 //! For a derived Modal Logic from HOOO EP, see the [modal] module.
 //!
+//! A paradoxical proposition `false^p` can be translated as `□¬p`.
+//!
 //! ### Comment conventions
 //!
 //! When a function comment says `a => b`, it is actually `(a => b)^true`.
