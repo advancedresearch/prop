@@ -1686,6 +1686,11 @@ pub fn exists_pow<A: Prop, B: Prop, X: Prop>(x: Exists<A, X>, pow_ba: Pow<B, A>)
     Rc::new(move |pow_nx_a| x(pow_transitivity(pow_ba, pow_nx_a)))
 }
 
+/// `∃ a { b }  =>  ∃ true { b }`.
+pub fn exists_to_exists_true<A: Prop, B: Prop>(x: Exists<A, B>) -> Exists<True, B> {
+    exists_pow(x, tr())
+}
+
 /// `∃ a { x } ⋀ ∃ b { x }  =>  ∃ a ⋀ b { x }`.
 pub fn exists_join<A: DProp, B: DProp, X: DProp>(
     a: Exists<A, X>,
