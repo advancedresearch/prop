@@ -187,3 +187,13 @@ pub fn five<A: DProp>(pos_a: Pos<A>) -> Nec<Pos<A>> {
         Right(para_pos_a) => imply::absurd()(para_pos_a(pos_a)),
     }
 }
+
+/// `◇a => ∃ true { a }`.
+pub fn pos_to_exists_true<A: Prop>(x: Pos<A>) -> Exists<True, A> {
+    Rc::new(move |tauto_na| {
+        match x.clone() {
+            Left(tauto_a) => not::absurd(tauto_na(True), tauto_a(True)),
+            Right(theory_a) => not::absurd(theory_a, Right(tauto_not_to_para(tauto_na))),
+        }
+    })
+}
