@@ -1645,6 +1645,11 @@ pub fn exists_true<A: Prop>(a: A) -> Exists<True, A> {
     Rc::new(move |tauto_na| tauto_na(True)(a.clone()))
 }
 
+/// `∃ true { a }  =>  a`.
+pub fn exists_rev_true<A: DProp>(x: Exists<True, A>) -> A {
+    exists_excm_to_pow(x, tauto!(A::decide()))(True)
+}
+
 /// `a^true  =>  ∃ a { true }`.
 pub fn exists_tauto<A: Prop>(tauto_a: Tauto<A>) -> Exists<A, True> {
     Rc::new(move |pow_not_true_a|
