@@ -1655,6 +1655,11 @@ pub fn exists_to_not_para<A: Prop>(x: Exists<True, A>) -> Not<Para<A>> {
     imply::in_left(x, para_to_tauto_not)
 }
 
+/// `¬(false^a)  =>  ∃ true { a }`.
+pub fn not_para_to_exists<A: Prop>(x: Not<Para<A>>) -> Exists<True, A> {
+    imply::in_left(x, tauto_not_to_para)
+}
+
 /// `a^true  =>  ∃ a { true }`.
 pub fn exists_tauto<A: Prop>(tauto_a: Tauto<A>) -> Exists<A, True> {
     Rc::new(move |pow_not_true_a|
