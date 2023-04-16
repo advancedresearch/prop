@@ -197,3 +197,13 @@ pub fn pos_to_exists_true<A: Prop>(x: Pos<A>) -> Exists<True, A> {
         }
     })
 }
+
+/// `a  =>  ¬¬◇a`.
+pub fn to_not_not_pos<A: Prop>(a: A) -> Not<Not<Pos<A>>> {
+    Rc::new(move |npos_a| {
+        let x = and::from_de_morgan(npos_a);
+        imply::in_left(x.1, and::to_de_morgan)((x.0,
+            hooo::exists_to_not_para(hooo::exists_true(a.clone()))))
+    })
+}
+
