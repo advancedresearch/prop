@@ -198,6 +198,11 @@ pub fn pos_to_exists_true<A: Prop>(x: Pos<A>) -> Exists<True, A> {
     })
 }
 
+/// `¬¬◇a => ∃ true { a }`.
+pub fn not_not_pos_to_exists_true<A: Prop>(x: Not<Not<Pos<A>>>) -> Exists<True, A> {
+    not::rev_triple(imply::modus_tollens(imply::modus_tollens(Rc::new(pos_to_exists_true)))(x))
+}
+
 /// `a  =>  ¬¬◇a`.
 pub fn to_not_not_pos<A: Prop>(a: A) -> Not<Not<Pos<A>>> {
     Rc::new(move |npos_a| {
