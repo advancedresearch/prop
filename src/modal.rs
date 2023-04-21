@@ -203,6 +203,14 @@ pub fn not_not_pos_to_exists_true<A: Prop>(x: Not<Not<Pos<A>>>) -> Exists<True, 
     not::rev_triple(imply::modus_tollens(imply::modus_tollens(Rc::new(pos_to_exists_true)))(x))
 }
 
+/// `∃ true { a } => ¬¬◇a`.
+pub fn exists_true_to_not_not_pos<A: Prop>(x: Exists<True, A>) -> Not<Not<Pos<A>>> {
+    Rc::new(move |npos_a| {
+        let y = and::from_de_morgan(npos_a);
+        y.1(and::to_de_morgan((y.0, hooo::exists_to_not_para(x.clone()))))
+    })
+}
+
 /// `a  =>  ¬¬◇a`.
 pub fn to_not_not_pos<A: Prop>(a: A) -> Not<Not<Pos<A>>> {
     Rc::new(move |npos_a| {
@@ -211,4 +219,3 @@ pub fn to_not_not_pos<A: Prop>(a: A) -> Not<Not<Pos<A>>> {
             hooo::exists_to_not_para(hooo::exists_true(a.clone()))))
     })
 }
-
