@@ -211,6 +211,11 @@ pub fn exists_true_to_not_not_pos<A: Prop>(x: Exists<True, A>) -> Not<Not<Pos<A>
     })
 }
 
+/// `¬¬◇a  ==  ∃ true { a }`.
+pub fn eq_not_not_pos_exists_true<A: Prop>() -> Eq<Not<Not<Pos<A>>>, Exists<True, A>> {
+    (Rc::new(not_not_pos_to_exists_true), Rc::new(exists_true_to_not_not_pos))
+}
+
 /// `a  =>  ¬¬◇a`.
 pub fn to_not_not_pos<A: Prop>(a: A) -> Not<Not<Pos<A>>> {
     Rc::new(move |npos_a| {
