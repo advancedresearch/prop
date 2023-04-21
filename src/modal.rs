@@ -14,7 +14,16 @@ use hooo::*;
 /// `◇p := p^true ⋁ theory(p)`.
 ///
 /// A proposition is possibly true if it is either a tautology or a theory.
+///
+/// This is a stronger notion of possibly true than in most modal logics.
+/// For a corresponding weaker notion of possibly true, see [NNPos].
 pub type Pos<A> = Or<Tauto<A>, Theory<A>>;
+
+/// `¬¬◇p`.
+///
+/// This corresponds to possibly true in most modal logics.
+/// However, in this model, this is weaker due to use of [hooo::Theory] in the definition.
+pub type NNPos<A> = Not<Not<Pos<A>>>;
 
 /// `□p := p^true`.
 ///
