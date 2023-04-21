@@ -32,7 +32,7 @@ pub type Nec<A> = Tauto<A>;
 
 /// `□¬□⊥`.
 pub fn nec_consistency() -> Nec<Not<Nec<False>>> {
-    fn f(_: True) -> Not<Nec<False>> {hooo::consistency()}
+    fn f(_: True) -> Not<Nec<False>> {consistency()}
     f
 }
 
@@ -51,7 +51,7 @@ pub fn para_lob(x: Imply<Nec<Imply<Nec<False>, False>>, Nec<False>>) -> False {x
 
 /// `□¬(□(□⊥ => ⊥) => □⊥)`.
 pub fn nec_not_lob() -> Nec<Not<Imply<Nec<Imply<Nec<False>, False>>, Nec<False>>>> {
-    hooo::para_to_tauto_not(para_lob)
+    para_to_tauto_not(para_lob)
 }
 
 /// `⊥^(¬□⊥ => ¬□¬□⊥)`.
@@ -61,7 +61,7 @@ pub fn para_godel(x: Imply<Not<Nec<False>>, Not<Nec<Not<Nec<False>>>>>) -> False
 
 /// `□¬(¬□⊥ => ¬□¬□⊥)`.
 pub fn nec_not_godel() -> Nec<Not<Imply<Not<Nec<False>>, Not<Nec<Not<Nec<False>>>>>>> {
-    hooo::para_to_tauto_not(para_godel)
+    para_to_tauto_not(para_godel)
 }
 
 /// `¬(false^a) => ◇a`.
@@ -84,12 +84,12 @@ pub fn pos_to_npara<A: Prop>(pos: Pos<A>) -> Not<Para<A>> {
 
 /// `false^(false^a) => ◇a`.
 pub fn para_para_to_pos<A: DProp>(para_para_a: Para<Para<A>>) -> Pos<A> {
-    npara_to_pos(hooo::para_para_to_not_para(para_para_a))
+    npara_to_pos(para_para_to_not_para(para_para_a))
 }
 
 /// `◇a => false^(false^a)`.
 pub fn pos_to_para_para<A: DProp>(pos: Pos<A>) -> Para<Para<A>> {
-    hooo::not_para_to_para_para(pos_to_npara(pos))
+    not_para_to_para_para(pos_to_npara(pos))
 }
 
 /// `¬◇a => false^a`.
@@ -150,6 +150,11 @@ pub fn pos_to_nnecn<A: Prop>(pos_a: Pos<A>) -> Not<Nec<Not<A>>> {
     })
 }
 
+/// `¬¬◇a => ¬□¬a`.
+pub fn nnpos_to_nnecn<A: Prop>(x: Not<Not<Pos<A>>>) -> Not<Nec<Not<A>>> {
+    not::rev_triple(imply::modus_tollens(imply::modus_tollens(Rc::new(pos_to_nnecn)))(x))
+}
+
 /// `¬□¬a => ◇a`.
 pub fn nnecn_to_pos<A: DProp>(ntauto_na: Not<Nec<Not<A>>>) -> Pos<A> {
     match uniform::<A>() {
@@ -158,6 +163,29 @@ pub fn nnecn_to_pos<A: DProp>(ntauto_na: Not<Nec<Not<A>>>) -> Pos<A> {
             not::absurd(imply::in_left(ntauto_na, |x| para_to_tauto_not(x)), para_a)
         }
     }
+}
+
+
+/// `¬□¬a => ¬¬◇a`.
+pub fn nnecn_to_nnpos<A: Prop>(x: Not<Nec<Not<A>>>) -> NNPos<A> {
+    Rc::new(move |npos_a| {
+        let y = and::from_de_morgan(npos_a);
+        y.1(and::to_de_morgan((y.0, exists_to_not_para(x.clone()))))
+    })
+}
+
+/// `¬¬◇a  ==  ¬□¬a`.
+pub fn eq_nnpos_nnecn<A: Prop>() -> Eq<NNPos<A>, Not<Nec<Not<A>>>> {
+    (Rc::new(nnpos_to_nnecn), Rc::new(nnecn_to_nnpos))
+}
+
+/// `a  =>  ¬¬◇a`.
+pub fn to_nnpos<A: Prop>(a: A) -> NNPos<A> {
+    Rc::new(move |npos_a| {
+        let x = and::from_de_morgan(npos_a);
+        imply::in_left(x.1, and::to_de_morgan)((x.0,
+            exists_to_not_para(exists_true(a.clone()))))
+    })
 }
 
 /// `(|- a) => (|- □a)`.
@@ -195,41 +223,4 @@ pub fn five<A: DProp>(pos_a: Pos<A>) -> Nec<Pos<A>> {
         Left(tauto_pos_a) => tauto_pos_a,
         Right(para_pos_a) => imply::absurd()(para_pos_a(pos_a)),
     }
-}
-
-/// `◇a => ∃ true { a }`.
-pub fn pos_to_exists_true<A: Prop>(x: Pos<A>) -> Exists<True, A> {
-    Rc::new(move |tauto_na| {
-        match x.clone() {
-            Left(tauto_a) => not::absurd(tauto_na(True), tauto_a(True)),
-            Right(theory_a) => not::absurd(theory_a, Right(tauto_not_to_para(tauto_na))),
-        }
-    })
-}
-
-/// `¬¬◇a => ∃ true { a }`.
-pub fn not_not_pos_to_exists_true<A: Prop>(x: Not<Not<Pos<A>>>) -> Exists<True, A> {
-    not::rev_triple(imply::modus_tollens(imply::modus_tollens(Rc::new(pos_to_exists_true)))(x))
-}
-
-/// `∃ true { a } => ¬¬◇a`.
-pub fn exists_true_to_not_not_pos<A: Prop>(x: Exists<True, A>) -> Not<Not<Pos<A>>> {
-    Rc::new(move |npos_a| {
-        let y = and::from_de_morgan(npos_a);
-        y.1(and::to_de_morgan((y.0, hooo::exists_to_not_para(x.clone()))))
-    })
-}
-
-/// `¬¬◇a  ==  ∃ true { a }`.
-pub fn eq_not_not_pos_exists_true<A: Prop>() -> Eq<Not<Not<Pos<A>>>, Exists<True, A>> {
-    (Rc::new(not_not_pos_to_exists_true), Rc::new(exists_true_to_not_not_pos))
-}
-
-/// `a  =>  ¬¬◇a`.
-pub fn to_not_not_pos<A: Prop>(a: A) -> Not<Not<Pos<A>>> {
-    Rc::new(move |npos_a| {
-        let x = and::from_de_morgan(npos_a);
-        imply::in_left(x.1, and::to_de_morgan)((x.0,
-            hooo::exists_to_not_para(hooo::exists_true(a.clone()))))
-    })
 }
