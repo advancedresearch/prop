@@ -33,6 +33,11 @@ pub type NNPos<A> = Not<Not<Pos<A>>>;
 /// A proposition is necessarily true if it is a tautology.
 pub type Nec<A> = Tauto<A>;
 
+/// `strong_pos(a) := p^true ⋁ false^(p^true ⋁ false^p)`.
+///
+/// This is a strong theoretical possibility which is equal to `□◇p` (see [eq_nec_pos_strong_pos]).
+pub type StrongPos<A> = Or<Tauto<A>, Para<Uniform<A>>>;
+
 /// `□¬□⊥`.
 pub fn nec_consistency() -> Nec<Not<Nec<False>>> {
     fn f(_: True) -> Not<Nec<False>> {consistency()}
@@ -229,3 +234,27 @@ pub fn five<A: DProp>(pos_a: Pos<A>) -> Nec<Pos<A>> {
 
 /// `□a => ◇a`.
 pub fn nec_to_pos<A: Prop>(nec_a: Nec<A>) -> Pos<A> {Left(nec_a)}
+
+/// `□◇a => strong_pos(a)`.
+pub fn nec_pos_to_strong_pos<A: Prop>(x: Nec<Pos<A>>) -> StrongPos<A> {
+    match hooo_or(x) {
+        Left(tauto_tauto_a) => Left(tauto_tauto_a(True)),
+        Right(tauto_theory_a) => Right(tauto_not_to_para(tauto_theory_a)),
+    }
+}
+
+/// `strong_pos(a) => □◇a`.
+pub fn strong_pos_to_nec_pos<A: Prop>(x: StrongPos<A>) -> Nec<Pos<A>> {
+    use hooo::pow::PowExt;
+
+    match x {
+        Left(tauto_a) => tauto_a.lift().trans(Left),
+        Right(para_uni_a) => para_to_tauto_not(para_uni_a).trans(Right),
+    }
+}
+
+/// `□◇a  ==  strong_pos(a)`.
+pub fn eq_nec_pos_strong_pos<A: Prop>() -> Eq<Nec<Pos<A>>, StrongPos<A>> {
+    (Rc::new(nec_pos_to_strong_pos), Rc::new(strong_pos_to_nec_pos))
+}
+
