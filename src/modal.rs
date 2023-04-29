@@ -168,7 +168,6 @@ pub fn nnecn_to_pos<A: DProp>(ntauto_na: Not<Nec<Not<A>>>) -> Pos<A> {
     }
 }
 
-
 /// `¬□¬a => ¬¬◇a`.
 pub fn nnecn_to_nnpos<A: Prop>(x: Not<Nec<Not<A>>>) -> NNPos<A> {
     Rc::new(move |npos_a| {
@@ -227,3 +226,6 @@ pub fn five<A: DProp>(pos_a: Pos<A>) -> Nec<Pos<A>> {
         Right(para_pos_a) => imply::absurd()(para_pos_a(pos_a)),
     }
 }
+
+/// `□a => ◇a`.
+pub fn nec_to_pos<A: Prop>(nec_a: Nec<A>) -> Pos<A> {Left(nec_a)}
