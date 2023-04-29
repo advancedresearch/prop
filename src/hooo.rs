@@ -152,6 +152,11 @@ type NEq<A, B> = Not<Eq<A, B>>;
 /// `a^b => (a^b)^c`.
 pub fn pow_lift<A: Prop, B: Prop, C: Prop>(_: Pow<A, B>) -> Pow<Pow<A, B>, C> {unimplemented!()}
 
+/// `c^a ⋀ c^b  =>  (c^a ⋀ c^b)^d`.
+pub fn pow_dual_rev_or_lift<A: Prop, B: Prop, C: Prop, D: Prop>(
+    x: And<Pow<C, A>, Pow<C, B>>
+) -> Pow<And<Pow<C, A>, Pow<C, B>>, D> {hooo_dual_rev_or(x).lift().trans(hooo_dual_or)}
+
 /// `a^b  =>  (¬b)^(¬a)`.
 pub fn pow_modus_tollens<A: Prop, B: Prop>(pow_ab: Pow<A, B>) -> Pow<Not<B>, Not<A>> {
     tauto_imply_to_pow(pow_ab.lift().trans(pow_to_imply).trans(imply::modus_tollens))
