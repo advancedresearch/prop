@@ -150,6 +150,10 @@ pub fn inv_double_val<F: Prop, X: Prop>() -> Eq<App<Inv<Inv<F>>, X>, App<F, X>> 
 pub fn q_inv<F: Prop, G: Prop>((eq_fg, (qu_f, qu_g)): Q<F, G>) -> Q<Inv<F>, Inv<G>> {
     (inv_eq(eq_fg), (inv_qu(qu_f), inv_qu(qu_g)))
 }
+/// `inv(f) ~~ inv(g)  =>  f ~~ g`.
+pub fn q_rev_inv<F: Prop, G: Prop>((eq_fg, (qu_f, qu_g)): Q<Inv<F>, Inv<G>>) -> Q<F, G> {
+    (inv_rev_eq(eq_fg), (inv_rev_qu(qu_f), inv_rev_qu(qu_g)))
+}
 /// `inv(f) ~~ g  =>  f ~~ inv(g)`.
 pub fn q_adjoint_left<F: Prop, G: Prop>(x: Q<Inv<F>, G>) -> Q<F, Inv<G>> {
     hooo::q_in_left_arg(q_inv(x), hooo::pow_eq_to_tauto_eq((inv_involve, involve_inv)))
