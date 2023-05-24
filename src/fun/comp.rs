@@ -56,9 +56,9 @@ pub fn comp_is_const<F: Prop, G: Prop>(a: IsConst<F>, b: IsConst<G>) -> IsConst<
 pub fn comp_inv_qu<F: Prop, G: Prop>(x: Qu<Inv<F>>, y: Qu<Inv<G>>) -> Qu<Inv<Comp<G, F>>> {
     inv_qu(comp_qu(inv_rev_qu(x), inv_rev_qu(y)))
 }
-/// `(inv(f) . inv(g)) == inv(g . f)`.
-pub fn comp_inv<F: Prop, G: Prop>() -> Eq<Comp<Inv<F>, Inv<G>>, Inv<Comp<G, F>>> {
-    (hooo::pow_to_imply(comp_inv_to_inv_comp), hooo::pow_to_imply(inv_comp_to_comp_inv))
+/// `(inv(f) . inv(g))  ==  inv(g . f)`.
+pub fn eq_comp_inv<F: Prop, G: Prop>() -> Eq<Comp<Inv<F>, Inv<G>>, Inv<Comp<G, F>>> {
+    (Rc::new(comp_inv), Rc::new(comp_rev_inv))
 }
 /// `(g . f)(x) == g(f(x))`.
 pub fn eq_app_comp<F: Prop, G: Prop, X: Prop>() -> Eq<App<G, App<F, X>>, App<Comp<G, F>, X>> {

@@ -57,7 +57,8 @@ pub fn norm1_comp<F: Prop, G1: Prop, G2: Prop, G3: Prop, G4: Prop>() ->
     Eq<Norm1<Norm1<F, G1, G2>, G3, G4>, Norm1<F, Comp<G3, G1>, Comp<G4, G2>>>
 {
     let y = eq::transitivity(comp_eq_left(comp_assoc()), eq::symmetry(comp_assoc()));
-    let y = eq::transitivity(eq::transitivity(y, comp_eq_right(comp_inv())), comp_eq_left(comp_assoc()));
+    let y = eq::transitivity(eq::transitivity(y, comp_eq_right(eq_comp_inv())),
+        comp_eq_left(comp_assoc()));
     eqx!(eqx!(y, norm1_def, cr, cl, l), norm1_def, l, r)
 }
 /// `f[g1][g2]  ==  f[g2 . g1]` for 1 argument.
