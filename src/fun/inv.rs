@@ -133,6 +133,10 @@ pub fn eq_qu_double<F: Prop>() -> Eq<Qu<F>, Qu<Inv<Inv<F>>>> {
 }
 /// `~inv(f) => ~f`.
 pub fn inv_rev_qu<F: Prop>(x: Qu<Inv<F>>) -> Qu<F> {qu_rev_double(inv_qu(x))}
+/// `~f  ==  ~inv(f)`.
+pub fn eq_qu_inv<F: Prop>() -> Eq<Qu<F>, Qu<Inv<F>>> {
+    (Rc::new(inv_qu), Rc::new(inv_rev_qu))
+}
 /// `~inv(f) ⋀ (f == g)^true  =>  ~inv(g)`.
 pub fn qu_inv_tauto_eq_to_qu_inv<F: Prop, G: Prop>(
     x: Qu<Inv<F>>,
