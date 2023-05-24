@@ -18,11 +18,11 @@ pub fn comp_ty<F: Prop, G: Prop, X: Prop, Y: Prop, Z: Prop>(
     _ty_g: Ty<G, Pow<Z, Y>>
 ) -> Ty<Comp<G, F>, Pow<Z, X>> {unimplemented!()}
 /// `inv(g . f) => (inv(f) . inv(g))`.
-pub fn inv_comp_to_comp_inv<F: Prop, G: Prop>(_: Inv<Comp<G, F>>) -> Comp<Inv<F>, Inv<G>> {
+pub fn comp_rev_inv<F: Prop, G: Prop>(_: Inv<Comp<G, F>>) -> Comp<Inv<F>, Inv<G>> {
     unimplemented!()
 }
 /// `(inv(f) . inv(g)) => inv(g . f)`.
-pub fn comp_inv_to_inv_comp<F: Prop, G: Prop>(_: Comp<Inv<F>, Inv<G>>) -> Inv<Comp<G, F>> {
+pub fn comp_inv<F: Prop, G: Prop>(_: Comp<Inv<F>, Inv<G>>) -> Inv<Comp<G, F>> {
     unimplemented!()
 }
 /// `g(f(x)) => (g . f)(x)`.
