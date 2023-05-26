@@ -136,13 +136,19 @@ pub fn qu_inv_tauto_eq_to_qu_inv<F: Prop, G: Prop>(
 pub fn inv_double_val<F: Prop, X: Prop>() -> Eq<App<Inv<Inv<F>>, X>, App<F, X>> {
     app_map_eq(involve_eq())
 }
+/// `~f ⋀ (inv(f)(a) == b)  =>  (f(b) == a)`.
+pub fn inv_rev_val_qu<F: Prop, A: Prop, B: Prop>(
+    qu_f: Qu<F>,
+    x: Eq<App<Inv<F>, A>, B>
+) -> Eq<App<F, B>, A> {
+    eq::in_left_arg(inv_val_qu(qu_double(qu_f.clone()), x), app_map_eq(involve_eq()))
+}
 /// `~f ⋀ ~inv(f)  =>  (f(a) == b) == (inv(f)(b) == a)`.
 pub fn qu_to_app_eq<A: Prop, B: Prop, F: Prop>(
     qu_f: Qu<F>, qu_inv_f: Qu<Inv<F>>
 ) -> Eq<Eq<App<F, A>, B>, Eq<App<Inv<F>, B>, A>> {
     (Rc::new(move |y| inv_val_qu(qu_inv_f.clone(), y)),
-     Rc::new(move |y|
-        eq::in_left_arg(inv_val_qu(qu_double(qu_f.clone()), y), app_map_eq(involve_eq()))))
+     Rc::new(move |y| inv_rev_val_qu(qu_f.clone(), y)))
 }
 /// `inv(f) == g  =>  inv(g) == f`.
 pub fn inv_swap_eq<F: Prop, G: Prop>(x: Eq<Inv<F>, G>) -> Eq<Inv<G>, F> {
