@@ -4,14 +4,12 @@
 //! and the syntax `x ~~ y` uses `Q<X, Y>` from the [quality] module.
 //!
 //! This model uses [imaginary inverse](https://github.com/advancedresearch/path_semantics/blob/master/papers-wip/imaginary-inverse.pdf)
-//! `inv(f)` with `~inv(f)` or `~f` as a proof of bijective inverse of `f`.
+//! `inv(f)` with `~inv(f)` as a proof of inverse of `f`.
 //! Here, `~` means the path semantical qubit operator, such that:
 //!
 //! ```text
 //! (inv(f) ~~ g) => ~inv(f)
 //! ```
-//!
-//! From `~inv(f)` one can prove `~f` and vice versa ([inv_qu] and [inv_rev_qu]).
 //!
 //! It means that one uses path semantical quality instead of equality for inverses.
 //! Path semantical quality `inv(f) ~~ g` also implies `inv(f) == g`,
