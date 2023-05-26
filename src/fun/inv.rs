@@ -68,8 +68,6 @@ pub fn inv_val_qu<F: Prop, A: Prop, B: Prop>(
 pub fn inv_involve<F: Prop>(_: Inv<Inv<F>>) -> F {unimplemented!()}
 /// `f => inv(inv(f))`.
 pub fn involve_inv<F: Prop>(_: F) -> Inv<Inv<F>> {unimplemented!()}
-/// `(f == g)  =>  inv(f) == inv(g)`.
-pub fn inv_eq<F: Prop, G: Prop>(_: Eq<F, G>) -> Eq<Inv<F>, Inv<G>> {unimplemented!()}
 /// `~f => ~inv(f)`.
 pub fn inv_qu<F: Prop>(_: Qu<F>) -> Qu<Inv<F>> {unimplemented!()}
 /// `(inv(f) == f)  =>  (inv(f) ~~ f)`.
@@ -137,6 +135,8 @@ pub fn inv_rev_qu<F: Prop>(x: Qu<Inv<F>>) -> Qu<F> {qu_rev_double(inv_qu(x))}
 pub fn eq_qu_inv<F: Prop>() -> Eq<Qu<F>, Qu<Inv<F>>> {
     (Rc::new(inv_qu), Rc::new(inv_rev_qu))
 }
+/// `(f == g)  =>  inv(f) == inv(g)`.
+pub fn inv_eq<F: Prop, G: Prop>(x: Eq<F, G>) -> Eq<Inv<F>, Inv<G>> {app_eq(x)}
 /// `~inv(f) ⋀ (f == g)^true  =>  ~inv(g)`.
 pub fn qu_inv_tauto_eq_to_qu_inv<F: Prop, G: Prop>(
     x: Qu<Inv<F>>,
