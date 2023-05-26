@@ -127,8 +127,6 @@ pub fn true_qu() -> Qu<True> {
         tauto!((True.map_any(), Rc::new(|_| hooo::pow_refl)));
     qubit::in_arg(x, y)
 }
-/// `~inv(true)`.
-pub fn inv_true_qu() -> Qu<Inv<True>> {inv_qu(true_qu())}
 /// `~true == true`.
 pub fn eq_qu_true_true() -> Eq<Qu<True>, True> {(True.map_any(), true_qu().map_any())}
 /// `a  =>  ~a`.

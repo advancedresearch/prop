@@ -54,7 +54,7 @@ pub fn comp_is_const<F: Prop, G: Prop>(a: IsConst<F>, b: IsConst<G>) -> IsConst<
 }
 /// `~inv(f) ⋀ ~inv(g)  =>  ~inv(g . f)`.
 pub fn comp_inv_qu<F: Prop, G: Prop>(x: Qu<Inv<F>>, y: Qu<Inv<G>>) -> Qu<Inv<Comp<G, F>>> {
-    inv_qu(comp_qu(inv_rev_qu(x), inv_rev_qu(y)))
+    qubit::in_arg(comp_qu(y, x), tauto!(eq_comp_inv()))
 }
 /// `(inv(f) . inv(g))  ==  inv(g . f)`.
 pub fn eq_comp_inv<F: Prop, G: Prop>() -> Eq<Comp<Inv<F>, Inv<G>>, Inv<Comp<G, F>>> {

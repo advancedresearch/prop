@@ -68,8 +68,6 @@ pub fn inv_val_qu<F: Prop, A: Prop, B: Prop>(
 pub fn inv_involve<F: Prop>(_: Inv<Inv<F>>) -> F {unimplemented!()}
 /// `f => inv(inv(f))`.
 pub fn involve_inv<F: Prop>(_: F) -> Inv<Inv<F>> {unimplemented!()}
-/// `~f => ~inv(f)`.
-pub fn inv_qu<F: Prop>(_: Qu<F>) -> Qu<Inv<F>> {unimplemented!()}
 /// `(inv(f) == f)  =>  (inv(f) ~~ f)`.
 pub fn self_inv_to_q<F: Prop>(_: Eq<Inv<F>, F>) -> Q<Inv<F>, F> {unimplemented!()}
 /// `theory(f) ⋀ ~inv(f) ⋀ (f : x -> y) ⋀ (x -> y)  =>  f ⋀ inv(f)`.
@@ -129,12 +127,6 @@ pub fn qu_rev_double<F: Prop>(x: Qu<Inv<Inv<F>>>) -> Qu<F> {
 pub fn eq_qu_double<F: Prop>() -> Eq<Qu<F>, Qu<Inv<Inv<F>>>> {
     (Rc::new(qu_double), Rc::new(qu_rev_double))
 }
-/// `~inv(f) => ~f`.
-pub fn inv_rev_qu<F: Prop>(x: Qu<Inv<F>>) -> Qu<F> {qu_rev_double(inv_qu(x))}
-/// `~f  ==  ~inv(f)`.
-pub fn eq_qu_inv<F: Prop>() -> Eq<Qu<F>, Qu<Inv<F>>> {
-    (Rc::new(inv_qu), Rc::new(inv_rev_qu))
-}
 /// `(f == g)  =>  inv(f) == inv(g)`.
 pub fn inv_eq<F: Prop, G: Prop>(x: Eq<F, G>) -> Eq<Inv<F>, Inv<G>> {app_eq(x)}
 /// `~inv(f) ⋀ (f == g)^true  =>  ~inv(g)`.
@@ -146,43 +138,17 @@ pub fn qu_inv_tauto_eq_to_qu_inv<F: Prop, G: Prop>(
 pub fn inv_double_val<F: Prop, X: Prop>() -> Eq<App<Inv<Inv<F>>, X>, App<F, X>> {
     app_map_eq(involve_eq())
 }
-/// `f ~~ g  =>  inv(f) ~~ inv(g)`.
-pub fn q_inv<F: Prop, G: Prop>((eq_fg, (qu_f, qu_g)): Q<F, G>) -> Q<Inv<F>, Inv<G>> {
-    (inv_eq(eq_fg), (inv_qu(qu_f), inv_qu(qu_g)))
-}
-/// `inv(f) ~~ inv(g)  =>  f ~~ g`.
-pub fn q_rev_inv<F: Prop, G: Prop>((eq_fg, (qu_f, qu_g)): Q<Inv<F>, Inv<G>>) -> Q<F, G> {
-    (inv_rev_eq(eq_fg), (inv_rev_qu(qu_f), inv_rev_qu(qu_g)))
-}
-/// `inv(f) ~~ g  =>  f ~~ inv(g)`.
-pub fn q_adjoint_left<F: Prop, G: Prop>(x: Q<Inv<F>, G>) -> Q<F, Inv<G>> {
-    hooo::q_in_left_arg(q_inv(x), hooo::pow_eq_to_tauto_eq((inv_involve, involve_inv)))
-}
-/// `f ~~ inv(g)  =>  inv(f) ~~ g`.
-pub fn q_adjoint_right<F: Prop, G: Prop>(x: Q<F, Inv<G>>) -> Q<Inv<F>, G> {
-    quality::symmetry(q_adjoint_left(quality::symmetry(x)))
-}
-/// `inv(f) ~~ g  ==  f ~~ inv(g)`.
-pub fn q_adjoint<F: Prop, G: Prop>() -> Eq<Q<Inv<F>, G>, Q<F, Inv<G>>> {
-    hooo::pow_eq_to_tauto_eq((q_adjoint_left, q_adjoint_right))(True)
-}
-/// `~inv(f)  =>  (f(a) == b) == (inv(f)(b) == a)`.
+/// `~f ⋀ ~inv(f)  =>  (f(a) == b) == (inv(f)(b) == a)`.
 pub fn qu_to_app_eq<A: Prop, B: Prop, F: Prop>(
-    x: Qu<Inv<F>>
+    qu_f: Qu<F>, qu_inv_f: Qu<Inv<F>>
 ) -> Eq<Eq<App<F, A>, B>, Eq<App<Inv<F>, B>, A>> {
-    let qu_inv_inv_f: Qu<Inv<Inv<F>>> = inv_qu(x.clone());
-
-    (Rc::new(move |y| inv_val_qu(x.clone(), y)),
+    (Rc::new(move |y| inv_val_qu(qu_inv_f.clone(), y)),
      Rc::new(move |y|
-        eq::in_left_arg(inv_val_qu(qu_inv_inv_f.clone(), y), app_map_eq(involve_eq()))))
+        eq::in_left_arg(inv_val_qu(qu_double(qu_f.clone()), y), app_map_eq(involve_eq()))))
 }
 /// `inv(f) == g  =>  inv(g) == f`.
 pub fn inv_swap_eq<F: Prop, G: Prop>(x: Eq<Inv<F>, G>) -> Eq<Inv<G>, F> {
     eq::symmetry(eq::in_left_arg(inv_eq(x), involve_eq()))
-}
-/// `inv(f) ~~ g  =>  inv(g) ~~ f`.
-pub fn inv_swap_q<F: Prop, G: Prop>(x: Q<Inv<F>, G>) -> Q<Inv<G>, F> {
-    quality::symmetry(q_adjoint_left(x))
 }
 /// `inv(f) == inv(g)  =>  f == g`.
 pub fn inv_rev_eq<F: Prop, G: Prop>(x: Eq<Inv<F>, Inv<G>>) -> Eq<F, G> {
