@@ -135,6 +135,7 @@ pub mod mid;
 pub mod fun;
 pub mod fun_traits;
 pub mod sd;
+pub mod halt;
 
 /// Logical true.
 #[derive(Copy, Clone)]
