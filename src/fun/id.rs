@@ -181,3 +181,11 @@ pub fn eq_comp_left_inv_id<F: Prop, A: Prop, B: Prop>(
     (Rc::new(move |x| comp_left_inv_to_id(ty_f.clone(), x)),
      Rc::new(move |x| id_to_comp_left_inv(ty_f2.clone(), x)))
 }
+/// `(f : a -> b)  =>  (f . inv(f)) == id{b}`.
+pub fn eq_comp_right_inv_id<F: Prop, A: Prop, B: Prop>(
+    ty_f: Ty<F, Pow<B, A>>
+) -> Eq<Comp<F, Inv<F>>, Id<B>> {
+    let ty_f2 = ty_f.clone();
+    (Rc::new(move |x| comp_right_inv_to_id(ty_f.clone(), x)),
+     Rc::new(move |x| id_to_comp_right_inv(ty_f2.clone(), x)))
+}
