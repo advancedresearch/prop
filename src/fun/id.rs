@@ -173,3 +173,11 @@ pub fn para_to_eq_qu<A: Prop>(para_a: Para<A>) -> Eq<Qu<A>, A> {
 pub fn pow_to_eq_qu<A: Prop, B: Prop>(x: Pow<A, B>) -> Eq<Qu<Pow<A, B>>, Pow<A, B>> {
     tauto_to_eq_qu(x.lift())
 }
+/// `(f : a -> b)  =>  (inv(f) . f) == id{a}`.
+pub fn eq_comp_left_inv_id<F: Prop, A: Prop, B: Prop>(
+    ty_f: Ty<F, Pow<B, A>>
+) -> Eq<Comp<Inv<F>, F>, Id<A>> {
+    let ty_f2 = ty_f.clone();
+    (Rc::new(move |x| comp_left_inv_to_id(ty_f.clone(), x)),
+     Rc::new(move |x| id_to_comp_left_inv(ty_f2.clone(), x)))
+}
