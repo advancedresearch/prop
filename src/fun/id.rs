@@ -46,23 +46,27 @@ pub fn id_def<A: Prop, X: Prop, N: Nat>(
 ) -> Eq<App<Id<X>, A>, A> {unimplemented!()}
 /// `inv(id{x}) == id{x}`.
 pub fn id_inv<X: Prop>() -> Eq<Inv<App<FId, X>>, App<FId, X>> {unimplemented!()}
-/// `(f : a -> b) ⋀ (f . inv(f))  =>  id{b}`.
+/// `~(f . inv(f)) ⋀ (f : a -> b) ⋀ (f . inv(f))  =>  id{b}`.
 pub fn comp_right_inv_to_id<F: Prop, A: Prop, B: Prop>(
+    _: Qu<Comp<F, Inv<F>>>,
     _: Ty<F, Pow<B, A>>,
     _: Comp<F, Inv<F>>
 ) -> App<FId, B> {unimplemented!()}
-/// `(f : a -> b) ⋀ id{b} => (f . inv(f))`.
+/// `~(f . inv(f)) ⋀ (f : a -> b) ⋀ id{b}  =>  (f . inv(f))`.
 pub fn id_to_comp_right_inv<F: Prop, A: Prop, B: Prop>(
+    _: Qu<Comp<F, Inv<F>>>,
     _: Ty<F, Pow<B, A>>,
     _: App<FId, B>
 ) -> Comp<F, Inv<F>> {unimplemented!()}
-/// `(f : a -> b) ⋀ (inv(f) . f) => id{a}`.
+/// `~(inv(f) . f) ⋀ (f : a -> b) ⋀ (inv(f) . f)  =>  id{a}`.
 pub fn comp_left_inv_to_id<F: Prop, A: Prop, B: Prop>(
+    _: Qu<Comp<Inv<F>, F>>,
     _: Ty<F, Pow<B, A>>,
     _: Comp<Inv<F>, F>
 ) -> App<FId, A> {unimplemented!()}
-/// `(f : a -> b) ⋀ id{a} => (inv(f). f)`.
+/// `~(inv(f) . f) ⋀ (f : a -> b) ⋀ id{a}  =>  (inv(f). f)`.
 pub fn id_to_comp_left_inv<F: Prop, A: Prop, B: Prop>(
+    _: Qu<Comp<Inv<F>, F>>,
     _: Ty<F, Pow<B, A>>,
     _: App<FId, A>
 ) -> Comp<Inv<F>, F> {unimplemented!()}
@@ -93,12 +97,18 @@ pub fn self_inv_to_eq_id<F: Prop, A: Prop>(
     ty_f: Ty<F, Pow<A, A>>,
     eq_f: Eq<Inv<F>, F>
 ) -> Eq<Comp<F, F>, App<FId, A>> {
+    let x = inv::self_inv_to_q(eq_f.clone());
+    let qu_f = qubit::Qubit::from_q(quality::right(x.clone()));
+    let qu_inv_f = qubit::Qubit::from_q(quality::left(x));
+    let qu_comp_f_inv_f = comp::comp_qu(qu_inv_f, qu_f);
+    let qu_comp_f_inv_f_2 = qu_comp_f_inv_f.clone();
     let ty_f_2 = ty_f.clone();
     let eq_f_2 = eq_f.clone();
     (
-        Rc::new(move |x| comp_right_inv_to_id(ty_f_2.clone(),
+        Rc::new(move |x| comp_right_inv_to_id(qu_comp_f_inv_f.clone(), ty_f_2.clone(),
             comp_in_right_arg(x, eq::symmetry(eq_f_2.clone())))),
-        Rc::new(move |x| comp_in_right_arg(id_to_comp_right_inv(ty_f.clone(), x), eq_f.clone())),
+        Rc::new(move |x| comp_in_right_arg(id_to_comp_right_inv(qu_comp_f_inv_f_2.clone(),
+            ty_f.clone(), x), eq_f.clone())),
     )
 }
 /// `inv(id{a}) ~~ id{a}`.
@@ -173,19 +183,23 @@ pub fn para_to_eq_qu<A: Prop>(para_a: Para<A>) -> Eq<Qu<A>, A> {
 pub fn pow_to_eq_qu<A: Prop, B: Prop>(x: Pow<A, B>) -> Eq<Qu<Pow<A, B>>, Pow<A, B>> {
     tauto_to_eq_qu(x.lift())
 }
-/// `(f : a -> b)  =>  (inv(f) . f) == id{a}`.
+/// `~(inv(f) . f) ⋀ (f : a -> b)  =>  (inv(f) . f) == id{a}`.
 pub fn eq_comp_left_inv_id<F: Prop, A: Prop, B: Prop>(
+    qu_comp_inv_f_f: Qu<Comp<Inv<F>, F>>,
     ty_f: Ty<F, Pow<B, A>>
 ) -> Eq<Comp<Inv<F>, F>, Id<A>> {
     let ty_f2 = ty_f.clone();
-    (Rc::new(move |x| comp_left_inv_to_id(ty_f.clone(), x)),
-     Rc::new(move |x| id_to_comp_left_inv(ty_f2.clone(), x)))
+    let qu_comp_inv_f_f_2 = qu_comp_inv_f_f.clone();
+    (Rc::new(move |x| comp_left_inv_to_id(qu_comp_inv_f_f.clone(), ty_f.clone(), x)),
+     Rc::new(move |x| id_to_comp_left_inv(qu_comp_inv_f_f_2.clone(), ty_f2.clone(), x)))
 }
-/// `(f : a -> b)  =>  (f . inv(f)) == id{b}`.
+/// `~(f . inv(f)) ⋀ (f : a -> b)  =>  (f . inv(f)) == id{b}`.
 pub fn eq_comp_right_inv_id<F: Prop, A: Prop, B: Prop>(
+    qu_comp_f_inv_f: Qu<Comp<F, Inv<F>>>,
     ty_f: Ty<F, Pow<B, A>>
 ) -> Eq<Comp<F, Inv<F>>, Id<B>> {
     let ty_f2 = ty_f.clone();
-    (Rc::new(move |x| comp_right_inv_to_id(ty_f.clone(), x)),
-     Rc::new(move |x| id_to_comp_right_inv(ty_f2.clone(), x)))
+    let qu_comp_f_inv_f_2 = qu_comp_f_inv_f.clone();
+    (Rc::new(move |x| comp_right_inv_to_id(qu_comp_f_inv_f.clone(), ty_f.clone(), x)),
+     Rc::new(move |x| id_to_comp_right_inv(qu_comp_f_inv_f_2.clone(), ty_f2.clone(), x)))
 }
