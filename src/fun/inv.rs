@@ -218,7 +218,7 @@ pub fn self_inv_to_eq_id<F: Prop, A: Prop>(
     )
 }
 /// `~(f . inv(f)) ⋀ ((g . f) == (h . f)) ⋀ (f : a -> x) ⋀ (g : x -> y) ⋀ (h : x -> y)  =>  g == h`.
-pub fn epic<F: Prop, G: Prop, H: Prop, X: Prop, Y: Prop, A: Prop>(
+pub fn split_epic<F: Prop, G: Prop, H: Prop, X: Prop, Y: Prop, A: Prop>(
     qu_comp_f_inv_f: Qu<Comp<F, Inv<F>>>,
     x: Eq<Comp<G, F>, Comp<H, F>>,
     ty_f: Ty<F, Pow<X, A>>,
@@ -236,7 +236,7 @@ pub fn epic<F: Prop, G: Prop, H: Prop, X: Prop, Y: Prop, A: Prop>(
     x
 }
 /// `~(inv(f) . f) ⋀ ((f . g) == (f . h)) ⋀ (f : x -> y) ⋀ (g : a -> x) ⋀ (h : a -> x)  =>  g == h`.
-pub fn monic<F: Prop, G: Prop, H: Prop, X: Prop, Y: Prop, A: Prop>(
+pub fn split_monic<F: Prop, G: Prop, H: Prop, X: Prop, Y: Prop, A: Prop>(
     qu_comp_inv_f_f: Qu<Comp<Inv<F>, F>>,
     x: Eq<Comp<F, G>, Comp<F, H>>,
     ty_f: Ty<F, Pow<Y, X>>,
