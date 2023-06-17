@@ -35,8 +35,8 @@
 //! When a function is "split epic", it means that it has a right inverse.
 //! Similarly, when a function is "split monic", it means it has a left inverse.
 //!
-//! - `~(f . inv(f))` is the same as saying that `f` is split epic (see [split_epic])
-//! - `~(inv(f) . f)` is the same as saying that `f` is split monic (see [split_monic])
+//! - `~(f . inv(f))` is the same as saying that `f` is split epic (see [SplitEpic] and [split_epic])
+//! - `~(inv(f) . f)` is the same as saying that `f` is split monic (see [SplitMonic] and [split_monic])
 
 use super::*;
 
@@ -58,6 +58,12 @@ pub type Surjective<F, X, Y, B, A> = Imply<
     And<Ty<F, Pow<X, Y>>, Ty<B, Y>>,
     Exists<Ty<A, X>, Eq<App<F, A>, B>>
 >;
+
+/// `split_epic(f) := ~(f . inv(f))`.
+pub type SplitEpic<F> = Qu<Comp<F, Inv<F>>>;
+
+/// `split_monic(f) := ~(inv(f) . f)`.
+pub type SplitMonic<F> = Qu<Comp<Inv<F>, F>>;
 
 /// Inverse type `(f : x -> y) => (inv(f) : y -> x)`.
 pub fn inv_ty<F: Prop, X: Prop, Y: Prop>(
@@ -89,25 +95,25 @@ pub fn path<F: Prop, X: Prop, Y: Prop>(
 pub fn id_inv<X: Prop>() -> Eq<Inv<App<FId, X>>, App<FId, X>> {unimplemented!()}
 /// `~(f . inv(f)) ⋀ (f : a -> b) ⋀ (f . inv(f))  =>  id{b}`.
 pub fn comp_right_inv_to_id<F: Prop, A: Prop, B: Prop>(
-    _: Qu<Comp<F, Inv<F>>>,
+    _: SplitEpic<F>,
     _: Ty<F, Pow<B, A>>,
     _: Comp<F, Inv<F>>
 ) -> App<FId, B> {unimplemented!()}
 /// `~(f . inv(f)) ⋀ (f : a -> b) ⋀ id{b}  =>  (f . inv(f))`.
 pub fn id_to_comp_right_inv<F: Prop, A: Prop, B: Prop>(
-    _: Qu<Comp<F, Inv<F>>>,
+    _: SplitEpic<F>,
     _: Ty<F, Pow<B, A>>,
     _: App<FId, B>
 ) -> Comp<F, Inv<F>> {unimplemented!()}
 /// `~(inv(f) . f) ⋀ (f : a -> b) ⋀ (inv(f) . f)  =>  id{a}`.
 pub fn comp_left_inv_to_id<F: Prop, A: Prop, B: Prop>(
-    _: Qu<Comp<Inv<F>, F>>,
+    _: SplitMonic<F>,
     _: Ty<F, Pow<B, A>>,
     _: Comp<Inv<F>, F>
 ) -> App<FId, A> {unimplemented!()}
 /// `~(inv(f) . f) ⋀ (f : a -> b) ⋀ id{a}  =>  (inv(f). f)`.
 pub fn id_to_comp_left_inv<F: Prop, A: Prop, B: Prop>(
-    _: Qu<Comp<Inv<F>, F>>,
+    _: SplitMonic<F>,
     _: Ty<F, Pow<B, A>>,
     _: App<FId, A>
 ) -> Comp<Inv<F>, F> {unimplemented!()}
@@ -227,7 +233,7 @@ pub fn self_inv_to_eq_id<F: Prop, A: Prop>(
 }
 /// `~(f . inv(f)) ⋀ ((g . f) == (h . f)) ⋀ (f : a -> x) ⋀ (g : x -> y) ⋀ (h : x -> y)  =>  g == h`.
 pub fn split_epic<F: Prop, G: Prop, H: Prop, X: Prop, Y: Prop, A: Prop>(
-    qu_comp_f_inv_f: Qu<Comp<F, Inv<F>>>,
+    qu_comp_f_inv_f: SplitEpic<F>,
     x: Eq<Comp<G, F>, Comp<H, F>>,
     ty_f: Ty<F, Pow<X, A>>,
     ty_g: Ty<G, Pow<Y, X>>,
@@ -245,7 +251,7 @@ pub fn split_epic<F: Prop, G: Prop, H: Prop, X: Prop, Y: Prop, A: Prop>(
 }
 /// `~(inv(f) . f) ⋀ ((f . g) == (f . h)) ⋀ (f : x -> y) ⋀ (g : a -> x) ⋀ (h : a -> x)  =>  g == h`.
 pub fn split_monic<F: Prop, G: Prop, H: Prop, X: Prop, Y: Prop, A: Prop>(
-    qu_comp_inv_f_f: Qu<Comp<Inv<F>, F>>,
+    qu_comp_inv_f_f: SplitMonic<F>,
     x: Eq<Comp<F, G>, Comp<F, H>>,
     ty_f: Ty<F, Pow<Y, X>>,
     ty_g: Ty<G, Pow<X, A>>,
@@ -263,7 +269,7 @@ pub fn split_monic<F: Prop, G: Prop, H: Prop, X: Prop, Y: Prop, A: Prop>(
 }
 /// `~(inv(f) . f) ⋀ (f : a -> b)  =>  (inv(f) . f) == id{a}`.
 pub fn eq_comp_left_inv_id<F: Prop, A: Prop, B: Prop>(
-    qu_comp_inv_f_f: Qu<Comp<Inv<F>, F>>,
+    qu_comp_inv_f_f: SplitMonic<F>,
     ty_f: Ty<F, Pow<B, A>>
 ) -> Eq<Comp<Inv<F>, F>, Id<A>> {
     let ty_f2 = ty_f.clone();
@@ -273,7 +279,7 @@ pub fn eq_comp_left_inv_id<F: Prop, A: Prop, B: Prop>(
 }
 /// `~(f . inv(f)) ⋀ (f : a -> b)  =>  (f . inv(f)) == id{b}`.
 pub fn eq_comp_right_inv_id<F: Prop, A: Prop, B: Prop>(
-    qu_comp_f_inv_f: Qu<Comp<F, Inv<F>>>,
+    qu_comp_f_inv_f: SplitEpic<F>,
     ty_f: Ty<F, Pow<B, A>>
 ) -> Eq<Comp<F, Inv<F>>, Id<B>> {
     let ty_f2 = ty_f.clone();
