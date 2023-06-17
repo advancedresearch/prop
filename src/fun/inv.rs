@@ -29,6 +29,14 @@
 //! only for functions that have inverses.
 //!
 //! If a function `f` has no inverse, then it is useful to prove `false^(inv(f) ~~ g)`.
+//!
+//! ### Split Epic and Split Monic functions
+//!
+//! When a function is "split epic", it means that it has a right inverse.
+//! Similarly, when a function is "split monic", it means it has a left inverse.
+//!
+//! - `~(f . inv(f))` is the same as saying that `f` is split epic (see [split_epic])
+//! - `~(inv(f) . f)` is the same as saying that `f` is split monic (see [split_monic])
 
 use super::*;
 
