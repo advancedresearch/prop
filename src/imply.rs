@@ -161,6 +161,11 @@ pub fn rev_double_neg_left<A: Prop, B: Prop>(f: Imply<Not<Not<A>>, B>) -> Imply<
     Rc::new(move |a| f(not::double(a)))
 }
 
+/// `(a => ¬b)  ==  (¬¬a => ¬b)`.
+pub fn eq_double_neg_left<A: Prop, B: Prop>() -> Eq<Imply<A, Not<B>>, Imply<Not<Not<A>>, Not<B>>> {
+    (Rc::new(double_neg_left), Rc::new(rev_double_neg_left))
+}
+
 /// `(a => b) => (¬a ∨ b)`.
 pub fn to_or_da<A: DProp, B: Prop>(f: Imply<A, B>) -> Or<Not<A>, B> {
     to_or_excm_a(f, A::decide())
