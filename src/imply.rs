@@ -150,6 +150,12 @@ pub fn rev_double_neg_imply_excm<A: Prop, B: Prop>(
     })
 }
 
+/// `(a => ¬b)  =>  (¬¬a => ¬b)`.
+pub fn rev_double_neg_left<A: Prop, B: Prop>(f: Imply<A, Not<B>>) -> Imply<Not<Not<A>>, Not<B>> {
+    Rc::new(move |nna|
+        not::rev_triple(imply::modus_tollens(imply::modus_tollens(f.clone()))(nna)))
+}
+
 /// `(a => b) => (¬a ∨ b)`.
 pub fn to_or_da<A: DProp, B: Prop>(f: Imply<A, B>) -> Or<Not<A>, B> {
     to_or_excm_a(f, A::decide())
