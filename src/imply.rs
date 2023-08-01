@@ -88,8 +88,8 @@ pub fn reorder_args<A: Prop, B: Prop, C: Prop>(
 }
 
 /// `(a => b)  =>  (¬¬a => ¬¬b)`.
-pub fn double_neg<A: DProp, B: Prop>(f: Imply<A, B>) -> Imply<Not<Not<A>>, Not<Not<B>>> {
-    Rc::new(move |nn_a| not::double(f(not::rev_double(nn_a))))
+pub fn double_neg<A: Prop, B: Prop>(f: Imply<A, B>) -> Imply<Not<Not<A>>, Not<Not<B>>> {
+    modus_tollens(modus_tollens(f))
 }
 
 /// `(¬¬a => ¬¬b)  =>  (a => b)`.
