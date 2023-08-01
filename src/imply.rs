@@ -151,7 +151,7 @@ pub fn rev_double_neg_imply_excm<A: Prop, B: Prop>(
 }
 
 /// `(a => ¬b)  =>  (¬¬a => ¬b)`.
-pub fn rev_double_neg_left<A: Prop, B: Prop>(f: Imply<A, Not<B>>) -> Imply<Not<Not<A>>, Not<B>> {
+pub fn double_neg_left<A: Prop, B: Prop>(f: Imply<A, Not<B>>) -> Imply<Not<Not<A>>, Not<B>> {
     Rc::new(move |nna|
         not::rev_triple(imply::modus_tollens(imply::modus_tollens(f.clone()))(nna)))
 }
